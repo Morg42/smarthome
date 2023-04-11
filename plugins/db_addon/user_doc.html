@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>db_addon &mdash; Dokumentation v1.9.4 v1.9.4 (Stand 14. März 2023) Dokumentation</title>
+  <title>db_addon &mdash; Dokumentation v1.9.5 v1.9.5 (Stand 31. März 2023) Dokumentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
@@ -37,7 +37,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Dokumentation v1.9.4
+            Dokumentation v1.9.5
               <img src="../../_static/logo_long_inverse3.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -445,6 +445,14 @@
 <li class="toctree-l5"><a class="reference internal" href="#db-addon-maintenance">db_addon Maintenance</a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="#erlauterungen-zu-temperatursummen">Erläuterungen zu Temperatursummen</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#grunlandtemperatursumme">Grünlandtemperatursumme</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wachstumsgradtag">Wachstumsgradtag</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#warmesumme">Wärmesumme</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#kaltesumme">Kältesumme</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tagesmitteltemperatur">Tagesmitteltemperatur</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../executor/user_doc.html">executor</a><ul>
@@ -816,6 +824,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../lirc/user_doc.html">lirc</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../lirc/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lirc/user_doc.html#items">Items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lirc/user_doc.html#web-interface">Web Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../mieleathome/user_doc.html">Sample Plugin &lt;- hier den Namen des Plugins einsetzen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../mieleathome/user_doc.html#anforderungen">Anforderungen</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../modbus_tcp/user_doc.html">modbus_tcp</a><ul>
@@ -1124,16 +1137,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#allgemeine-informationen">Allgemeine Informationen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#konfiguration-der-fritz-box">Konfiguration der Fritz!Box</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#konfiguration-des-plugins">Konfiguration des Plugins</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#konfiguration-des-items">Konfiguration des Items</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-data-type">avm_data_type</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-incoming-allowed">avm_incoming_allowed</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-target-number">avm_target_number</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-wlan-index">avm_wlan_index</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-mac">avm_mac</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-tam-index">avm_tam_index</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-deflection-index">avm_deflection_index</a></li>
-</ul>
-</li>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#item-structs">item_structs</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#item-beispiel-mit-verwendung-der-structs-ohne-instanz">Item Beispiel mit Verwendung der structs ohne Instanz</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#item-beispiel-mit-verwendung-der-structs-mit-instanz">Item Beispiel mit Verwendung der structs mit Instanz</a></li>
@@ -1746,16 +1749,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#allgemeine-informationen">Allgemeine Informationen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#konfiguration-der-fritz-box">Konfiguration der Fritz!Box</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#konfiguration-des-plugins">Konfiguration des Plugins</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#konfiguration-des-items">Konfiguration des Items</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-data-type">avm_data_type</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-incoming-allowed">avm_incoming_allowed</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-target-number">avm_target_number</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-wlan-index">avm_wlan_index</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-mac">avm_mac</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-tam-index">avm_tam_index</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#avm-deflection-index">avm_deflection_index</a></li>
-</ul>
-</li>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#item-structs">item_structs</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#item-beispiel-mit-verwendung-der-structs-ohne-instanz">Item Beispiel mit Verwendung der structs ohne Instanz</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../avm/user_doc.html#item-beispiel-mit-verwendung-der-structs-mit-instanz">Item Beispiel mit Verwendung der structs mit Instanz</a></li>
@@ -1878,6 +1871,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#web-interface">Web Interface</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#db-addon-items">db_addon Items</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#db-addon-maintenance">db_addon Maintenance</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#erlauterungen-zu-temperatursummen">Erläuterungen zu Temperatursummen</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#grunlandtemperatursumme">Grünlandtemperatursumme</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wachstumsgradtag">Wachstumsgradtag</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#warmesumme">Wärmesumme</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#kaltesumme">Kältesumme</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tagesmitteltemperatur">Tagesmitteltemperatur</a></li>
 </ul>
 </li>
 </ul>
@@ -2102,6 +2103,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../lirc/user_doc.html">lirc</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../lirc/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lirc/user_doc.html#items">Items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lirc/user_doc.html#web-interface">Web Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../mieleathome/user_doc.html">Sample Plugin &lt;- hier den Namen des Plugins einsetzen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../mieleathome/user_doc.html#anforderungen">Anforderungen</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../modbus_tcp/user_doc.html">modbus_tcp</a><ul>
@@ -3944,6 +3950,12 @@
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/userfunctions/userfunctions.html#reload-von-userfunctions">Reload von Userfunctions</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../referenz/virtual_environments/virtual_environments.html">Virtuelle Environments <span class="redsup">Neu</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../referenz/virtual_environments/virtual_environments.html#installation-von-virtualenv">Installation von virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../referenz/virtual_environments/virtual_environments.html#erstellung-von-virtuellen-environments">Erstellung von virtuellen Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../referenz/virtual_environments/virtual_environments.html#virtuelle-environements-als-dienst">Virtuelle Environements als Dienst</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../referenz/libraries_plugins_logics.html">Libraries für Plugins und Logiken</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/db.html">lib.db</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../lib/db.html#lib.db.Database"><code class="docutils literal notranslate"><span class="pre">Database</span></code></a><ul>
@@ -4161,6 +4173,31 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ - Häufig gestellte Fragen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../release/release.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../release/1_9_5.html">Release 1.9.5 - 31. März 2023</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_9_5.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_9_5.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#allgmein">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#updates-in-the-core">Updates in the CORE</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_9_5.html#anderungen-bei-plugins">Änderungen bei Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#id1">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#neue-plugins">Neue Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#plugin-updates">Plugin Updates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#outdated-plugins">Outdated Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_9_5.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#tools">Tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_9_5.html#dokumentation">Dokumentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../release/1_9_4.html">Release 1.9.4 - 14. März 2023</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../release/1_9_4.html#uberblick">Überblick</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../release/1_9_4.html#minimum-python-version">Minimum Python Version</a></li>
@@ -4447,7 +4484,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Dokumentation v1.9.4</a>
+          <a href="../../index.html">Dokumentation v1.9.5</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -4468,17 +4505,19 @@
              
   <span class="target" id="index-0"></span><section id="db-addon">
 <span id="index-1"></span><h1>db_addon<a class="headerlink" href="#db-addon" title="Permalink to this heading"></a></h1>
-<a class="reference internal image-reference" href="../../_images/plugin_logo7.png"><img alt="plugin logo" class="align-left" src="../../_images/plugin_logo7.png" style="width: 150.0px; height: 150.0px;" /></a>
+<a class="reference internal image-reference" href="../../_images/plugin_logo8.png"><img alt="plugin logo" class="align-left" src="../../_images/plugin_logo8.png" style="width: 150.0px; height: 150.0px;" /></a>
 <p>Das Plugin bietet eine Funktionserweiterung zum Database Plugin und ermöglicht die einfache Auswertung von Messdaten.
 Basierend auf den Daten in der Datenbank können bspw. Auswertungen zu Verbrauch (heute, gestern, …) oder zu Minimal-
 und Maximalwerten gefahren werden.
 Diese Auswertungen werden zyklisch zum Tageswechsel, Wochenwechsel, Monatswechsel oder Jahreswechsel, in Abhängigkeit
 der Funktion erzeugt.
 Um die Zugriffe auf die Datenbank zu minimieren, werden diverse Daten zwischengespeichert.</p>
-<p>Die Items mit einem DatabaseAddon-Attribut müssen im gleichen Pfad sein, wie das Item, für das das Database Attribut
-konfiguriert ist.
-Bedeutet: Die Items mit dem DatabaseAddon-Attribute müssen Kinder oder Kindeskinder oder Kindeskinderkinder des Items
-sein, für das das Database Attribut konfiguriert ist</p>
+<p>Sind Items mit einem DatabaseAddon-Attribut im gleichen Pfad, wie das Item, für das das Database Attribut
+konfiguriert ist, wird dieses Item automatisch ermittelt. Bedeutet: Sind die Items mit dem DatabaseAddon-Attribute Kinder
+oder Kindeskinder oder Kindeskinderkinder des Items, für das das Database Attribut konfiguriert ist, wird dieses automatisch
+ermittelt.</p>
+<p>Alternativ kann mit dem Attribute „db_addon_database_item“  auch der absolute Pfad des Items angegeben werden,  für das
+das Database Attribut konfiguriert ist.</p>
 <p>Bsp:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">temperatur</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bool</span>
@@ -4494,6 +4533,12 @@ sein, für das das Database Attribut konfiguriert ist</p>
 <span class="w">        </span><span class="nt">gestern_max</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num</span>
 <span class="w">            </span><span class="nt">db_addon_fct</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">heute_minus1_max</span>
+
+
+<span class="nt">tagesmitteltemperatur_gestern</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num</span>
+<span class="w">    </span><span class="nt">db_addon_fct</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">heute_minus1_avg</span>
+<span class="w">    </span><span class="nt">db_addon_database_item</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;temperatur&#39;</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -4623,6 +4668,64 @@ aufgrund vieler Leseanfragen führen.</p>
 <h3>db_addon Maintenance<a class="headerlink" href="#db-addon-maintenance" title="Permalink to this heading"></a></h3>
 <p>Das Webinterface zeigt detaillierte Informationen über die im Plugin verfügbaren Daten an.
 Dies dient der Maintenance bzw. Fehlersuche. Dieser Tab ist nur bei Log-Level „Debug“ verfügbar.</p>
+</section>
+</section>
+<section id="erlauterungen-zu-temperatursummen">
+<h2>Erläuterungen zu Temperatursummen<a class="headerlink" href="#erlauterungen-zu-temperatursummen" title="Permalink to this heading"></a></h2>
+<section id="grunlandtemperatursumme">
+<h3>Grünlandtemperatursumme<a class="headerlink" href="#grunlandtemperatursumme" title="Permalink to this heading"></a></h3>
+<p>Beim Grünland wird die Wärmesumme nach Ernst und Loeper benutzt, um den Vegetationsbeginn und somit den Termin von Düngungsmaßnahmen zu bestimmen.
+Dabei erfolgt die Aufsummierung der Tagesmitteltemperaturen über 0 °C, wobei der Januar mit 0.5 und der Februar mit 0.75 gewichtet wird.
+Bei einer Wärmesumme von 200 Grad ist eine Düngung angesagt.</p>
+<p>siehe: <a class="reference external" href="https://de.wikipedia.org/wiki/Gr%C3%BCnlandtemperatursumme">https://de.wikipedia.org/wiki/Gr%C3%BCnlandtemperatursumme</a></p>
+<p>Folgende Parameter sind möglich / notwendig:</p>
+<ul class="simple">
+<li><p>year: Jahreszahl (str oder int), für das die Berechnung ausgeführt werden soll oder „current“ für aktuelles Jahr  (default: ‚current‘)</p></li>
+</ul>
+</section>
+<section id="wachstumsgradtag">
+<h3>Wachstumsgradtag<a class="headerlink" href="#wachstumsgradtag" title="Permalink to this heading"></a></h3>
+<p>Der Begriff Wachstumsgradtage (WGT) ist ein Überbegriff für verschiedene Größen.
+Gemeinsam ist ihnen, daß zur Berechnung eine Lufttemperatur von einem Schwellenwert subtrahiert wird.
+Je nach Fragestellung und Pflanzenart werden der Schwellenwert unterschiedlich gewählt und die Temperatur unterschiedlich bestimmt.
+Verfügbar sind die Berechnung über 0) „einfachen Durchschnitt der Tagestemperaturen“, 1) „modifizierten Durchschnitt der Tagestemperaturen“
+und 2) Anzahl der Tage, deren Mitteltempertatur oberhalb der Schwellentemperatur lag.</p>
+<p>siehe <a class="reference external" href="https://de.wikipedia.org/wiki/Wachstumsgradtag">https://de.wikipedia.org/wiki/Wachstumsgradtag</a></p>
+<p>Folgende Parameter sind möglich / notwendig:</p>
+<ul class="simple">
+<li><p>year: Jahreszahl (str oder int), für das die Berechnung ausgeführt werden soll oder „current“ für aktuelles Jahr  (default: ‚current‘)</p></li>
+<li><p>method: 0-Berechnung über „einfachen Durchschnitt der Tagestemperaturen“, 1-Berechnung über „modifizierten Durchschnitt (default: 0)</p></li>
+</ul>
+<p>der Tagestemperaturen“ 2-Anzahl der Tage, mit Mitteltempertatur oberhalb Schwellentemperatur// 10, 11 Ausgabe aus Zeitserie
+- threshold: Schwellentemperatur in °C (int) (default: 10)</p>
+</section>
+<section id="warmesumme">
+<h3>Wärmesumme<a class="headerlink" href="#warmesumme" title="Permalink to this heading"></a></h3>
+<p>Die Wärmesumme soll eine Aussage über den Sommer und die Pflanzenreife liefern. Es gibt keine eindeutige Definition der Größe „Wärmesumme“.
+Berechnet wird die Wärmesumme als Summe aller Tagesmitteltemperaturen über einem Schwellenwert ab dem 1.1. des Jahres.</p>
+<p>siehe <a class="reference external" href="https://de.wikipedia.org/wiki/W%C3%A4rmesumme">https://de.wikipedia.org/wiki/W%C3%A4rmesumme</a></p>
+<p>Folgende Parameter sind möglich / notwendig:</p>
+<ul class="simple">
+<li><p>year: Jahreszahl (str oder int), für das die Berechnung ausgeführt werden soll oder „current“ für aktuelles Jahr (default: ‚current‘)</p></li>
+<li><p>month: Monat (int) des Jahres, für das die Berechnung ausgeführt werden soll (optional) (default: None)</p></li>
+<li><p>threshold: Schwellentemperatur in °C (int) (default: 10)</p></li>
+</ul>
+</section>
+<section id="kaltesumme">
+<h3>Kältesumme<a class="headerlink" href="#kaltesumme" title="Permalink to this heading"></a></h3>
+<p>Die Kältesumme soll eine Aussage über die Härte des Winters liefern.
+Berechnet wird die Kältesumme als Summe aller negativen Tagesmitteltemperaturen ab dem 21.9. des Jahres bis 31.3. des Folgejahres.</p>
+<p>siehe <a class="reference external" href="https://de.wikipedia.org/wiki/K%C3%A4ltesumme">https://de.wikipedia.org/wiki/K%C3%A4ltesumme</a></p>
+<p>Folgende Parameter sind möglich / notwendig:</p>
+<ul class="simple">
+<li><p>year: Jahreszahl (str oder int), für das die Berechnung ausgeführt werden soll oder „current“ für aktuelles Jahr (default: ‚current‘)</p></li>
+<li><p>month: Monat (int) des Jahres, für das die Berechnung ausgeführt werden soll (optional) (default: None)</p></li>
+</ul>
+</section>
+<section id="tagesmitteltemperatur">
+<h3>Tagesmitteltemperatur<a class="headerlink" href="#tagesmitteltemperatur" title="Permalink to this heading"></a></h3>
+<p>Die Tagesmitteltemperatur wird auf Basis der stündlichen Durchschnittswerte eines Tages (aller in der DB enthaltenen Datensätze)
+für die angegebene Anzahl von Tagen (days=optional) berechnet.</p>
 </section>
 </section>
 </section>
