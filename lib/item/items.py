@@ -201,6 +201,21 @@ class Items():
                     self._children.append(child)
         del(item_conf)  # clean up
 
+        #
+        # alias
+        #
+
+        # check all items for alias paths
+        for item in self.return_items():
+            if item._alias_path:
+                target = self.return_item(item._alias_path)
+                if target is not None:
+                    item._set_alias(target)
+
+        #
+        #
+        #
+
         # Test if all used attributes are defined in configuread plugins
         #feature moved to lib.metadata
         #for item in self.return_items():

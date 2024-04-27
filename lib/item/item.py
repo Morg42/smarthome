@@ -60,6 +60,17 @@ from .helpers import *
 
 _items_instance = None
 
+#
+# alias
+#
+
+# TODO: move to lib.constants
+KEY_ALIAS = 'alias'
+
+#
+#
+#
+
 
 #ATTRIB_COMPAT_DEFAULT_FALLBACK = ATTRIB_COMPAT_V12
 ATTRIB_COMPAT_DEFAULT_FALLBACK = ATTRIB_COMPAT_LATEST
@@ -256,6 +267,17 @@ class Item():
         self._enforce_updates = False
         self._enforce_change = False
 
+#
+# alias
+#
+
+        self.__target = self
+        self._alias_path = ''
+
+#
+#
+#
+
         self._eval = None				    # -> KEY_EVAL
         self._eval_unexpanded = ''
         self._eval_trigger = False
@@ -382,6 +404,16 @@ class Item():
                     if attr == KEY_INITVALUE:
                         attr = KEY_VALUE
                     setattr(self, '_' + attr, value)
+#
+# alias
+#
+
+                elif attr == KEY_ALIAS:
+                    self._alias_path = value
+
+#
+#
+#
                 elif attr in [KEY_CACHE, KEY_ENFORCE_UPDATES, KEY_ENFORCE_CHANGE]:  # cast to bool
                     try:
                         setattr(self, '_' + attr, cast_bool(value))
@@ -1005,43 +1037,43 @@ class Item():
 
 
     def _get_last_change(self):
-        return self.__last_change
+        return self.__target.__last_change
 
     def _get_last_change_age(self):
-        delta = self.shtime.now() - self.__last_change
+        delta = self.shtime.now() - self.__target.__last_change
         return delta.total_seconds()
 
     def _get_last_change_by(self):
-        return self.__changed_by
+        return self.__target.__changed_by
 
     def _get_last_update(self):
-        return self.__last_update
+        return self.__target.__last_update
 
     def _get_last_update_by(self):
-        return self.__updated_by
+        return self.__target.__updated_by
 
     def _get_last_update_age(self):
-        delta = self.shtime.now() - self.__last_update
+        delta = self.shtime.now() - self.__target.__last_update
         return delta.total_seconds()
 
     def _get_last_trigger(self):
-        return self.__last_trigger
+        return self.__target.__last_trigger
 
     def _get_last_trigger_age(self):
-        delta = self.shtime.now() - self.__last_trigger
+        delta = self.shtime.now() - self.__target.__last_trigger
         return delta.total_seconds()
 
     def _get_last_trigger_by(self):
-        return self.__triggered_by
+        return self.__target.__triggered_by
 
     def _get_last_value(self):
-        return self.__last_value
+        return self.__target.__last_value
 
     def _get_prev_change(self):
-        return self.__prev_change
+        return self.__target.__prev_change
 
     def _get_prev_change_age(self):
-        delta = self.__last_change - self.__prev_change
+        delta = self.__target.__last_change - self.__target.__prev_change
         if delta.total_seconds() < 0.0001:
             return 0.0
         return delta.total_seconds()
@@ -1050,11 +1082,11 @@ class Item():
         return self. __prev_change_by
 
     def _get_prev_update(self):
-        return self.__prev_change
+        return self.__target.__prev_change
 
     def _get_prev_update_age(self):
 
-        delta = self.__last_update - self.__prev_update
+        delta = self.__target.__last_update - self.__target.__prev_update
         if delta.total_seconds() < 0.0001:
             return 0.0
         return delta.total_seconds()
@@ -1063,14 +1095,14 @@ class Item():
         return self. __prev_update_by
 
     def _get_prev_value(self):
-        return self.__prev_value
+        return self.__target.__prev_value
 
     def _get_prev_trigger(self):
-        return self.__prev_trigger
+        return self.__target.__prev_trigger
 
     def _get_prev_trigger_age(self):
 
-        delta = self.__last_trigger - self.__prev_trigger
+        delta = self.__target.__last_trigger - self.__target.__prev_trigger
         if delta.total_seconds() < 0.0001:
             return 0.0
         return delta.total_seconds()
@@ -1092,13 +1124,24 @@ class Item():
         :return: String with the path of the item
         :rtype: str
         """
+        return self.__target.property.path
+
+    def realpath(self):
+        """
+        Path of the item, even if it is an alias
+
+        Available only in SmartHomeNG v1.6, not in versions above
+
+        :return: String with the path of the item
+        :rtype: str
+        """
         return self.property.path
 
     def id(self):
         """
         Old method name - Use item.property.path instead of item.property.path
         """
-        return self.property.path
+        return self.__target.property.path
 
 
     def type(self):
@@ -1108,7 +1151,7 @@ class Item():
         :return: Datatype of the item
         :rtype: str
         """
-        return self.property.type
+        return self.__target.property.type
 
 
     def last_change(self):
@@ -1117,7 +1160,7 @@ class Item():
 
         :return: Timestamp of last change
         """
-        return self.property.last_change
+        return self.__target.property.last_change
 
     def age(self):
         """
@@ -1126,7 +1169,7 @@ class Item():
         :return: Age of the value
         :rtype: int
         """
-        return self.property.last_change_age
+        return self.__target.property.last_change_age
 
 
     def last_update(self):
@@ -1135,7 +1178,7 @@ class Item():
 
         :return: Timestamp of last update
         """
-        return self.property.last_update
+        return self.__target.property.last_update
 
     def update_age(self):
         """
@@ -1144,7 +1187,7 @@ class Item():
         :return: Update-age of the value
         :rtype: int
         """
-        return self.property.last_update_age
+        return self.__target.property.last_update_age
 
     def last_trigger(self):
         """
@@ -1152,7 +1195,7 @@ class Item():
 
         :return: Timestamp of last update
         """
-        return self.property.last_trigger
+        return self.__target.property.last_trigger
 
     def trigger_age(self):
         """
@@ -1161,7 +1204,7 @@ class Item():
         :return: Update-age of the value
         :rtype: int
         """
-        return self.property.last_trigger_age
+        return self.__target.property.last_trigger_age
 
     def prev_change(self):
         """
@@ -1169,7 +1212,7 @@ class Item():
 
         :return: Timestamp of previous change
         """
-        return self.property.prev_change
+        return self.__target.property.prev_change
 
     def prev_age(self):
         """
@@ -1178,7 +1221,7 @@ class Item():
         :return: Age of the previous value
         :rtype: int
         """
-        return self.property.prev_change_age
+        return self.__target.property.prev_change_age
 
     def prev_update(self):
         """
@@ -1186,7 +1229,7 @@ class Item():
 
         :return: Timestamp of previous update
         """
-        return self.property.prev_update
+        return self.__target.property.prev_update
 
     def prev_update_age(self):
         """
@@ -1196,7 +1239,7 @@ class Item():
         :return: Update-age of the previous value
         :rtype: int
         """
-        return self.property.prev_update_age
+        return self.__target.property.prev_update_age
 
     def prev_trigger(self):
         """
@@ -1204,7 +1247,7 @@ class Item():
 
         :return: Timestamp of previous update
         """
-        return self.property.prev_trigger
+        return self.__target.property.prev_trigger
 
     def prev_trigger_age(self):
         """
@@ -1213,7 +1256,7 @@ class Item():
         :return: Update-age of the previous value
         :rtype: int
         """
-        return self.property.prev_trigger_age
+        return self.__target.property.prev_trigger_age
 
     def prev_value(self):
         """
@@ -1221,7 +1264,7 @@ class Item():
 
         :return: Next-to-last value of the item
         """
-        return self.property.last_value
+        return self.__target.property.last_value
 
     def changed_by(self):
         """
@@ -1230,7 +1273,7 @@ class Item():
         :return: Changer of item's value
         :rtype: str
         """
-        return self.property.last_change_by
+        return self.__target.property.last_change_by
 
     def updated_by(self):
         """
@@ -1239,7 +1282,7 @@ class Item():
         :return: Updater of item's value
         :rtype: str
         """
-        return self.property.last_update_by
+        return self.__target.property.last_update_by
 
     def triggered_by(self):
         """
@@ -1248,7 +1291,7 @@ class Item():
         :return: Updater of item's value
         :rtype: str
         """
-        return self.property.last_trigger_by
+        return self.__target.property.last_trigger_by
 
     """
     Following are methods to handle relative item paths
@@ -1268,7 +1311,7 @@ class Item():
         if (len(relativepath) == 0) or ((len(relativepath) > 0) and (relativepath[0] != '.')):
             return relativepath
         relpath = relativepath.rstrip()
-        rootpath = self._path
+        rootpath = self.__target._path
 
         while (len(relpath) > 0) and (relpath[0] == '.'):
             relpath = relpath[1:]
@@ -1276,7 +1319,7 @@ class Item():
                 if rootpath.rfind('.') == -1:
                     if rootpath == '':
                         relpath = ''
-                        logger.error("{}.get_absolutepath(): Relative path trying to access above root level on attribute '{}'".format(self._path, attribute))
+                        logger.error("{}.get_absolutepath(): Relative path trying to access above root level on attribute '{}'".format(self.__target._path, attribute))
                     else:
                         rootpath = ''
                 else:
@@ -1295,7 +1338,7 @@ class Item():
                 rootpath = relpath
         rootpath += trailing_str
 
-        logger.info("{}.get_absolutepath('{}'): Result = '{}' (for attribute '{}')".format(self._path, relativepath, rootpath, attribute))
+        logger.info("{}.get_absolutepath('{}'): Result = '{}' (for attribute '{}')".format(self.__target._path, relativepath, rootpath, attribute))
         if rootpath[-5:] == '.self':
             rootpath = rootpath.replace('.self', '')
         rootpath = rootpath.replace('.self.', '.')
@@ -1316,36 +1359,36 @@ class Item():
 
         """
         def __checkforentry(attr):
-            if isinstance(self.conf[attr], str):
+            if isinstance(self.__target.conf[attr], str):
                 if (begintag != '') and (endtag != ''):
-                    self.conf[attr] = self.get_stringwithabsolutepathes(self.conf[attr], begintag, endtag, attr)
+                    self.__target.conf[attr] = self.get_stringwithabsolutepathes(self.__target.conf[attr], begintag, endtag, attr)
                 elif (begintag == '') and (endtag == ''):
-                    self.conf[attr] = self.get_absolutepath(self.conf[attr], attr)
-            elif isinstance(self.conf[attr], list):
-                logger.debug("expand_relativepathes(1): to expand={}".format(self.conf[attr]))
+                    self.__target.conf[attr] = self.get_absolutepath(self.__target.conf[attr], attr)
+            elif isinstance(self.__target.conf[attr], list):
+                logger.debug("expand_relativepathes(1): to expand={}".format(self.__target.conf[attr]))
                 new_attr = []
-                for a in self.conf[attr]:
+                for a in self.__target.conf[attr]:
                     # Convert accidentally wrong dict entries to string
                     if isinstance(a, dict):
                         a = list("{!s}:{!s}".format(k,v) for (k,v) in a.items())[0]
                     logger.debug("expand_relativepathes: before : to expand={}".format(a))
                     if (begintag != '') and (endtag != ''):
-                        a = self.get_stringwithabsolutepathes(a, begintag, endtag, attr)
+                        a = self.__target.get_stringwithabsolutepathes(a, begintag, endtag, attr)
                     elif (begintag == '') and (endtag == ''):
-                        a = self.get_absolutepath(a, attr)
+                        a = self.__target.get_absolutepath(a, attr)
                     logger.debug("expand_relativepathes: after: to expand={}".format(a))
                     new_attr.append(a)
-                self.conf[attr] = new_attr
-                logger.debug("expand_relativepathes(2): expanded={}".format(self.conf[attr]))
+                self.__target.conf[attr] = new_attr
+                logger.debug("expand_relativepathes(2): expanded={}".format(self.__target.conf[attr]))
             else:
-                logger.warning("expand_relativepathes: attr={} can not expand for type(self.conf[attr])={}".format(attr, type(self.conf[attr])))
+                logger.warning("expand_relativepathes: attr={} can not expand for type(self.__target.conf[attr])={}".format(attr, type(self.__target.conf[attr])))
 
         # Check if wildcard is used
         if isinstance(attr, str) and attr[-1:] == "*":
-            for entry in self.conf:
+            for entry in self.__target.conf:
                 if attr[:-1] in entry:
                     __checkforentry(entry)
-        elif attr in self.conf:
+        elif attr in self.__target.conf:
             __checkforentry(attr)
         return
 
@@ -1377,14 +1420,14 @@ class Item():
                 else:
                     rel = rest[:rest.find(endtag)]
                 rest = rest[rest.find(endtag):]
-                pref += self.get_absolutepath(rel, attribute)
+                pref += self.__target.get_absolutepath(rel, attribute)
                 # Re-combine string for next loop
                 rest = pref+rest
                 pref = ''
 
             pref += rest
             logger.debug("{}.get_stringwithabsolutepathes('{}') with begintag = '{}', endtag = '{}': result = '{}'".format(
-                self._path, evalstr, begintag, endtag, pref))
+                self.__target._path, evalstr, begintag, endtag, pref))
             return pref # end of __checkfortags(...)
 
 
@@ -1414,7 +1457,7 @@ class Item():
         :param attr: Get the value from this attribute of the parent item
         :return: value from attribute of parent item
         """
-        pitem = self
+        pitem = self.__target
         pattr_value = pitem.conf.get(attr, default)
         return pattr_value
 
@@ -1426,7 +1469,7 @@ class Item():
         :param attr: Get the value from this attribute of the parent item
         :return: value from attribute of parent item
         """
-        pitem = self.return_parent()
+        pitem = self.__target.return_parent()
         pattr_value = pitem.conf.get(attr, default)
         return pattr_value
 
@@ -1438,7 +1481,7 @@ class Item():
         :param attr: Get the value from this attribute of the grandparent item
         :return: value from attribute of grandparent item
         """
-        pitem = self.return_parent()
+        pitem = self.__target.return_parent()
         gpitem = pitem.return_parent()
         gpattr_value = gpitem.conf.get(attr, default)
         return gpattr_value
@@ -1451,7 +1494,7 @@ class Item():
         :param attr: Get the value from this attribute of the grandparent item
         :return: value from attribute of grandparent item
         """
-        pitem = self.return_parent()
+        pitem = self.__target.return_parent()
         gpitem = pitem.return_parent()
         ggpitem = gpitem.return_parent()
         ggpattr_value = ggpitem.conf.get(attr, default)
@@ -1487,7 +1530,7 @@ class Item():
                             wrk = wrk[:p]+'False'+wrk[p+5:]
 
                         # expand relative item paths
-                        wrk = self.get_stringwithabsolutepathes(wrk, 'sh.', '(', KEY_CONDITION)
+                        wrk = self.__target.get_stringwithabsolutepathes(wrk, 'sh.', '(', KEY_CONDITION)
                         #wrk = self.get_stringwithabsolutepathes(wrk, 'sh.', '.property', KEY_CONDITION)
 
                         and_cond.append(wrk)
@@ -1507,45 +1550,45 @@ class Item():
 
     def __call__(self, value=None, caller='Logic', source=None, dest=None, key=None, index=None, default=None):
         # return value
-        if value is None or self._type is None:
-            if key is not None and self._type == 'dict':
-                return self.__get_dictentry(key, default)
-            elif index is not None and self._type == 'list':
-                return self.__get_listentry(index, default)
-            return copy.deepcopy(self._value)
+        if value is None or self.__target._type is None:
+            if key is not None and self.__target._type == 'dict':
+                return self.__target.__get_dictentry(key, default)
+            elif index is not None and self.__target._type == 'list':
+                return self.__target.__get_listentry(index, default)
+            return copy.deepcopy(self.__target._value)
 
         # set value
-        if self._eval:
+        if self.__target._eval:
             args = {'value': value, 'caller': caller, 'source': source, 'dest': dest}
-            self._sh.trigger(name=self._path + '-eval', obj=self.__run_eval, value=args, by=caller, source=source, dest=dest)
+            self._sh.trigger(name=self.__target._path + '-eval', obj=self.__target.__run_eval, value=args, by=caller, source=source, dest=dest)
         else:
-            self.__update(value, caller, source, dest, key, index)
+            self.__target.__update(value, caller, source, dest, key, index)
 
 
     def __iter__(self):
-        for child in self.__children:
+        for child in self.__target.__children:
             yield child
 
     def __setitem__(self, item, value):
-        vars(self)[item] = value
+        vars(self.__target)[item] = value
 
     def __getitem__(self, item):
-        return vars(self)[item]
+        return vars(self.__target)[item]
 
     def __bool__(self):
-        return bool(self._value)
+        return bool(self.__target._value)
 
     def __str__(self):
-        return self._name
+        return self.__target._name
 
     def __repr__(self):
-        return "Item: {}".format(self._path)
+        return "Item: {}".format(self.__target._path)
 
 
     def __get_listentry(self, index, default):
         if isinstance(index, int):
             try:
-                return self._value[index]
+                return self.__target._value[index]
             except Exception as e:
                 if default is None:
                     msg = f"Item '{self._path}': Cannot access list entry (index={index}) : {e}"
@@ -1553,7 +1596,7 @@ class Item():
                     raise ValueError(msg)  # needed additionally to show error message in eval syntax checker
             return default
         else:
-            msg = f"Item '{self._path}': Cannot access list entry: 'index' must be an integer not a {str(type(index)).split(chr(39))[1]} value ({index})"
+            msg = f"Item '{self.__target._path}': Cannot access list entry: 'index' must be an integer not a {str(type(index)).split(chr(39))[1]} value ({index})"
             logger.warning(msg)
             raise TypeError(msg)  # needed additionally to show error message in eval syntax checker
 
@@ -1562,24 +1605,24 @@ class Item():
         # Update a list item element (selected by index)
         if isinstance(index, str):
             if index.lower() == 'append':
-                valuelist = copy.deepcopy(self._value)
+                valuelist = copy.deepcopy(self.__target._value)
                 valuelist.append(value)
                 return valuelist
             elif index.lower() == 'prepend':
-                valuelist = copy.deepcopy(self._value)
+                valuelist = copy.deepcopy(self.__target._value)
                 valuelist.insert(0, value)
                 return valuelist
         if isinstance(index, int):
-            valuelist = copy.deepcopy(self._value)
+            valuelist = copy.deepcopy(self.__target._value)
             try:
                 valuelist[index] = value
             except Exception as e:
-                msg = f"Item '{self._path}': Cannot access list entry (index={index}) : {e}"
+                msg = f"Item '{self.__target._path}': Cannot access list entry (index={index}) : {e}"
                 logger.warning(msg)
                 raise ValueError(msg)  # needed additionally to show error message in eval syntax checker
             return valuelist
         else:
-            msg = f"Item '{self._path}': Cannot access list entry: 'index' must be an integer not a {str(type(index)).split(chr(39))[1]} value ({index})"
+            msg = f"Item '{self.__target._path}': Cannot access list entry: 'index' must be an integer not a {str(type(index)).split(chr(39))[1]} value ({index})"
             logger.warning(msg)
             raise TypeError(msg)  # needed additionally to show error message in eval syntax checker
 
@@ -1624,7 +1667,7 @@ class Item():
                 # f_code.__class__.__class__.__name__ == 'type'
                 #msg += f" - f_code={inspect.stack()[level].frame.f_code}   -  classname={inspect.stack()[level].frame.f_code.__class__.__class__.__class__.__name__}   -   dir(__class__.__class__.__class__)={dir(inspect.stack()[level].frame.f_code.__class__.__class__.__class__)}"
                 if inspect.stack()[level].function == '__run_eval':
-                    msg += f"Item '{self.get_calling_item_from_frame(inspect.stack()[level].frame)}'"
+                    msg += f"Item '{self.__target.get_calling_item_from_frame(inspect.stack()[level].frame)}'"
                 else:
                     msg += f"{inspect.stack()[level].function}()"
             except Exception as ex:
@@ -1635,13 +1678,13 @@ class Item():
 
     def __get_dictentry(self, key, default):
         try:
-            return self._value[key]
+            return self.__target._value[key]
         except Exception as e:
             if default is None:
-                msg = f"Item '{self._path}': {e.__class__.__name__}: {e}"
-                stack_info = self.get_stack_info()
+                msg = f"Item '{self.__target._path}': {e.__class__.__name__}: {e}"
+                stack_info = self.__target.get_stack_info()
                 if stack_info.startswith('Item'):
-                    msg += f"  -  called from: {self.get_stack_info()}"
+                    msg += f"  -  called from: {self.__target.get_stack_info()}"
                 logger.info(msg)
                 raise KeyError(msg)  # msg needed to show error message in eval syntax checker
         return default
@@ -1649,7 +1692,7 @@ class Item():
 
     def __set_dictentry(self, value, key):
         # Update a dict item element (selected by key) or add an element, if the key does not exist
-        valuedict = copy.deepcopy(self._value)
+        valuedict = copy.deepcopy(self.__target._value)
         valuedict[key] = value
         return valuedict
 
@@ -1679,44 +1722,44 @@ class Item():
 
         Called from Items.load_itemdefinitions
         """
-        if self._trigger:
+        if self.__target._trigger:
             # Only if item has an eval_trigger
             _items = []
-            for trigger in self._trigger:
-                if _items_instance.match_items(trigger) == [] and self._eval:
-                    logger.warning(f"item '{self._path}': trigger item '{trigger}' not found for function '{self._eval}'")
+            for trigger in self.__target._trigger:
+                if _items_instance.match_items(trigger) == [] and self.__target._eval:
+                    logger.warning(f"item '{self.__target._path}': trigger item '{trigger}' not found for function '{self.__target._eval}'")
                 _items.extend(_items_instance.match_items(trigger))
             for item in _items:
-                if item != self:  # prevent loop
-                        item._items_to_trigger.append(self)
-            if self._eval:
+                if item != self.__target:  # prevent loop
+                        item._items_to_trigger.append(self.__target)
+            if self.__target._eval:
                 # Build eval statement from trigger items (joined by given function)
                 items = ['sh.' + str(x.id()) + '()' for x in _items]
-                if self._eval == 'and':
-                    self._eval = ' and '.join(items)
-                elif self._eval == 'or':
-                    self._eval = ' or '.join(items)
-                elif self._eval == 'sum':
-                    self._eval = ' + '.join(items)
-                elif self._eval == 'avg':
-                    self._eval = '({0})/{1}'.format(' + '.join(items), len(items))
-                elif self._eval == 'max':
-                    self._eval = 'max({0})'.format(','.join(items))
-                elif self._eval == 'min':
-                    self._eval = 'min({0})'.format(','.join(items))
+                if self.__target._eval == 'and':
+                    self.__target._eval = ' and '.join(items)
+                elif self.__target._eval == 'or':
+                    self.__target._eval = ' or '.join(items)
+                elif self.__target._eval == 'sum':
+                    self.__target._eval = ' + '.join(items)
+                elif self.__target._eval == 'avg':
+                    self.__target._eval = '({0})/{1}'.format(' + '.join(items), len(items))
+                elif self.__target._eval == 'max':
+                    self.__target._eval = 'max({0})'.format(','.join(items))
+                elif self.__target._eval == 'min':
+                    self.__target._eval = 'min({0})'.format(','.join(items))
 
-        if self._hysteresis_input:
+        if self.__target._hysteresis_input:
             # Only if item has a hysteresis_input attribute
-            triggering_item = _items_instance.return_item(self._hysteresis_input)
+            triggering_item = _items_instance.return_item(self.__target._hysteresis_input)
             if triggering_item is None: # triggering item was not found
-                logger.error(f"item '{self._path}': trigger item '{self._hysteresis_input}' not found for function 'hysteresis'")
-            #elif self._hysteresis_upper_threshold < self._hysteresis_lower_threshold:
-            #    logger.error(f"item '{self._path}': Hysteresis upper threshod is lower than lower threshod")
+                logger.error(f"item '{self.__target._path}': trigger item '{self.__target._hysteresis_input}' not found for function 'hysteresis'")
+            #elif self.__target._hysteresis_upper_threshold < self.__target._hysteresis_lower_threshold:
+            #    logger.error(f"item '{self.__target._path}': Hysteresis upper threshod is lower than lower threshod")
             else:
-                if triggering_item != self:  # prevent loop
-                    if self._hysteresis_log:
-                        logger.notice(f"_init_prerun: Adding to triggering_item {self}")
-                    triggering_item._hysteresis_items_to_trigger.append(self)
+                if triggering_item != self.__target:  # prevent loop
+                    if self.__target._hysteresis_log:
+                        logger.notice(f"_init_prerun: Adding to triggering_item {self.__target}")
+                    triggering_item._hysteresis_items_to_trigger.append(self.__target)
 
 
     def _init_start_scheduler(self):
@@ -1731,15 +1774,15 @@ class Item():
         #############################################################
         # Crontab/Cycle
         #############################################################
-        if self._crontab is not None or self._cycle_time is not None:
+        if self.__target._crontab is not None or self.__target._cycle_time is not None:
             cycle = None
-            if self._cycle_time is not None:
-                #cycle = self._build_cycledict(cycle)
-                if self._cycle_value is None:
-                    cycle = {self._cast_duration(self._cycle_time): self._value}
+            if self.__target._cycle_time is not None:
+                #cycle = self.__target._build_cycledict(cycle)
+                if self.__target._cycle_value is None:
+                    cycle = {self.__target._cast_duration(self.__target._cycle_time): self.__target._value}
                 else:
-                    cycle = {self._cast_duration(self._cycle_time): self._cycle_value}
-            self._sh.scheduler.add(self._itemname_prefix+self._path, self, cron=self._crontab, cycle=cycle)
+                    cycle = {self.__target._cast_duration(self.__target._cycle_time): self.__target._cycle_value}
+            self.__target._sh.scheduler.add(self.__target._itemname_prefix+self.__target._path, self.__target, cron=self.__target._crontab, cycle=cycle)
 
         return
 
@@ -1750,11 +1793,11 @@ class Item():
 
         Called from Items.load_itemdefinitions
         """
-        if self._trigger:
+        if self.__target._trigger:
             # Only if item has an eval_trigger
-            if self._eval and not self._cache:
+            if self.__target._eval and not self.__target._cache:
                 # Only if item has an eval expression
-                self._sh.trigger(name=self._path, obj=self.__run_eval, by='Init', source='_init_run', value={'value': self._value, 'caller': 'Init:Eval'})
+                self.__target._sh.trigger(name=self.__target._path, obj=self.__target.__run_eval, by='Init', source='_init_run', value={'value': self.__target._value, 'caller': 'Init:Eval'})
                 return True
         return False
 
@@ -1773,8 +1816,8 @@ class Item():
         """
 
         # set up environment for calculating eval-expression
-        sh = self._sh
-        shtime = self.shtime
+        sh = self.__target._sh
+        shtime = self.__target.shtime
         items = _items_instance
         import math
         import lib.userfunctions as uf
@@ -1784,11 +1827,11 @@ class Item():
         try:
             result = eval(eval_expression)
         except Exception as e:
-            logger.error(f"Item '{self._path}': __run_attribute_eval({eval_expression}): Problem evaluating '{eval_expression}' - Exception {e}")
+            logger.error(f"Item '{self.__target._path}': __run_attribute_eval({eval_expression}): Problem evaluating '{eval_expression}' - Exception {e}")
             result = ''
         if result_type == 'num':
             if not isinstance(result, (int, float)):
-                logger.error(f"Item '{self._path}': __run_attribute_eval({eval_expression}): Attribute expression '{eval_expression}' evaluated to a non-numeric value '{result}', using 0 instead")
+                logger.error(f"Item '{self.__target._path}': __run_attribute_eval({eval_expression}): Attribute expression '{eval_expression}' evaluated to a non-numeric value '{result}', using 0 instead")
                 result = 0
 
         return result
@@ -1798,51 +1841,51 @@ class Item():
         """
         evaluate the 'hysteresis' entry of the actual item
         """
-        upper = self.__run_attribute_eval(self._hysteresis_upper_threshold)
-        lower = self.__run_attribute_eval(self._hysteresis_lower_threshold)
+        upper = self.__target.__run_attribute_eval(self.__target._hysteresis_upper_threshold)
+        lower = self.__target.__run_attribute_eval(self.__target._hysteresis_lower_threshold)
 
-        if self._hysteresis_upper_timer_active and (value <= upper):
-            self._sh.scheduler.remove(self._itemname_prefix + self.id() + '-UpTimer')
-            self._hysteresis_upper_timer_active = False
-            self._hysteresis_active_timer_ends = None
-        if self._hysteresis_lower_timer_active and (value >= lower):
-            self._sh.scheduler.remove(self._itemname_prefix + self.id() + '-LoTimer')
-            self._hysteresis_lower_timer_active = False
-            self._hysteresis_active_timer_ends = None
+        if self.__target._hysteresis_upper_timer_active and (value <= upper):
+            self.__target._sh.scheduler.remove(self.__target._itemname_prefix + self.__target.id() + '-UpTimer')
+            self.__target._hysteresis_upper_timer_active = False
+            self.__target._hysteresis_active_timer_ends = None
+        if self.__target._hysteresis_lower_timer_active and (value >= lower):
+            self.__target._sh.scheduler.remove(self.__target._itemname_prefix + self.__target.id() + '-LoTimer')
+            self.__target._hysteresis_lower_timer_active = False
+            self.__target._hysteresis_active_timer_ends = None
 
         if value > upper:
-            if self._hysteresis_upper_timer is None:
-                self.__update(True, caller, source, dest)
+            if self.__target._hysteresis_upper_timer is None:
+                self.__target.__update(True, caller, source, dest)
             else:
-                if not self._hysteresis_upper_timer_active and (self._value == False): ###ms value = self._value
-                    timer = self.__run_attribute_eval(self._hysteresis_upper_timer)
+                if not self.__target._hysteresis_upper_timer_active and (self.__target._value == False): ###ms value = self.__target._value
+                    timer = self.__target.__run_attribute_eval(self.__target._hysteresis_upper_timer)
                     if timer < 0:
-                        logger.warning(f"Item '{self._path}': Hysteresis upper-timer evaluated to an value less than zero ({timer}), using 0 instead")
+                        logger.warning(f"Item '{self.__target._path}': Hysteresis upper-timer evaluated to an value less than zero ({timer}), using 0 instead")
                         timer = 0
-                    self._hysteresis_upper_timer_active = True
-                    next = self.shtime.now() + datetime.timedelta(seconds=timer)
-                    self.active_timer_ends = next
-                    #next = self.shtime.now() + datetime.timedelta(seconds=self._hysteresis_upper_timer)
-                    if self._hysteresis_log:
-                        logger.notice(f"__run_hysteresis {self._path}: scheduler.add {self._path}-UpTimer")
-                    self._sh.scheduler.add(self._itemname_prefix+self.id() + '-UpTimer', self.__call__, value={'value': True, 'caller': 'Hysteresis'}, next=next)
+                    self.__target._hysteresis_upper_timer_active = True
+                    next = self.__target.shtime.now() + datetime.timedelta(seconds=timer)
+                    self.__target.active_timer_ends = next
+                    #next = self.__target.shtime.now() + datetime.timedelta(seconds=self.__target._hysteresis_upper_timer)
+                    if self.__target._hysteresis_log:
+                        logger.notice(f"__run_hysteresis {self.__target._path}: scheduler.add {self.__target._path}-UpTimer")
+                    self.__target._sh.scheduler.add(self.__target._itemname_prefix+self.__target.id() + '-UpTimer', self.__target.__call__, value={'value': True, 'caller': 'Hysteresis'}, next=next)
 
         if value < lower:
-            if self._hysteresis_lower_timer is None:
-                self.__update(False, caller, source, dest)
+            if self.__target._hysteresis_lower_timer is None:
+                self.__target.__update(False, caller, source, dest)
             else:
-                if not self._hysteresis_lower_timer_active and (self._value == True):
-                    timer = self.__run_attribute_eval(self._hysteresis_lower_timer)
+                if not self.__target._hysteresis_lower_timer_active and (self.__target._value == True):
+                    timer = self.__target.__run_attribute_eval(self.__target._hysteresis_lower_timer)
                     if timer < 0:
-                        logger.warning(f"Item '{self._path}': Hysteresis lower-timer evaluated to an value less than zero ({timer}), using 0 instead")
+                        logger.warning(f"Item '{self.__target._path}': Hysteresis lower-timer evaluated to an value less than zero ({timer}), using 0 instead")
                         timer = 0
-                    self._hysteresis_lower_timer_active = True
-                    next = self.shtime.now() + datetime.timedelta(seconds=timer)
-                    self._hysteresis_active_timer_ends = next
-                    #next = self.shtime.now() + datetime.timedelta(seconds=self._hysteresis_lower_timer)
-                    if self._hysteresis_log:
-                        logger.notice(f"__run_hysteresis {self._path}: scheduler.add {self._path}-LoTimer")
-                    self._sh.scheduler.add(self._itemname_prefix + self.id() + '-LoTimer', self.__call__, value={'value': False, 'caller': 'Hysteresis'}, next=next)
+                    self.__target._hysteresis_lower_timer_active = True
+                    next = self.__target.shtime.now() + datetime.timedelta(seconds=timer)
+                    self.__target._hysteresis_active_timer_ends = next
+                    #next = self.__target.shtime.now() + datetime.timedelta(seconds=self.__target._hysteresis_lower_timer)
+                    if self.__target._hysteresis_log:
+                        logger.notice(f"__run_hysteresis {self.__target._path}: scheduler.add {self.__target._path}-LoTimer")
+                    self.__target._sh.scheduler.add(self.__target._itemname_prefix + self.__target.id() + '-LoTimer', self.__target.__call__, value={'value': False, 'caller': 'Hysteresis'}, next=next)
         return
 
 
@@ -1865,30 +1908,30 @@ class Item():
         """
 
         if log:
-            logger.notice(f"{self._path}: {txt}")
+            logger.notice(f"{self.__target._path}: {txt}")
         state = ''
         if input_value > upper:
-            if self._hysteresis_upper_timer_active:
+            if self.__target._hysteresis_upper_timer_active:
                 state = 'Timer -> '
             state += 'On'
             if log:
                 logger.notice(f" -> {state} - {txt}")
         elif input_value < lower:
-            if self._hysteresis_lower_timer_active:
+            if self.__target._hysteresis_lower_timer_active:
                 state = 'Timer -> '
             state += 'Off'
             if log:
                 logger.notice(f" -> {state} - {txt}")
         else:
-            state = 'Stay (' + self._onoff(self._value) + ')'
+            state = 'Stay (' + self.__target._onoff(self.__target._value) + ')'
             if log:
                 logger.notice(f" -> {state} - {txt}")
 
-        if not (self._hysteresis_upper_timer_active) and not (self._hysteresis_lower_timer_active):
-            if self.__updated_by.lower() == 'init:cache':
+        if not (self.__target._hysteresis_upper_timer_active) and not (self.__target._hysteresis_lower_timer_active):
+            if self.__target.__updated_by.lower() == 'init:cache':
                 if not state.startswith('Stay'):
-                    if state != self._onoff(self._value):
-                        state = 'Cached (' + self._onoff(self._value) + ')'
+                    if state != self.__target._onoff(self.__target._value):
+                        state = 'Cached (' + self.__target._onoff(self.__target._value) + ')'
                         if log:
                             logger.notice(f" -> {state} - {txt}")
 
@@ -1908,14 +1951,14 @@ class Item():
         """
         time.sleep(0.1)     # to prevent execution before xxx_timer_active could be updated
 
-        upper = self.__run_attribute_eval(self._hysteresis_upper_threshold)
-        lower = self.__run_attribute_eval(self._hysteresis_lower_threshold)
-        input_value = _items_instance.return_item(self._hysteresis_input)()
+        upper = self.__target.__run_attribute_eval(self.__target._hysteresis_upper_threshold)
+        lower = self.__target.__run_attribute_eval(self.__target._hysteresis_lower_threshold)
+        input_value = _items_instance.return_item(self.__target._hysteresis_input)()
 
-        state = self._get_hysterisis_state_string(lower, upper, input_value, log=self._hysteresis_log, txt='hysteresis_state')
+        state = self.__target._get_hysterisis_state_string(lower, upper, input_value, log=self.__target._hysteresis_log, txt='hysteresis_state')
 
-        if self._hysteresis_log:
-            logger.notice(f"hysteresis_state ({self._path}): state={state}, input_value={input_value}, value={self._value}, __updated_by={self.__updated_by}")
+        if self.__target._hysteresis_log:
+            logger.notice(f"hysteresis_state ({self.__target._path}): state={state}, input_value={input_value}, value={self.__target._value}, __updated_by={self.__target.__updated_by}")
         return state
 
 
@@ -1933,25 +1976,25 @@ class Item():
         """
         time.sleep(0.1)     # to prevent execution before xxx_timer_active could be updated
 
-        upper = self.__run_attribute_eval(self._hysteresis_upper_threshold)
-        if self._hysteresis_upper_timer is None:
-            upper_timer = self._hysteresis_upper_timer
+        upper = self.__target.__run_attribute_eval(self.__target._hysteresis_upper_threshold)
+        if self.__target._hysteresis_upper_timer is None:
+            upper_timer = self.__target._hysteresis_upper_timer
         else:
-            upper_timer = self.__run_attribute_eval(self._hysteresis_upper_timer)
-        lower = self.__run_attribute_eval(self._hysteresis_lower_threshold)
-        if self._hysteresis_lower_timer is None:
-            lower_timer = self._hysteresis_lower_timer
+            upper_timer = self.__target.__run_attribute_eval(self.__target._hysteresis_upper_timer)
+        lower = self.__target.__run_attribute_eval(self.__target._hysteresis_lower_threshold)
+        if self.__target._hysteresis_lower_timer is None:
+            lower_timer = self.__target._hysteresis_lower_timer
         else:
-            lower_timer = self.__run_attribute_eval(self._hysteresis_lower_timer)
-        input_value = _items_instance.return_item(self._hysteresis_input)()
+            lower_timer = self.__target.__run_attribute_eval(self.__target._hysteresis_lower_timer)
+        input_value = _items_instance.return_item(self.__target._hysteresis_input)()
 
-        state = self._get_hysterisis_state_string(lower, upper, input_value, log=self._hysteresis_log, txt='hysteresis_data')
+        state = self.__target._get_hysterisis_state_string(lower, upper, input_value, log=self.__target._hysteresis_log, txt='hysteresis_data')
 
-        data = {'lower_threshold': lower, 'lower_timer': lower_timer, 'upper_threshold': upper, 'upper_timer': upper_timer, 'input': input_value, 'output': self._value, 'state': state, 'lower_timer_active': self._hysteresis_lower_timer_active, 'upper_timer_active': self._hysteresis_upper_timer_active}
-        if (self._hysteresis_lower_timer_active or self._hysteresis_upper_timer_active) and self._hysteresis_active_timer_ends is not None:
-            data['active_timer_ends'] = self._hysteresis_active_timer_ends.strftime("%d.%m.%Y %H:%M:%S") + " " + self._hysteresis_active_timer_ends.tzname()
-        if self._hysteresis_log:
-            logger.notice(f"hysteresis_data ({self._path}): {data}, __updated_by={self.__updated_by}")
+        data = {'lower_threshold': lower, 'lower_timer': lower_timer, 'upper_threshold': upper, 'upper_timer': upper_timer, 'input': input_value, 'output': self.__target._value, 'state': state, 'lower_timer_active': self.__target._hysteresis_lower_timer_active, 'upper_timer_active': self.__target._hysteresis_upper_timer_active}
+        if (self.__target._hysteresis_lower_timer_active or self.__target._hysteresis_upper_timer_active) and self.__target._hysteresis_active_timer_ends is not None:
+            data['active_timer_ends'] = self.__target._hysteresis_active_timer_ends.strftime("%d.%m.%Y %H:%M:%S") + " " + self.__target._hysteresis_active_timer_ends.tzname()
+        if self.__target._hysteresis_log:
+            logger.notice(f"hysteresis_data ({self.__target._path}): {data}, __updated_by={self.__target.__updated_by}")
         return data
 
 
@@ -1964,34 +2007,34 @@ class Item():
         if (not caller.lower().startswith('eval:')) and (not caller.lower().endswith(':eval')):
             caller = 'Eval:' + caller
 
-        if (self._sh.shng_status['code'] < 14):
+        if (self.__target._sh.shng_status['code'] < 14):
             # items are not (completly) loaded
-            logger.dbghigh(f"Item {self._path}: Running __run_eval before initialization is finished - eval run ignored- caller={caller}, source={source}  -  shng_status{self._sh.shng_status}")
+            logger.dbghigh(f"Item {self.__target._path}: Running __run_eval before initialization is finished - eval run ignored- caller={caller}, source={source}  -  shng_status{self.__target._sh.shng_status}")
             return
-        if (self._sh.shng_status['code'] < 20) and (not caller.startswith('Init')):
-            logger.info(f"Item {self._path}: Running __run_eval before initialization is finished - caller={caller}, source={source}, value={value}  -  shng_status{self._sh.shng_status}")
-        if (self._sh.shng_status['code'] > 20):
-            logger.info(f"Item {self._path}: Running __run_eval after leaving run-mode - caller={caller}, source={source}, value={value}  -  shng_status{self._sh.shng_status}")
+        if (self.__target._sh.shng_status['code'] < 20) and (not caller.startswith('Init')):
+            logger.info(f"Item {self.__target._path}: Running __run_eval before initialization is finished - caller={caller}, source={source}, value={value}  -  shng_status{self.__target._sh.shng_status}")
+        if (self.__target._sh.shng_status['code'] > 20):
+            logger.info(f"Item {self.__target._path}: Running __run_eval after leaving run-mode - caller={caller}, source={source}, value={value}  -  shng_status{self.__target._sh.shng_status}")
 
-        if self._eval:
+        if self.__target._eval:
             # Test if a conditional trigger is defined
-            if self._trigger_condition is not None:
-                #logger.warning("Item {}: Evaluating trigger condition {}".format(self._path, self._trigger_condition))
+            if self.__target._trigger_condition is not None:
+                #logger.warning("Item {}: Evaluating trigger condition {}".format(self.__target._path, self.__target._trigger_condition))
                 try:
                     # set up environment for calculating eval-expression
-                    sh = self._sh
-                    shtime = self.shtime
+                    sh = self.__target._sh
+                    shtime = self.__target.shtime
                     items = _items_instance
                     import math
                     import lib.userfunctions as uf
                     # uf.import_user_modules()  -  Modules were loaded during initialization phase of shng
                     env = lib.env
 
-                    cond = eval(self._trigger_condition)
-                    logger.warning(f"Item '{self._path}': Condition result '{cond}' evaluating trigger condition {self._trigger_condition}")
+                    cond = eval(self.__target._trigger_condition)
+                    logger.warning(f"Item '{self.__target._path}': Condition result '{cond}' evaluating trigger condition {self.__target._trigger_condition}")
                 except Exception as e:
-                    log_msg = f"Item '{self._path}': Problem evaluating trigger condition '{self._trigger_condition}': {e}"
-                    if (self._sh.shng_status['code'] != 20) and (caller != 'Init'):
+                    log_msg = f"Item '{self.__target._path}': Problem evaluating trigger condition '{self.__target._trigger_condition}': {e}"
+                    if (self.__target._sh.shng_status['code'] != 20) and (caller != 'Init'):
                         logger.debug(log_msg)
                     else:
                         logger.warning(log_msg)
@@ -2001,8 +2044,8 @@ class Item():
 
             if cond == True:
                 # set up environment for calculating eval-expression
-                sh = self._sh
-                shtime = self.shtime
+                sh = self.__target._sh
+                shtime = self.__target.shtime
                 items = _items_instance
                 import math
                 import lib.userfunctions as uf
@@ -2010,47 +2053,47 @@ class Item():
                 env = lib.env
 
                 try:
-                    self.__prev_trigger_by = self.__triggered_by
-                    self.__triggered_by = "{0}:{1}".format(caller, source)
-                    self.__prev_trigger = self.__last_trigger
-                    self.__last_trigger = self.shtime.now()
+                    self.__target.__prev_trigger_by = self.__target.__triggered_by
+                    self.__target.__triggered_by = "{0}:{1}".format(caller, source)
+                    self.__target.__prev_trigger = self.__target.__last_trigger
+                    self.__target.__last_trigger = self.__target.shtime.now()
 
                     try:
-                        triggered = source in self._trigger
+                        triggered = source in self.__target._trigger
                     except:
                         triggered = False
 
-                    if self._eval_on_trigger_only and not triggered:
-                        # logger.debug(f'Item {self._path} Eval triggered by: {self.__triggered_by}, not in eval triggers {self._trigger}, but eval_on_trigger only set, so eval is ignored. Value is "{value}"')
-                        logger.info(f'Item {self._path} Eval triggered by: {self.__triggered_by}, not in eval_triggers, but eval_on_trigger_only set. Ignoring eval expression, setting value "{value}"')
+                    if self.__target._eval_on_trigger_only and not triggered:
+                        # logger.debug(f'Item {self.__target._path} Eval triggered by: {self.__target.__triggered_by}, not in eval triggers {self.__target._trigger}, but eval_on_trigger only set, so eval is ignored. Value is "{value}"')
+                        logger.info(f'Item {self.__target._path} Eval triggered by: {self.__target.__triggered_by}, not in eval_triggers, but eval_on_trigger_only set. Ignoring eval expression, setting value "{value}"')
                     else:
-                        logger.debug(f"Item {self._path} Eval triggered by: {self.__triggered_by}, Evaluating item with value {value}. Eval expression: {self._eval}")
+                        logger.debug(f"Item {self.__target._path} Eval triggered by: {self.__target.__triggered_by}, Evaluating item with value {value}. Eval expression: {self.__target._eval}")
 
                         # ms if contab: init = x is set, x is transfered as a string, for that case re-try eval with x converted to float
                         try:
-                            value = eval(self._eval)
+                            value = eval(self.__target._eval)
                         except Exception as e:
-                            #value = self._value = self.cast(value)
-                            value = self.cast(value)
-                            value = eval(self._eval)
+                            #value = self.__target._value = self.__target.cast(value)
+                            value = self.__target.cast(value)
+                            value = eval(self.__target._eval)
                         # ms end
                 except Exception as e:
                     # adding "None" as the "destination" information at end of triggered_by
                     # This helps figuring out whether an eval expression was successfully evaluated or not.
-                    self.__triggered_by = f"{caller}:{source}:None"
+                    self.__target.__triggered_by = f"{caller}:{source}:None"
                     if e.__class__.__name__ == 'KeyError':
-                        log_msg = f"Item '{self._path}': problem evaluating '{self._eval}' - KeyError (in dict)"
+                        log_msg = f"Item '{self.__target._path}': problem evaluating '{self.__target._eval}' - KeyError (in dict)"
                     else:
-                        log_msg = f"Item '{self._path}': problem evaluating '{self._eval}' - {e.__class__.__name__}: {e}"
-                    if (self._sh.shng_status['code'] != 20) and (caller != 'Init'):
-                        logger.debug(log_msg + " (status_code={}/caller={})".format(self._sh.shng_status['code'], caller))
+                        log_msg = f"Item '{self.__target._path}': problem evaluating '{self.__target._eval}' - {e.__class__.__name__}: {e}"
+                    if (self.__target._sh.shng_status['code'] != 20) and (caller != 'Init'):
+                        logger.debug(log_msg + " (status_code={}/caller={})".format(self.__target._sh.shng_status['code'], caller))
                     else:
                         logger.warning(log_msg)
                 else:
                     if value is None:
-                        logger.debug(f"Item {self._path}: evaluating {self._eval} returns None")
+                        logger.debug(f"Item {self.__target._path}: evaluating {self.__target._eval} returns None")
                     else:
-                        self.__update(value, caller, source, dest)
+                        self.__target.__update(value, caller, source, dest)
 
 
     # New for on_update / on_change
@@ -2067,15 +2110,15 @@ class Item():
         """
 
         # set up environment for calculating eval-expression
-        sh = self._sh
-        shtime = self.shtime
+        sh = self.__target._sh
+        shtime = self.__target.shtime
         items = _items_instance
         import math
         import lib.userfunctions as uf
         #uf.import_user_modules()  -  Modules were loaded during initialization phase of shng
         env = lib.env
 
-        logger.info(f"Item '{self._path}': '{attr}' evaluating {on_dest} = {on_eval}")
+        logger.info(f"Item '{self.__target._path}': '{attr}' evaluating {on_dest} = {on_eval}")
 
         # if syntax without '=' is used, add caller and source to the item assignement
         if on_dest == '':
@@ -2084,10 +2127,10 @@ class Item():
                 test = on_eval.replace(' ', '')
                 if test.lower().find(',caller=') == -1 and test.lower().find(',source=') == -1:
                     # if neither 'caller' nor 'source' is given
-                    on_eval = on_eval[:-1] + ", caller='" + attr + "', source='" + self._path + "')"
+                    on_eval = on_eval[:-1] + ", caller='" + attr + "', source='" + self.__target._path + "')"
                 if test.lower().find(',caller=') > -1 and test.lower().find(',source=') == -1:
                     # if only 'caller' is given
-                    on_eval = on_eval[:-1] + ", source='" + self._path + "')"
+                    on_eval = on_eval[:-1] + ", source='" + self.__target._path + "')"
                 if test.lower().find(',caller=') == -1 and test.lower().find(',source=') > -1:
                     # if only 'source' is given
                     on_eval = on_eval[:-1] + ", caller='" + attr + "')"
@@ -2097,17 +2140,17 @@ class Item():
         try:
             dest_value = eval(on_eval)       # calculate to test if expression computes and see if it computes to None
         except Exception as e:
-            logger.warning(f"Item {self._path}: '{attr}' item-value='{value}' problem evaluating {on_eval}: {e}")
+            logger.warning(f"Item {self.__target._path}: '{attr}' item-value='{value}' problem evaluating {on_eval}: {e}")
         else:
             if dest_value is not None:
                 # expression computes and does not result in None
                 if on_dest != '':
                     dest_item = _items_instance.return_item(on_dest)
                     if dest_item is not None:
-                        dest_item.__update(dest_value, caller=attr, source=self._path)
+                        dest_item.__update(dest_value, caller=attr, source=self.__target._path)
                         logger.debug(" - : '{}' finally evaluating {} = {}, result={}".format(attr, on_dest, on_eval, dest_value))
                     else:
-                        logger.error(f"Item {self._path}: '{attr}' has not found dest_item '{on_dest}' = {on_eval}, result={dest_value}")
+                        logger.error(f"Item {self.__target._path}: '{attr}' has not found dest_item '{on_dest}' = {on_eval}, result={dest_value}")
                 else:
                     dummy = eval(on_eval)
                     logger.debug(" - : '{}' finally evaluating {}, result={}".format(attr, on_eval, dest_value))
@@ -2120,22 +2163,22 @@ class Item():
         """
         evaluate all 'on_update' entries of the actual item
         """
-        if self._on_update:
-            # sh = self._sh  # noqa
-#            logger.info("Item {}: 'on_update' evaluating {} = {}".format(self._path, self._on_update_dest_var, self._on_update))
-            for on_update_dest, on_update_eval in zip(self._on_update_dest_var, self._on_update):
-                self._run_on_xxx(self._path, value, on_update_dest, on_update_eval, 'On_Update')
+        if self.__target._on_update:
+            # sh = self.__target._sh  # noqa
+#            logger.info("Item {}: 'on_update' evaluating {} = {}".format(self.__target._path, self.__target._on_update_dest_var, self.__target._on_update))
+            for on_update_dest, on_update_eval in zip(self.__target._on_update_dest_var, self.__target._on_update):
+                self.__target._run_on_xxx(self.__target._path, value, on_update_dest, on_update_eval, 'On_Update')
 
 
     def __run_on_change(self, value=None):
         """
         evaluate all 'on_change' entries of the actual item
         """
-        if self._on_change:
-            # sh = self._sh  # noqa
-#            logger.info("Item {}: 'on_change' evaluating lists {} = {}".format(self._path, self._on_change_dest_var, self._on_change))
-            for on_change_dest, on_change_eval in zip(self._on_change_dest_var, self._on_change):
-                self._run_on_xxx(self._path, value, on_change_dest, on_change_eval, 'On_Change')
+        if self.__target._on_change:
+            # sh = self.__target._sh  # noqa
+#            logger.info("Item {}: 'on_change' evaluating lists {} = {}".format(self.__target._path, self.__target._on_change_dest_var, self.__target._on_change))
+            for on_change_dest, on_change_eval in zip(self.__target._on_change_dest_var, self.__target._on_change):
+                self.__target._run_on_xxx(self.__target._path, value, on_change_dest, on_change_eval, 'On_Change')
 
 
     def _log_build_standardtext(self, value, caller, source=None, dest=None):
@@ -2146,7 +2189,7 @@ class Item():
         log_dst = ''
         if dest is not None:
             log_dst += ', dest: ' + dest
-        txt = f"Item Change: {self._path} = {value}  -  caller: {caller}{log_src}{log_dst}"
+        txt = f"Item Change: {self.__target._path} = {value}  -  caller: {caller}{log_src}{log_dst}"
         return txt
 
 
@@ -2156,25 +2199,25 @@ class Item():
         # caller
         # source
         # dest
-        lvalue = self.property.last_value
-        mlvalue = self._log_mapping.get(lvalue, lvalue)
-        name = self._name
-        age = round(self._get_last_change_age(), 2)
-        id = self._path
-        if self.__parent == _items_instance:
+        lvalue = self.__target.property.last_value
+        mlvalue = self.__target._log_mapping.get(lvalue, lvalue)
+        name = self.__target._name
+        age = round(self.__target._get_last_change_age(), 2)
+        id = self.__target._path
+        if self.__target.__parent == _items_instance:
             pname = None
             pid = None
         else:
-            pname = self.__parent._name
-            pid = self.__parent._path
-        mvalue = self._log_mapping.get(value, value)
-        lowlimit = self._get_rule('lowlimit')
-        highlimit = self._get_rule('highlimit')
-        filter = self._get_rule('filter')
-        exclude = self._get_rule('exclude')
+            pname = self.__target.__parent._name
+            pid = self.__target.__parent._path
+        mvalue = self.__target._log_mapping.get(value, value)
+        lowlimit = self.__target._get_rule('lowlimit')
+        highlimit = self.__target._get_rule('highlimit')
+        filter = self.__target._get_rule('filter')
+        exclude = self.__target._get_rule('exclude')
 
-        sh = self._sh
-        shtime = self.shtime
+        sh = self.__target._sh
+        shtime = self.__target.shtime
         time = shtime.now().strftime("%H:%M:%S")
         date = shtime.now().strftime("%d.%m.%Y")
         stamp = shtime.now().timestamp()
@@ -2182,15 +2225,15 @@ class Item():
 
         items = _items_instance
         try:
-            entry = self._log_rules.get('itemvalue', None)
+            entry = self.__target._log_rules.get('itemvalue', None)
             if entry is not None:
-                item = self.get_absolutepath(entry.strip().replace("sh.", ""), "log_rules")
+                item = self.__target.get_absolutepath(entry.strip().replace("sh.", ""), "log_rules")
                 itemvalue = str(_items_instance.return_item(item).property.value)
             else:
                 itemvalue = None
         except Exception as e:
-            logger.error(f"{id}: Invalid item in log_text '{self._log_text}'"
-                         f" or log_rules '{self._log_rules}' - (Exception: {e})")
+            logger.error(f"{id}: Invalid item in log_text '{self.__target._log_text}'"
+                         f" or log_rules '{self.__target._log_rules}' - (Exception: {e})")
             itemvalue = "INVALID"
 
         import math
@@ -2198,11 +2241,11 @@ class Item():
         env = lib.env
 
         try:
-            #logger.warning(f"self._log_text: {self._log_text}, type={type(self._log_text)}")
-            txt = eval(f"f'{self._log_text}'")
+            #logger.warning(f"self.__target._log_text: {self.__target._log_text}, type={type(self.__target._log_text)}")
+            txt = eval(f"f'{self.__target._log_text}'")
         except Exception as e:
-            logger.error(f"{id}: Invalid log_text template ' {self._log_text}' - (Exception: {e})")
-            txt = self._log_text
+            logger.error(f"{id}: Invalid log_text template ' {self.__target._log_text}' - (Exception: {e})")
+            txt = self.__target._log_text
         return txt
 
 
@@ -2212,7 +2255,7 @@ class Item():
             if isinstance(returnvalue, str) and to != "str":
                 try:
                     # try to get value from item
-                    item = self.get_absolutepath(entry.strip().replace("sh.", ""), "log_rules")
+                    item = self.__target.get_absolutepath(entry.strip().replace("sh.", ""), "log_rules")
                     returnvalue = _items_instance.return_item(item).property.value
                 except Exception as e:
                     pass
@@ -2222,7 +2265,7 @@ class Item():
                 except ValueError as e:
                     returnvalue = None
             elif isinstance(entry, list):
-                entry = [convert_entry(val, self._type) for val in entry]
+                entry = [convert_entry(val, self.__target._type) for val in entry]
             elif isinstance(returnvalue, (float, int)) and to == "str":
                 returnvalue = str(returnvalue)
             if returnvalue is None:
@@ -2231,9 +2274,9 @@ class Item():
 
         defaults = {'filter': [], 'exclude': [], 'lowlimit': None, 'highlimit': None}
         types = {'filter': 'list', 'exclude': 'list', 'lowlimit': 'num', 'highlimit': 'num'}
-        entry =  self._log_rules.get(rule_entry, defaults.get(rule_entry))
+        entry =  self.__target._log_rules.get(rule_entry, defaults.get(rule_entry))
         if entry is not None and entry != []:
-            entry = convert_entry(entry, types.get(rule_entry) or self._type)
+            entry = convert_entry(entry, types.get(rule_entry) or self.__target._type)
 
         return entry
 
@@ -2243,20 +2286,20 @@ class Item():
         :return:
         """
 
-        if self._log_change_logger is not None:
-            filter_list = self._get_rule('filter')
-            exclude_list = self._get_rule('exclude')
+        if self.__target._log_change_logger is not None:
+            filter_list = self.__target._get_rule('filter')
+            exclude_list = self.__target._get_rule('exclude')
             if filter_list != [] and exclude_list != []:
                 logger.warning(f"Defining filter AND exclude does not work. "
                                f"Ignoring exclude list {exclude_list} "
                                f"Using filter: {filter_list}")
 
-            if self._type == 'num':
-                low_limit =  self._get_rule('lowlimit')
+            if self.__target._type == 'num':
+                low_limit =  self.__target._get_rule('lowlimit')
                 if low_limit is not None:
                     if low_limit > float(value):
                         return
-                high_limit =  self._get_rule('highlimit')
+                high_limit =  self.__target._get_rule('highlimit')
                 if high_limit is not None:
                     if high_limit <= float(value):
                         return
@@ -2274,10 +2317,10 @@ class Item():
                     if value in exclude_list:
                         return
 
-            if self._log_text is None:
-                txt = self._log_build_standardtext(value, caller, source, dest)
+            if self.__target._log_text is None:
+                txt = self.__target._log_build_standardtext(value, caller, source, dest)
             else:
-                txt = self._log_build_text(value, caller, source, dest)
+                txt = self.__target._log_build_text(value, caller, source, dest)
 
             # log_src = ''
             # if source is not None:
@@ -2285,15 +2328,15 @@ class Item():
             # log_dst = ''
             # if dest is not None:
             #     log_dst += ', dest: ' + dest
-            #self._log_change_logger.log(self._log_level, "Item Change: {} = {}  -  caller: {}{}{}".format(self._path, value, caller, log_src, log_dst))
-            self._log_change_logger.log(self._log_level, txt)
+            #self.__target._log_change_logger.log(self.__target._log_level, "Item Change: {} = {}  -  caller: {}{}{}".format(self.__target._path, value, caller, log_src, log_dst))
+            self.__target._log_change_logger.log(self.__target._log_level, txt)
 
 
     def __trigger_logics(self, source_details=None):
-        source={'item': self._path, 'details': source_details}
-        for logic in self.__logics_to_trigger:
-#            logic.trigger(by='Item', source=self._path, value=self._value)
-            logic.trigger(by='Item', source=source, value=self._value)
+        source={'item': self.__target._path, 'details': source_details}
+        for logic in self.__target.__logics_to_trigger:
+#            logic.trigger(by='Item', source=self.__target._path, value=self.__target._value)
+            logic.trigger(by='Item', source=source, value=self.__target._value)
 
     # logic.trigger(by='Logic', source=None, value=None, dest=None, dt=None):
 
@@ -2310,142 +2353,142 @@ class Item():
         :param last_change:
         :return:
         """
-        self.__prev_value = self.__last_value
-        self.__last_value = self._value
-        self._value = value
+        self.__target.__prev_value = self.__target.__last_value
+        self.__target.__last_value = self.__target._value
+        self.__target._value = value
 
         if prev_change is None:
-            self.__prev_change = self.__last_change
+            self.__target.__prev_change = self.__target.__last_change
         else:
-            self.__prev_change = prev_change
+            self.__target.__prev_change = prev_change
         if last_change is None:
-            self.__last_change = self.shtime.now()
+            self.__target.__last_change = self.__target.shtime.now()
         else:
-            self.__last_change = last_change
+            self.__target.__last_change = last_change
 
-        self.__prev_update = self.__last_update
-        self.__last_update = self.__last_change
+        self.__target.__prev_update = self.__target.__last_update
+        self.__target.__last_update = self.__target.__last_change
 
-        self.__prev_change_by = self.__changed_by
-        self.__prev_update_by = self.__updated_by
-        self.__changed_by = "{0}:{1}".format(caller, source)
-        self.__updated_by = "{0}:{1}".format(caller, source)
-        self.__triggered_by = "{0}:{1}".format(caller, source)
+        self.__target.__prev_change_by = self.__target.__changed_by
+        self.__target.__prev_update_by = self.__target.__updated_by
+        self.__target.__changed_by = "{0}:{1}".format(caller, source)
+        self.__target.__updated_by = "{0}:{1}".format(caller, source)
+        self.__target.__triggered_by = "{0}:{1}".format(caller, source)
 
         if caller != "fader":
             # log every item change to standard logger, if level is DEBUG
             # log with level INFO, if 'item_change_log' is set in etc/smarthome.yaml
-            self._change_logger("Item {} = {} via {} {} {}".format(self._path, value, caller, source, dest))
+            self.__target._change_logger("Item {} = {} via {} {} {}".format(self.__target._path, value, caller, source, dest))
 
             # Write item value to log, if Item has attribute log_change set
-            self._log_on_change(value, caller, source, dest)
+            self.__target._log_on_change(value, caller, source, dest)
         return
 
 
     def __update(self, value, caller='Logic', source=None, dest=None, key=None, index=None):
 
         # special handling, if item is a hysteresys item (has a hysteresis_input attribute)
-        if self._hysteresis_input is not None:
-            if self._hysteresis_upper_timer_active:
-                if self._hysteresis_log:
+        if self.__target._hysteresis_input is not None:
+            if self.__target._hysteresis_upper_timer_active:
+                if self.__target._hysteresis_log:
                     logger.notice(f"__update: upper_timer caller={caller}, value={value}")
-                self._hysteresis_upper_timer_active = False
-                self.active_timer_ends = None
-            if self._hysteresis_lower_timer_active:
-                self._hysteresis_lower_timer_active = False
-                self.active_timer_ends = None
-                if self._hysteresis_log:
+                self.__target._hysteresis_upper_timer_active = False
+                self.__target.active_timer_ends = None
+            if self.__target._hysteresis_lower_timer_active:
+                self.__target._hysteresis_lower_timer_active = False
+                self.__target.active_timer_ends = None
+                if self.__target._hysteresis_log:
                     logger.notice(f"__update: lower_timer caller={caller}, value={value}")
 
         if key is None and index is None:
             # don't cast for elements of complex types
             try:
-                value = self.cast(value)
+                value = self.__target.cast(value)
             except:
                 try:
-                    logger.warning(f'Item {self._path}: value "{value}" does not match type {self._type}. Via caller {caller}, source {source}')
+                    logger.warning(f'Item {self.__target._path}: value "{value}" does not match type {self.__target._type}. Via caller {caller}, source {source}')
                 except:
                     pass
                 return
 
-        self._lock.acquire()
+        self.__target._lock.acquire()
         _changed = False
-        trigger_source_details = self.__updated_by
+        trigger_source_details = self.__target.__updated_by
 
 
-        if key is not None and self._type == 'dict':
+        if key is not None and self.__target._type == 'dict':
             # Update a dict item element or add an element (selected by key)
-            value = self.__set_dictentry(value, key)
-        elif index is not None and self._type == 'list':
+            value = self.__target.__set_dictentry(value, key)
+        elif index is not None and self.__target._type == 'list':
             # Update a list item element (selected by index)
-            value = self.__set_listentry(value, index)
+            value = self.__target.__set_listentry(value, index)
 
-        if value != self._value or self._enforce_change:
+        if value != self.__target._value or self.__target._enforce_change:
             _changed = True
-            self._set_value(value, caller, source, dest, prev_change=None, last_change=None)
-            trigger_source_details = self.__changed_by
+            self.__target._set_value(value, caller, source, dest, prev_change=None, last_change=None)
+            trigger_source_details = self.__target.__changed_by
             if caller != "fader":
-                self._fading = False
-                self._lock.notify_all()
+                self.__target._fading = False
+                self.__target._lock.notify_all()
         else:
-            self.__prev_update = self.__last_update
-            self.__last_update = self.shtime.now()
-            self.__prev_update_by = self.__updated_by
-            self.__updated_by = "{0}:{1}".format(caller, source)
-        self._lock.release()
+            self.__target.__prev_update = self.__target.__last_update
+            self.__target.__last_update = self.__target.shtime.now()
+            self.__target.__prev_update_by = self.__target.__updated_by
+            self.__target.__updated_by = "{0}:{1}".format(caller, source)
+        self.__target._lock.release()
 
         # ms: call run_on_update() from here
-        self.__run_on_update(value)
-        if _changed or self._enforce_updates or self._type == 'scene':
+        self.__target.__run_on_update(value)
+        if _changed or self.__target._enforce_updates or self.__target._type == 'scene':
             # ms: call run_on_change() from here -> noved down
-            #self.__run_on_change(value)
-            for method in self.__methods_to_trigger:
+            #self.__target.__run_on_change(value)
+            for method in self.__target.__methods_to_trigger:
                 try:
-                    method(self, caller, source, dest)
+                    method(self.__target, caller, source, dest)
                 except Exception as e:
-                    logger.exception("Item {}: problem running {}: {}".format(self._path, method, e))
-            if self._threshold and self.__logics_to_trigger:
-                if self.__th_crossed and self._value <= self.__th_low:  # cross lower bound
-                    self.__th_crossed = False
-                    self._threshold_data[2] = self.__th_crossed
-                    self.__trigger_logics(trigger_source_details)
-                elif not self.__th_crossed and self._value >= self.__th_high:  # cross upper bound
-                    self.__th_crossed = True
-                    self._threshold_data[2] = self.__th_crossed
-                    self.__trigger_logics(trigger_source_details)
-            elif self.__logics_to_trigger:
-                self.__trigger_logics(trigger_source_details)
-            for item in self._items_to_trigger:
-                args = {'value': value, 'source': self._path}
-                self._sh.trigger(name='items.' + item.property.path, obj=item.__run_eval, value=args, by=caller, source=source, dest=dest)
-            for item in self._hysteresis_items_to_trigger:
-                args = {'value': value, 'source': self._path}
-                self._sh.trigger(name='items.' + item.property.path, obj=item.__run_hysteresis, value=args, by=caller, source=source, dest=dest)
+                    logger.exception("Item {}: problem running {}: {}".format(self.__target._path, method, e))
+            if self.__target._threshold and self.__target.__logics_to_trigger:
+                if self.__target.__th_crossed and self.__target._value <= self.__target.__th_low:  # cross lower bound
+                    self.__target.__th_crossed = False
+                    self.__target._threshold_data[2] = self.__target.__th_crossed
+                    self.__target.__trigger_logics(trigger_source_details)
+                elif not self.__target.__th_crossed and self.__target._value >= self.__target.__th_high:  # cross upper bound
+                    self.__target.__th_crossed = True
+                    self.__target._threshold_data[2] = self.__target.__th_crossed
+                    self.__target.__trigger_logics(trigger_source_details)
+            elif self.__target.__logics_to_trigger:
+                self.__target.__trigger_logics(trigger_source_details)
+            for item in self.__target._items_to_trigger:
+                args = {'value': value, 'source': self.__target._path}
+                self.__target._sh.trigger(name='items.' + item.property.path, obj=item.__run_eval, value=args, by=caller, source=source, dest=dest)
+            for item in self.__target._hysteresis_items_to_trigger:
+                args = {'value': value, 'source': self.__target._path}
+                self.__target._sh.trigger(name='items.' + item.property.path, obj=item.__run_hysteresis, value=args, by=caller, source=source, dest=dest)
             # ms: call run_on_change() from here - after eval is run
-            self.__run_on_change(value)
+            self.__target.__run_on_change(value)
 
-        if _changed and self._cache and not self._fading:
+        if _changed and self.__target._cache and not self.__target._fading:
             try:
-                cache_write(self._cache, self._value)
+                cache_write(self.__target._cache, self.__target._value)
             except Exception as e:
-                logger.warning("Item: {}: could not update cache {}".format(self._path, e))
+                logger.warning("Item: {}: could not update cache {}".format(self.__target._path, e))
 
-        if self._autotimer_time and caller != 'Autotimer' and not self._fading:
+        if self.__target._autotimer_time and caller != 'Autotimer' and not self.__target._fading:
             # cast_duration for fixed attribute
-            _time = self._cast_duration(self._autotimer_time, test=True)
+            _time = self.__target._cast_duration(self.__target._autotimer_time, test=True)
             if _time == False:
-                _time = self._autotimer_time
+                _time = self.__target._autotimer_time
             # cast_duration for result of eval expression
-            _time = self._cast_duration(self.__run_attribute_eval(_time, 'str'))
-            if self._autotimer_value is None:
-                _value = self._value
+            _time = self.__target._cast_duration(self.__target.__run_attribute_eval(_time, 'str'))
+            if self.__target._autotimer_value is None:
+                _value = self.__target._value
             else:
-                _value = self.__run_attribute_eval(self._autotimer_value, 'str')
+                _value = self.__target.__run_attribute_eval(self.__target._autotimer_value, 'str')
 
-            #logger.notice(f"Item {self._path} __update: _time={_time}, _value={_value}")
+            #logger.notice(f"Item {self.__target._path} __update: _time={_time}, _value={_value}")
 
-            next = self.shtime.now() + datetime.timedelta(seconds=_time)
-            self._sh.scheduler.add(self._itemname_prefix+self.id() + '-Timer', self.__call__, value={'value': _value, 'caller': 'Autotimer'}, next=next)
+            next = self.__target.shtime.now() + datetime.timedelta(seconds=_time)
+            self.__target._sh.scheduler.add(self.__target._itemname_prefix+self.__target.id() + '-Timer', self.__target.__call__, value={'value': _value, 'caller': 'Autotimer'}, next=next)
 
 
     def add_logic_trigger(self, logic):
@@ -2456,10 +2499,10 @@ class Item():
         :type logic:
         :return:
         """
-        self.__logics_to_trigger.append(logic)
+        self.__target.__logics_to_trigger.append(logic)
 
     def remove_logic_trigger(self, logic):
-        self.__logics_to_trigger.remove(logic)
+        self.__target.__logics_to_trigger.remove(logic)
 
     def get_logic_triggers(self):
         """
@@ -2468,13 +2511,13 @@ class Item():
         :return: Logics to trigger
         :rtype: list
         """
-        return self.__logics_to_trigger
+        return self.__target.__logics_to_trigger
 
     def add_method_trigger(self, method):
-        self.__methods_to_trigger.append(method)
+        self.__target.__methods_to_trigger.append(method)
 
     def remove_method_trigger(self, method):
-        self.__methods_to_trigger.remove(method)
+        self.__target.__methods_to_trigger.remove(method)
 
     def get_method_triggers(self):
         """
@@ -2483,7 +2526,7 @@ class Item():
         :return: methods to trigger
         :rtype: list
         """
-        return self.__methods_to_trigger
+        return self.__target.__methods_to_trigger
 
 
     def get_item_triggers(self):
@@ -2493,7 +2536,7 @@ class Item():
         :return: methods to trigger
         :rtype: list
         """
-        return self._items_to_trigger
+        return self.__target._items_to_trigger
 
 
     def get_hysteresis_item_triggers(self):
@@ -2503,7 +2546,7 @@ class Item():
         :return: methods to trigger
         :rtype: list
         """
-        return self._hysteresis_items_to_trigger
+        return self.__target._hysteresis_items_to_trigger
 
 
     def timer(self, time, value, auto=False, caller=None, source=None, compat=ATTRIB_COMPAT_LATEST):
@@ -2517,20 +2560,20 @@ class Item():
         :param source: Optional: The source of the timer-request
         :param compat: Not used anymore, only defined for backward compatibility
         """
-        time = self._cast_duration(time)
-        value = self._castvalue_to_itemtype(value, compat)
+        time = self.__target._cast_duration(time)
+        value = self.__target._castvalue_to_itemtype(value, compat)
         if caller is None:
             if auto:
                 caller = 'Autotimer'
-                self._autotimer_time = time
-                self._autotimer_value = value
+                self.__target._autotimer_time = time
+                self.__target._autotimer_value = value
             else:
                 caller = 'Timer'
-        next = self.shtime.now() + datetime.timedelta(seconds=time)
+        next = self.__target.shtime.now() + datetime.timedelta(seconds=time)
         if source is None:
-            self._sh.scheduler.add(self._itemname_prefix+self.id() + '-Timer', self.__call__, value={'value': value, 'caller': caller}, next=next)
+            self.__target._sh.scheduler.add(self.__target._itemname_prefix+self.__target.id() + '-Timer', self.__target.__call__, value={'value': value, 'caller': caller}, next=next)
         else:
-            self._sh.scheduler.add(self._itemname_prefix+self.id() + '-Timer', self.__call__, value={'value': value, 'caller': caller, 'source': source}, next=next)
+            self.__target._sh.scheduler.add(self.__target._itemname_prefix+self.__target.id() + '-Timer', self.__target.__call__, value={'value': value, 'caller': caller, 'source': source}, next=next)
         return
 
 
@@ -2538,7 +2581,7 @@ class Item():
         """
         Remove a running timer for this item from the scheduler
         """
-        self._sh.scheduler.remove(self._itemname_prefix+self.id() + '-Timer')
+        self.__target._sh.scheduler.remove(self.__target._itemname_prefix+self.__target.id() + '-Timer')
         return
 
 
@@ -2553,24 +2596,24 @@ class Item():
         :param compat: Not used anymore, only defined for backward compatibility
         """
         if time is not None and value is not None:
-            time = self._cast_duration(time)
-            self._autotimer_time = time
-            self._autotimer_value = value
+            time = self.__target._cast_duration(time)
+            self.__target._autotimer_time = time
+            self.__target._autotimer_value = value
         else:
-            self._autotimer_time = None
-            self._autotimer_value = None
+            self.__target._autotimer_time = None
+            self.__target._autotimer_value = None
 
 
     def fade(self, dest, step=1, delta=1):
         dest = float(dest)
-        self._sh.trigger(self._path, fadejob, value={'item': self, 'dest': dest, 'step': step, 'delta': delta})
+        self.__target._sh.trigger(self.__target._path, fadejob, value={'item': self.__target, 'dest': dest, 'step': step, 'delta': delta})
 
     def return_children(self):
-        for child in self.__children:
+        for child in self.__target.__children:
             yield child
 
     def return_parent(self):
-        return self.__parent
+        return self.__target.__parent
 
 
     def set(self, value, caller='Logic', source=None, dest=None, prev_change=None, last_change=None):
@@ -2588,34 +2631,34 @@ class Item():
         :return:
         """
         try:
-            value = self.cast(value)
+            value = self.__target.cast(value)
         except:
             try:
-                logger.warning("Item {}: value {} does not match type {}. Via {} {}".format(self._path, value, self._type, caller, source))
+                logger.warning("Item {}: value {} does not match type {}. Via {} {}".format(self.__target._path, value, self.__target._type, caller, source))
             except:
                 pass
             return
-        self._lock.acquire()
-        self._set_value(value, caller, source, dest, prev_change, last_change)
-        self._lock.release()
+        self.__target._lock.acquire()
+        self.__target._set_value(value, caller, source, dest, prev_change, last_change)
+        self.__target._lock.release()
         return
 
 
     def get_children_path(self):
         return [item._path
-                for item in self.__children]
+                for item in self.__target.__children]
 
     def jsonvars(self):
         """
         Translation method from object members to json
         :return: Key / Value pairs from object members
         """
-        return { "id": self._path,
-                 "name": self._name,
-                 "value" : self._value,
-                 "type": self._type,
-                 "attributes": self.conf,
-                 "children": self.get_children_path() }
+        return { "id": self.__target._path,
+                 "name": self.__target._name,
+                 "value" : self.__target._value,
+                 "type": self.__target._type,
+                 "attributes": self.__target.conf,
+                 "children": self.__target.get_children_path() }
 
 # alternative method to get all class members
 #    @staticmethod
@@ -2626,4 +2669,17 @@ class Item():
 #                #if not str(k).startswith('_')}
 
     def to_json(self):
-       return json.dumps(self.jsonvars(), sort_keys=True, indent=2)
+       return json.dumps(self.__target.jsonvars(), sort_keys=True, indent=2)
+
+
+#
+# alias
+#
+
+    def _set_alias(self, target):
+        if self._alias_path and target is not None:
+            self.__target = target
+
+#
+#
+#
