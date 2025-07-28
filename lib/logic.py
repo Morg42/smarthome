@@ -1132,7 +1132,7 @@ class Logic():
         :return: name of the item
         :rtype: str
         """
-        return "Logic ' "+self._name+"'"   # string is to be used in item assignements sh.xxx(<value>, logic.lname)
+        return "Logic " + self._name   # string is to be used in item assignements sh.xxx(<value>, logic.lname)
 
     @lname.setter
     def lname(self, value):
