@@ -89,11 +89,11 @@ function get_pythonversion_for_shng() {
                 if [ "`which python3.9`" != "" ]; then
                     echo 3.9
                 else
-                    if [ "`which python3.8`" != "" ]; then
-                        echo 3.8
+                    if [ "`which python3.13`" != "" ]; then
+                        echo 3.13
                     else
-                        if [ "`which python3.13`" != "" ]; then
-                            echo 3.13
+                        if [ "`which python3.14`" != "" ]; then
+                            echo 3.14
                         fi
                     fi
                 fi
