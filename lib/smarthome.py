@@ -984,10 +984,10 @@ class SmartHome():
     def _maintenance(self):
         self._logger.debug("_maintenance: Started")
         references = sum(self._object_refcount().values())
-        self._logger.info(f"_maintenance: Object references: {references}")
+        self._logger.debug(f"_maintenance: Object references: {references}")
         self._garbage_collection()
         references = sum(self._object_refcount().values())
-        self._logger.info(f"_maintenance: Object references: {references}")
+        self._logger.debug(f"_maintenance: Object references: {references}")
 
     def _excepthook(self, typ, value, tb):
         mytb = "".join(traceback.format_tb(tb))
@@ -995,7 +995,7 @@ class SmartHome():
 
     def _garbage_collection(self):
         c = gc.collect()
-        self._logger.debug(f"Garbage collector: collected {c} objects.")
+        self._logger.dbghigh(f"Garbage collector: collected {c} objects.")
 
 
     def _export_threadinfo(self):
