@@ -2053,6 +2053,9 @@ class Item():
         :return: hysteresis state of the item
         :rtype: str
         """
+        if self._hysteresis_input is None:
+            return None
+
         time.sleep(0.1)     # to prevent execution before xxx_timer_active could be updated
 
         upper = self.__run_attribute_eval(self._hysteresis_upper_threshold)
