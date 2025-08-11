@@ -29,7 +29,7 @@
 #    print()
 #    exit(1)
 
-import importlib
+import importlib.metadata
 
 import logging
 import os
