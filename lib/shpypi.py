@@ -29,6 +29,7 @@ except:
     print()
     exit(1)
 
+import importlib
 
 import logging
 import os
@@ -152,6 +153,7 @@ class Shpypi:
 
         installed_packages = pkg_resources.working_set
         self.logger.notice(f"{installed_packages=}")
+        self.logger.notice(f"{importlib.metadata=}")
 
         installed_packages_dict = {}
         for dist in installed_packages:
