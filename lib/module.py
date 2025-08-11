@@ -241,7 +241,7 @@ class Modules():
         try:
             exec("self.loadedmodule = {0}.{1}.__new__({0}.{1})".format(classpath, classname))
         except Exception as e:
-            #logger.error("Module '{}' ({}) exception during initialization: {}".format(name, classpath, e))
+            logger.error("Module '{}' ({}) exception during initialization: {}".format(name, classpath, e))
             pass
 
         # load module-specific translations
