@@ -152,15 +152,20 @@ class Shpypi:
         """
 
         installed_packages_dict = {}
-        #installed_packages = pkg_resources.working_set
-        #for dist in installed_packages:
-        #    installed_packages_dict[dist.key] = dist.version
+        installed_packages = pkg_resources.working_set
+        for dist in installed_packages:
+            installed_packages_dict[dist.key] = dist.version
 
         ### -------
+        installed_packages_dict2 = {}
         distributions = importlib.metadata.distributions()
         for dist in distributions:
-            installed_packages_dict[dist.metadata['Name']] = dist.version
+            installed_packages_dict2[dist.metadata['Name']] = dist.version
         ### -------
+        self.logger.warning(f"{installed_packages_dict=}")
+        self.logger.warning(f"{installed_packages_dict2=}")
+        for pkgname in installed_packages_dict.keys():
+            self.logger.warning(f"{pkgname}: '{installed_packages_dict[pkgname]}' - '{installed_packages_dict2.get(pkgname, '?')}'")
 
         self.logger.info(f"get_installed_packages: installed_packages_dict = {installed_packages_dict}")
         return installed_packages_dict
