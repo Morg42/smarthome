@@ -70,6 +70,10 @@ echo
 #echo "Virtual environment created in SmartHomeNG installation $SHNG_BASEDIR"
 echo "Python virtual environment 'py_$VENV_NAME' (`python3 -V`) created"
 echo "in SmartHomeNG installation '$SHNG_BASEDIR'"
+
+# try to install setuptools, in case setup tools are not installed automatically (for Python 3.12, 3.13)
+pip install setuptools >/dev/null
+
 echo
 pip list
 echo
