@@ -151,12 +151,14 @@ class Shpypi:
         """
 
         installed_packages = pkg_resources.working_set
+        self.logger.notice(f"{installed_packages=}")
 
         installed_packages_dict = {}
         for dist in installed_packages:
             installed_packages_dict[dist.key] = dist.version
+        self.logger.notice(f"{installed_packages_dict=}")
 
-        self.logger.info("get_installed_packages: installed_packages_dict = {}".format(installed_packages_dict))
+        self.logger.info(f"get_installed_packages: installed_packages_dict = {installed_packages_dict}")
         return installed_packages_dict
 
 
