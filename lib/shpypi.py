@@ -29,8 +29,6 @@
 #    print()
 #    exit(1)
 
-import importlib.metadata
-
 import logging
 import os
 import pathlib
@@ -150,6 +148,7 @@ class Shpypi:
         :return: dict of package and version
         :rtype: dict
         """
+        import importlib.metadata
 
         #installed_packages = pkg_resources.working_set
         #self.logger.warning(f"{installed_packages=}")
