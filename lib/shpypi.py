@@ -158,7 +158,16 @@ class Shpypi:
         installed_packages_dict = {}
         for dist in installed_packages:
             installed_packages_dict[dist.key] = dist.version
+
+        ### -------
+        installed_packages_dict_new = {}
+        distributions = importlib.metadata.distributions()
+        for dist in distributions:
+            installed_packages_dict_new[dist.metadata['Name']] = dist.version
+        ### -------
+
         self.logger.warning(f"{installed_packages_dict=}")
+        self.logger.warning(f"{installed_packages_dict_new=}")
 
         self.logger.info(f"get_installed_packages: installed_packages_dict = {installed_packages_dict}")
         return installed_packages_dict
