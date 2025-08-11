@@ -223,19 +223,19 @@ class Modules():
         :return: loaded module
         :rtype: object
         """
-        logger.debug('_load_module: Section {}, Module {}, classpath {}'.format( name, classname, classpath ))
+        logger.notice(f"_load_module: Section {name}, Module {classname}, classpath {classpath}")
 
         enabled = Utils.strip_quotes(args.get('enabled', 'true').lower())
         if enabled == 'false':
             logger.warning("Not loading module {} from section '{}': Module is disabled".format(classname, name))
             return
 
-        logger.info("Loading module '{}': args = '{}'".format(name, args))
+        logger.notice(f"Loading module '{name}': args = '{args}'")  # info
         # Load an instance of the module
         try:
-            exec("import {0}".format(classpath))
+            exec(f"import {classpath}")
         except Exception as e:
-            logger.critical("Module '{}' ({}) exception during import of __init__.py: {}".format(name, classpath, e))
+            logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
 
         try:
