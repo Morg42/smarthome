@@ -20,14 +20,16 @@
 #########################################################################
 
 
-#try:
-#    import pkg_resources
-#except:
-#    print()
-#    print("ERROR: setuptools are not installed")
-#    print("Install with 'pip3 install setuptools'")
-#    print()
-#    exit(1)
+try:
+    import pkg_resources
+except:
+    print()
+    print("ERROR: setuptools are not installed")
+    print("Install with 'pip3 install setuptools'")
+    print()
+    exit(1)
+
+import importlib.metadata
 
 import logging
 import os
@@ -148,20 +150,16 @@ class Shpypi:
         :return: dict of package and version
         :rtype: dict
         """
-        import importlib.metadata
-
-        #installed_packages = pkg_resources.working_set
-        #self.logger.warning(f"{installed_packages=}")
-        #self.logger.warning(f"{importlib.metadata=}")
 
         installed_packages_dict = {}
-        #for dist in installed_packages:
-        #    installed_packages_dict[dist.key] = dist.version
+        installed_packages = pkg_resources.working_set
+        for dist in installed_packages:
+            installed_packages_dict[dist.key] = dist.version
 
         ### -------
-        distributions = importlib.metadata.distributions()
-        for dist in distributions:
-            installed_packages_dict[dist.metadata['Name']] = dist.version
+        #distributions = importlib.metadata.distributions()
+        #for dist in distributions:
+        #    installed_packages_dict[dist.metadata['Name']] = dist.version
         ### -------
 
         self.logger.info(f"get_installed_packages: installed_packages_dict = {installed_packages_dict}")
