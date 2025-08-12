@@ -226,16 +226,14 @@ class Modules():
         :return: loaded module
         :rtype: object
         """
-        #logger.notice(f"_load_module: Section {name}, Module {classname}, classpath {classpath}")
 
-        import modules
+        import modules    # needed for Python 3.13 and up
 
         enabled = Utils.strip_quotes(args.get('enabled', 'true').lower())
         if enabled == 'false':
             logger.warning("Not loading module {classname} from section '{name}': Module is disabled")
             return
 
-        #logger.notice(f"{os.getcwd()=}, {sys.path=}")
         logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
@@ -244,16 +242,12 @@ class Modules():
                 import modules.http
             else:
                 exec(f"import {classpath}")
-            logger.notice(f"importlib.import_module({classpath}) passed w/o exception")
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
-        #logger.notice(f"Imported Modules: {sys.modules.keys()}")
 
         try:
-            logger.notice(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
             exec(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
-            logger.notice(f"{self.loadedmodule=}) - __new__ method executed")
         except Exception as e:
             logger.error(f"Module '{name}' ({classpath}) exception during initialization (__new__): {e}")
             pass
@@ -264,9 +258,7 @@ class Modules():
 
         # get arguments defined in __init__ of module's class to self.args
         try:
-            #logger.notice("exec: self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
 #            exec("self.args = inspect.getargspec({classpath}.{classname}.__init__)[0][1:]")
-            #logger.notice(f"self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
             exec(f"self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
         except Exception as e:
             logger.critical(f"Module '{name}' exception during 'inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]': {e}")
