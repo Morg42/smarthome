@@ -237,8 +237,9 @@ class Modules():
         logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
-            if name == 'websocketX':
-                importlib.import_module(classpath)
+            if name == 'http':
+                #importlib.import_module(classpath)
+                import modules.http
             else:
                 exec(f"import {classpath}")
             logger.notice(f"importlib.import_module({classpath}) passed w/o exception")
@@ -248,7 +249,7 @@ class Modules():
         try:
             args = inspect.getfullargspec(classpath + '.' + classname + '.__init__')
             logger.notice(f"{args=}")
-        except:
+        except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during getting args of __init__.py: {e}")
         #logger.notice(f"Imported Modules: {sys.modules.keys()}")
 
