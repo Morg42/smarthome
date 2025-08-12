@@ -237,8 +237,10 @@ class Modules():
         logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
-            #exec(f"import {classpath}")
-            importlib.import_module(classpath)
+            if name == 'websocket':
+                importlib.import_module(classpath)
+            else:
+                exec(f"import {classpath}")
             logger.notice(f"importlib.import_module({classpath}) passed w/o exception")
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
@@ -298,7 +300,7 @@ class Modules():
                 logger.error(f"Module {name} not started: Module version mismatch")
                 return None
         else:
-            logger.error("Modules: Module '{}' initialization failed, module not loaded".format(classpath.split('.')[1]))
+            logger.error("Modules: Module '{classpath.split('.')[1]}' initialization failed, module not loaded")
             return None
 
 
