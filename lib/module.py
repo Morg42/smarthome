@@ -239,9 +239,11 @@ class Modules():
         try:
             #exec(f"import {classpath}")
             importlib.import_module(classpath)
+            logger.notice(f"importlib.import_module({classpath}) passed w/o exception")
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
+        logger.notice(f"Imported Modules: {sys.modules.keys()}")
 
         try:
             exec(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
@@ -255,9 +257,9 @@ class Modules():
 
         # get arguments defined in __init__ of module's class to self.args
         try:
-            #logger.notice("exec: self.args = inspect.getfullargspec({0}.{1}.__init__)[0][1:]".format(classpath, classname))
-#            exec("self.args = inspect.getargspec({0}.{1}.__init__)[0][1:]".format(classpath, classname))
-            exec("self.args = inspect.getfullargspec({0}.{1}.__init__)[0][1:]".format(classpath, classname))
+            #logger.notice("exec: self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
+#            exec("self.args = inspect.getargspec({classpath}.{classname}.__init__)[0][1:]")
+            exec("self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
         except Exception as e:
             logger.critical("Module '{}' ({}) exception during call to __init__.py: {}".format(name, classpath, e))
             return None
