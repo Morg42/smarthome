@@ -233,7 +233,7 @@ class Modules():
             logger.warning("Not loading module {classname} from section '{name}': Module is disabled")
             return
 
-        logger.notice(f"{os.getcwd()=}, {sys.path=}")
+        #logger.notice(f"{os.getcwd()=}, {sys.path=}")
         logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
@@ -248,11 +248,12 @@ class Modules():
         #logger.notice(f"Imported Modules: {sys.modules.keys()}")
 
         try:
+            logger.notice(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
             exec(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
+            logger.notice(f"{self.loadedmodule=}) - __new__ method executed")
         except Exception as e:
-            logger.error(f"Module '{name}' ({classpath}) exception during initialization: {e}")
+            logger.error(f"Module '{name}' ({classpath}) exception during initialization (__new__): {e}")
             pass
-        logger.notice(f"{self.loadedmodule=})")
 
         # load module-specific translations
         translation.load_translations('module', classpath.replace('.', '/'), 'module/'+classpath.split('.')[1])
