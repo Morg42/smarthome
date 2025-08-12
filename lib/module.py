@@ -265,7 +265,7 @@ class Modules():
             #logger.notice(f"self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
             exec(f"self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
         except Exception as e:
-            logger.critical(f"Module '{name}' ({classpath} / {classname}) exception during inspect.getfullargspec(...): {e}")
+            logger.critical(f"Module '{name}' exception during 'inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]': {e}")
             return None
         #logger.notice("- self.args = '{self.args}'")
 
