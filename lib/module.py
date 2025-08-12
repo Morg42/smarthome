@@ -230,9 +230,10 @@ class Modules():
 
         enabled = Utils.strip_quotes(args.get('enabled', 'true').lower())
         if enabled == 'false':
-            logger.warning("Not loading module {} from section '{}': Module is disabled".format(classname, name))
+            logger.warning("Not loading module {classname} from section '{name}': Module is disabled")
             return
 
+        logger.notice(f"{os.getcwd()=}, {sys.path=}")
         logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
@@ -252,7 +253,6 @@ class Modules():
         translation.load_translations('module', classpath.replace('.', '/'), 'module/'+classpath.split('.')[1])
 #        translation.load_translations('global', classpath.replace('.', '/'), 'module/'+classpath.split('.')[1])
 
-        logger.notice(f"{os.getcwd()=}, {sys.path=}")
         # get arguments defined in __init__ of module's class to self.args
         try:
             #logger.notice("exec: self.args = inspect.getfullargspec({0}.{1}.__init__)[0][1:]".format(classpath, classname))
