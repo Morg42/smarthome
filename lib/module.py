@@ -246,16 +246,11 @@ class Modules():
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
-        try:
-            args = inspect.getfullargspec(classpath + '.' + classname + '.__init__')
-            logger.notice(f"{args=}")
-        except Exception as e:
-            logger.critical(f"Module '{name}' ({classpath}) exception during getting args of __init__.py: {e}")
         #logger.notice(f"Imported Modules: {sys.modules.keys()}")
 
         try:
-            logger.notice(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
-            exec(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
+            logger.notice(f"self.loadedmodule = {classpath}.{classname}.__init__({classpath}.{classname})")
+            exec(f"self.loadedmodule = {classpath}.{classname}.__init__({classpath}.{classname})")
             logger.notice(f"{self.loadedmodule=}) - __new__ method executed")
         except Exception as e:
             logger.error(f"Module '{name}' ({classpath}) exception during initialization (__new__): {e}")
