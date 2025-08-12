@@ -45,7 +45,9 @@ import logging
 #import threading
 import inspect
 import os
+
 import sys
+import importlib
 
 import lib.config
 import lib.translation as translation
@@ -224,17 +226,18 @@ class Modules():
         :return: loaded module
         :rtype: object
         """
-        logger.notice(f"_load_module: Section {name}, Module {classname}, classpath {classpath}")
+        #logger.notice(f"_load_module: Section {name}, Module {classname}, classpath {classpath}")
 
         enabled = Utils.strip_quotes(args.get('enabled', 'true').lower())
         if enabled == 'false':
             logger.warning("Not loading module {} from section '{}': Module is disabled".format(classname, name))
             return
 
-        logger.notice(f"Loading module '{name}': args = '{args}'")  # info
+        logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
-            exec(f"import {classpath}")
+            #exec(f"import {classpath}")
+            importlib.import_module(classpath)
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
