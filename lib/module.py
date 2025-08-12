@@ -228,6 +228,8 @@ class Modules():
         """
         #logger.notice(f"_load_module: Section {name}, Module {classname}, classpath {classpath}")
 
+        import modules
+
         enabled = Utils.strip_quotes(args.get('enabled', 'true').lower())
         if enabled == 'false':
             logger.warning("Not loading module {classname} from section '{name}': Module is disabled")
@@ -237,7 +239,7 @@ class Modules():
         logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
-            if name == 'http':
+            if name == 'httpX':
                 #importlib.import_module(classpath)
                 import modules.http
             else:
@@ -249,8 +251,8 @@ class Modules():
         #logger.notice(f"Imported Modules: {sys.modules.keys()}")
 
         try:
-            logger.notice(f"self.loadedmodule = {classpath}.{classname}.__init__({classpath}.{classname})")
-            exec(f"self.loadedmodule = {classpath}.{classname}.__init__({classpath}.{classname})")
+            logger.notice(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
+            exec(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
             logger.notice(f"{self.loadedmodule=}) - __new__ method executed")
         except Exception as e:
             logger.error(f"Module '{name}' ({classpath}) exception during initialization (__new__): {e}")
