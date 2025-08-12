@@ -237,7 +237,7 @@ class Modules():
         logger.info(f"Loading module '{name}': args = '{args}'")
         # Load an instance of the module
         try:
-            if name == 'websocket':
+            if name == 'websocketX':
                 importlib.import_module(classpath)
             else:
                 exec(f"import {classpath}")
@@ -245,13 +245,14 @@ class Modules():
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
-        logger.notice(f"Imported Modules: {sys.modules.keys()}")
+        #logger.notice(f"Imported Modules: {sys.modules.keys()}")
 
         try:
             exec(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
         except Exception as e:
             logger.error(f"Module '{name}' ({classpath}) exception during initialization: {e}")
             pass
+        logger.notice(f"{self.loadedmodule=})")
 
         # load module-specific translations
         translation.load_translations('module', classpath.replace('.', '/'), 'module/'+classpath.split('.')[1])
@@ -261,9 +262,10 @@ class Modules():
         try:
             #logger.notice("exec: self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
 #            exec("self.args = inspect.getargspec({classpath}.{classname}.__init__)[0][1:]")
-            exec("self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
+            #logger.notice(f"self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
+            exec(f"self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
         except Exception as e:
-            logger.critical("Module '{}' ({}) exception during call to __init__.py: {}".format(name, classpath, e))
+            logger.critical(f"Module '{name}' ({classpath} / {classname}) exception during inspect.getfullargspec(...): {e}")
             return None
         #logger.notice("- self.args = '{self.args}'")
 
