@@ -242,6 +242,8 @@ class Modules():
             else:
                 exec(f"import {classpath}")
             logger.notice(f"importlib.import_module({classpath}) passed w/o exception")
+            args = inspect.getfullargspec(classpath + '.' + classname + '.__init__')
+            logger.notice(f"{args=}")
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
