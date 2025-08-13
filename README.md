@@ -24,7 +24,7 @@ Unterstützung gibt es im [Supportforum](https://knx-user-forum.de/forum/support
 
 Ein [Wiki](https://github.com/smarthomeNG/smarthome/wiki) existiert zumeist in deutscher Sprache.
 
-Die Kernfunktionalität wird alle 6-9 Monate in einem Release erweitert und freigegeben.
+Die Kernfunktionalität wird alle 9-12 Monate in einem Release erweitert und freigegeben.
 
 ## Bis zur Version v1.11 benutzte Werkzeuge
 
