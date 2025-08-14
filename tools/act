@@ -58,6 +58,7 @@ if [ ! -d venvs ]; then
     return 2
 fi
 
+BASE_DIR=`pwd`
 cd venvs > /dev/null
 ENV_DIR=`pwd`
 
@@ -65,6 +66,7 @@ if test -f "$ENV_DIR/py_$1/bin/activate"; then
     echo
     source $ENV_DIR/py_$1/bin/activate
     echo "Activating virtual environment py_$1 (`python3 -V`)"
+    echo "from SmartHomeNG installation in $BASE_DIR"
     echo
     echo To deactivate the virtual environment simply type the command \'deactivate\'
 else
