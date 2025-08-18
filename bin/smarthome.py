@@ -42,8 +42,11 @@ if sys.hexversion < 0x03090000:
 import os
 if not os.name == 'nt':
     # Check only, if not running under Windows
-    if os.getegid() == 0:
+    if os.geteuid() == 0:
         print("SmartHomeNG should not run as root")
+        # exit()
+    elif os.getegid() == 0:
+        print("SmartHomeNG should not run as user with membership of root group")
         # exit()
 
 #####################################################################
