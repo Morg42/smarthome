@@ -42,7 +42,8 @@ import re
 import asyncio
 import logging
 import requests
-from iowait import IOWait
+#from iowait import IOWait
+import selectors
 import socket
 import struct
 import subprocess
@@ -845,8 +846,12 @@ class Tcp_client(object):
         Thread worker to handle receiving.
         """
         self.logger.debug(f'{self._id} started receive thread')
-        waitobj = IOWait()
-        waitobj.watch(self._socket, read=True)
+        #alt
+        #waitobj = IOWait()
+        #waitobj.watch(self._socket, read=True)
+        # neu:
+        selector = selectors.DefaultSelector()
+        selector.register(self._socket, selectors.EVENT_READ)
         __buffer = b''
 
         self._is_receiving = True
@@ -855,9 +860,14 @@ class Tcp_client(object):
         # try to find possible "hidden" errors
         try:
             while self._is_connected and self.__running:
-                events = waitobj.wait(1000)     # BMX
-                for fileno, read, write in events:  # BMX
-                    if read:
+                #alt
+                #events = waitobj.wait(1000)     # BMX
+                #for fileno, read, write in events:  # BMX
+
+                #neu
+                events = selector.select(timeout=1)  # 1 Sekunde
+                for key, mask in events:
+                    if mask & selectors.EVENT_READ:
                         timeout = False
                         try:
                             msg = self._socket.recv(4096)
@@ -913,7 +923,7 @@ class Tcp_client(object):
                                 self._is_receiving = False
                                 self._is_connected = False
                                 try:
-                                    self._socket.shutdown()
+                                    self._socket.shutdown(socket.SHUT_RDWR)
                                 except Exception:
                                     pass
                                 if timeout:
@@ -922,7 +932,10 @@ class Tcp_client(object):
                                 else:
                                     # default state, peer closed connection
                                     self.logger.warning(f'{self._id} connection closed by peer')
-                                waitobj.unwatch(self._socket)
+                                #alt
+                                #waitobj.unwatch(self._socket)
+                                #neu
+                                selector.unregister(self._socket)
                                 if self._disconnected_callback is not None:
                                     try:
                                         self._disconnected_callback(self)
@@ -933,7 +946,7 @@ class Tcp_client(object):
                                     self.connect()
                                 if self._is_connected:
                                     self.logger.debug(f'{self._id} set read watch on socket again')
-                                    waitobj.watch(self._socket, read=True)
+                                    selector.register(self._socket, selectors.EVENT_READ)
                             else:
                                 # socket shut down by self.close, no error
                                 self.logger.debug(f'{self._id} connection shut down by call to close method')

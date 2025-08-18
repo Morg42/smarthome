@@ -231,7 +231,7 @@ class Modules():
 
         enabled = Utils.strip_quotes(args.get('enabled', 'true').lower())
         if enabled == 'false':
-            logger.warning("Not loading module {classname} from section '{name}': Module is disabled")
+            logger.warning(f"Not loading module {classname} from section '{name}': Module is disabled")
             return
 
         logger.info(f"Loading module '{name}': args = '{args}'")
