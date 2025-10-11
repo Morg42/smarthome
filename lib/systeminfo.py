@@ -187,7 +187,12 @@ class Systeminfo:
             os_release = cls.read_linuxinfo()
             if os_release == {}:
                 return pf
-            return utils.Utils.strip_quotes(os_release.get('PRETTY_NAME', 'Linux'))
+            if utils.Utils.strip_quotes(os_release.get('ID', '?')) == 'debian':
+                name = utils.Utils.strip_quotes(os_release.get('NAME', 'deb'))
+                name += ' ' + utils.Utils.strip_quotes(os_release.get('DEBIAN_VERSION_FULL', '?'))
+                name += ' (' + utils.Utils.strip_quotes(os_release.get('VERSION_CODENAME', '?')) + ')'
+                return name
+            return utils.Utils.strip_quotes(os_release.get('PRETTY_NAME', 'linux'))
         elif pf == 'darwin':
             os_release = cls.read_macosinfo()
             return os_release
@@ -210,6 +215,8 @@ class Systeminfo:
             os_release = cls.read_linuxinfo()
             if os_release == {}:
                 return pf
+            if utils.Utils.strip_quotes(os_release.get('ID', '?')) == 'debian':
+                return utils.Utils.strip_quotes(os_release.get('DEBIAN_VERSION_FULL', '?'))
             return utils.Utils.strip_quotes(os_release.get('VERSION_ID', '?'))
         elif pf == 'darwin':
             return platform.platform().split('-')[1]
