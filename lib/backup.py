@@ -153,7 +153,7 @@ def create_backup(conf_base_dir, base_dir, filename_with_timestamp=False, before
     dest_dir= 'plugins'
     for filename in sorted(os.listdir(source_dir)):
         if filename.startswith('priv_'):
-            logger.notice(f"Backup private plugin: {filename}")
+            logger.dbghigh(f"Backup private plugin: {filename}")
             backup_directory2(backupzip, os.path.join(source_dir, filename), '.*', dest_dir=os.path.join(dest_dir, filename))
     #arc_dir = 'plugins/priv_widgets'
 
@@ -415,7 +415,7 @@ def restore_backup(conf_base_dir, base_dir, config_etc=False):
     nl = restorezip.namelist()
     pl = sorted(list(set( [token.split('/')[0] + '/' + token.split('/')[1] for token in nl if
           token.startswith('plugins/') and len(token.split('/')) == 3] )))
-    logger.notice(f"Restoring private plugins from zip-file: {pl}")
+    logger.dbghigh(f"Restoring private plugins from zip-file: {pl}")
     fl = [token for token in nl if token.startswith('plugins/')]
     logger.dbgmed(f"restoring files: {fl}")
     restorezip.extractall(path=base_dir, members=fl)
@@ -505,7 +505,7 @@ def restore_directory2(restorezip, arc_dir, dest_dir, overwrite=False):
         prefix =arc_dir + os.path.sep
         if fn.startswith(prefix):
             fn2 = fn[len(prefix):]
-            logger.notice(f"{arc_dir}: {os.path.basename(fn2)} - {fn}")
+            logger.dbghigh(f"{arc_dir}: {os.path.basename(fn2)} - {fn}")
             restore_file(restorezip, arc_dir, os.path.basename(fn), dest_dir, overwrite)
 
 
