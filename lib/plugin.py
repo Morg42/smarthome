@@ -987,10 +987,15 @@ class PluginLoggingAdapter(logging.LoggerAdapter):
         logging.addLevelName(_SH.logs.DBGHIGH_level, "DBGHIGH")
         logging.addLevelName(_SH.logs.DBGMED_level, "DBGMED")
         logging.addLevelName(_SH.logs.DBGLOW_level, "DBGLOW")
+        logging.addLevelName(_SH.logs.DEVELOP_level, "DEVELOP")
         return
 
     def notice(self, msg, *args, **kwargs):
         self.logger.log(_SH.logs.NOTICE_level, f"{self.extra['plugininstance']}{msg}", *args, **kwargs)
+        return
+
+    def develop(self, msg, *args, **kwargs):
+        self.logger.log(_SH.logs.DEVELOP_level, f"{self.extra['plugininstance']}{msg}", *args, **kwargs)
         return
 
     def dbghigh(self, msg, *args, **kwargs):
