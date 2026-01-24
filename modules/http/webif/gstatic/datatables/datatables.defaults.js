@@ -174,18 +174,23 @@ $(window).bind('datatables_defaults', function() {
 			$.fn.dataTable.moment('HH:mm:ss DD.MM.YYYY');
 			$.fn.dataTable.moment('HH:mm:ss.SSSS DD.MM.YYYY');
 
-			$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
-				window.activeTab = $(this).attr("href").replace("#", "") ;
-				$.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
-				$.fn.dataTable.tables({ visible: true, api: true }).fixedHeader.adjust();
-				$.fn.dataTable.tables({ visible: true, api: true }).responsive.recalc();
-				$(function () {
-						console.log("resize datatable after tab change");
-						$(window).resize();
-						setTimeout(function() { $(window).resize(); }, 300); // necessary for Safari
-				});
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		    const tabId = $(this).attr('href').replace('#', '');
+		    const tables = $('#' + tabId).find('table.dataTable');
+				console.log("Change tab to " + tabId);
+				requestAnimationFrame(() => {
+	        setTimeout(() => {
+	            $('#' + tabId).find('table.dataTable').each(function () {
+	                const dt = $(this).DataTable();
+	                dt.columns.adjust();
+	                dt.responsive.recalc();
+	                dt.fixedHeader.adjust();
+									window.toggle = window.toggle * -1 + 0.1;
+									dt.responsive.recalc();
+	            });
+					}, 100);
 			});
-
+		});
 		}
 	catch (e)
 		{
