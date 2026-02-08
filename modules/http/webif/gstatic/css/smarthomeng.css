@@ -115,6 +115,12 @@ background-color: rgba(0,0,0,.03);
   padding-top: 10px;
 }
 
+.nav-link,
+.dropdown-item,
+.btn {
+  cursor: pointer;
+}
+
 .cardOverlay {
   position: absolute;
   background: black;

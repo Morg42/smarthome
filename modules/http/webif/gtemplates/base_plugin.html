@@ -293,29 +293,29 @@ window.activeTab = "bodytab_" + {{ start_tab }};
 		{% endif %}
 		{% if tabcount > 1 %}
 			{% if tab1title != "hidden" %}
-				<li id="tab_1" class="nav-item"><a class="text-dark nav-link {% if start_tab==1 %}active{% endif %}" data-toggle="tab" href="#bodytab_1">{{ tab1title }}</a></li>
+				<li id="tab_1" class="nav-item"><a class="text-dark nav-link {% if start_tab==1 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_1" role="tab">{{ tab1title }}</a></li>
 			{% endif %}
 			{% if tab2title != "hidden" %}
-				<li id="tab_2" class="nav-item"><a class="text-dark nav-link {% if start_tab==2 %}active{% endif %}" data-toggle="tab" href="#bodytab_2">{{ tab2title }}</a></li>
+				<li id="tab_2" class="nav-item"><a class="text-dark nav-link {% if start_tab==2 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_2" role="tab">{{ tab2title }}</a></li>
 			{% endif %}
 		{% endif %}
 		{% if tabcount > 2 and tab3title != "hidden" %}
-			<li id="tab_3" class="nav-item"><a class="text-dark nav-link {% if start_tab==3 %}active{% endif %}" data-toggle="tab" href="#bodytab_3">{{ tab3title }}</a></li>
+			<li id="tab_3" class="nav-item"><a class="text-dark nav-link {% if start_tab==3 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_3" role="tab">{{ tab3title }}</a></li>
 		{% endif %}
 		{% if tabcount > 3 and tab4title != "hidden" %}
-			<li id="tab_4" class="nav-item"><a class="text-dark nav-link {% if start_tab==4 %}active{% endif %}" data-toggle="tab" href="#bodytab_4">{{ tab4title }}</a></li>
+			<li id="tab_4" class="nav-item"><a class="text-dark nav-link {% if start_tab==4 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_4" role="tab">{{ tab4title }}</a></li>
 		{% endif %}
 		{% if tabcount > 4 and tab5title != "hidden" %}
-			<li id="tab_5" class="nav-item"><a class="text-dark nav-link {% if start_tab==5 %}active{% endif %}" data-toggle="tab" href="#bodytab_5">{{ tab5title }}</a></li>
+			<li id="tab_5" class="nav-item"><a class="text-dark nav-link {% if start_tab==5 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_5" role="tab">{{ tab5title }}</a></li>
 		{% endif %}
 		{% if tabcount > 5 and tab6title != "hidden" %}
-			<li id="tab_6" class="nav-item"><a class="text-dark nav-link {% if start_tab==6 %}active{% endif %}" data-toggle="tab" href="#bodytab_6">{{ tab6title }}</a></li>
+			<li id="tab_6" class="nav-item"><a class="text-dark nav-link {% if start_tab==6 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_6" role="tab">{{ tab6title }}</a></li>
 		{% endif %}
 		{% if tabcount > 6 and tab7title != "hidden" %}
-			<li id="tab_7" class="nav-item"><a class="text-dark nav-link {% if start_tab==7 %}active{% endif %}" data-toggle="tab" href="#bodytab_7">{{ tab7title }}</a></li>
+			<li id="tab_7" class="nav-item"><a class="text-dark nav-link {% if start_tab==7 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_7" role="tab">{{ tab7title }}</a></li>
 		{% endif %}
 		{% if tabcount > 7 and tab8title != "hidden" %}
-			<li id="tab_8" class="nav-item"><a class="text-dark nav-link {% if start_tab==8 %}active{% endif %}" data-toggle="tab" href="#bodytab_8">{{ tab8title }}</a></li>
+			<li id="tab_8" class="nav-item"><a class="text-dark nav-link {% if start_tab==8 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#bodytab_8" role="tab">{{ tab8title }}</a></li>
 		{% endif %}
 	</ul>
 </div>
@@ -325,17 +325,17 @@ window.activeTab = "bodytab_" + {{ start_tab }};
 {% else %}
 <div style="margin-left: 15px; margin-right: 10px; border-left: 1px solid var(--shng-border); border-right: 1px solid var(--shng-border); border-bottom: 1px solid var(--shng-border);" class="tab-content" id="resize_wrapper">
 {% endif %}
-	<div id="bodytab_1" class="table-resize tab-pane {% if start_tab==1 %}in active{% endif %}" role="tabpanel">
+	<div id="bodytab_1" class="table-resize tab-pane {% if start_tab==1 %}fade show active{% endif %}" role="tabpanel">
 		{% block bodytab1 %}
 		{% endblock bodytab1 %}
 	</div>
 
-	<div id="bodytab_2" class="table-resize tab-pane {% if start_tab==2 %}in active{% endif %}" role="tabpanel">
+	<div id="bodytab_2" class="table-resize tab-pane {% if start_tab==2 %}fade show active{% endif %}" role="tabpanel">
 		{% block bodytab2 %}
 		{% endblock bodytab2 %}
 	</div>
 
-	<div id="bodytab_3" class="table-resize tab-pane {% if start_tab==3 %}in active{% endif %}" role="tabpanel">
+	<div id="bodytab_3" class="table-resize tab-pane {% if start_tab==3 %}fade show active{% endif %}" role="tabpanel">
 		{% block bodytab3 %}
 		{% endblock bodytab3 %}
 	</div>
@@ -345,22 +345,22 @@ window.activeTab = "bodytab_" + {{ start_tab }};
 		{% endblock bodytab4 %}
 	</div>
 
-	<div id="bodytab_5" class="table-resize tab-pane {% if start_tab==5 %}in active{% endif %}" role="tabpanel">
+	<div id="bodytab_5" class="table-resize tab-pane {% if start_tab==5 %}fade show active{% endif %}" role="tabpanel">
 		{% block bodytab5 %}
 		{% endblock bodytab5 %}
 	</div>
 
-	<div id="bodytab_6" class="table-resize tab-pane {% if start_tab==6 %}in active{% endif %}" role="tabpanel">
+	<div id="bodytab_6" class="table-resize tab-pane {% if start_tab==6 %}fade show active{% endif %}" role="tabpanel">
 		{% block bodytab6 %}
 		{% endblock bodytab6 %}
 	</div>
 
-	<div id="bodytab_7" class="table-resize tab-pane {% if start_tab==7 %}in active{% endif %}" role="tabpanel">
+	<div id="bodytab_7" class="table-resize tab-pane {% if start_tab==7 %}fade show active{% endif %}" role="tabpanel">
 		{% block bodytab7 %}
 		{% endblock bodytab7 %}
 	</div>
 
-	<div id="bodytab_8" class="table-resize tab-pane {% if start_tab==8 %}in active{% endif %}" role="tabpanel">
+	<div id="bodytab_8" class="table-resize tab-pane {% if start_tab==8 %}fade show active{% endif %}" role="tabpanel">
 		{% block bodytab8 %}
 		{% endblock bodytab8 %}
 	</div>
