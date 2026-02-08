@@ -47,16 +47,38 @@ function shngPost(path, params, method='post') {
  * Needs jquery ui effect "switchClass"
  * @param {string} $element dom element
  * @param {number} highlight duration of effect in seconds (fade off)
- */
- function startAnimation($element, highlight) {
-    $element.stop(true, false);
-    $element.css({ 'background-color' : '' });
-    $element.switchClass("shng_effect_standard", "shng_effect_highlight", highlight*10)
-       .delay(highlight*20).switchClass("shng_effect_highlight", "shng_effect_standard", highlight*1000, 'easeInOutQuad');
-    $element.promise().done( function() {
-      $element.removeClass('shng_effect_standard');$element.removeClass('shng_effect_highlight');
-    });
- }
+*/
+function startAnimation($element, highlight) {
+  $element.stop(true, false);
+  $element.css({ 'background-color' : '' });
+  $element.switchClass("shng_effect_standard", "shng_effect_highlight", highlight*10)
+     .delay(highlight*20).switchClass("shng_effect_highlight", "shng_effect_standard", highlight*1000, 'easeInOutQuad');
+  $element.promise().done( function() {
+    $element.removeClass('shng_effect_standard');$element.removeClass('shng_effect_highlight');
+  });
+}
+
+ /**
+  * converts bytes to human readable form
+  * @param {number} bytes value
+*/
+function humanBytes(bytes) {
+   let size = parseFloat(bytes);
+   let unit = 'B';
+
+   if (size >= 1024**4) {
+       size /= 1024**4; unit = 'TB';
+   } else if (size >= 1024**3) {
+       size /= 1024**3; unit = 'GB';
+   } else if (size >= 1024**2) {
+       size /= 1024**2; unit = 'MB';
+   } else if (size >= 1024) {
+       size /= 1024; unit = 'KB';
+   }
+
+   let rounded = Math.round(size * 100) / 100;
+   return (Number.isInteger(rounded) ? rounded : rounded) + ' ' + unit;
+}
 
  /**
   * inserts text into a dom element. To be used for ajax updates
@@ -64,7 +86,7 @@ function shngPost(path, params, method='post') {
   * @param {string} text to insert
   * @param {string} table id of datatable
   * @param {number} duration of highlight effect in seconds (integer)
-  */
+*/
 function shngInsertText (id, text, table_id=null, highlight=0) {
 
     function sanitize(text, spaces=false, quotes=false, entities=true, trim=true, normalize=true) {

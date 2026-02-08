@@ -1,0 +1,23 @@
+{% macro humanBytes(b) %}
+    {% set size = b|float %}
+
+    {% if size < 1024 %}
+    {% set value = size %}
+    {% set unit = 'B' %}
+    {% elif size < 1024**2 %}
+    {% set value = size / 1024 %}
+    {% set unit = 'KB' %}
+    {% elif size < 1024**3 %}
+    {% set value = size / 1024**2 %}
+    {% set unit = 'MB' %}
+    {% elif size < 1024**4 %}
+    {% set value = size / 1024**3 %}
+    {% set unit = 'GB' %}
+    {% else %}
+    {% set value = size / 1024**4 %}
+    {% set unit = 'TB' %}
+    {% endif %}
+
+    {% set rounded = value | round(2) %}
+    {{ rounded | int if rounded == rounded | int else rounded }} {{ unit }}
+{% endmacro %}
