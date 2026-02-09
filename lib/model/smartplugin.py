@@ -1005,7 +1005,7 @@ class SmartPlugin(SmartObject, Utils):
         self.logger.debug(f"scheduler_trigger: name = {name}, parameters: {parameters}")
         self._sh.scheduler.trigger(name, obj, by, source, value, dest, prio, dt, from_smartplugin=True)
 
-    def scheduler_add(self, name: str, obj: object, prio: int=3, cron=None, cycle=None, value=None, offset=None, next=None) -> None:
+    def scheduler_add(self, name: str, obj: object, prio: int = 3, cron=None, cycle=None, value=None, offset=None, next=None) -> None:
         """
         This methods adds a scheduler entry for a plugin-scheduler
 

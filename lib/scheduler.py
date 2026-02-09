@@ -507,6 +507,8 @@ class Scheduler(threading.Thread):
                             logger.debug("Scheduler: Name changed by adding plugin instance name to: " + name)
 
                 item = None
+                if isinstance(cycle, float):
+                    cycle = int(cycle)
                 if isinstance(cycle, int):
                     source = {'source': 'cycle1', 'details': cycle}
                     cycle = {cycle: value}
