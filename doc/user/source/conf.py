@@ -44,7 +44,7 @@ extensions = [
   'sphinx.ext.viewcode',
   'sphinx.ext.githubpages',
   'sphinx_autodoc_typehints',
-  'sphinx_tabs.tabs',
+  'sphinx_design',
   'myst_parser']
 #  'rst2pdf.pdfbuilder']
 
