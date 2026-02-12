@@ -103,8 +103,9 @@ class SchedulersController(RESTResource):
                 schedule['next'] = s['next'].strftime('%Y-%m-%d %H:%M:%S%z')
                 # unpack cycle dict
                 cy = s['cycle']
-                if isinstance(cy, dict) and 'cycle' in cy:
-                    cy = cy['cycle']
+                # keep <cycle> = {'cycle': <value>}, so commented this out
+                # if isinstance(cy, dict) and 'cycle' in cy:
+                #     cy = cy['cycle']
                 schedule['cycle'] = str(cy)
                 #            schedule['cron'] = html.escape(str(s['cron']))
                 schedule['cron'] = str(s['cron'])
