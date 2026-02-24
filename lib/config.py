@@ -274,14 +274,18 @@ def merge_structlists(l1, l2, key=''):
         return l1 + l2
 
 
-def merge(source, destination, source_name='', dest_name='', filename=''):
+def merge(source, destination, source_name='', dest_name='', filename='', add=None, top=False):
     """
     Merges an OrderedDict Tree into another one
 
     :param source: source tree to merge into another one
     :param destination: destination tree to merge into
+    :param add: Data to insert into every node
+    :param top: don't add <add> if at top of tree
     :type source: OrderedDict
     :type destination: OrderedDict
+    :type add: OrderedDict|None
+    :type top: bool
 
     :return: Merged configuration tree
     :rtype: OrderedDict
@@ -309,7 +313,7 @@ def merge(source, destination, source_name='', dest_name='', filename=''):
                 if node == 'None':
                     destination[key] = value
                 else:
-                    merge(value, node, source_name, dest_name)
+                    merge(value, node, source_name, dest_name, add=add)
             else:
                 if isinstance(value, list) or isinstance(destination.get(key, None), list):
                     if destination.get(key, None) is None:
@@ -321,7 +325,9 @@ def merge(source, destination, source_name='', dest_name='', filename=''):
                 else:
                     # convert to string and remove newlines from multiline attributes
                     destination[key] = str(value).replace('\n', '')
-
+            # if "add" dict is supplied, insert into every node, overwriting existing values
+            if add and not top:
+                destination.update(add)
         except Exception as e:
             logger.error(f"Problem merging subtrees (key={key}), probably invalid YAML file '{source_name}' with entry '{destination}'. Error: {e}")
 
@@ -343,12 +349,14 @@ def nested_get(input_dict, path):
     return internal_dict_value
 
 
-def nested_put(output_dict, path, value):
+def nested_put(output_dict, path, value, add=None):
     """
 
     :param output_dict: dict structure to write to
     :param path: path to write to
     :param value: value to write to the nested key
+    :param add: data to insert into every node
+    :param top: at top of tree, don't add <add> here
     :return:
     """
     internal_dict_value = output_dict
@@ -374,7 +382,7 @@ def nested_put(output_dict, path, value):
         #     logger.warning(f"nested_put: - merge struct = {dict(value)}")
 
         # internal_last_dict_value[nested_key[len(nested_key)-1]] = value
-        merge(value, internal_last_dict_value[nested_key[len(nested_key) - 1]], 'struct-tree', 'sub-tree')
+        merge(value, internal_last_dict_value[nested_key[len(nested_key) - 1]], 'struct-tree', 'sub-tree', add=add, top=True)
 
         # if struct_merging_active:
         #     logger.warning(f"nested_put: - dest result  = {dict(internal_last_dict_value[nested_key[len(nested_key)-1]])}")
@@ -399,6 +407,10 @@ def search_for_struct_in_items(items, struct_dict, config, source_name='', paren
     :return: True, if a struct attribute was expanded
     """
 
+    def first(s):
+        """ return first item of iterable """
+        return next(iter(s), None)
+
     if source_name.startswith('test_struct'):
         logger.info(f"search_for_struct_in_items: items.keys()={list(dict(items).keys())}, source_name={source_name}, parent={parent}")
 
@@ -412,7 +424,31 @@ def search_for_struct_in_items(items, struct_dict, config, source_name='', paren
 
         if key == 'struct':
             # item is a struct
-            struct_names = value
+
+            struct_attr_list = []
+
+            if isinstance(value, list) and any(isinstance(x, dict) for x in value):
+
+                # we have a list of dicts
+                struct_attr_list = copy.deepcopy(value)
+                s = []
+                # do a thorough conversion if we have a mix of strs and dicts
+                for entry in value:
+                    if isinstance(entry, dict):
+                        s = s + list(entry.keys())
+                    elif isinstance(entry, str):
+                        s.append(entry)
+                    else:
+                        logger.warning(f'while processing {key} of {items}, list element {entry} could not be processed')
+                struct_names = s  # [k for k,v in value.items()]
+            elif isinstance(value, dict):
+
+                # we have a single dict
+                struct_attr_list = [copy.deepcopy(value)]
+                logger.warning(f'found struct attrs as dict in {parent}, tell developer')
+                struct_names = list(value.keys())
+            else:
+                struct_names = value
             # ensure, struct_names is a list
             if isinstance(struct_names, str):
                 struct_names = [struct_names]
@@ -420,14 +456,28 @@ def search_for_struct_in_items(items, struct_dict, config, source_name='', paren
             instance = items.get('instance', '')
             template = collections.OrderedDict()
 
+            # we need a joined OrderedDict()...
+            struct_attrs = collections.OrderedDict()
+            for item in struct_attr_list:
+                if not isinstance(item, collections.OrderedDict):
+                    continue
+                try:
+                    s_name = first(item)
+                    struct_attrs.setdefault(s_name, collections.OrderedDict())
+                    for subitem in item[s_name]:
+                        struct_attrs[s_name].update(subitem)
+                except (ValueError, IndexError, KeyError) as e:
+                    # this shouldn't happen, just log something on debug.
+                    logger.debug(f'Problem joining struct attr data from {struct_attr_list} for {item}: {e}')
+
             global struct_merging_active
             struct_merging_active = True
             for struct_name in struct_names:
                 wrk = struct_name.find('@')
                 if wrk > -1:
-                    add_struct_to_item_template(parent, struct_name[:wrk], template, struct_dict, struct_name[wrk + 1:])
+                    add_struct_to_item_template(parent, struct_name[:wrk], template, struct_dict, struct_name[wrk + 1:], struct_attrs=struct_attrs.get(struct_name))
                 else:
-                    add_struct_to_item_template(parent, struct_name, template, struct_dict, instance)
+                    add_struct_to_item_template(parent, struct_name, template, struct_dict, instance, struct_attrs=struct_attrs.get(struct_name))
             if template != {}:
                 config = merge(template, config, source_name, 'Item-Tree')
             struct_merging_active = False
@@ -479,7 +529,7 @@ def set_attr_for_subtree(subtree, attr, value, indent=0):
     return
 
 
-def add_struct_to_item_template(path, struct_name, template, struct_dict, instance):
+def add_struct_to_item_template(path, struct_name, template, struct_dict, instance, struct_attrs=None):
     """
     Add the referenced struct to the items_template subtree
 
@@ -488,6 +538,7 @@ def add_struct_to_item_template(path, struct_name, template, struct_dict, instan
     :param template: Template dict to be merged into the item tree
     :param struct_dict: dict with all defined structs (from /etc/structs.yaml and from loaded plugins)
     :param instance: For multi instance plugins: instance for which the items work (is derived from item with struct attribute)
+    :param struct_attrs: OrderedDict with attributes to set for every item
 
     :return:
     """
@@ -512,7 +563,7 @@ def add_struct_to_item_template(path, struct_name, template, struct_dict, instan
             if Utils.to_bool(getattr(_sh, '_struct_strip_name', False)):
                 del tmp_struct['name']
                 logger.debug(f'removed "name" attribute from struct {struct_name}')
-        nested_put(template, path, tmp_struct)
+        nested_put(template, path, tmp_struct, add=struct_attrs)
 
         if instance != '' or True:
             # add instance to items added by template struct
