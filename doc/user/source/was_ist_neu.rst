@@ -55,6 +55,18 @@ diesem und den vorangegangenen Releases ist den :doc:`Release Notes </release/re
       Diese Plugins waren als `deprecated` markiert und wurden entfernt. Sie sind
       bei Bedarf im Repo `smarthomeNG/plugins-archive` verfügbar.
 
+  - **Dokumentation**:
+
+    - **Ordner/Dateien**: Vor dem Hintergrund, dass die Konfiguration zukünftig vollständig unterhalb von
+      ``etc`` abgelegt werden soll (Option **-e**/**--config-etc**), werden alle Datei- und Pfadnamen von
+      Konfigurationsdateien unterhalb von ``etc`` angegeben. In Ausnahmefällen können z.B. in Beispielen
+      nur lokale Dateinamen angegeben werden.
+
+    - **Verweise auf ältere SmartHomeNG-Versionen**: In der Beschreibung von Konfiguration oder Syntax wird
+      nur noch der aktuell gültige Stand angegeben. Beschreibungen, wie etwas in früheren Versionen
+      angegeben werden musste, oder seit welcher Version ein bestimmtes Feature implementiert ist, entfallen.
+      Nach Möglichkeit werden Dokumentationen von früheren Versionen von SmartHomeNG parallel als Archiv
+      bereitgestellt.
 |
 
 .. comment
