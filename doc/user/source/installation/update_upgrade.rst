@@ -231,7 +231,7 @@ von der Kommandozeile aus machen:
 
 
 Jetzt heißt es genau zu schauen, was an **WARNING** oder **ERROR** gemeldet wird. Logfiles findet man im
-Verzeichnis ``../var/log`` (in der Standardinstallation unter ``/usr/local/smarthome/var/log``).
+Verzeichnis ``var/log`` (in der Standardinstallation unter ``/usr/local/smarthome/var/log``).
 Von da aus kann man sie mit einem Editor in Ruhe anschauen und auf Fehler durchsuchen.
 
 Wenn dann die Konfiguration stimmt, kann man natürlich den automatischen
@@ -337,7 +337,7 @@ Konvertierung von \*.conf-Dateien
 
 Möchte man vom alten ``*.conf`` Format der Konfigurationsdateien
 (die ab Version 2.0 nicht weiter unterstützt werden) auf das neue
-``*.yaml`` Format umschwenken, so kann der im Verzeichnis ``../tools``
+``*.yaml`` Format umschwenken, so kann der im Verzeichnis ``tools``
 bereitgestellte Konverter ``conf_to_yaml_converter.py`` genutzt werden
 um das automatisch zu tun.
 

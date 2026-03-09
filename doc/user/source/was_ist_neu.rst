@@ -10,7 +10,7 @@ diesem und den vorangegangenen Releases ist den :doc:`Release Notes </release/re
 
     - **Backup der Konfiguration**: Das Sichern und Wiederherstellen der Konfiguration wurde erweitert.
       Beim sichern der Konfiguration werden nun, falls vorhanden, die privaten Plugins (Plugins, deren
-      Name mit **priv_** beginnt) und die privaten Tools (das Verzeichnis priv_tools) mit gesichert und
+      Name mit ``priv_`` beginnt) und die privaten Tools (das Verzeichnis priv_tools) mit gesichert und
       beim Wiederherstellen aus der Zip Datei zurück kopiert.
 
       Dadurch steht jetzt eine einfache Möglichkeit der Sicherung dieser Dateien, die nicht in git

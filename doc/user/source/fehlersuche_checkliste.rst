@@ -43,7 +43,7 @@ Es sollte eine Zeile augegeben werden, die etwa so aussieht:
     smartho+ 28373     1  1 12:45 ?        00:00:02 python3 bin/smarthome.py
 
 Die Zeile zeigt an, dass unter dem User **smarthome** (hier zu smartho+ abgekürzt) unter der PID **28373** seit **12:45**
-Uhr SmartHomeNG (**python3 bin/smarthome.py**) ausgeführt wird.
+Uhr SmartHomeNG (``y``) ausgeführt wird.
 
 
 ------
@@ -120,7 +120,7 @@ Nun sollte so etwas ähnliches gezeigt werden:
    smarthome@sh13:~$
 
 Im obigen Fall handelt es sich beim laufenden eibd um eine Installation, die auf eine KNX
-Schnittstelle zugreift. Wichtig ist hier, das die Zeile **/usr/bin/eibd** auftaucht. Wenn
+Schnittstelle zugreift. Wichtig ist hier, das die Zeile ``/usr/bin/eibd`` auftaucht. Wenn
 das der Fall ist, dann läuft der eibd.
 
 Ob der eibd auch schalten kann stellt man fest mit

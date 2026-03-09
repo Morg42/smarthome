@@ -48,7 +48,7 @@ Auf diesem Tab können folgende Funktionen ausgelöst werden:
   wird die in dem Zip Archiv gesicherte Konfiguration wiederhergestellt. Als Vorsichtsmaßnahme wird vor Beginn der
   Wiederherstellung ein Backup der aktuellen Konfiguration vorgenommen. Dieses verbleibt auf dem SmartHomeNG Server
   um im Notfall die aktuelle Konfiguration wiederherstellen zu können, falls die hochgeladene Datei nicht die gewünschte
-  Konfiguration enthielt. Dieses Backup wird im Verzeichnis ../var/backup abgelegt und trägt den Dateinamen
+  Konfiguration enthielt. Dieses Backup wird im Verzeichnis var/backup abgelegt und trägt den Dateinamen
   shng_config_backup_before_restore_<Jahr>-<Monat>-<Tag>-<Stunde>-<Minuten>.zip
 
 
@@ -116,7 +116,7 @@ Der CONF-YAML Konverter dient dazu, Snippets die im alten CONF Format vorliegen 
 Cache Prüfung
 =============
 
-Auf diesem Tab kann der SmartHomeNG Item-Cache überprüft werden. Dazu werden alle im Directory ../var/cache vorhandenen
+Auf diesem Tab kann der SmartHomeNG Item-Cache überprüft werden. Dazu werden alle im Directory var/cache vorhandenen
 Dateien angezeigt, zu denen es kein Item gibt oder zu denen es zwar ein Item gibt, bei dem jedoch das cache Attribut
 nicht gesetzt ist.
 

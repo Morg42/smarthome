@@ -3,8 +3,8 @@
 Entwickler Dokumentation (Englisch)
 ###################################
 
-Wenn jemand Plugins entwickeln möchte oder Interesse an der Mitarbeit bei der allgemeinen
-Weiterentwicklung von SmartHomeNG hat, benötigt er weitergehende Informationen.
+Die früher gepflegte Entwicklerdokumentation wurde in Gänze in die
+Anwenderdokumentation aufgenommen und wird dort auf Deutsch weitergepflegt.
 
-Diese für Entwickler interessante Dokumentation steht ausschließlich in englischer Sprache
-zur Verfügung und ist hier zu finden: `https://www.smarthomeNG.de/developer/ <../developer/>`_
+Einzelne Anteile können nach wie vor auf Englisch sein, sofern diese direkt aus
+dem Programmcode übernommen wurden.
