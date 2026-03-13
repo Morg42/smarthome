@@ -15,6 +15,7 @@ nosetests.xml
 test.cache
 /.pytest_cache
 pyrightconfig.json
+pyproject.toml
 
 # OSX specific files
 .DS_Store
