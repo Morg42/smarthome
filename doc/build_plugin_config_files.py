@@ -72,77 +72,65 @@ sys.path.insert(0, '../lib')
 import shyaml
 
 type_unclassified = 'unclassified'
-plugin_sections = [['gateway', 'Gateway', 'Gateway'],
-                   ['interface', 'Interface', 'Interface'],
-                   ['protocol', 'Protocol', 'Protokoll'],
-                   ['system', 'System', 'System'],
-                   [type_unclassified, 'Non classified', 'nicht klassifizierte'],
-                   ['web', 'Web/Cloud', 'Web/Cloud']]
+plugin_sections = [
+    ['gateway', 'Gateway', 'Gateway'],
+    ['interface', 'Interface', 'Interface'],
+    ['protocol', 'Protocol', 'Protokoll'],
+    ['system', 'System', 'System'],
+    [type_unclassified, 'Non classified', 'nicht klassifizierte'],
+    ['web', 'Web/Cloud', 'Web/Cloud'],
+]
 
 
 def bold(s):
-    return "**" + s + "**" if s else ""
+    return '**' + s + '**' if s else ''
 
 
-def get_pluginlist_fromgit():
-    plglist = []
-    plg_git = subprocess.check_output(['git', 'ls-files', '*/__init__.py'], stderr=subprocess.STDOUT).decode().strip('\n')
-    for plg in plg_git.split('\n'):
-        if plg.split('/')[1] == '__init__.py':
-            # print(plg.split('/')[0], '   -   ', plg)
-            plglist.append(plg.split('/')[0])
+def get_list_fromgit(name: str):
+    """get filelist via git and return all matching files at first directory level"""
+    # this could be written as a single nested comprehension, but gets quite unreadable
+    # we gain speedup by using comprehensions and not splitting twice
+    plg_git = (
+        subprocess.check_output(['git', 'ls-files', f'*/{name}'], stderr=subprocess.STDOUT)
+        .decode()
+        .strip('\n')
+        .split('\n')
+    )
+    plglist = [x[0] for x in (p.split('/') for p in plg_git) if x[1] == name]
     return plglist
 
 
-def get_local_pluginlist():
-    plglist = os.listdir('.')
+def get_pluginlist_fromgit():
+    return get_list_fromgit('__init__.py')
 
-    for entry in plglist:
-        if entry[0] in ['.', '_'] or entry == 'deprecated_plugins':
-            plglist.remove(entry)
-    for entry in plglist:
-        if entry[0] in ['.', '_']:
-            plglist.remove(entry)
-    for entry in plglist:
-        if entry[0] in ['.', '_']:
-            plglist.remove(entry)
+
+def get_local_pluginlist():
+    plglist = [x for x in os.listdir('.') if x[0] not in ['.', '_'] and x != 'deprecated_plugins']
     return plglist
 
 
 def get_pluginyamllist_fromgit():
-    plglist = []
-    plg_git = subprocess.check_output(['git', 'ls-files', '*/plugin.yaml'], stderr=subprocess.STDOUT).decode().strip('\n')
-    for plg in plg_git.split('\n'):
-        if plg.split('/')[1] == 'plugin.yaml':
-            # print(plg,'   -   ', plg.split('/')[0],)
-            plglist.append(plg.split('/')[0])
-    return plglist
+    return get_list_fromgit('plugin.yaml')
 
 
 def get_description(section_dict, maxlen=70, lang='en', textkey='description'):
     desc = ''
-    if lang == 'en':
-        lang2 = 'de'
-    else:
-        lang2 = 'en'
     try:
-        desc = section_dict[textkey].get(lang, '')
+        desc = section_dict[textkey]['lang']
     except Exception:
         pass
     if desc == '':
         try:
-            desc = section_dict[textkey].get(lang2, '')
+            lang2 = 'de' if lang == 'en' else 'en'
+            desc = section_dict[textkey]['lang2']
         except Exception:
             pass
 
     if type(desc) is list:
         return desc
 
-    import textwrap
     lines = textwrap.wrap(desc, maxlen, break_long_words=False)
-    if lines == []:
-        lines.append('')
-    return lines
+    return lines or ['']
 
 
 def get_doc_description(yml, language, key='description', index=None):
@@ -158,7 +146,7 @@ def get_doc_description(yml, language, key='description', index=None):
         if desc == ['']:
             return ''
         if len(desc) < index + 1:
-            print('Zu kurze Liste {} für index {}'.format(desc, index))
+            print(f'Zu kurze Liste {desc} für index {index}')
             return ''
         return desc[index]
 
@@ -166,9 +154,7 @@ def get_doc_description(yml, language, key='description', index=None):
 def get_maintainer(section_dict, maxlen=20):
     maint = section_dict.get('maintainer', '')
     lines = textwrap.wrap(maint, maxlen, break_long_words=False)
-    if lines == []:
-        lines.append('')
-    return lines
+    return lines or ['']
 
 
 def get_tester(section_dict, maxlen=20):
@@ -177,35 +163,33 @@ def get_tester(section_dict, maxlen=20):
         lines = textwrap.wrap(str(maint), maxlen, break_long_words=False)
     except Exception:
         print()
-        print("section_dict: {}, maint: {}".format(section_dict, maint))
+        print(f'section_dict: {section_dict}, maint: {maint}')
         print()
         lines = []
-    if lines == []:
-        lines.append('')
-    return lines
+    return lines or ['']
 
 
 def get_docurl(section_dict, maxlen=70):
     maint = section_dict.get('documentation', '')
     lines = textwrap.wrap(maint, maxlen, break_long_words=True)
-    if lines == []:
-        lines.append('')
-    return lines
+    return lines or ['']
 
 
 def get_supurl(section_dict, maxlen=70):
     maint = section_dict.get('support', '')
     lines = textwrap.wrap(maint, maxlen, break_long_words=True)
-    if lines == []:
-        lines.append('')
-    return lines
+    return lines or ['']
 
 
 def html_escape(str):
     #    str = str.rstrip().replace('<', '&lt;').replace('>', '&gt;')
     #    str = str.rstrip().replace('(', '&#40;').replace(')', '&#41;')
     #    str = str.rstrip().replace("'", '&#39;').replace('"', '&quot;')
-    html = str.rstrip().replace("ä", '&auml;').replace("ö", '&ouml;').replace("ü", '&uuml;') if str else ""
+    html = (
+        str.rstrip().replace('ä', '&auml;').replace('ö', '&ouml;').replace('ü', '&uuml;')
+        if str
+        else ''
+    )
     return html
 
 
@@ -216,10 +200,21 @@ def build_pluginlist(plugin_type='all'):
     """
     result = []
     plugin_type = plugin_type.lower()
+
+    # avoid division by zero in for loop
+    if not plugins_git:
+        return []
+
+    num_pl = len(plugins_git)
+    count = 0
+
     for metaplugin in plugins_git:
+        count += 1
+        print(f'Lese Metadaten: {int(100 * count / num_pl)}%\r', end='')
         metafile = metaplugin + '/plugin.yaml'
         plg_dict = {}
-        if metaplugin in plugins_git:    # pluginsyaml_git
+        plgtype = type_unclassified
+        if metaplugin in plugins_git:  # pluginsyaml_git
             if os.path.isfile(metafile):
                 plugin_yaml = shyaml.yaml_load(metafile, ordered=True)
             else:
@@ -230,9 +225,9 @@ def build_pluginlist(plugin_type='all'):
                 except Exception as e:
                     raise AttributeError(f"'{metafile}: Exception {e}")
                 if section_dict is not None:
-                    if section_dict.get('type') is not None:
+                    if section_dict.get('type'):
                         if section_dict.get('type').lower() in plugin_types:
-                            plgtype = section_dict.get('type').lower()
+                            plgtype = section_dict.get('type', type_unclassified).lower()
                             plg_dict['name'] = metaplugin.lower()
                             plg_dict['type'] = plgtype
                             plg_dict['desc'] = get_description(section_dict, 85, language)
@@ -240,14 +235,10 @@ def build_pluginlist(plugin_type='all'):
                             plg_dict['test'] = get_tester(section_dict, 15)
                             plg_dict['doc'] = html_escape(section_dict.get('documentation', ''))
                             plg_dict['sup'] = html_escape(section_dict.get('support', ''))
-                        else:
-                            plgtype = type_unclassified
-                    else:
-                        plgtype = type_unclassified
-                        if plugin_type == type_unclassified:
-                            print("not found: plugin type '{}' defined in plugin '{}'".format(section_dict.get('type'), metaplugin))
-                else:
-                    plgtype = type_unclassified
+                    elif plugin_type == type_unclassified:
+                        print(
+                            f"not found: plugin type '{section_dict.get('type')}' defined in plugin '{metaplugin}'"
+                        )
 
                 if (plgtype == type_unclassified) and (plugin_yaml != ''):
                     plg_dict['name'] = metaplugin.lower()
@@ -257,11 +248,10 @@ def build_pluginlist(plugin_type='all'):
                     plg_dict['test'] = get_tester(section_dict, 15)
                     plg_dict['doc'] = html_escape(section_dict.get('documentation', ''))
                     plg_dict['sup'] = html_escape(section_dict.get('support', ''))
-                    print("unclassified: metafile = {}, plg_dict = {}".format(metafile, str(plg_dict)))
+                    print(f'unclassified: metafile = {metafile}, plg_dict = {plg_dict!s}')
 
                 plg_dict['desc'].append('')
             else:
-                plgtype = type_unclassified
                 plg_dict['name'] = metaplugin.lower()
                 plg_dict['type'] = type_unclassified
                 plg_dict['desc'] = ['No metadata (plugin.yaml) was provided for this plugin!']
@@ -282,29 +272,29 @@ def build_pluginlist(plugin_type='all'):
         if (plgtype == plugin_type) or (plugin_type == 'all'):
             # result.append(metaplugin)
             result.append(plg_dict)
+    print('\n')
     return result
 
 
 def write_dummyfile(configfile_dir, namelist):
     outf_name = os.path.join(configfile_dir, 'dummy_config.rst')
-    fh_dummy = open(outf_name, "w", encoding='UTF-8')
 
-    fh_dummy.write(':orphan:\n')
-    fh_dummy.write('\n')
-    fh_dummy.write('.. This file is only created to suppress Sphinx warnings about plugins config .rst files not beeing included in any toctree.\n')
-    fh_dummy.write('\n')
-    fh_dummy.write('.. toctree::\n')
-    fh_dummy.write('   :maxdepth: 2\n')
-    fh_dummy.write('   :glob:\n')
-    fh_dummy.write('   :titlesonly:\n')
-    fh_dummy.write('   :hidden:\n')
-    fh_dummy.write('\n')
-    for n in namelist:
-        # fh_dummy.write('   /doc/user/source/plugins_doc/config/' + n+'.rst\n')
-        fh_dummy.write('   ' + n + '.rst\n')
-
-    fh_dummy.close()
-    return
+    with open(outf_name, 'w', encoding='UTF-8') as fh_dummy:
+        fh_dummy.write(':orphan:\n')
+        fh_dummy.write('\n')
+        fh_dummy.write(
+            '.. This file is only created to suppress Sphinx warnings about plugins config .rst files not beeing included in any toctree.\n'
+        )
+        fh_dummy.write('\n')
+        fh_dummy.write('.. toctree::\n')
+        fh_dummy.write('   :maxdepth: 2\n')
+        fh_dummy.write('   :glob:\n')
+        fh_dummy.write('   :titlesonly:\n')
+        fh_dummy.write('   :hidden:\n')
+        fh_dummy.write('\n')
+        for n in namelist:
+            # fh_dummy.write('   /doc/user/source/plugins_doc/config/' + n+'.rst\n')
+            fh_dummy.write('   ' + n + '.rst\n')
 
 
 def write_heading(fh, heading, level):
@@ -327,13 +317,7 @@ def write_heading(fh, heading, level):
 
 def write_formatted(fh, str):
 
-    sl = str.split('\\n')
-    if 1 == 2:
-        print('strl: {}'.format(str))
-        print()
-        print('sl: {}'.format(sl))
-        input('Press RETURN')
-    for s in sl:
+    for s in str.split('\\n'):
         if s.startswith(' '):
             if not s.startswith(' -'):
                 s = s[1:]
@@ -344,12 +328,11 @@ def write_formatted(fh, str):
 # ==================================================================================
 #   write_struct
 
-def write_struct(fh, conf, key, language='de', level=0):
+
+def write_struct(fh, conf, key, level=0):
     """
     Create output for a .rst file with struct tree views
     """
-    # write_formatted(fh, get_doc_description(conf, language))
-
     indent = ' ' * 4
 
     def prefix(level):
@@ -395,12 +378,13 @@ def write_struct(fh, conf, key, language='de', level=0):
 # ==================================================================================
 #   write_configfile
 
+
 def write_configfile(plg, configfile_dir, language='de'):
     """
     Create a .rst file with configuration information for the passed plugin
     """
-#    lparameter_yaml = []
-#    no_lparameters = (lparameter_yaml == 'NONE')
+    #    lparameter_yaml = []
+    #    no_lparameters = (lparameter_yaml == 'NONE')
 
     plgname = plg['name']
 
@@ -444,13 +428,13 @@ def write_configfile(plg, configfile_dir, language='de'):
     # Create rST file
     # ---------------------------------
     outf_name = os.path.join(configfile_dir, plgname + '.rst')
-    fh = open(outf_name, "w", encoding='UTF-8')
+    fh = open(outf_name, 'w', encoding='UTF-8')
     fh.write('.. |_| unicode:: 0xA0\n')
     fh.write('\n')
 
     write_heading(fh, f"Plugin '{plgname}' Konfiguration", 1)
     fh.write('\n')
-    fh.write(f".. index:: Plugins; {plgname} Konfiguration\n")
+    fh.write(f'.. index:: Plugins; {plgname} Konfiguration\n')
     fh.write('\n')
 
     # --------------------------------------------
@@ -459,7 +443,7 @@ def write_configfile(plg, configfile_dir, language='de'):
     plgtype = plugin_yaml.get('type', '').lower()
     plgstate = plugin_yaml.get('state', '').lower()
     if plgtype != '':
-#        cwd = os.getcwd()
+        #        cwd = os.getcwd()
         plglogo = plgname + '/webif/static/img/plugin_logo'
         if os.path.isfile(plglogo + '.png'):
             ext = '.png'
@@ -470,15 +454,15 @@ def write_configfile(plg, configfile_dir, language='de'):
         else:
             ext = '.???'
         if os.path.isfile(plglogo + ext):
-            fh.write(".. image:: /plugins/" + plglogo + ext + "\n")
+            fh.write('.. image:: /plugins/' + plglogo + ext + '\n')
             fh.write('   :alt: plugin logo\n')
         else:
-            print(f"Plugin {plgname}: Kein Plugin-Logo gefunden, Typ-Logo verwendet.")
+            print(f'Plugin {plgname}: Kein Plugin-Logo gefunden, Typ-Logo verwendet.')
             fh.write('.. image:: /_static/img/' + plgtype + '.svg\n')
             fh.write('   :alt: plugin type logo\n')
         fh.write('   :width: 300px\n')
         fh.write('   :height: 300px\n')
-        fh.write('   :scale: 50 %\n')
+        fh.write('   :scale: 50%\n')
         fh.write('   :align: left\n')
         fh.write('\n')
         fh.write('.. |br| raw:: html\n')
@@ -486,19 +470,27 @@ def write_configfile(plg, configfile_dir, language='de'):
         fh.write('   <br />\n')
         fh.write('\n')
 
-    fh.write('Im folgenden sind etwaige Anforderungen und unterstützte Hardware beschrieben. Danach folgt die \
-              Beschreibung, wie das Plugin ' + bold(plgname) + ' konfiguriert wird. Außerdem ist im folgenden \
-              beschrieben, wie das Plugin in den Item Definitionen genutzt werden kann. [#f1]_ \n')
+    fh.write(
+        'Im folgenden sind etwaige Anforderungen und unterstützte Hardware beschrieben. Danach folgt die \
+              Beschreibung, wie das Plugin '
+        + bold(plgname)
+        + ' konfiguriert wird. Außerdem ist im folgenden \
+              beschrieben, wie das Plugin in den Item Definitionen genutzt werden kann. [#f1]_ \n'
+    )
     fh.write('\n')
-    fh.write(f"Es handelt sich bei diesem Plugin um ein **{plgtype} Plugin**.\n")
+    fh.write(f'Es handelt sich bei diesem Plugin um ein **{plgtype} Plugin**.\n')
     if plgstate == 'deprecated':
         fh.write('\n')
-        fh.write(f"**ACHTUNG**: Dieses Plugin ist als {plgstate} gekennzeichnet. Es wird empfohlen auf eine \
-                 Nachfolgelösung umzusteigen.\n")
+        fh.write(
+            f'**ACHTUNG**: Dieses Plugin ist als {plgstate} gekennzeichnet. Es wird empfohlen auf eine \
+                 Nachfolgelösung umzusteigen.\n'
+        )
     if plgstate == 'develop':
         fh.write('\n')
-        fh.write(f"**ACHTUNG**: Dieses Plugin ist als {plgstate} gekennzeichnet. Es kann daher sein, dass es \
-                 noch nicht sämtliche Funktionen unterstützt oder noch fehlerhaft ist.\n")
+        fh.write(
+            f'**ACHTUNG**: Dieses Plugin ist als {plgstate} gekennzeichnet. Es kann daher sein, dass es \
+                 noch nicht sämtliche Funktionen unterstützt oder noch fehlerhaft ist.\n'
+        )
 
     fh.write('\n')
     fh.write('\n')
@@ -513,7 +505,7 @@ def write_configfile(plg, configfile_dir, language='de'):
     if py_versioncomment != '':
         fh.write('.. attention::\n')
         fh.write('\n')
-        fh.write(f"    {py_versioncomment}\n")
+        fh.write(f'    {py_versioncomment}\n')
         fh.write('\n')
         fh.write('\n')
 
@@ -525,7 +517,13 @@ def write_configfile(plg, configfile_dir, language='de'):
     max_version = str(plugin_yaml.get('sh_maxversion', ''))
     min_py_version = str(plugin_yaml.get('py_minversion', ''))
     max_py_version = str(plugin_yaml.get('py_maxversion', ''))
-    if requirements[0] != '' or min_version != '' or max_version != '' or min_py_version != '' or max_py_version != '':
+    if (
+        requirements[0] != ''
+        or min_version != ''
+        or max_version != ''
+        or min_py_version != ''
+        or max_py_version != ''
+    ):
         write_heading(fh, 'Anforderungen', 2)
         fh.write('\n')
         write_formatted(fh, get_doc_description(plugin_yaml, language, 'requirements'))
@@ -552,7 +550,11 @@ def write_configfile(plg, configfile_dir, language='de'):
     # ---------------------------------
     write_heading(fh, 'Konfiguration', 2)
     fh.write('\n')
-    fh.write('Im folgenden ist beschrieben, wie das Plugin ' + bold(plgname) + ' konfiguriert wird. Außerdem ist im folgenden beschrieben, wie das Plugin in den Item Definitionen genutzt werden kann.\n')
+    fh.write(
+        'Im folgenden ist beschrieben, wie das Plugin '
+        + bold(plgname)
+        + ' konfiguriert wird. Außerdem ist im folgenden beschrieben, wie das Plugin in den Item Definitionen genutzt werden kann.\n'
+    )
     fh.write('\n')
 
     # ---------------------------------
@@ -560,14 +562,18 @@ def write_configfile(plg, configfile_dir, language='de'):
     # ---------------------------------
     write_heading(fh, 'Parameter', 1)
     fh.write('\n')
-    fh.write('Das Plugin verfügt über folgende Parameter, die in der Datei ``../etc/plugin.yaml`` konfiguriert werden:\n')
+    fh.write(
+        'Das Plugin verfügt über folgende Parameter, die in der Datei ``../etc/plugin.yaml`` konfiguriert werden:\n'
+    )
     fh.write('\n')
 
     if not parameter_yaml:
         if parameter_yaml == {}:
             fh.write('**Keine**\n')
         else:
-            fh.write('Keine Parameter in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n')
+            fh.write(
+                'Keine Parameter in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n'
+            )
     else:
         for p in sorted(parameter_yaml):
             # ---------------------------------
@@ -595,7 +601,9 @@ def write_configfile(plg, configfile_dir, language='de'):
                 fh.write(' - Mögliche Werte:\n')
                 fh.write('\n')
                 for index, v in enumerate(validlist):
-                    desc = get_doc_description(parameter_yaml[p], language, key='valid_list_description', index=index)
+                    desc = get_doc_description(
+                        parameter_yaml[p], language, key='valid_list_description', index=index
+                    )
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
                     fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -606,14 +614,18 @@ def write_configfile(plg, configfile_dir, language='de'):
     # ---------------------------------
     write_heading(fh, 'Item Attribute', 1)
     fh.write('\n')
-    fh.write('Das Plugin unterstützt folgende Item Attribute, die in den Dateien im Verzeichnis  ``../items`` verwendet werden:\n')
+    fh.write(
+        'Das Plugin unterstützt folgende Item Attribute, die in den Dateien im Verzeichnis  ``../items`` verwendet werden:\n'
+    )
     fh.write('\n')
 
     if not iattributes_yaml:
         if iattributes_yaml == {}:
             fh.write('**Keine**\n')
         else:
-            fh.write('Keine Item Attribute in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n')
+            fh.write(
+                'Keine Item Attribute in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n'
+            )
     else:
         for a in sorted(iattributes_yaml):
             # ---------------------------------
@@ -641,7 +653,9 @@ def write_configfile(plg, configfile_dir, language='de'):
                 fh.write(' - Mögliche Werte:\n')
                 fh.write('\n')
                 for index, v in enumerate(validlist):
-                    desc = get_doc_description(iattributes_yaml[a], language, key='valid_list_description', index=index)
+                    desc = get_doc_description(
+                        iattributes_yaml[a], language, key='valid_list_description', index=index
+                    )
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
                     fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -652,7 +666,9 @@ def write_configfile(plg, configfile_dir, language='de'):
     # ---------------------------------
     write_heading(fh, 'Item-Structs', 1)
     fh.write('\n')
-    fh.write('Das Plugin stellt die folgenden Item-Structs zur Verfügung. Diese Informationen sind aus der `plugin.yaml` entnommen und möglicherweise nicht vollständig.\n')
+    fh.write(
+        'Das Plugin stellt die folgenden Item-Structs zur Verfügung. Diese Informationen sind aus der `plugin.yaml` entnommen und möglicherweise nicht vollständig.\n'
+    )
     fh.write('\n')
 
     if not structs_yaml:
@@ -668,21 +684,25 @@ def write_configfile(plg, configfile_dir, language='de'):
             except Exception:
                 pass
             fh.write('\n')
-            write_struct(fh, structs_yaml[struct], struct, language)
+            write_struct(fh, structs_yaml[struct], struct)
 
     # ---------------------------------
     # write logic_parameter section
     # ---------------------------------
     write_heading(fh, 'Logik Parameter', 1)
     fh.write('\n')
-    fh.write('Das Plugin verfügt über folgende Parameter, die in der Datei ``../etc/logic.yaml`` konfiguriert werden:\n')
+    fh.write(
+        'Das Plugin verfügt über folgende Parameter, die in der Datei ``../etc/logic.yaml`` konfiguriert werden:\n'
+    )
     fh.write('\n')
 
     if not lparameter_yaml:
         if lparameter_yaml == {}:
             fh.write('**Keine**\n')
         else:
-            fh.write('Keine Logik Parameter in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n')
+            fh.write(
+                'Keine Logik Parameter in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n'
+            )
     else:
         for l in sorted(lparameter_yaml):
             # ---------------------------------
@@ -710,7 +730,9 @@ def write_configfile(plg, configfile_dir, language='de'):
                 fh.write(' - Mögliche Werte:\n')
                 fh.write('\n')
                 for index, v in enumerate(validlist):
-                    desc = get_doc_description(lparameter_yaml[l], language, key='valid_list_description', index=index)
+                    desc = get_doc_description(
+                        lparameter_yaml[l], language, key='valid_list_description', index=index
+                    )
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
                     fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -722,7 +744,8 @@ def write_configfile(plg, configfile_dir, language='de'):
     write_heading(fh, 'Plugin Functions', 1)
     fh.write('\n')
     fh.write(
-        'Das Plugin verfügt über folgende öffentliche Funktionen, die z.B. in Logiken aufgerufen werden können.\n')
+        'Das Plugin verfügt über folgende öffentliche Funktionen, die z.B. in Logiken aufgerufen werden können.\n'
+    )
     fh.write('\n')
 
     if not functions_yaml:
@@ -730,7 +753,8 @@ def write_configfile(plg, configfile_dir, language='de'):
             fh.write('**Keine**\n')
         else:
             fh.write(
-                'Keine Funktionen in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n')
+                'Keine Funktionen in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n'
+            )
     else:
         for f in sorted(functions_yaml):
             # ---------------------------------
@@ -750,10 +774,10 @@ def write_configfile(plg, configfile_dir, language='de'):
                                 default = " '" + default + "'"
                             fp += '=' + default
                     else:
-                        print("\n\nFEHLER: Ungültige Plugin-Funktion:")
-                        print(f"Plugin: {plgname}")
-                        print(f"par   : {par}\n")
-                        print(f"func_param_yaml: {func_param_yaml}\n")
+                        print('\n\nFEHLER: Ungültige Plugin-Funktion:')
+                        print(f'Plugin: {plgname}')
+                        print(f'par   : {par}\n')
+                        print(f'func_param_yaml: {func_param_yaml}\n')
 
             write_heading(fh, f + '(' + fp + ')', 2)
             fh.write('\n')
@@ -783,7 +807,9 @@ def write_configfile(plg, configfile_dir, language='de'):
                 fh.write(' - Mögliche Werte:\n')
                 fh.write('\n')
                 for index, v in enumerate(validlist):
-                    desc = get_doc_description(functions_yaml[f], language, key='valid_list_description', index=index)
+                    desc = get_doc_description(
+                        functions_yaml[f], language, key='valid_list_description', index=index
+                    )
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
                     fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -813,7 +839,12 @@ def write_configfile(plg, configfile_dir, language='de'):
                         fh.write(' - Mögliche Werte:\n')
                         fh.write('\n')
                         for index, v in enumerate(validlist):
-                            desc = get_doc_description(func_param_yaml[par], language, key='valid_list_description', index=index)
+                            desc = get_doc_description(
+                                func_param_yaml[par],
+                                language,
+                                key='valid_list_description',
+                                index=index,
+                            )
                             if desc != '':
                                 desc = ' |_| - |_| ' + desc
                             fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -822,7 +853,11 @@ def write_configfile(plg, configfile_dir, language='de'):
     fh.write('\n')
 
     if os.path.isfile(plg['name'] + '/README.md'):
-        fh.write('.. [#f1] Diese Seite wurde aus den Metadaten des Plugins erzeugt. Für den Fall, dass diese Seite nicht alle benötigten Informationen enthält, bitte auf die englischsprachige :doc:`README Datei <../../plugins/' + plgname + '/README>` des Plugins zugreifen.\n')
+        fh.write(
+            '.. [#f1] Diese Seite wurde aus den Metadaten des Plugins erzeugt. Für den Fall, dass diese Seite nicht alle benötigten Informationen enthält, bitte auf die englischsprachige :doc:`README Datei <../../plugins/'
+            + plgname
+            + '/README>` des Plugins zugreifen.\n'
+        )
     else:
         fh.write('.. [#f1] Diese Seite wurde aus den Metadaten des Plugins erzeugt.\n')
 
@@ -835,7 +870,6 @@ def write_configfile(plg, configfile_dir, language='de'):
 #
 
 if __name__ == '__main__':
-
     #    print ('Number of arguments:', len(sys.argv), 'arguments.')
     #    print ('Argument List:', str(sys.argv))
 
@@ -848,7 +882,7 @@ if __name__ == '__main__':
         language = 'en'
 
     global docu_type
-    docu_type = start_dir.split('/')[-1:][0]     # developer / user
+    docu_type = start_dir.split('/')[-1:][0]  # developer / user
 
     print('Creating the configuration documentation pages for the plugins')
     print('Start directory        = ' + start_dir)
@@ -871,39 +905,58 @@ if __name__ == '__main__':
     print('--- Liste der Plugins auf github (' + str(len(plugins_git)) + '):')
 
     pluginsyaml_git = get_pluginyamllist_fromgit()
-#    if not 'xmpp' in plugins_git:
-#        plugins_git.append('xmpp')
+    #    if not 'xmpp' in plugins_git:
+    #        plugins_git.append('xmpp')
 
     print('--- Liste der Plugins mit Metadaten auf github (' + str(len(pluginsyaml_git)) + '):')
     print()
 
-    plugin_rst_dir = start_dir + '/source'
+    if docu_type == 'doc':
+        plugin_rst_dir = os.path.join(start_dir, 'user', 'source')
+    else:
+        plugin_rst_dir = os.path.join(start_dir, 'source')
     print('zu schreiben in: ' + plugin_rst_dir)
 
     plugin_types = []
     for pl in plugin_sections:
         plugin_types.append(pl[0])
 
-    plglist = build_pluginlist()
-
     configfile_dir = plugin_rst_dir + '/' + 'plugins_doc/config'
+    skip = 0
     if os.path.exists(configfile_dir):
-        # delete files in directory
-        for the_file in os.listdir(configfile_dir):
-            file_path = os.path.join(configfile_dir, the_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-            except Exception as e:
-                print(e)
+        # try to check which files don't need recreating
+        plugins_new = []
+
+        for plg in plugins_git:
+            plg_file = os.path.join(plugindirectory, plg, 'plugin.yaml')
+            rst_file = os.path.join(configfile_dir, plg + '.rst')
+            if not os.path.exists(rst_file):
+                plugins_new.append(plg)
+                continue
+            if not os.path.exists(plg_file):
+                plugins_new.append(plg)
+                continue
+            plg_time = os.path.getmtime(plg_file)
+            rst_time = os.path.getmtime(rst_file)
+            # recreate if rst file is older than plugin.yaml
+            if rst_time < plg_time:
+                plugins_new.append(plg)
+            else:
+                skip += 1
+        plugins_git = plugins_new
     else:
         os.makedirs(configfile_dir)
+    print('\n')
+
+    print(f'zu schreiben: {len(plugins_git)} Dateien, {skip} noch aktuell')
+
+    plglist = build_pluginlist()
 
     dummy_list = []
     print()
     for plg in plglist:
         write_configfile(plg, configfile_dir, language)
-        print('plugin {}: ./config/{}.rst'.format(plg['name'], plg['name']), ' ' * 20, end='\r')
+        print(f'plugin {plg["name"]}: ./config/{plg["name"]}.rst', ' ' * 20, end='\r')
         dummy_list.append(plg['name'])
     write_dummyfile(configfile_dir, dummy_list)
     print(' ' * 50)
