@@ -47,8 +47,8 @@ These files contain
 """
 
 import os
-import sys
 import subprocess
+import sys
 import textwrap
 
 print('')
@@ -62,151 +62,106 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # um im Test-build_doc Umfeld zu laufen:
 sys.path.insert(0, '..')
 sys.path.insert(0, '../lib')
-import shyaml  # noqa
-
+import shyaml  # type: ignore  # not in path
 
 type_unclassified = 'unclassified'
-plugin_sections = [
-    ['gateway', 'Gateway', 'Gateway'],
-    ['interface', 'Interface', 'Interface'],
-    ['protocol', 'Protocol', 'Protokoll'],
-    ['system', 'System', 'System'],
-    ['web', 'Web/Cloud', 'Web/Cloud'],
-    [type_unclassified, 'Non classified', 'nicht klassifizierte'],
-    ['all', 'All plugins', 'Alle Plugins'],
-]
+plugin_sections = {
+    'gateway': {'de': 'Gateway', 'en': 'Gateway'},
+    'interface': {'de': 'Interface', 'en': 'Interface'},
+    'protocol': {'de': 'Protokoll', 'en': 'Protocol'},
+    'system': {'de': 'System', 'en': 'System'},
+    'web': {'de': 'Web/Cloud', 'en': 'Web/Cloud'},
+    type_unclassified: {'de': 'nicht klassifizierte', 'en': 'non classified'},
+    'all': {'de': 'Alle Plugins', 'en': 'All plugins'},
+}
+
+v = {
+    'type': {'de': 'Typ', 'en': 'type'},
+    'conf': {'de': 'Konfiguration', 'en': 'Configuration'},
+    'desc': {'de': 'Beschreibung', 'en': 'Description'},
+    'info': {'de': 'zusätzliche Infos', 'en': 'additional information'},
+    'supp': {'de': 'Unterstützung', 'en': 'support'},
+    'pver': {'de': 'maximale Python-Version', 'en': 'maximum Python version'},
+    'sver': {'de': 'maximale SmartHomeNG-Version', 'en': 'maximum SmartHomeNG-Version'},
+    'stat': {'de': 'Plugin-Status', 'en': 'Plugin status'},
+}
+
+default_lang = 'en'
 
 
-def bold(s):
+def bold(s: str) -> str:
+    """mark string as bold if not empty"""
     return '**' + s + '**' if s else ''
 
 
-def get_pluginlist_fromgit():
-    plglist = []
+def get_list_fromgit(name: str):
+    """get filelist via git and return all matching files at first directory level"""
+    # this could be written as a single nested comprehension, but gets quite unreadable
+    # we gain speedup by using comprehensions
     plg_git = (
-        subprocess.check_output(['git', 'ls-files', '*/__init__.py'], stderr=subprocess.STDOUT)
+        subprocess.check_output(['git', 'ls-files', f'*/{name}'], stderr=subprocess.STDOUT)
         .decode()
         .strip('\n')
+        .split('\n')
     )
-    for plg in plg_git.split('\n'):
-        if plg.split('/')[1] == '__init__.py':
-            # print(plg.split('/')[0], '   -   ', plg)
-            plglist.append(plg.split('/')[0])
+    plglist = [x[0] for x in (p.split('/') for p in plg_git) if x[1] == name]
     return plglist
 
 
-def get_local_pluginlist():
-    plglist = os.listdir('.')
+def get_pluginlist_fromgit():
+    """get filelist of __init__.py files"""
+    return get_list_fromgit('__init__.py')
 
-    for entry in plglist:
-        if entry[0] in ['.', '_'] or entry == 'deprecated_plugins':
-            plglist.remove(entry)
-    for entry in plglist:
-        if entry[0] in ['.', '_']:
-            plglist.remove(entry)
-    for entry in plglist:
-        if entry[0] in ['.', '_']:
-            plglist.remove(entry)
+
+def get_local_pluginlist():
+    """like get_list_fromgit, but list files from local dir"""
+    plglist = [x for x in os.listdir('.') if x[0] not in ['.', '_'] and x != 'deprecated_plugins']
     return plglist
 
 
 def get_pluginyamllist_fromgit():
-    plglist = []
-    plg_git = (
-        subprocess.check_output(['git', 'ls-files', '*/plugin.yaml'], stderr=subprocess.STDOUT)
-        .decode()
-        .strip('\n')
-    )
-    for plg in plg_git.split('\n'):
-        if plg.split('/')[1] == 'plugin.yaml':
-            plglist.append(plg.split('/')[0])
-    return plglist
+    """get filelist of plugin.yaml files"""
+    return get_list_fromgit('plugin.yaml')
 
 
-def get_description(section_dict, maxlen=70, lang='en'):
+def get_description(section_dict: dict, lang: str = 'en') -> str:
+    """get description from dict in specified or fallback language as single line string"""
     desc = ''
-    if lang == 'en':
-        lang2 = 'de'
-    else:
-        lang2 = 'en'
     try:
-        desc = section_dict['description'].get(lang, '')
+        desc = (section_dict['description'].get(lang, '') or '').replace('\n', ' ')
     except Exception:
         pass
-    if desc == '':
+    if not desc:
         try:
-            desc = section_dict['description'].get(lang2, '')
+            lang2 = 'de' if lang == 'en' else default_lang
+            desc = (section_dict['description'].get(lang2, '') or '').replace('\n', ' ')
         except Exception:
             pass
-    lines = textwrap.wrap(desc, maxlen, break_long_words=False)
-    if lines == []:
-        lines.append('')
-    return lines
+    return desc
 
 
-def get_version(section_dict, maxlen=8):
+def get_info(from_dict: dict, section: str, link: bool = False) -> str:
+    # as None can be returned as a value, or-it with '' to guarantee a str
+    # remove newlines as we don't need visual layout
+    text = (from_dict.get(section, '') or '').replace('\n', ' ')
+
+    if link and text and not text.startswith('https://'):
+        text = 'https://' + text
+    if link:
+        text = html_escape(text)
+    return text
+
+
+def get_version(section_dict: dict) -> str:
+    """return version from dict with v or empty string"""
     version = section_dict.get('version', '')
     if version != '':
         version = 'v' + version
-    lines = textwrap.wrap(version, maxlen, break_long_words=False)
-    if lines == []:
-        lines.append('')
-    return lines
+    return version
 
 
-def get_state(section_dict, maxlen=20):
-    state = section_dict.get('state', '')
-
-    # import textwrap
-    # lines = textwrap.wrap(state, maxlen, break_long_words=False)
-    # if lines == []:
-    #    lines.append('')
-    # return lines
-    return state
-
-
-def get_maintainer(section_dict, maxlen=20):
-    maint = section_dict.get('maintainer', '')
-    lines = textwrap.wrap(maint, maxlen, break_long_words=False)
-    if lines == []:
-        lines.append('')
-    return lines
-
-
-def get_tester(section_dict, maxlen=20):
-    maint = section_dict.get('tester', '')
-    lines = []
-    try:
-        lines = textwrap.wrap(str(maint), maxlen, break_long_words=False)
-    except Exception:
-        print()
-        print(f'section_dict: {section_dict}, maint: {maint}')
-        print()
-    if lines == []:
-        lines.append('')
-    return lines
-
-
-def get_docurl(section_dict, maxlen=70):
-    maint = section_dict.get('documentation', '')
-    lines = textwrap.wrap(maint, maxlen, break_long_words=True)
-    if lines == []:
-        lines.append('')
-    return lines
-
-
-def get_supurl(section_dict, maxlen=70):
-    maint = section_dict.get('support', '')
-    lines = textwrap.wrap(maint, maxlen, break_long_words=True)
-    if lines == []:
-        lines.append('')
-    return lines
-
-
-def html_escape(str):
-    #    str = str.rstrip().replace('<', '&lt;').replace('>', '&gt;')
-    #    str = str.rstrip().replace('(', '&#40;').replace(')', '&#41;')
-    #    str = str.rstrip().replace("'", '&#39;').replace('"', '&quot;')
+def html_escape(str) -> str:
+    """minimal html escape for umlauts"""
     html = (
         str.rstrip().replace('ä', '&auml;').replace('ö', '&ouml;').replace('ü', '&uuml;')
         if str
@@ -215,144 +170,182 @@ def html_escape(str):
     return html
 
 
-def build_pluginlist():
+def build_pluginlist(plugins: list[str], language: str = 'de') -> dict:
     """
     Return a list of dicts with a dict for each plugin of the requested type
-    The dict contains the plugin name, type and description
+    The dict contains the plugin name, type and description as strings
     """
-    results = {type_: [] for type_ in plugin_types if type_ != 'all'}
-    changed = {type_: False for type_ in plugin_types if type_ != all}
+    results = {type_: list() for type_ in plugin_sections}
 
     # prevent division by zero
-    if not plugins_git:
+    if not plugins:
         return results
 
-    num_pl = len(plugins_git)
+    num_pl = len(plugins)
     count = 0
 
     # read all plugins once
-    for metaplugin in plugins_git:
+    for metaplugin in plugins:
         count += 1
         print(f'Lese Metadaten: {int(100 * count / num_pl)}%\r', end='')
-        metafile = metaplugin + '/plugin.yaml'
         plg_dict = {}
+        plg_dict['name'] = metaplugin.lower()
         plg_dict['type'] = type_unclassified
         plgtype = type_unclassified
-        if os.path.isfile(metafile):
-            plugin_yaml = shyaml.yaml_load(metafile)
-        else:
-            plugin_yaml = ''
-        if plugin_yaml != '':
+
+        metafile = os.path.join(metaplugin, 'plugin.yaml')
+        plugin_yaml = shyaml.yaml_load(metafile)
+        if plugin_yaml:
             section_dict = plugin_yaml.get('plugin')
-            if section_dict is not None:
-                plg_dict['name'] = metaplugin.lower()
+            if section_dict:
                 plg_dict['version'] = get_version(section_dict)
                 plg_dict['sh_minversion'] = str(section_dict.get('sh_minversion', ''))
                 plg_dict['sh_maxversion'] = str(section_dict.get('sh_maxversion', ''))
                 plg_dict['py_minversion'] = str(section_dict.get('py_minversion', ''))
                 plg_dict['py_maxversion'] = str(section_dict.get('py_maxversion', ''))
 
-                if section_dict.get('type') is not None:
-                    if section_dict.get('type').lower() in plugin_types:
-                        plgtype = section_dict.get('type').lower()
-                        plg_dict['state'] = get_state(section_dict)
-                        plg_dict['desc'] = get_description(section_dict, 85, language)
-                        plg_dict['maint'] = get_maintainer(section_dict, 15)
-                        plg_dict['test'] = get_tester(section_dict, 15)
-                        plg_dict['doc'] = html_escape(section_dict.get('documentation', ''))
-                        plg_dict['sup'] = html_escape(section_dict.get('support', ''))
-                    plg_dict['type'] = plgtype
+                try:
+                    if section_dict['type'].lower() in plugin_sections:
+                        plgtype = section_dict['type'].lower()
+                except Exception:
+                    pass
+                plg_dict['type'] = plgtype
 
-            if (plgtype == type_unclassified) and (plugin_yaml != ''):
-                plg_dict['desc'] = get_description(section_dict, 85, language)
-                plg_dict['maint'] = get_maintainer(section_dict, 15)
-                plg_dict['test'] = get_tester(section_dict, 15)
-                plg_dict['doc'] = html_escape(section_dict.get('documentation', ''))
-                plg_dict['sup'] = html_escape(section_dict.get('support', ''))
-                print('')
-                print(f'> unclassified plugin: metafile = {metafile}, plg_dict = {plg_dict!s}')
+                plg_dict['desc'] = get_description(section_dict, language)
+                plg_dict['maint'] = get_info(section_dict, 'maintainer')
+                plg_dict['test'] = get_info(section_dict, 'tester')
 
-            plg_dict['desc'].append('')
+                plg_dict['state'] = get_info(section_dict, 'state')
+                plg_dict['doc'] = get_info(section_dict, 'documentation', link=True)
+                plg_dict['sup'] = get_info(section_dict, 'support', link=True)
+
         else:
-            plg_dict['name'] = metaplugin.lower()
             plg_dict['version'] = ''
-            plg_dict['type'] = type_unclassified
-            plg_dict['desc'] = ['No metadata (plugin.yaml) was provided for this plugin!']
-            plg_dict['maint'] = ['']
-            plg_dict['test'] = ['']
+            plg_dict['desc'] = 'No metadata (plugin.yaml) was provided for this plugin!'
+            plg_dict['maint'] = ''
+            plg_dict['test'] = ''
             plg_dict['doc'] = ''
             plg_dict['sup'] = ''
 
-        # Adjust list lengths
-        maxlen = max(len(plg_dict['desc']), len(plg_dict['maint']), len(plg_dict['test']))
-        while len(plg_dict['desc']) < maxlen:
-            plg_dict['desc'].append('')
-        while len(plg_dict['maint']) < maxlen:
-            plg_dict['maint'].append('')
-        while len(plg_dict['test']) < maxlen:
-            plg_dict['test'].append('')
-
-        # check if plugin.yaml is older than plgtype rst file -> skip
-        # plg_file = metafile
-        rst_filename = os.path.join(plugin_rst_dir, 'plugins_doc', 'plugins_' + plgtype + '.rst')
-        if not os.path.exists(rst_filename) or os.path.getmtime(metafile) > os.path.getmtime(
-            rst_filename
-        ):
-            changed[plgtype] = True
-
-        if plgtype != 'all':
-            results[plgtype].append(plg_dict)
-            # print(f'added {metaplugin} to {plgtype}')
+        results[plgtype].append(plg_dict)
+        results['all'].append(plg_dict)
+        # print(f'added {metaplugin} to {plgtype}')
 
     print('\n')
-
-    for plgtype in changed:
-        if not changed[plgtype]:
-            results[plgtype] = None
-
     return results
 
 
-def write_rstfile(plgtype='all', plgtype_print='', heading=''):
+def flatten(obj):
+    """return flat list from nested list"""
+    if isinstance(obj, list):
+        for item in obj:
+            yield from flatten(item)
+    else:
+        yield obj
+
+
+def make_table_lines(lines: list, indent: int = 3, top: bool = False, wide: bool = False) -> list:
+    """
+    take a list and return rST lines
+
+    If top is set, the list looks like
+    * - foo
+      - bar
+      - baz
+
+    If top is not set, the list looks like
+    - foo
+
+      bar
+
+      baz
+    """
+
+    ind = ' ' * indent
+
+    first, follow = '- ', '  '
+    if top:
+        first, follow = '* - ', '  - '
+
+    result = []
+    if not lines or lines == [None]:
+        return []
+
+    for i, line in enumerate(lines):
+        if isinstance(line, list):
+            if top:
+                result += [ind + l for l in line if line]
+            else:
+                result += [l for x in line if line for l in (ind + x, ind)][:-1]
+        else:
+            result += [ind + (follow if i else first) + line]
+            if wide:
+                result += ['']
+    if result[-1:] == '':
+        del result[-1:]
+    return result
+
+
+def make_table_bullet_lines(lines: list, indent: int = 3) -> list:
+    """
+    take a list and return rST lines with bullets
+
+    (indented) list looks like
+
+      + foo
+      + bar
+      + baz
+
+    with correct empty line before and after
+
+    If lines is empty, return
+    <empty>
+    |br|
+    <empty>
+
+    to enforce one empty line
+    """
+    if not lines or lines == [[], []]:
+        return ['', '|br|', '']
+
+    ind = ' ' * indent
+
+    result = ['']
+    for line in flatten(lines):
+        result += [ind + '+ ' + line]
+    result += ['']
+    return result
+
+
+def write_rstfile(
+    results, plugin_rst_dir, plgtype='all', plgtype_print='', heading='', language='en'
+):
     """
     Create a .rst file for each plugin category
     """
-    fh_dummy_used = False
 
-    if heading == '':
+    if not heading:
         title = plgtype + ' Plugins'
     else:
         title = heading
 
-    if plgtype == 'all':
-        plglist = [plg_dict for type_ in results for plg_dict in results[type_]]
-    else:
-        plglist = [plg_dict for plg_dict in results[plgtype]]
+    plglist = [plg_dict for plg_dict in results[plgtype]]
 
-    rst_filename = 'plugins_doc/plugins_' + plgtype.lower() + '.rst'
-    rst_dummyname = 'plugins_doc/dummy_' + plgtype.lower() + '.rst'
+    rst_filename = os.path.join('plugins_doc', 'plugins_' + plgtype.lower() + '.rst')
+    rst_dummyname = os.path.join('plugins_doc', 'dummy_' + plgtype.lower() + '.rst')
     print(f'Datei: {rst_filename}{" " * (26 - len(rst_filename))}  -  {len(plglist)} {title}')
 
     #    print("> Opening file "+plugin_rst_dir+'/'+rst_filename)
-    fh = open(plugin_rst_dir + '/' + rst_filename, 'w')
+    with (
+        open(plugin_rst_dir + '/' + rst_filename, 'w') as fh,
+        open(plugin_rst_dir + '/' + rst_dummyname, 'w') as fh_dummy,
+    ):
+        #    fh.write(title+'\n')
+        #    fh.write('-'*len(title)+'\n')
+        # if plgtype != type_unclassified:
+        #     fh.write(f'.. index:: Plugin Type; {plgtype_print}\n\n')
+        fh.write(f'.. include:: /plugins_doc/plugins_{plgtype}_header.rst\n\n')
 
-    #    fh.write(title+'\n')
-    #    fh.write('-'*len(title)+'\n')
-    if plgtype != type_unclassified:
-        fh.write('.. index:: Plugin Type; ' + plgtype_print + '\n')
-        fh.write('\n')
-    fh.write('.. include:: /plugins_doc/plugins_' + plgtype + '_header.rst\n')
-    fh.write('\n')
-
-    if len(plglist) == 0:
-        if language == 'de':
-            fh.write('Zurzeit gibt es keine noch nicht klassifizierten Plugins.\n')
-        else:
-            fh.write('At the moments there are no plugins that have not been classified.\n')
-    else:
-        if not fh_dummy_used:
-            fh_dummy = open(plugin_rst_dir + '/' + rst_dummyname, 'w')
-            fh_dummy_used = True
         # write toctree to dummy file to suppress warnings for not included README.md files.
         fh_dummy.write(':orphan:\n')
         fh_dummy.write('\n')
@@ -374,195 +367,97 @@ def write_rstfile(plgtype='all', plgtype_print='', heading=''):
         fh.write('   :titlesonly:\n')
         fh.write('   :hidden:\n')
         fh.write('\n')
-        for plg in plglist:
-            if os.path.isfile(plg['name'] + '/README.md'):
-                fh_dummy.write('   /plugins/' + plg['name'] + '/README.md\n')
-            if docu_type == 'user':
-                fp = plg['name'] + '/user_doc'
-                # fp_ignore = plg['name']+'/developer_doc'
-                if os.path.isfile(fp + '.rst') or os.path.isfile(fp + '.md'):
-                    fh.write('   /plugins/' + fp + '\n')
-                # if os.path.isfile(fp_ignore+'.rst') or os.path.isfile(fp_ignore+'.md'):
-                # fh_dummy.write('   /plugins/'+fp_ignore+'\n')
-            elif docu_type == 'developer':
-                fp = plg['name'] + '/developer_doc'
-                # fp_ignore = plg['name']+'/user_doc'
-                if os.path.isfile(fp + '.rst') or os.path.isfile(fp + '.md'):
-                    fh.write('   /plugins/' + fp + '\n')
-                else:
-                    fp = plg['name'] + '/user_doc_en'
-                    if os.path.isfile(fp + '.rst') or os.path.isfile(fp + '.md'):
-                        fh.write('   /plugins/' + fp + '\n')
-                        # if os.path.isfile(fp_ignore+'.rst') or os.path.isfile(fp_ignore+'.md'):
-                        # fh_dummy.write('   /plugins/'+fp_ignore+'\n')
+
+        if not plglist:
+            if language == 'de':
+                fh.write(f'Zur Zeit gibt es keine Plugins des Typs {plgtype_print}.\n')
             else:
-                fh.write('   /plugins/' + plg['name'] + '/README.md\n')
+                fh.write(f'At the moment there are no plugins of type {plgtype_print}\n')
+            return
+
+        for plg in plglist:
+            if os.path.isfile(os.path.join(plg['name'], 'README.md')):
+                fh_dummy.write(f'   /plugins/{plg["name"]}/README.md\n')
+
+            fp = os.path.join(plg['name'], 'user_doc')
+            if os.path.isfile(fp + '.rst') or os.path.isfile(fp + '.md'):
+                fh.write(f'   /plugins/{fp}\n')
+
+            # fh.write(f'   config/{plg["name"]}\n')
         fh.write('\n')
 
         # write table with details
-        # fh.write('.. include:: /plugins_doc/plugins_'+plgtype+'_header.rst\n')
-        fh.write('\n')
-        fh.write('\n')
-        fh.write('.. table:: \n')
-        fh.write('   :widths: grid\n')
-        fh.write('\n')
-        fh.write(
-            '   +-'
-            + '-' * 65
-            + '-+-'
-            + '-' * 8
-            + '-+-'
-            + '-' * 165
-            + '-+-----------------+-----------------+\n'
-        )
-        if language == 'de':
-            fh.write(
-                f'   | {"Plugin (Konfiguration)":<65.65} | Version  | {"Beschreibung":<165.165} | Maintainer      | Tester          |\n'
-            )
-        else:
-            fh.write(
-                f'   | {"Plugin (Configuration)":<65.65} | Version  | {"Description":<165.165} | Maintainer      | Tester          |\n'
-            )
-            # fh.write('   | {p:<65.65} | Version  | {b:<165.165} | Maintainer      | Tester          |\n'.format(p='Plugin', b='Description'))
-        fh.write(
-            '   +='
-            + '=' * 65
-            + '=+='
-            + '=' * 8
-            + '=+='
-            + '=' * 165
-            + '=+=================+=================+\n'
-        )
+        fh.write(f"""
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - Plugin ({v['conf'][language]})
+     - Version
+     - {v['desc'][language]}
+     - Maintainer
+     - Tester""")
+
         for plg in plglist:
-            plg_readme_link = ':doc:`' + plg['name'] + ' </plugins/' + plg['name'] + '/README.md>`'
-            plg_readme_link = ':doc:`' + plg['name'] + ' <../plugins/' + plg['name'] + '/README>`'
-            if os.path.isfile(plugin_rst_dir + '/' + 'plugins_doc/config/' + plg['name'] + '.rst'):
+            if os.path.isfile(
+                os.path.join(plugin_rst_dir, 'plugins_doc', 'config', plg['name'] + '.rst')
+            ):
                 # a generated <config>.rst exists
-                plg_readme_link = ':doc:`' + plg['name'] + ' <config/' + plg['name'] + '>`'
+                plg_readme_link = f':doc:`{plg["name"]} <config/{plg["name"]}>`'
             else:
                 # no generated <config>.rst exists (for english developer documentation
-                # -> test if a README really exists
-                if not os.path.isfile(plg['name'] + '/README.md'):
-                    plg_readme_link = plg['name']
+                plg_readme_link = plg['name']
 
-            # fh.write('   | {plg:<65.65} | {desc:<165.165} | {maint:<15.15} | {test:<15.15} |\n'.format(plg=plg['name'], desc=plg['desc'][0], maint=plg['maint'][0], test=plg['test'][0]))
-            fh.write(
-                f'   | {plg_readme_link:<65.65} | {plg["version"][0]:<8.8} | {plg["desc"][0]:<165.165} | {plg["maint"][0]:<15.15} | {plg["test"][0]:<15.15} |\n'
-            )
-            for lr in range(1, len(plg['desc'])):
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | {plg["desc"][lr]:<165.165} | {plg["maint"][lr]:<15.15} | {plg["test"][lr]:<15.15} |\n'
-                )
-            if plg['doc'] != '':
-                if language == 'de':
-                    plg['doc'] = '`' + plg['name'] + ' zusätzliche Infos <' + plg['doc'] + '>`_'
-                else:
-                    plg['doc'] = '`' + plg['name'] + ' additional info <' + plg['doc'] + '>`_'
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | - {plg["doc"]:<163.163} | {"":<15.15} | {"":<15.15} |\n'
-                )
-            if plg['sup'] != '':
-                # if plg['doc'] != '':
-                #     fh.write('   | {plg:<65.65} |   {desc:<163.163} | {maint:<15.15} | {test:<15.15} |\n'.format(plg='', desc='', maint='', test=''))
-                if language == 'de':
-                    plg['sup'] = '`' + plg['name'] + ' Unterstützung <' + plg['sup'] + '>`_'
-                else:
-                    plg['sup'] = '`' + plg['name'] + ' support <' + plg['sup'] + '>`_'
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | - {plg["sup"]:<163.163} | {"":<15.15} | {"":<15.15} |\n'
-                )
-            else:
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | {"":<165.165} | {"":<15.15} | {"":<15.15} |\n'
-                )
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | {".":<165.165} | {"":<15.15} | {"":<15.15} |\n'
-                )
+            plg_doc = ''
+            if plg['doc']:
+                plg_doc = f'`{plg["name"]} {v["info"][language]} <{plg["doc"]}>`_'
 
-            leerzeileausgegeben = False
-            if plgtype == 'all':
-                if language == 'de':
-                    desc = 'Plugin Typ: **' + plg['type'] + '**'
-                else:
-                    desc = 'Plugin type: **' + plg['type'] + '**'
-                leerzeileausgegeben = True
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | {"":<165.165} | {"":<15.15} | {"":<15.15} |\n'
-                )
-                fh.write(
-                    '   | {plg:<65.65} | {vers:<8.8} | {desc:<165.165} | {maint:<15.15} | {test:<15.15} |\n'.format(
-                        plg='', vers='', desc=desc, maint='', test=''
-                    )
-                )
+            plg_sup = ''
+            if plg['sup']:
+                plg_sup = f'`{plg["name"]} {v["supp"][language]} <{plg["sup"]}>`_'
 
-            py_maxversion = plg['py_maxversion']
-            if py_maxversion != '':
-                if language == 'de':
-                    desc = 'maximale Python Version: **' + py_maxversion + '**'
-                else:
-                    desc = 'maximum Python version: **' + py_maxversion + '**'
-                leerzeileausgegeben = True
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | {"":<165.165} | {"":<15.15} | {"":<15.15} |\n'
+            desc = (
+                [plg['desc']]
+                + make_table_bullet_lines(
+                    [plg_doc if plg['doc'] else []] + [plg_sup if plg['sup'] else []], 0
                 )
-                fh.write(
-                    '   | {plg:<65.65} | {vers:<8.8} | {desc:<165.165} | {maint:<15.15} | {test:<15.15} |\n'.format(
-                        plg='', vers='', desc=desc, maint='', test=''
-                    )
+                + (
+                    [f'Plugin {v["type"][language]}: {bold(plg["type"])}']
+                    if plgtype == 'all'
+                    else []
                 )
-
-            sh_maxversion = plg['sh_maxversion']
-            if sh_maxversion != '':
-                if language == 'de':
-                    desc = 'maximale SmartHomeNG Version: **' + sh_maxversion + '**'
-                else:
-                    desc = 'maximum version of SmartHomeNG: **' + sh_maxversion + '**'
-                leerzeileausgegeben = True
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | {"":<165.165} | {"":<15.15} | {"":<15.15} |\n'
-                )
-                fh.write(
-                    '   | {plg:<65.65} | {vers:<8.8} | {desc:<165.165} | {maint:<15.15} | {test:<15.15} |\n'.format(
-                        plg='', vers='', desc=desc, maint='', test=''
-                    )
-                )
-
-            if plg['state'] in ['deprecated', 'develop']:
-                if language == 'de':
-                    desc = 'Plugin Status: **' + plg['state'] + '**'
-                else:
-                    desc = 'Plugin Status: **' + plg['state'] + '**'
-                if not leerzeileausgegeben:
-                    fh.write(
-                        f'   | {"":<65.65} | {"":<8.8} | {"":<165.165} | {"":<15.15} | {"":<15.15} |\n'
-                    )
-                fh.write(
-                    f'   | {"":<65.65} | {"":<8.8} | {"":<165.165} | {"":<15.15} | {"":<15.15} |\n'
-                )
-                fh.write(
-                    '   | {plg:<65.65} | {vers:<8.8} | {desc:<165.165} | {maint:<15.15} | {test:<15.15} |\n'.format(
-                        plg='', vers='', desc=desc, maint='', test=''
-                    )
-                )
-
-            fh.write(
-                '   +-'
-                + '-' * 65
-                + '-+-'
-                + '-' * 8
-                + '-+-'
-                + '-' * 165
-                + '-+-----------------+-----------------+\n'
             )
 
-        fh.write('\n')
-        fh.write('\n')
+            if plg.get('py_maxversion'):
+                desc += ['', f'{v["pver"][language]}: {bold(plg["py_maxversion"])}']
+            if plg.get('sh_maxversion'):
+                desc += ['', f'{v["sver"][language]}: {bold(plg["sh_maxversion"])}']
+            if plg.get('state', '').lower() in ['deprecated', 'develop']:
+                desc += ['', f'{v["stat"][language]}: {bold(plg["state"])}']
 
-        fh.write('.. include:: /plugins_doc/plugins_footer.rst\n')
+            fh.write(
+                '\n'
+                + '\n'.join(
+                    make_table_lines(
+                        [
+                            plg_readme_link,
+                            plg['version'],
+                            make_table_lines(desc, 2),
+                            make_table_lines(
+                                [x.strip() for x in plg['maint'].split(',')], 2, wide=True
+                            ),
+                            make_table_lines(
+                                [x.strip() for x in plg['test'].split(',')], 2, wide=True
+                            ),
+                            [],
+                        ],
+                        top=True,
+                    )
+                )
+            )
 
-    fh.close()
-    if fh_dummy_used:
-        fh_dummy.close()
+        fh.write('\n\n.. include:: /plugins_doc/plugins_footer.rst\n')
 
 
 # ==================================================================================
@@ -573,13 +468,10 @@ if __name__ == '__main__':
     #    print ('Number of arguments:', len(sys.argv), 'arguments.')
     #    print ('Argument List:', str(sys.argv))
 
-    global language
     language = 'en'
 
     if 'de' in sys.argv:
         language = 'de'
-    if 'en' in sys.argv:
-        language = 'en'
 
     global docu_type
     docu_type = start_dir.split('/')[-1:][0]  # developer / user
@@ -616,13 +508,13 @@ if __name__ == '__main__':
         plugin_rst_dir = os.path.join(start_dir, 'source')
     print('zu schreiben in: ' + plugin_rst_dir)
 
-    plugin_types = [x for x, _, _ in plugin_sections]
-
-    results = build_pluginlist()
+    results = build_pluginlist(plugins_git, language)
 
     for pl in plugin_sections:
-        if results[pl[0]] is None:
-            print(f'Datei: plugins_doc/plugins_{pl[0].lower()}.rst: Daten unverändert, übersprungen')
+        if results[pl] is None:
+            print(f'Datei: plugins_doc/plugins_{pl.lower()}.rst: Daten unverändert, übersprungen')
         else:
-            write_rstfile(pl[0], pl[2])
+            write_rstfile(
+                results, plugin_rst_dir, pl, plugin_sections[pl][language], language=language
+            )
     print()
