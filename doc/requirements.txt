@@ -7,21 +7,13 @@ sphinx-design
 
 # the following extensions create collapsible parts of documentation
 # sphinx-panels seem to be most extensive
-#sphinx-togglebutton
-#sphinx-toolbox
-#sphinx-panels  https://sphinx-panels.readthedocs.io/en/latest/
-
 sphinx-autodoc-typehints
-
 sphinx-treeview
 
-# recommonmark is marked deprecated as of April 30th, 2021
-#recommonmark>=0.6.0
 # the replacement to support Markdown like Readme.md is MyST
 # see at https://www.sphinx-doc.org/en/master/usage/markdown.html and
 # at https://myst-parser.readthedocs.io/en/latest/using/intro.html for a primer on MyST
 attrs
-#myst-parser<=0.16.1
 myst-parser
 
 ruamel.yaml>=0.13.7,<=0.15.74;python_version<'3.7'

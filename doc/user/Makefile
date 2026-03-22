@@ -21,6 +21,9 @@ help:
 	@echo "  html       to make standalone HTML files"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
+	@echo "  pdf        to make a PDF file"
+	@echo "  latex      to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
+	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
 	@echo "  pickle     to make pickle files"
 	@echo "  json       to make JSON files"
 	@echo "  htmlhelp   to make HTML files and a HTML help project"
@@ -35,10 +38,6 @@ help:
 	@echo "  changes    to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
-
-#	@echo "  pdf        to make a PDF file"
-#	@echo "  latex      to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
-#	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
 
 clean:
 	-rm -rf $(BUILDDIR)/*
@@ -55,8 +54,7 @@ html:
 	@test ! -L "source/templates" && echo "creating a link to the templates directory" && ln -s ../../../templates source/templates || echo "link to templates directory already exists"
 	@echo
 	@python3 -V
-	@python3 ../build_plugin_config_files.py de
-	@python3 ../build_plugin_rst_files.py de
+	@python3 ../build_plugin_doc_files.py de
 	@echo
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
@@ -68,28 +66,50 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
-# pdf:
-# 	@echo
-# 	@echo starting at:
-# 	@pwd
-# 	@echo
-# 	@test ! -L "source/plugins" && echo "creating a link to the plugin directory" && ln -s ../../../plugins source/plugins || echo "link to plugins directory already exists"
-# 	@test ! -L "source/modules" && echo "creating a link to the module directory" && ln -s ../../../modules source/modules || echo "link to modules directory already exists"
-# 	@test ! -L "source/dev" && echo "creating a link to the dev directory" && ln -s ../../../dev source/dev || echo "link to dev directory already exists"
-# 	@test ! -L "source/logics" && echo "creating a link to the logics directory" && ln -s ../../../logics source/logics || echo "link to logics directory already exists"
-# 	@echo
-# 	@python3 -V
-# 	@python3 ../build_plugin_config_files.py de
-# 	@python3 ../build_plugin_rst_files.py de
-# 	@echo
-# 	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) $(BUILDDIR)/pdf
-# 	@echo
-# 	@test -L "source/dev" && echo "removing link to the dev directory" && unlink source/dev
-# 	@test -L "source/modules" && echo "removing link to the modules directory" && unlink source/modules
-# 	@test -L "source/plugins" && echo "removing link to the plugin directory" && unlink source/plugins
-# 	@test -L "source/logics" && echo "removing link to the logics directory" && unlink source/logics
-# 	@echo
-# 	@echo "Build finished. The PDF files are in build/pdf."
+htmlonly:
+	@echo
+	@echo starting at:
+	@pwd
+	@echo
+	@test ! -L "source/plugins" && echo "creating a link to the plugin directory" && ln -s ../../../plugins source/plugins || echo "link to plugins directory already exists"
+	@test ! -L "source/modules" && echo "creating a link to the module directory" && ln -s ../../../modules source/modules || echo "link to modules directory already exists"
+	@test ! -L "source/dev" && echo "creating a link to the dev directory" && ln -s ../../../dev source/dev || echo "link to dev directory already exists"
+	@test ! -L "source/logics" && echo "creating a link to the logics directory" && ln -s ../../../logics source/logics || echo "link to logics directory already exists"
+	@test ! -L "source/templates" && echo "creating a link to the templates directory" && ln -s ../../../templates source/templates || echo "link to templates directory already exists"
+	@echo
+	@python3 -V
+	@echo
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@test -L "source/dev" && echo "removing link to the dev directory" && unlink source/dev
+	@test -L "source/modules" && echo "removing link to the modules directory" && unlink source/modules
+	@test -L "source/plugins" && echo "removing link to the plugin directory" && unlink source/plugins
+	@test -L "source/logics" && echo "removing link to the logics directory" && unlink source/logics
+	@test -L "source/templates" && echo "removing link to the templates directory" && unlink source/templates
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+pdf:
+	@echo
+	@echo starting at:
+	@pwd
+	@echo
+	@test ! -L "source/plugins" && echo "creating a link to the plugin directory" && ln -s ../../../plugins source/plugins || echo "link to plugins directory already exists"
+	@test ! -L "source/modules" && echo "creating a link to the module directory" && ln -s ../../../modules source/modules || echo "link to modules directory already exists"
+	@test ! -L "source/dev" && echo "creating a link to the dev directory" && ln -s ../../../dev source/dev || echo "link to dev directory already exists"
+	@test ! -L "source/logics" && echo "creating a link to the logics directory" && ln -s ../../../logics source/logics || echo "link to logics directory already exists"
+	@echo
+	@python3 -V
+	@python3 ../build_plugin_doc_files.py de
+	@echo
+	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) $(BUILDDIR)/pdf
+	@echo
+	@test -L "source/dev" && echo "removing link to the dev directory" && unlink source/dev
+	@test -L "source/modules" && echo "removing link to the modules directory" && unlink source/modules
+	@test -L "source/plugins" && echo "removing link to the plugin directory" && unlink source/plugins
+	@test -L "source/logics" && echo "removing link to the logics directory" && unlink source/logics
+	@echo
+	@echo "Build finished. The PDF files are in build/pdf."
 
 server:
 	@echo "Running dev. server on port 4001."
@@ -144,18 +164,18 @@ epub:
 	@echo
 	@echo "Build finished. The epub file is in $(BUILDDIR)/epub."
 
-# latex:
-# 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-# 	@echo
-# 	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
-# 	@echo "Run \`make' in that directory to run these through (pdf)latex" \
-# 	      "(use \`make latexpdf' here to do that automatically)."
-# 
-# latexpdf:
-# 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-# 	@echo "Running LaTeX files through pdflatex..."
-# 	$(MAKE) -C $(BUILDDIR)/latex all-pdf
-# 	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
+latex:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	@echo
+	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
+	@echo "Run \`make' in that directory to run these through (pdf)latex" \
+	      "(use \`make latexpdf' here to do that automatically)."
+
+latexpdf:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	@echo "Running LaTeX files through pdflatex..."
+	$(MAKE) -C $(BUILDDIR)/latex all-pdf
+	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
 
 text:
 	$(SPHINXBUILD) -b text $(ALLSPHINXOPTS) $(BUILDDIR)/text
