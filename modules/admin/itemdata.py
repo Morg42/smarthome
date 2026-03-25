@@ -317,7 +317,7 @@ class ItemData:
 
 
             item_data.append(data_dict)
-            return json.dumps(item_data)
+            return json.dumps(item_data, default=str)
         else:
             self.logger.error("Requested item '{}' is None, check if item really exists.".format(item_path))
             return

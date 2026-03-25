@@ -22,7 +22,7 @@
 #  along with SmartHomeNG. If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: I001
 from typing import Any
 
 import logging
@@ -37,6 +37,7 @@ import re
 import inspect
 
 import time             # for calls to time in eval
+import dateutil.tz as _tz
 
 from lib.shtime import Shtime
 import lib.env
@@ -59,7 +60,8 @@ from lib.utils import Utils
 from .property import Property
 from .helpers import (  # noqa - cast_foo methods are accessed via globals()
     cast_str, cast_list, cast_dict, cast_foo, cast_bool, cast_scene, cast_num,
-    split_duration_value_string, cache_read, cache_write, fadejob)
+    split_duration_value_string, cache_read, cache_write, fadejob,
+    cast_timestamp, cast_datetime)
 
 _items_instance = None
 
@@ -377,7 +379,7 @@ class Item():
         setattr(self, '_type', dict(config.items()).get(KEY_TYPE))
         if self._type is None:
             self._type = FOO  # Every item has a type, type is FOO, if not defined in item
-        # __defaults = {'num': 0, 'str': '', 'bool': False, 'list': [], 'dict': {}, 'foo': None, 'scene': 0}
+        # __defaults = {'num': 0, 'str': '', 'bool': False, 'list': [], 'dict': {}, 'foo': None, 'scene': 0, 'timestamp': 0}
         if self._type not in ITEM_DEFAULTS:
             logger.error(f"Item {self._path}: type '{self._type}' unknown. Please use one of: {', '.join(list(ITEM_DEFAULTS.keys()))}.")
             raise AttributeError
@@ -588,7 +590,6 @@ class Item():
         #############################################################
         # Value
         #############################################################
-        initial_value = False
         if self._value is None:
             initial_value = False
             self._value = ITEM_DEFAULTS[self._type]
@@ -597,8 +598,7 @@ class Item():
         try:
             self._value = self.cast(self._value)
             if initial_value:
-                self.__changed_by = 'Init:Initial_Value'
-                self.__updated_by = self.__changed_by
+                self.__updated_by = self.__changed_by = 'Init:Initial_Value'
                 # Write item value to log, if Item has attribute log_change set
                 self._log_on_change(self._value, 'Init', 'Initial_Value', None)
         except Exception:
@@ -645,7 +645,7 @@ class Item():
                 logger.notice(f"Created cache for item {self._cache} in file {self._cache}")
 
         #############################################################
-        # add list/dict methods
+        # add list/dict/datetime methods
         #############################################################
         if self._type in ['list', 'dict']:
             # get proper subclass - ListHandler / DictHandler
@@ -654,6 +654,12 @@ class Item():
             obj = type_class(item=self)
             # create item member <item>.list / <item>.dict
             setattr(self, self._type, obj)
+        if self._type == 'timestamp':
+            setattr(self, 'as_dt', self.__ts_as_dt)
+            setattr(self, 'as_str', self.__ts_as_str)
+        if self._type == 'datetime':
+            setattr(self, 'as_ts', self.__dt_as_ts)
+            setattr(self, 'as_str', self.__dt_as_str)
 
         #############################################################
         # Plugins
@@ -790,6 +796,7 @@ class Item():
         # casting of value, if compat = latest
         if compat == ATTRIB_COMPAT_LATEST:
             if self._type is not None:
+# TODO: this should have been set as self._cast...?
                 mycast = globals()['cast_' + self._type]
                 try:
                     value = mycast(value)
@@ -1631,6 +1638,37 @@ class Item():
             logger.warning(msg)
             raise TypeError(msg)  # needed additionally to show error message in eval syntax checker
 
+#
+# helper methods for timestamp item output
+#
+
+    def __ts_as_dt(self, tz=None) -> datetime.datetime:
+        if tz is None:
+            tz = self.shtime.tzinfo()  # type: ignore : shtime is set dynamically
+        return datetime.datetime.fromtimestamp(self._value, tz)  # type: ignore : method is only made "public" if type matches
+
+    def __ts_as_str(self, format=None, tz=None) -> str:
+        dt = self.__ts_as_dt(tz)
+        if not format:
+            return str(dt)
+        return dt.strftime(format)
+
+#
+# helper methods for datetime item output
+#
+
+    def __dt_as_ts(self) -> float:
+        return self._value.timestamp()  # type: ignore : self._value is set dynamically
+
+
+    def __dt_as_str(self, format=None) -> str:
+        if not format:
+            return str(self._value)
+        return self._value.strftime(format)  # type: ignore : self.value is set dynamically
+
+#
+#
+#
 
     def get_class_from_frame(self, fr):
         # https://stackoverflow.com/questions/2203424/python-how-to-retrieve-class-information-from-a-frame-object
@@ -2141,7 +2179,7 @@ class Item():
                     sh = self._sh
                     shtime = self.shtime
                     items = _items_instance
-                    import math
+                    import math  # noqa: I001
                     import lib.userfunctions as uf
                     env = lib.env
 

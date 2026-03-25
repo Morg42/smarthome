@@ -25,6 +25,7 @@ import logging
 import os
 import datetime
 import json
+from lib.shtime import Shtime
 
 from ast import literal_eval
 import pickle
@@ -125,6 +126,63 @@ def cast_num(value):
     except Exception:
         pass
     raise ValueError
+
+
+def cast_timestamp(value):
+    """
+    cast a passed value to timestamp
+
+    :param value: numerical value (idem) or str in ISO time format or datetime object
+    :return: timestamp (float)
+    """
+    if isinstance(value, (int, float)):
+        return value
+
+    shtime = Shtime.get_instance()
+
+    if isinstance(value, datetime.datetime):
+        try:
+            return shtime.ts(value)  # type: ignore : shtime is set dynamically
+        except Exception:
+            pass
+
+    if isinstance(value, str):
+        try:
+            return shtime.ts(datetime.datetime.fromisoformat(value))  # type: ignore : shtime is set dynamically
+        except Exception:
+            pass
+
+    raise ValueError(f'{value} can not be converted to timestamp')
+
+
+def cast_datetime(value):
+    """
+    cast a passed value to datetime
+
+    :param value: numerical value (idem) or str in ISO time format or datetime object
+    :return: timestamp (float)
+    """
+    if isinstance(value, datetime.datetime):
+        return value
+
+    if value is None:
+        return None
+
+    shtime = Shtime.get_instance()
+
+    if isinstance(value, (int, float)):
+        try:
+            return datetime.datetime.fromtimestamp(value, shtime.tzinfo())  # type: ignore : shtime is set dynamically
+        except Exception:
+            pass
+
+    if isinstance(value, str):
+        try:
+            return datetime.datetime.fromisoformat(value)  # type: ignore : shtime is set dynamically
+        except Exception:
+            pass
+
+    raise ValueError(f'{value} can not be converted to timestamp')
 
 
 #####################################################################
