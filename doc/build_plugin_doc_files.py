@@ -1160,7 +1160,7 @@ if __name__ == '__main__':
 #
 
     print('\n\n--- Schreibe Dokumentation aus plugin.yaml')
-    print(f'zu schreiben: {len(plugins_by_type['changed'])} Dateien, {skip} noch aktuell\n')
+    print(f'zu schreiben: {len(plugins_by_type["changed"])} Dateien, {skip} noch aktuell\n')
 
     for plg in plugins_by_type['changed']:
         write_configfile(plg, configfile_dir, language)
