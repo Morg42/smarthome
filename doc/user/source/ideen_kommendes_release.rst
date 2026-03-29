@@ -92,7 +92,7 @@ neue Version von SmartHomeNG installiert wird.
 * Nach erfolgtem Lauf ein Flag in eine Datei speichern (dass die Daten dem Release … entsprechen)
 * Mehrere Routinen nacheinander aufrufen, falls jemand beim Update Versionen überspringt
 * Neustart nach jeder Routine notwendig?
-* Routinen könnten in lib/update abgelegt werden
+* Routinen könnten in ``lib/update`` abgelegt werden
 * Wo sollten die Flags gespeichert werden?
 
 |

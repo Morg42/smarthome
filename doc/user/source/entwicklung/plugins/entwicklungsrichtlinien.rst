@@ -143,7 +143,7 @@ Basic Rules
 Fork erstellen
 --------------
 
-    * Gehen Sie aif GitHub zum `SmartHome Repo <https://github.com/smarthomeNG/smarthome/>`_ und melden Sie sich mit
+    * Gehen Sie auf GitHub zum `SmartHome Repo <https://github.com/smarthomeNG/smarthome/>`_ und melden Sie sich mit
       Ihrem Benutzernamen/Passwort an
     * Klicken Sie rechts oben auf „Fork“.
     * Wechseln Sie zu Ihrem Terminal und geben Sie „git clone https://USER:PASSWORD@github.com/USER/smarthome“ ein

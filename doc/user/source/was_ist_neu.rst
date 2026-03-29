@@ -17,24 +17,24 @@ diesem und den vorangegangenen Releases ist den :doc:`Release Notes </release/re
       gesichert werden, zur Verfügung.
 
     - **Konfiguration unterhalb von etc mit Migration**: Wenn SmartHomeNG mit der Kommandozeilenoption **-e** gestartet
-      wird, sucht es die Konfigurationsverzeichnisse `items, `structs`, `logics`, `uf` und `scenes`
-      nicht mehr im Stammverzeichnis, sondern unterhalb von `etc`. Dies ist auch durch die Option
-      **config_etc: true** in der `etc/smarthome.yaml` möglich.
+      wird, sucht es die Konfigurationsverzeichnisse ``items``, ``structs``, ``logics``, ``uf`` und ``scenes``
+      nicht mehr im Stammverzeichnis, sondern unterhalb von ``etc``. Dies ist auch durch die Option
+      **config_etc: true** in der ``etc/smarthome.yaml`` möglich.
 
-      Gleichzeitig wird versucht, vorhandene Konfigurationsdateien nach `etc/<Verzeichnis>`` zu verschieben und -
-      beim Aufruf mit **-e** - den Eintrag **config_etc: true** in der `etc/smarthome.yaml` einzutragen, da nach
+      Gleichzeitig wird versucht, vorhandene Konfigurationsdateien nach ``etc/<Verzeichnis>`` zu verschieben und -
+      beim Aufruf mit **-e** - den Eintrag **config_etc: true** in der ``etc/smarthome.yaml`` einzutragen, da nach
       der Migration der Konfigurationsdateien der bisherige Aufruf nicht mehr funktionieren würde.
 
-      Die Konfiguration unterhalb von `etc` soll in zukünftigen Releases Standard werden.
+      Die Konfiguration unterhalb von ``etc`` soll in zukünftigen Releases Standard werden.
 
     - **Anpassung der Plugin-Instanzbenennung**: Bisher wurde der Instanzname eines Plugins aus der Angabe
-      **instance: <name>** in der `etc/plugin.yaml` ermittelt. Im - derzeit optional verfügbaren - neuen
-      System wird stattdessen der Name des entsprechenden Abschnitts in der `etc/plugin.yaml` verwendet.
+      **instance: <name>** in der ``etc/plugin.yaml`` ermittelt. Im - derzeit optional verfügbaren - neuen
+      System wird stattdessen der Name des entsprechenden Abschnitts in der ``etc/plugin.yaml`` verwendet.
       Damit erhält standardmäßig jedes Plugin, das mehrfach eingebunden wird, einen Instanzbezeichner. Wenn
       das für einzelne Instanzen nicht gewollt ist, kann mit **default_instance: true** für einzelne Plugins
       weiterhin der leere Instanzname verwendet werden.
 
-      Um dieses System jetzt schon zu aktivieren, muss in der `etc/smarthome.yaml` die Option
+      Um dieses System jetzt schon zu aktivieren, muss in der ``etc/smarthome.yaml`` die Option
       **legacy_instances: false** gesetzt werden.
 
       Diese Methode der Instanzbenennung soll in zukünftigen Releases Standard werden.
@@ -67,6 +67,7 @@ diesem und den vorangegangenen Releases ist den :doc:`Release Notes </release/re
       angegeben werden musste, oder seit welcher Version ein bestimmtes Feature implementiert ist, entfallen.
       Nach Möglichkeit werden Dokumentationen von früheren Versionen von SmartHomeNG parallel als Archiv
       bereitgestellt.
+
 |
 
 .. comment

@@ -25,14 +25,14 @@ Prinzipiell gibt es 2 Anwendungsfälle:
 
 Demzufolge können die Item-Struktur-Templates an zwei verschiedenen Stellen definiert werden:
 
- - der Nutzer kann die Strukturen in Dateien im Verzeichnis etc/structs in beliebigen Dateien definieren
+ - der Nutzer kann die Strukturen in Dateien im Verzeichnis ``etc/structs`` in beliebigen Dateien definieren
  - Autoren von Plugins können die Strukturen in den Metadaten des Plugins definieren. Beim Start von SmartHomeNG stehen
    die dann die Strukturen aller konfigurierten Plugins zur Verfügung.
 
 
 Um eine doppelte Namensvergabe zu vermeiden, wird bei der Nutzung den structs, die in Plugins definiert wurden, der
 Name des Plugins vorangestellt; bei structs, die vom Nutzer definiert wurden, wird "my." und der Name der Datei vorangestellt. Wenn z.B. die struct **weather** genutzt werden soll, die im Plugin **darksky**
-definiert wurde, so muss als Referenz **darksky.weather** angegeben werden. Für die struct **weather*, die vom Nutzer in der Datei etc/structs/lightsky.yaml definiert wurde, muss **my.lightsky.weather** als Referenz
+definiert wurde, so muss als Referenz **darksky.weather** angegeben werden. Für die struct **weather*, die vom Nutzer in der Datei ``etc/structs/lightsky.yaml`` definiert wurde, muss **my.lightsky.weather** als Referenz
 angegeben werden.
 
 Eine Übersicht der zur Verfügung stehenden structs kann in der Admin GUI unter **Items/Struktur** Templates eingesehen werden.

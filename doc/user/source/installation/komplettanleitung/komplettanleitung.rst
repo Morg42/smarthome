@@ -9,7 +9,7 @@ Komplettanleitung
 =================
 
 Diese Anleitung beschreibt eine komplette Installation von **SmartHomeNG v1.12** auf
-einem Linuxsystem mit Debian 12 (bookworm).
+einem Linuxsystem mit Debian 13 (trixie).
 
 Zusätzlich wird die Installation folgender weiterer Pakete beschrieben:
 

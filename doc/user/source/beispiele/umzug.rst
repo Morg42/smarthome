@@ -225,7 +225,7 @@ Verzeichnisse können Unterverzeichnisse enthalten und müssen daher rekursiv ko
 Nicht kopiert werden müssen die Verzeichnisse ``backup`` und ``restore``, sowie die Dateien ``pip_list.txt``
 und ``systeminfo.yaml``, die direkt im ``var`` Verzeichnis liegen.
 
-Wenn die alte SmarthomeNG Installation (das Verzeichnis /usr/local/smarthome) auf dem neuen System
+Wenn die alte SmarthomeNG Installation (das Verzeichnis ``/usr/local/smarthome``) auf dem neuen System
 als /mnt/shng_old gemountet wurde, sollten die jeweiligen Verzeichnisse unterhalb des var Verzeichnisses
 mit den folgenden Befehlen kopiert werden (hier am Beispiel des cache Verzeichnisse):
 

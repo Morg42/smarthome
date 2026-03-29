@@ -17,7 +17,7 @@ sollen, dann müsst ihr Informationen beisteuern:
 * Debug Ausgabe anhängen, mindestens bis das Problem ersichtlich geloggt wird. (Dazu SmartHome.py mit
   der Option **-d** starten)
 * Error und Warnings soweit möglich bereits vorher beseitigen
-* evtl. die etc/plugin.conf und die items mit denen Euer Problem zusammenhängt
+* evtl. die ``etc/plugin.conf`` und die items mit denen Euer Problem zusammenhängt
 * Wichtig ist auch u.U. die verwendete Hardware (VM oder Raspi 1, 2, 3) das Betriebssystem
   (Raspbian, Ubuntu x.y, Debian x.y) und ob eibd oder knxd genutzt werden.
 
@@ -87,7 +87,7 @@ zu einer sehr großen Anzahl von Log Einträgen und ist deshalb recht unübersic
 .. note::
 
     Vorzuziehen ist eine gezielte Aktivierung der DBUG Ausgaben für einzelne Komponenten oder Plugins. Dieses geschieht
-    über die Logging Konfiguration in /etc/logging.yaml bzw. über die GUI des Admin Interfaces.
+    über die Logging Konfiguration in ``/etc/logging.yaml`` bzw. über die GUI des Admin Interfaces.
 
 
 .. code::

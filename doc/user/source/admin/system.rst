@@ -98,7 +98,7 @@ Allgemein
 =========
 
 In diesem Tab werden die allgemeinen Einstellungen für SmartHomeNG konfiguriert. Es handelt sich hierbei um die Einstellungen,
-die in der Konfigurationsdatei etc/smarthome.yaml abgelegt sind.
+die in der Konfigurationsdatei ``etc/smarthome.yaml`` abgelegt sind.
 
 .. image:: assets/system-common.jpg
    :class: screenshot
@@ -129,7 +129,7 @@ Admin Modul
 ===========
 
 In diesem Tab werden die Einstellungen für das Admin Modul konfiguriert. Es handelt sich hierbei um die Einstellungen,
-die in der Konfigurationsdatei etc/module.yaml im Abschnitt ``admin:`` abgelegt sind.
+die in der Konfigurationsdatei ``etc/module.yaml`` im Abschnitt **admin:** abgelegt sind.
 
 .. image:: assets/system-admin.jpg
    :class: screenshot
@@ -155,7 +155,7 @@ MQTT Modul
 ==========
 
 In diesem Tab werden die Einstellungen für Nutzung des MQTT Protokolls konfiguriert. Es handelt sich hierbei um die
-Einstellungen, die in der Konfigurationsdatei etc/module.yaml im Abschnitt ``mqtt:`` abgelegt sind.
+Einstellungen, die in der Konfigurationsdatei ``etc/module.yaml`` im Abschnitt **mqtt:** abgelegt sind.
 
 .. image:: assets/system-mqtt.jpg
    :class: screenshot

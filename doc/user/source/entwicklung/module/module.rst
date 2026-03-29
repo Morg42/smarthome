@@ -33,8 +33,8 @@ Ein Modul besteht aus mindestens zwei Dateien:
 - dem Programm Code: __init__.py
 - den Metadaten: module.yaml
 
-Beide Dateien lliegen in einem Unterordnet des Ordners ``modules`` und dieser Unterordnet trägt den Namen des
-Mooduls.
+Beide Dateien liegen in einem Unterordner des Ordners ``modules`` und dieser Unterordner trägt den Namen des
+Moduls.
 
 Metadaten
 =========

@@ -67,11 +67,10 @@ Attribute eines Items werden in der Konfigurationsdatei in der Form
 
 
 angegeben. Normalerweise sind Attribut-Werte einzeilig. Es wird alles bis zum Zeilenende oder bis
-zum Beginn eines Kommentars (`#`) angenommen. (Seit dem Release 1.3 werden auch mehrzeilige Attribute
-unterstützt.)
+zum Beginn eines Kommentars (`#`) angenommen. 
 
 Informationen zum :doc:`Dateiformat </konfiguration/konfigurationsdateien/konfigdateien>`
-finden Sie :doc:`hier </konfiguration/konfigurationsdateien/konfigdateien>` unter
+finden sich :doc:`hier </konfiguration/konfigurationsdateien/konfigdateien>` unter
 **Aufbau der Konfigurationsdateien**.
 
 
