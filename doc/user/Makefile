@@ -41,6 +41,8 @@ help:
 
 clean:
 	-rm -rf $(BUILDDIR)/*
+	-rm -rf source/plugins_doc/config/
+	-rm -f source/plugins_doc/dummy_* source/plugins_doc/plugins_all.rst source/plugins_doc/plugins_gateway.rst source/plugins_doc/plugins_interface.rst source/plugins_doc/plugins_protocol.rst source/plugins_doc/plugins_system.rst source/plugins_doc/plugins_web.rst source/plugins_doc/plugins_unclassified.rst
 
 html:
 	@echo
