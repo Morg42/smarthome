@@ -174,9 +174,16 @@ class Shtime:
         """
 
         if self._tzinfo is None:
-            self._tzinfo = tz.gettz()
+            self._tzinfo = self._tzinfo
         # tz aware 'localtime'
         return datetime.datetime.now(self._tzinfo)
+
+
+    def ts(self, dt, tz=None):
+        """ Return dt as posix timestamp, possibly with different local tz """
+        if tz is None:
+            tz = self._tzinfo
+        return dt.replace(tzinfo=tz).timestamp()
 
 
     def tz(self):

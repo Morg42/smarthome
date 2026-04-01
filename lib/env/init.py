@@ -12,5 +12,4 @@ hostname=socket.gethostname()
 sh.env.system.name(hostname, logic.lname)
 
 # operating system start
-start=datetime.datetime.fromtimestamp(psutil.boot_time())
-sh.env.system.start(start, logic.lname)
+sh.env.system.start(psutil.boot_time(), logic.lname)

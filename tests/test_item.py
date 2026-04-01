@@ -30,6 +30,7 @@ import lib.plugin
 import lib.item
 from lib.model.smartplugin import SmartPlugin
 import threading
+from datetime import datetime as dt, timezone as tz
 
 from lib.constants import YAML_FILE
 
@@ -344,6 +345,17 @@ class TestItem(unittest.TestCase):
         except AttributeError:
             return lib.item._cast_bool(value)
 
+    def item_cast_timestamp(self, value):
+        try:
+            return lib.item.helpers.cast_timestamp(value)
+        except AttributeError:
+            return lib.item._cast_timestamp(value)    
+
+    def item_cast_datetime(self, value):
+        try:
+            return lib.item.helpers.cast_datetime(value)
+        except AttributeError:
+            return lib.item._cast_datetime(value)    
 
     def test_cast_str(self):
         #with self.assertRaises(ValueError):
@@ -392,6 +404,29 @@ class TestItem(unittest.TestCase):
         self.assertEqual(1.2, self.item_cast_num(float(1.2)))
         with self.assertRaises(ValueError):
             self.assertEqual(10, self.item_cast_num(' 0x0a'))
+
+    def test_cast_timestamp(self):
+        d = dt.now(tz.utc)
+        ts = d.timestamp()
+        ds = d.isoformat()
+
+        self.assertEqual(ts, self.item_cast_timestamp(ts))
+        self.assertEqual(int(ts), self.item_cast_timestamp(int(ts)))
+        self.assertEqual(ts, self.item_cast_timestamp(ds))
+        self.assertEqual(ts, self.item_cast_timestamp(d))
+        with self.assertRaises(ValueError):
+            self.assertEqual(ts, self.item_cast_timestamp(f' {ds}'))        
+
+    def test_cast_datetime(self):
+        d = dt.now(tz.utc)
+        ts = d.timestamp()
+        ds = d.isoformat()
+
+        self.assertEqual(d, self.item_cast_datetime(d))
+        self.assertEqual(d, self.item_cast_datetime(ts))
+        self.assertEqual(d, self.item_cast_datetime(ds))
+        with self.assertRaises(ValueError):
+            self.assertEqual(d, self.item_cast_datetime(f' {ds}'))        
 
     def test_cast_bool(self):
         """

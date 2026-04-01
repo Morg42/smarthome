@@ -3,7 +3,7 @@ env:
     system:
 
         start:
-            type: foo
+            type: datetime
 
         load:
             type: num

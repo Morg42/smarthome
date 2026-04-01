@@ -25,15 +25,16 @@ This file describes a group of system wide constants for items, plugins and file
 """
 
 #item types
-ITEM_TYPES=["num","str","bool", "list","dict","foo","scene"]
-ITEM_DEFAULTS= __defaults = {'num': 0, 'str': '', 'bool': False, 'list': [], 'dict': {}, 'foo': None, 'scene': 0}
+ITEM_TYPES=["num", "str", "bool", "list", "dict", "foo", "scene", "timestamp", "datetime"]
+ITEM_DEFAULTS= __defaults = {'num': 0, 'str': '', 'bool': False, 'list': [], 'dict': {}, 'foo': None, 'scene': 0, 'timestamp': 0.0, 'datetime': None}
 FOO = 'foo'
 
 #metadata types
-META_DATA_TYPES=['bool', 'int', 'float', 'num', 'scene', 'str', 'password', 'list', 'dict', 'ip', 'ipv4', 'ipv6', 'mac', 'knx_ga', 'foo']
+META_DATA_TYPES=['bool', 'int', 'float', 'num', 'scene', 'str', 'password', 'list', 'dict', 'ip', 'ipv4', 'ipv6', 'mac', 'knx_ga', 'foo', 'timestamp']
 META_DATA_DEFAULTS={'bool': False, 'int': 0, 'float': 0.0, 'num': 0, 'scene': 0, 'str': '',  'password': '',
                     'list': [], 'dict': {}, 'OrderedDict': {},
-                    'ip': '0.0.0.0', 'ipv4': '0.0.0.0', 'ipv6': '', 'mac': '00:00:00:00:00:00', 'knx_ga': '', 'foo': None}
+                    'ip': '0.0.0.0', 'ipv4': '0.0.0.0', 'ipv6': '', 'mac': '00:00:00:00:00:00', 'knx_ga': '',
+                    'foo': None, 'timestamp': 0.0}
 
 #config params for items
 KEY_ENFORCE_UPDATES = 'enforce_updates'

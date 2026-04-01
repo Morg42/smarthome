@@ -18,7 +18,7 @@ env:
             type: bool
 
         sunrise:
-            type: foo
+            type: datetime
 
             azimut:
 
@@ -37,7 +37,7 @@ env:
                     type: num
 
         sunset:
-            type: foo
+            type: datetime
 
             azimut:
 
@@ -74,10 +74,10 @@ env:
                     type: num
 
         moonrise:
-            type: foo
+            type: datetime
 
         moonset:
-            type: foo
+            type: datetime
 
         moonphase:
             type: num
