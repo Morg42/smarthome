@@ -39,21 +39,21 @@ import os
 import sys
 
 print('')
-print(os.path.basename(__file__) + ' - tool to convert shng .conf files to yaml')
+print(os.path.basename(__file__) + ' - Tool zur Konvertierung von shng .conf-Dateien ins yaml-Format')
 print('')
 
 #####################################################################
 # Check Python Version
 #####################################################################
 if sys.hexversion < 0x03030000:
-    print("Sorry your python interpreter ({0}.{1}) is too old. Please update to 3.3 or newer.".format(sys.version_info[0], sys.version_info[1]))
-    print("")
+    print(f'Der Python-Interpreter ({sys.version_info[0]}.{sys.version_info[1]}) ist zu alt. Bitte mindestens auf Python 3.3 aktualisieren.')
     exit()
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, '../lib')
+os.chdir('..')
+sys.path.insert(0, 'lib')
 
-import item_conversion # noqa
+import item_conversion  # noqa
 
 # ==================================================================================
 #   Convert all .conf files in a directory
@@ -67,15 +67,18 @@ def _convert_directory(dir):
             # Remove path and extension
             item_file = os.path.basename(item_file)
             item_file = os.path.splitext(item_file)[0]
-            configurationfile = dir+'/'+item_file
+            configurationfile = os.path.join(dir, item_file)
 
-            ydata = item_conversion.parse_for_convert(configurationfile+'.conf')
+            ydata = item_conversion.parse_for_convert(configurationfile + '.conf')
             try:
                 if ydata is not None:
                     item_conversion.yaml_save(configurationfile, ydata)
+                    try:
+                        os.rename(configurationfile + '.conf', configurationfile + '.conf.old')
+                    except Exception as e:
+                        print(f'Fehler beim Umbenennen, bitte {configurationfile}.conf von Hand entfernen: {e}')
             except Exception as e:
-                print()
-                print("ERROR: Problem reading {0}: {1}".format(dir+'/'+configurationfile, e))
+                print(f'Fehler beim Lesen von {configurationfile}: {e}')
 
 
 # ==================================================================================
@@ -84,46 +87,26 @@ def _convert_directory(dir):
 
 if __name__ == '__main__':
 
-    # change the working diractory to the directory from which the converter is loaded (../tools)
-    os.chdir(os.path.dirname(os.path.abspath(os.path.basename(__file__))))
-
-    directory = os.path.abspath('../items')
-    etc_dir = os.path.abspath('../etc')
 
     if item_conversion.is_ruamelyaml_installed() is False:
+        print('Fehler: ruamel.yaml nicht installiert.')
         exit(1)
 
-    print('converting .conf-files from the following directories:')
-    print('- item-directory  : ' + directory)
-    print('- config-directory: ' + etc_dir)
-    print('')
+    # dirs for old and new config scheme
+    dirs_old = ('items', 'scenes', 'structs')
+    dirs_new = (os.path.join('etc', dir) for dir in dirs_old)
 
-    ans_item = input('Convert item files (y/n)?: ').upper()
-    ans_etc = input('Convert config files (y/n)?: ').upper()
-    print()
+    # join all dirs
+    dirs = ('etc',) + dirs_old + dirs_new
 
-    if ans_item == 'Y':
-        print('Converting item files:')
-        _convert_directory(directory)
-        print('')
+    # just keep those which are dirs
+    dirs = (dir if os.path.isdir(dir) for dir in dirs)
 
-    if ans_etc == 'Y':
-        print('Convering configuration files:')
-        _convert_directory(etc_dir)
-        print('')
-
-    if ans_item == 'Y' or ans_etc == 'Y':
-        print('Conversion finished!')
+    for dir in dirs:
+        result = input(f'Dateien im Verzeichnis {dir} konvertieren (j/n)? ').lower()
         print()
 
-    if ans_item == 'Y':
-        print('You MUST move the old item.conf files out of the directory,')
-        print('since SmartHomeNG tries to read all .yaml AND all .conf files')
-        print('stored in the item directory.')
-        print()
-
-    if ans_etc == 'Y':
-        print('You should move the old .conf files out of the etc directory to avoid')
-        print('confusion. If both files (.conf and .yaml) exist, SmartHomeNG only reads')
-        print('the .yaml file.')
-        print()
+        if ans_item == 'j':
+            print(f'Konvertiere Dateien in {dir}:')
+            _convert_directory(dir)
+            print('')
