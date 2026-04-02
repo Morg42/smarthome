@@ -891,7 +891,7 @@ class Protocol():
                         else:
                             self.logger.info(f"update_log - Error in 'await websocket.send(data)': {e}")
                 else:
-                    self.logger.error(f'update_log - requested log {log_entry["name"]} not in sv_monitor_logs: {self.sv_monitor_logs}')
+                    self.logger.error(f'update_log - update submitted for log {log_entry["name"]}, which is not in sv_monitor_logs: {self.sv_monitor_logs}')
             else:
                 self.logger.info(f"update_log: Client {self.build_log_info(client_addr)} is not active any more")
                 remove.append(client_addr)
