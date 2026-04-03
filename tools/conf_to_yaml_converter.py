@@ -37,6 +37,7 @@ will be used.
 
 import os
 import sys
+from pathlib import Path
 
 print('')
 print(os.path.basename(__file__) + ' - Tool zur Konvertierung von shng .conf-Dateien ins yaml-Format')
@@ -62,23 +63,21 @@ import item_conversion  # noqa
 
 def _convert_directory(dir):
 
-    for item_file in sorted(os.listdir(dir)):
-        if item_file.endswith('.conf'):
-            # Remove path and extension
-            item_file = os.path.basename(item_file)
-            item_file = os.path.splitext(item_file)[0]
-            configurationfile = os.path.join(dir, item_file)
+    print(f'Konvertiere Dateien in {dir}:')
+    for item_file in sorted(Path(dir).glob('*.conf')):
+        # Remove path and extension
+        configurationfile = Path(*item_file.parts[:-1], item_file.stem)
 
-            ydata = item_conversion.parse_for_convert(configurationfile + '.conf')
-            try:
-                if ydata is not None:
-                    item_conversion.yaml_save(configurationfile, ydata)
-                    try:
-                        os.rename(configurationfile + '.conf', configurationfile + '.conf.old')
-                    except Exception as e:
-                        print(f'Fehler beim Umbenennen, bitte {configurationfile}.conf von Hand entfernen: {e}')
-            except Exception as e:
-                print(f'Fehler beim Lesen von {configurationfile}: {e}')
+        ydata = item_conversion.parse_for_convert(str(configurationfile) + '.conf')
+        try:
+            if ydata is not None:
+                item_conversion.yaml_save(str(configurationfile), ydata)
+                if not Path.is_file(configurationfile.with_suffix('.conf.old')):
+                    Path.rename(configurationfile.with_suffix('.conf'), configurationfile.with_suffix('.conf.old'))
+                else:
+                    print(f'Fehler beim Umbenennen, bitte {configurationfile}.conf von Hand entfernen.')
+        except Exception as e:
+            print(f'Fehler beim Lesen von {configurationfile}: {e}')
 
 
 # ==================================================================================
@@ -92,21 +91,17 @@ if __name__ == '__main__':
         print('Fehler: ruamel.yaml nicht installiert.')
         exit(1)
 
-    # dirs for old and new config scheme
-    dirs_old = ('items', 'scenes', 'structs')
-    dirs_new = (os.path.join('etc', dir) for dir in dirs_old)
+    # subdirs possible for conf files
+    dirs_old = ['items', 'scenes', 'structs']
 
     # join all dirs
-    dirs = ('etc',) + dirs_old + dirs_new
+    # in later release, remove '+ dirs_old'
+    dirs = ['etc'] + dirs_old + [os.path.join('etc', dir) for dir in dirs_old]
 
-    # just keep those which are dirs
-    dirs = (dir if os.path.isdir(dir) for dir in dirs)
+    # just keep those which are dirs and contain conf files
+    do_dirs = [dir for dir in dirs if os.path.isdir(dir) and list(Path(dir).glob('*.conf'))]
 
-    for dir in dirs:
-        result = input(f'Dateien im Verzeichnis {dir} konvertieren (j/n)? ').lower()
-        print()
-
-        if ans_item == 'j':
-            print(f'Konvertiere Dateien in {dir}:')
-            _convert_directory(dir)
-            print('')
+    for dir in do_dirs:
+        if os.listdir(dir):
+            if input(f'Dateien im Verzeichnis {dir} konvertieren (j/n)? ').lower() == 'j':
+                _convert_directory(dir)
