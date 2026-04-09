@@ -58,11 +58,6 @@ import subprocess
 import sys
 from typing import Optional
 
-print('')
-print(os.path.basename(__file__) + ' - Builds the .rst files for the documentation')
-print('')
-start_dir = os.getcwd()
-
 # find lib directory and import lib/item_conversion
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -70,6 +65,11 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, '..')
 sys.path.insert(0, '../lib')
 import shyaml  # type: ignore  # not in path
+
+print('')
+print(os.path.basename(__file__) + ' - Builds the .rst files for the documentation')
+print('')
+start_dir = os.getcwd()
 
 type_unclassified = 'unclassified'
 plugin_sections = {
@@ -101,6 +101,7 @@ def bold(s: str) -> str:
     return '**' + s + '**' if s else ''
 
 
+# TODO: return generator?
 def get_list_fromgit(name: str) -> list:
     """get filelist via git and return all matching files at first directory level"""
     # this could be written as a single nested comprehension, but gets quite unreadable
@@ -120,6 +121,7 @@ def get_pluginlist_fromgit() -> list:
     return get_list_fromgit('__init__.py')
 
 
+# TODO: return generator?
 def get_local_pluginlist() -> list:
     """like get_list_fromgit, but list files from local dir"""
     plglist = [x for x in os.listdir('.') if x[0] not in ['.', '_'] and x != 'deprecated_plugins']
@@ -158,15 +160,17 @@ def get_description(section_dict: dict, lang: str = 'en', key: str = 'descriptio
     except Exception:
         pass
     if not desc:
+        lang2 = 'de' if lang == 'en' else default_lang
         try:
-            lang2 = 'de' if lang == 'en' else default_lang
             desc = (section_dict[key].get(lang2, '') or '').replace('\n', ' ')
         except Exception:
             pass
     return desc
 
 
-def get_doc_description(from_dict: dict, language: str, key: str = 'description', index: Optional[int] = None) -> str:
+def get_doc_description(
+    from_dict: dict, language: str, key: str = 'description', index: Optional[int] = None
+) -> str:
     if index is None:
         # return description
         desc = get_description(from_dict, language, key + '_long')
@@ -178,12 +182,14 @@ def get_doc_description(from_dict: dict, language: str, key: str = 'description'
         desc = get_description(from_dict, language, key)
         if not desc:
             return ''
-        if len(desc) < index + 1:
+        try:
+            return desc[index]
+        except IndexError:
             print(f'Zu kurze Liste {desc} für index {index}')
             return ''
-        return desc[index]
 
 
+# TODO: test
 def flatten(obj):
     """return flat list from nested list"""
     if isinstance(obj, list):
@@ -210,6 +216,9 @@ def make_table_lines(lines: list, indent: int = 3, top: bool = False, wide: bool
       baz
     """
 
+    if not lines or lines == [None]:
+        return []
+
     ind = ' ' * indent
 
     first, follow = '- ', '  '
@@ -217,21 +226,23 @@ def make_table_lines(lines: list, indent: int = 3, top: bool = False, wide: bool
         first, follow = '* - ', '  - '
 
     result = []
-    if not lines or lines == [None]:
-        return []
 
     for i, line in enumerate(lines):
         if isinstance(line, list):
             if top:
-                result += [ind + l for l in line if line]
+                # get every non-empty line indented
+                result += [ind + ln for ln in line if line]
             else:
-                result += [l for x in line if line for l in (ind + x, ind)][:-1]
+                # get every non-empty line indented, add empty lines only between lines
+                result += [ln for x in line if line for ln in (ind + x, ind)][:-1]
         else:
+            # get line indented with first or follower list mark
             result += [ind + (follow if i else first) + line]
             if wide:
                 result += ['']
+    # don't return trailing empty line
     if result[-1:] == '':
-        del result[-1:]
+        return result[:-1]
     return result
 
 
@@ -293,10 +304,8 @@ def write_formatted(fh, str):
 
 
 def build_pluginlist(
-        plugins: list[str],
-        changed_plugins: list[str],
-        language: str = 'de'
-    ) -> dict[str, list]:
+    plugins: list[str], changed_plugins: list[str], language: str = 'de'
+) -> dict[str, list]:
     """
     Return a dict of <type>: <plugin_dict> for each plugin of the requested type
     The dict contains the plugin name, type and description as strings
@@ -324,7 +333,7 @@ def build_pluginlist(
 
         metafile = os.path.join(metaplugin, 'plugin.yaml')
         plugin_yaml = shyaml.yaml_load(metafile)
-        
+
         if plugin_yaml:
             section_dict = plugin_yaml.get('plugin')
 
@@ -368,7 +377,7 @@ def build_pluginlist(
 
 
 def write_config_dummyfile(configfile_dir: str, namelist: list):
-    """ write dummy rst file to include plugin docs in hidden toctree """
+    """write dummy rst file to include plugin docs in hidden toctree"""
     outf_name = os.path.join(configfile_dir, 'dummy_config.rst')
 
     with open(outf_name, 'w', encoding='UTF-8') as fh_dummy:
@@ -391,6 +400,7 @@ def write_config_dummyfile(configfile_dir: str, namelist: list):
 
 # ==================================================================================
 #   write_struct
+
 
 def write_struct(fh, conf, key, level=0):
     """
@@ -441,13 +451,14 @@ def write_struct(fh, conf, key, level=0):
 # ==================================================================================
 #   write_type_files
 
+
 def write_type_files(
     plg_dicts_by_type: dict[str, list],
     plugin_rst_dir: str,
     plgtype: str = 'all',
     plgtype_print: str = '',
     heading: str = '',
-    language: str = 'en'
+    language: str = 'en',
 ):
     """
     Create a .rst file for each plugin category
@@ -592,6 +603,7 @@ def write_type_files(
 
 # ==================================================================================
 #   write_configfile
+
 
 def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
     """
@@ -912,18 +924,18 @@ def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
                 'Keine Logik Parameter in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)\n'
             )
     else:
-        for l in sorted(lparameter_yaml):
+        for logic in sorted(lparameter_yaml):
             # ---------------------------------
             # write info for one attribute
             # ---------------------------------
-            write_heading(fh, l, 2)
+            write_heading(fh, logic, 2)
             fh.write('\n')
-            write_formatted(fh, get_doc_description(lparameter_yaml[l], language))
-            datatype = lparameter_yaml[l].get('type', '').lower()
-            default = str(lparameter_yaml[l].get('default', ''))
-            validlist = lparameter_yaml[l].get('valid_list', [])
-            validmin = lparameter_yaml[l].get('valid_min', '')
-            validmax = lparameter_yaml[l].get('valid_max', '')
+            write_formatted(fh, get_doc_description(lparameter_yaml[logic], language))
+            datatype = lparameter_yaml[logic].get('type', '').lower()
+            default = str(lparameter_yaml[logic].get('default', ''))
+            validlist = lparameter_yaml[logic].get('valid_list', [])
+            validmin = lparameter_yaml[logic].get('valid_min', '')
+            validmax = lparameter_yaml[logic].get('valid_max', '')
             fh.write(' - Datentyp: ' + bold(datatype) + '\n')
             if default != '':
                 default_printable = default.replace('\r', '\\r')
@@ -939,7 +951,7 @@ def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
                 fh.write('\n')
                 for index, v in enumerate(validlist):
                     desc = get_doc_description(
-                        lparameter_yaml[l], language, key='valid_list_description', index=index
+                        lparameter_yaml[logic], language, key='valid_list_description', index=index
                     )
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
@@ -1121,9 +1133,9 @@ if __name__ == '__main__':
         plugin_rst_dir = os.path.join(start_dir, 'source')
     print('zu schreiben in: ' + plugin_rst_dir)
 
-#
-#   check outdated config files and build list
-#
+    #
+    #   check outdated config files and build list
+    #
 
     configfile_dir = os.path.join(plugin_rst_dir, 'plugins_doc', 'config')
     skip = 0
@@ -1155,9 +1167,9 @@ if __name__ == '__main__':
 
     plugins_by_type = build_pluginlist(plugins_git, plugins_new, language)
 
-#
-#   generate plugin config files
-#
+    #
+    #   generate plugin config files
+    #
 
     print('\n\n--- Schreibe Dokumentation aus plugin.yaml')
     print(f'zu schreiben: {len(plugins_by_type["changed"])} Dateien, {skip} noch aktuell\n')
@@ -1170,10 +1182,9 @@ if __name__ == '__main__':
 
     write_config_dummyfile(configfile_dir, plugins_git)
 
-
-#
-#   generate plugin type files
-#
+    #
+    #   generate plugin type files
+    #
 
     print('--- Schreibe Listen nach Kategorien')
 
@@ -1182,6 +1193,10 @@ if __name__ == '__main__':
             print(f'Datei: plugins_doc/plugins_{pl.lower()}.rst: Daten unverändert, übersprungen')
         else:
             write_type_files(
-                plugins_by_type, plugin_rst_dir, pl, plugin_sections[pl][language], language=language
+                plugins_by_type,
+                plugin_rst_dir,
+                pl,
+                plugin_sections[pl][language],
+                language=language,
             )
     print()

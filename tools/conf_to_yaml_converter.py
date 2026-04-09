@@ -54,7 +54,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 os.chdir('..')
 sys.path.insert(0, 'lib')
 
-import item_conversion  # noqa
+import item_conversion  # type: ignore # import path changed dynamically
 
 # ==================================================================================
 #   Convert all .conf files in a directory
@@ -69,15 +69,19 @@ def _convert_directory(dir):
         configurationfile = Path(*item_file.parts[:-1], item_file.stem)
 
         ydata = item_conversion.parse_for_convert(str(configurationfile) + '.conf')
+        if not ydata:
+            continue
         try:
-            if ydata is not None:
-                item_conversion.yaml_save(str(configurationfile), ydata)
-                if not Path.is_file(configurationfile.with_suffix('.conf.old')):
-                    Path.rename(configurationfile.with_suffix('.conf'), configurationfile.with_suffix('.conf.old'))
-                else:
-                    print(f'Fehler beim Umbenennen, bitte {configurationfile}.conf von Hand entfernen.')
+            item_conversion.yaml_save(str(configurationfile), ydata)
         except Exception as e:
             print(f'Fehler beim Lesen von {configurationfile}: {e}')
+        else:
+            # as rename overwrites, which is not wanted, we test for existing file
+            if not Path.is_file(configurationfile.with_suffix('.conf.old')):
+                Path.rename(configurationfile.with_suffix('.conf'), configurationfile.with_suffix('.conf.old'))
+            else:
+                print(f'Fehler beim Umbenennen, bitte {configurationfile}.conf von Hand entfernen.')
+
 
 
 # ==================================================================================
