@@ -13,7 +13,8 @@ von SmartHomeNG und den Plugins.
 
         Diese Release Notes sind ein Arbeitsstand des **develop** Branches.
 
-         - Berücksichtigt sind Commits im smarthome Repository bis inkl. 16. April 2026
+         - Berücksichtigt sind Commits im smarthome Repository bis inkl. 27. April 2026
+           ('lib.item: fix string detection in autotimer values')
 
          - Berücksichtigt sind Commits im plugins Repository bis inkl. 16. April 2026
 
@@ -123,6 +124,7 @@ Updates in the CORE
     * Small fix for hysteresis
     * Small fix in hysteresis_state()
     * add "remark" property from item configuration
+    * fix string detection in autotimer values
 
   * lib.log:
 
@@ -183,6 +185,10 @@ Updates in the CORE
     * update fontawesome from 5.15.4 to 7.1.0
     * update jquery from 3.7.0 to 4.0.0
     * update jquery-ui from 1.13.2 to 1.14.2
+
+  * modules.websocket:
+
+    * only push log updates for subscribed logs
 
 * tools:
 
