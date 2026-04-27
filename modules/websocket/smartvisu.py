@@ -879,16 +879,17 @@ class Protocol():
             if (client_addr in self.sv_clients) and not (client_addr in remove):
                 websocket = self.sv_clients[client_addr]['websocket']
 
-                log_entry['cmd'] = 'log'
-                msg = json.dumps(log_entry, default=self.json_serial)
-                try:
-                    #self.logger.notice(">LogUp {}: {}".format(self.client_address(websocket), msg))
-                    await websocket.send(msg)
-                except Exception as e:
-                    if not str(e).startswith(('code = 1005', 'code = 1006')):
-                        self.logger.exception(f"update_log - Error in 'await websocket.send(data)': {e}")
-                    else:
-                        self.logger.info(f"update_log - Error in 'await websocket.send(data)': {e}")
+                if log_entry['name'] in self.sv_monitor_logs[client_addr]:
+                    log_entry['cmd'] = 'log'
+                    msg = json.dumps(log_entry, default=self.json_serial)
+                    try:
+                        #self.logger.notice(">LogUp {}: {}".format(self.client_address(websocket), msg))
+                        await websocket.send(msg)
+                    except Exception as e:
+                        if not str(e).startswith(('code = 1005', 'code = 1006')):
+                            self.logger.exception(f"update_log - Error in 'await websocket.send(data)': {e}")
+                        else:
+                            self.logger.info(f"update_log - Error in 'await websocket.send(data)': {e}")
             else:
                 self.logger.info(f"update_log: Client {self.build_log_info(client_addr)} is not active any more")
                 remove.append(client_addr)
