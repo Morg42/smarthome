@@ -33,6 +33,7 @@ import json
 import threading
 import ast
 import re
+import sys
 
 import inspect
 
@@ -1943,6 +1944,17 @@ class Item():
         eval_expression = str(eval_expression)
         try:
             result = eval(eval_expression)
+        except NameError as e:
+            _, ex, _ = sys.exc_info()  # err should be like "name 'foo' is not defined"
+            err = str(ex)
+            if err.startswith("name '") and err.endswith("' is not defined"):
+                var = err[6:-16]
+            eval_expression2 = eval_expression.replace(var, "'" + var + "'")        
+            try:
+                result = eval('"' + eval_expression2 + '"')
+            except Exception as e:
+                logger.error(f"Item '{self._path}': __run_attribute_eval({eval_expression2}): Problem evaluating '{eval_expression2}' - Exception {e}")
+                result = result_error
         except Exception as e:
             logger.error(f"Item '{self._path}': __run_attribute_eval({eval_expression}): Problem evaluating '{eval_expression}' - Exception {e}")
             result = result_error
