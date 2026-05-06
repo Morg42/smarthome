@@ -2719,13 +2719,16 @@ class Item():
             self.__updated_by = "{0}:{1}".format(caller, source)
         self._lock.release()
 
-        ### Test for fix for unwanted plugin retrigger in combination with eval expressions
-        # remove existing profix from caller
+        # Test for fix for unwanted plugin retrigger in combination with eval expressions
+        # remove existing prefix from caller
         caller_without_prefix = caller
-        if caller.lower().startswith('eval:'):
-            # clean up caller for update_item methods
-            caller_without_prefix = caller[5:]
-        ### END Test for fix for unwanted plugin retrigger in combination with eval expressions
+        try:
+            if caller.lower().startswith('eval:'):
+                # clean up caller for update_item methods
+                caller_without_prefix = caller[5:]
+        except AttributeError:
+            pass
+        # END Test for fix for unwanted plugin retrigger in combination with eval expressions
 
         self.__run_on_update(value, caller=caller, source=source, dest=dest)
 
