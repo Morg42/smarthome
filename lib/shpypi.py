@@ -245,7 +245,10 @@ class Shpypi:
         requirements_met = self.test_requirements(os.path.join(complete_filename), logging)
 
         if requirements_met:
-            os.remove(complete_filename)
+            try:
+                os.remove(complete_filename)
+            except FileNotFoundError:
+                pass
             return 1
         else:
             if self.install_requirements('core', logging, pip3_command):
