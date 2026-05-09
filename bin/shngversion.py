@@ -114,8 +114,9 @@ from lib.utils import Version
 # Update auf 1.11.0.2  wg. initialem Support für Python 3.13
 
 # Update auf 1.12.0    wg. Release
-shNG_version = '1.12.0.0'
-shNG_branch = 'master'
+# Update auf 1.12.0.1  wg. Kennzeichnung des Repo Stands als "nach dem v1.11.0 Release"
+shNG_version = '1.12.0.1'
+shNG_branch = 'develop'
 shNG_releasedate = '09. Mai 2026'   # Muss beim Release für den master branch auf das Release Datum gesetzt werden
 
 # ---------------------------------------------------------------------------------
