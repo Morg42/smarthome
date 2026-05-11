@@ -251,7 +251,6 @@ class PluginController(RESTResource):
         elif action in ['load', 'unload', 'reload']:
             response = self.handle_plugin_lifecycle(id, action)
         else:
-            response = {'result': 'error', 'description': "Plugin '{}': unknown action '{}'".format(id, action)}        else:
             response = {'result': 'error', 'description': "Plugin '{}': unknown action '{}'".format(id, action)}
             self.logger.warning("PluginController.update(): " + response['description'])
 
