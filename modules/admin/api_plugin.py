@@ -184,6 +184,38 @@ class PluginController(RESTResource):
 
         return response
 
+    def handle_plugin_lifecycle(self, id, action):
+        if self.plugins is None:
+            self.plugins = Plugins.get_instance()
+
+        if action == 'load':
+            if self.plugins.return_plugin(id):
+                return {'result': 'error', 'description': "Plugin '{}' is already loaded".format(id)}
+            _conf = lib.config.parse_basename(self.plugins._configfile, configtype='plugin')
+            plg_conf = _conf.get(id)
+            if plg_conf is None:
+                return {'result': 'error', 'description': "No configuration section '{}' found".format(id)}
+            result = self.plugins.load_plugin(id, plg_conf)
+            if result:
+                myplugin = self.plugins.return_plugin(id)
+                if myplugin:
+                    myplugin.run()
+                return {'result': 'ok'}
+            return {'result': 'error', 'description': "load_plugin('{}') returned False".format(id)}
+
+        elif action == 'unload':
+            if self.plugins.return_plugin(id) is None:
+                return {'result': 'error', 'description': "Plugin '{}' is not loaded".format(id)}
+            result = self.plugins.unload_plugin(id)
+            return {'result': 'ok'} if result else {'result': 'error', 'description': "unload_plugin('{}') returned False".format(id)}
+
+        elif action == 'reload':
+            if self.plugins.return_plugin(id) is None:
+                return {'result': 'error', 'description': "Plugin '{}' is not loaded".format(id)}
+            result = self.plugins.reload_plugin(id)
+            return {'result': 'ok'} if result else {'result': 'error', 'description': "reload_plugin('{}') returned False".format(id)}
+
+        return {'result': 'error', 'description': "Unknown lifecycle action '{}'".format(action)}
 
     def update(self, id='', action=''):
         self.logger.info("PluginController.update(id='{}', action='{}')".format(id, action))
@@ -214,8 +246,10 @@ class PluginController(RESTResource):
                     plugin_conf[id] = params.get('config', {})
                     shyaml.yaml_save_roundtrip(config_filename, plugin_conf, False)
                     response = {'result': 'ok'}
-        elif action in ['start','stop']:
+        elif action in ['start', 'stop']:
             response = self.handle_plugin_action(id, action)
+        elif action in ['load', 'unload', 'reload']:
+            response = self.handle_plugin_lifecycle(id, action)
         else:
             response = {'result': 'error', 'description': "Plugin '{}': unknown action '{}'".format(id, action)}
             self.logger.warning("PluginController.update(): " + response['description'])
