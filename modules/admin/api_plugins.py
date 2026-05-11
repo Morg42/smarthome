@@ -236,6 +236,7 @@ class PluginsConfigController(RESTResource):
             if plg == '?':
                 plg = _conf[confplg].get('class_path', '?')
             plginstance = self.plugins.return_plugin(confplg)
+            _conf[confplg]['_loaded'] = plginstance is not None
             typ = '?'
             if plginstance != None:
                 # self.logger.warning("confplg {}: type(plginstance) = {}".format(confplg, type(plginstance)))
