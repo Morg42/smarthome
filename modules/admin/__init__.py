@@ -56,13 +56,11 @@ from .api_plugins import *
 from .api_plugin import *
 #from .api_plginst import *
 
-
 suburl = 'admin'
-suburl2 = 'admin2'
 
 
 class Admin(Module):
-    version = '1.8.2'
+    version = '1.9.0'
     longname = 'Admin module for SmartHomeNG'
     _port = 0
 
@@ -121,17 +119,12 @@ class Admin(Module):
         mysuburl = ''
         if suburl != '':
             mysuburl = '/' + suburl
-        mysuburl2 = ''
-        if suburl2 != '':
-            mysuburl2 = '/' + suburl2
         ip = Utils.get_local_ipv4_address()
         self._port = self.mod_http._port
         # self.logger.warning('port = {}'.format(self._port))
         self.shng_url_root = 'http://' + ip + ':' + str(self._port)         # for links mto plugin webinterfaces
         self.url_root = self.shng_url_root + mysuburl
-        self.url_root2 = self.shng_url_root + mysuburl2
         self.api_url_root = self.shng_url_root + 'api'
-        self.api2_url_root = self.shng_url_root + 'api2'
 
     def start(self):
         """
@@ -142,7 +135,6 @@ class Admin(Module):
         self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'start()'}))
 
         self.webif_dir = os.path.dirname(os.path.abspath(__file__)) + '/webif'
-        self.webif2_dir = os.path.dirname(os.path.abspath(__file__)) + '/webif2'
 
         self.logger.info("Module '{}': webif_dir = webif_dir = {}".format(self._shortname, self.webif_dir))
         # config for Angular app (special: error page)
@@ -150,35 +142,15 @@ class Admin(Module):
             '/': {
                 'tools.staticdir.root': self.webif_dir,
                 'tools.staticdir.on': True,
-                'tools.staticdir.dir': 'static',
+                'tools.staticdir.dir': 'static/browser',
                 'tools.staticdir.index': 'index.html',
                 'tools.chaching.on': False,
                 'tools.caching.force': False,
                 'tools.caching.delay': 6,
                 'tools.expires.on': True,
                 'tools.expires.secs': 6,
-                'error_page.404': self.webif_dir + '/static/index.html',
-                #                    'error_page.404': self.error_page,
-                #                   'tools.auth_basic.on': False,
-                #                   'tools.auth_basic.realm': 'shng_admin_webif',
-            }
-        }
-        # config for Angular app (special: error page)
-        config2 = {
-            '/': {
-                'tools.staticdir.root': self.webif2_dir,
-                'tools.staticdir.on': True,
-                'tools.staticdir.dir': 'static',
-                'tools.staticdir.index': 'index.html',
-                'tools.chaching.on': False,
-                'tools.caching.force': False,
-                'tools.caching.delay': 6,
-                'tools.expires.on': True,
-                'tools.expires.secs': 6,
-                'error_page.404': self.webif2_dir + '/static/index.html',
-                #                    'error_page.404': self.error_page,
-                #                   'tools.auth_basic.on': False,
-                #                   'tools.auth_basic.realm': 'shng_admin_webif',
+                # fix for path error
+                'error_page.404': self._spa_index,
             }
         }
         # API config (special: request.dispatch)
@@ -196,38 +168,8 @@ class Admin(Module):
                 'error_page.405': self._error_page,
                 'error_page.411': self._error_page,
                 'error_page.500': self._error_page,
-                # 'tools.auth_basic.on': False,
-                # 'tools.auth_basic.realm': 'shng_admin_webif',
             }
         }
-
-        # def register_webif(self, app, pluginname, conf, pluginclass='', instance='', description='', webifname='', use_global_basic_auth=True):
-        """
-        Register an application for CherryPy
-
-        This method is called by a plugin to register a webinterface
-
-        It should be called like this:
-
-            self.mod_http.register_webif(WebInterface( ... ), 
-                               self.get_shortname(), 
-                               config, 
-                               self.get_classname(), self.get_instance_name(),
-                               description,
-                               webifname,
-                               use_global_basic_auth
-                               useprefix)
-
-
-        :param app: Instance of the application object
-        :param pluginname: Mount point for the application
-        :param conf: Cherrypy application configuration dictionary
-        :param pluginclass: Name of the plugin's class
-        :param instance: Instance of the plugin (if multi-instance)
-        :param description: Description of the functionallity of the webif. If left empty, a generic description will be generated
-        :param webifname: Name of the webinterface. If left empty, the pluginname is used
-        :param use_global_basic_auth: if True, global basic_auth settings from the http module are used. If False, registering plugin provides its own basic_auth
-        """
 
         # Register the web interface as a cherrypy app
         self.mod_http.register_webif(WebInterface(self.webif_dir, self, self.shng_url_root, self.url_root),
@@ -235,16 +177,6 @@ class Admin(Module):
                                      config,
                                      'admin', '',
                                      description='Administrationsoberfläche für SmartHomeNG',
-                                     webifname='',
-                                     use_global_basic_auth=False,
-                                     useprefix=False)
-
-        # Register the alternate web interface as a cherrypy app
-        self.mod_http.register_webif(WebInterface(self.webif2_dir, self, self.shng_url_root, self.url_root2),
-                                     suburl2,
-                                     config2,
-                                     'admin2', '',
-                                     description='kommende Administrationsoberfläche für SmartHomeNG',
                                      webifname='',
                                      use_global_basic_auth=False,
                                      useprefix=False)
@@ -259,7 +191,14 @@ class Admin(Module):
                                      use_global_basic_auth=False,
                                      useprefix=False)
 
-        return
+        # Angular's polyfills bundle requests /3rdpartylicenses.txt at the server
+        # root (not relative to base-href), so serve it from the root app.
+        license_file = os.path.join(self.webif_dir, 'static', '3rdpartylicenses.txt')
+        if os.path.isfile(license_file) and '' in cherrypy.tree.apps:
+            cherrypy.tree.apps[''].config['/3rdpartylicenses.txt'] = {
+                'tools.staticfile.on': True,
+                'tools.staticfile.filename': license_file,
+            }
 
     def stop(self):
         """
@@ -356,6 +295,11 @@ class Admin(Module):
 
         return result
 
+    def _spa_index(self, status, message, traceback, version):
+        cherrypy.response.status = 200
+        index_path = os.path.join(self.webif_dir, 'static', 'browser', 'index.html')
+        with open(index_path, 'r', encoding='utf-8') as f:
+            return f.read()
 
 def translate(s):
     # needed for Admin UI
