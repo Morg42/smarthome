@@ -31,6 +31,7 @@ import bin.shngversion
 import lib.daemon
 import lib.backup as backup
 from lib.constants import (DIR_ETC, DIR_MODULES)
+from lib.shpypi import Shpypi
 
 
 # ======================================================================
@@ -271,6 +272,19 @@ class ServerController(RESTResource):
 
 
     # ======================================================================
+    #  /api/server/pypi
+    #
+    def pypi(self):
+        """
+        Returns PyPI package requirement and availability information.
+        """
+        shpypi = Shpypi.get_instance()
+        package_list = shpypi.get_packagelist()
+        sorted_list = sorted(package_list, key=lambda k: k['sort'], reverse=False)
+        return json.dumps(sorted_list)
+
+
+    # ======================================================================
     #  GET /api/server/
     #
     def read(self, id=''):
@@ -285,6 +299,8 @@ class ServerController(RESTResource):
             return self.status()
         elif id == 'info':
             return self.info()
+        elif id == 'pypi':
+            return self.pypi()
 
         return None
 

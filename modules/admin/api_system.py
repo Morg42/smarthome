@@ -246,19 +246,6 @@ class SystemController(RESTResource):
         return json.dumps(response)
 
 
-    # ======================================================================
-    #  /api/system/pypi
-    #
-    def pypi(self):
-        """
-        Returns PyPI package requirement and availability information.
-        """
-        shpypi = Shpypi.get_instance()
-        package_list = shpypi.get_packagelist()
-        sorted_list = sorted(package_list, key=lambda k: k['sort'], reverse=False)
-        return json.dumps(sorted_list)
-
-
     def get_knx_daemon(self):
         """
         Tests it knxd or eibd are running
@@ -389,8 +376,6 @@ class SystemController(RESTResource):
         #     return self.status()
         elif id == 'info':
             return self.info()
-        elif id == 'pypi':
-            return self.pypi()
 
         return None
 
