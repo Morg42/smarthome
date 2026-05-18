@@ -277,10 +277,17 @@ class ServerController(RESTResource):
     def pypi(self):
         """
         Returns PyPI package requirement and availability information.
+
+        Uses the Shpypi singleton's package_list when already populated so
+        that in-place updates by the scheduler's lookup_pypi_releasedata job
+        are reflected — mirroring the cache behaviour of the legacy endpoint.
         """
         shpypi = Shpypi.get_instance()
-        package_list = shpypi.get_packagelist()
-        sorted_list = sorted(package_list, key=lambda k: k['sort'], reverse=False)
+        if shpypi.package_list:
+            source = shpypi.package_list
+        else:
+            source = shpypi.get_packagelist()
+        sorted_list = sorted(source, key=lambda k: k['sort'], reverse=False)
         return json.dumps(sorted_list)
 
 
