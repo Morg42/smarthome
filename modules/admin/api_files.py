@@ -122,24 +122,61 @@ class FilesController(RESTResource):
 
     def save_logging_config(self):
         """
-        Save logging configuration
+        Save logging configuration and apply it immediately.
+
+        Backs up the current config to logging.yaml.bak before writing.
+        If the new config is invalid, the backup is automatically restored.
 
         :return: status dict
         """
-        params = None
         params = self.get_body(text=True)
         if params is None:
-            self.logger.warning("FilesController.save_logging_config(): Bad, request")
+            self.logger.warning("FilesController.save_logging_config(): Bad request")
             raise cherrypy.HTTPError(status=411)
         self.logger.debug("FilesController.save_logging_config(): '{}'".format(params))
 
-
         filename = self._sh.get_config_file(BASE_LOG)
+<<<<<<< Updated upstream
         read_data = None
+=======
+        bak_filename = filename + '.bak'
+
+        # Read current config before overwriting so we can restore it on failure
+        old_content = None
+        try:
+            with open(filename, 'r', encoding='UTF-8') as f:
+                old_content = f.read()
+            with open(bak_filename, 'w', encoding='UTF-8') as f:
+                f.write(old_content)
+            self.logger.info("FilesController.save_logging_config(): backup written to {}".format(bak_filename))
+        except Exception as e:
+            self.logger.warning("FilesController.save_logging_config(): could not create backup: {}".format(e))
+
+        # Write new config
+>>>>>>> Stashed changes
         with open(filename, 'w', encoding='UTF-8') as f:
             f.write(params)
 
-        result = {"result": "ok"}
+        # Apply new config at runtime
+        reload_ok = self._sh.logs.reload_logging_config()
+
+        if reload_ok:
+            result = {"result": "ok", "config_reloaded": True}
+        else:
+            # New config is invalid — restore previous config automatically
+            if old_content is not None:
+                try:
+                    with open(filename, 'w', encoding='UTF-8') as f:
+                        f.write(old_content)
+                    self._sh.logs.reload_logging_config()
+                    self.logger.warning("FilesController.save_logging_config(): invalid config rejected, previous config restored from backup")
+                    result = {"result": "error", "description": "Invalid logging configuration — previous config has been restored. The backup is saved as logging.yaml.bak.", "config_restored": True}
+                except Exception as e:
+                    self.logger.error("FilesController.save_logging_config(): failed to restore backup: {}".format(e))
+                    result = {"result": "error", "description": "Invalid logging configuration and backup restore failed: {}".format(e), "config_restored": False}
+            else:
+                result = {"result": "error", "description": "Invalid logging configuration — no backup was available to restore.", "config_restored": False}
+
         return json.dumps(result)
 
 

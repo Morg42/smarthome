@@ -294,6 +294,41 @@ class Logs():
         return logging_config
 
 
+    def reload_logging_config(self):
+        """
+        Reload logging configuration from logging.yaml at runtime without restarting.
+        Called after the advanced configuration editor saves changes.
+
+        :return: True on success, False on error
+        :rtype: bool
+        """
+        config_dict = self.load_logging_config()
+        if config_dict is None:
+            self.logger.error("reload_logging_config: failed to load logging config from disk")
+            return False
+
+        config_dict = self.add_all_handlers_logger(config_dict)
+
+        # Remove existing MemLog handler from root before dictConfig to avoid duplicates
+        root_logger = logging.getLogger('')
+        for h in list(root_logger.handlers):
+            if isinstance(h, ShngMemLogHandler):
+                root_logger.removeHandler(h)
+
+        try:
+            logging.config.dictConfig(config_dict)
+        except Exception as e:
+            self.logger.error(f"reload_logging_config: dictConfig failed: {e}")
+            return False
+
+        # Invalidate handler object cache — dictConfig created new handler instances
+        self._all_handlers = {}
+
+        self.initMemLog()
+        self.logger.notice("Logging configuration reloaded from logging.yaml")
+        return True
+
+
     def add_all_handlers_logger(self, logging_config):
 
         lg = logging_config['loggers'].get(self._all_handlers_logger_name, None)
