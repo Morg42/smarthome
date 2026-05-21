@@ -113,9 +113,6 @@ class FilesController(RESTResource):
 
         self.logger.info("FilesController.get_logging_config()")
         filename = self._sh.get_config_file(BASE_LOG)
-        read_data = None
-        with open(filename, encoding='UTF-8') as f:
-            read_data = f.read()
         return cherrypy.lib.static.serve_file(filename, 'application/x-download',
                                  'attachment', 'logging.yaml')
 
@@ -136,9 +133,6 @@ class FilesController(RESTResource):
         self.logger.debug("FilesController.save_logging_config(): '{}'".format(params))
 
         filename = self._sh.get_config_file(BASE_LOG)
-<<<<<<< Updated upstream
-        read_data = None
-=======
         bak_filename = filename + '.bak'
 
         # Read current config before overwriting so we can restore it on failure
@@ -153,7 +147,6 @@ class FilesController(RESTResource):
             self.logger.warning("FilesController.save_logging_config(): could not create backup: {}".format(e))
 
         # Write new config
->>>>>>> Stashed changes
         with open(filename, 'w', encoding='UTF-8') as f:
             f.write(params)
 
@@ -190,10 +183,6 @@ class FilesController(RESTResource):
         if not(os.path.isfile(filename)):
             open(filename, 'a', encoding='UTF-8').close()
             self.logger.info("FilesController.get_struct_config(): created empty file {}".format(filename))
-
-        read_data = None
-        with open(filename, encoding='UTF-8') as f:
-            read_data = f.read()
         return cherrypy.lib.static.serve_file(filename, 'application/x-download',
                                  'attachment', 'struct.yaml')
 
@@ -213,7 +202,6 @@ class FilesController(RESTResource):
 
 
         filename = self._sh.get_config_file(BASE_STRUCT)
-        read_data = None
         with open(filename, 'w', encoding='UTF-8') as f:
             f.write(params)
 
@@ -243,9 +231,6 @@ class FilesController(RESTResource):
 
         self.logger.info("FilesController.get_items_config({})".format(fn))
         filename = os.path.join(self.items_dir, fn + '.yaml')
-        read_data = None
-        with open(filename, encoding='UTF-8') as f:
-            read_data = f.read()
         return cherrypy.lib.static.serve_file(filename, 'application/x-download',
                                  'attachment', fn + '.yaml')
 
@@ -265,7 +250,6 @@ class FilesController(RESTResource):
 
 
         filename = os.path.join(self.items_dir, filename + '.yaml')
-        read_data = None
         with open(filename, 'w', encoding='UTF-8') as f:
             f.write(params)
 
@@ -310,9 +294,6 @@ class FilesController(RESTResource):
 
         self.logger.info("FilesController.get_scenes_config({})".format(fn))
         filename = os.path.join(self.scenes_dir, fn + '.yaml')
-        read_data = None
-        with open(filename, encoding='UTF-8') as f:
-            read_data = f.read()
         return cherrypy.lib.static.serve_file(filename, 'application/x-download',
                                  'attachment', fn + '.yaml')
 
@@ -332,7 +313,6 @@ class FilesController(RESTResource):
 
 
         filename = os.path.join(self.scenes_dir, filename + '.yaml')
-        read_data = None
         with open(filename, 'w', encoding='UTF-8') as f:
             f.write(params)
 
@@ -377,9 +357,6 @@ class FilesController(RESTResource):
             filename = os.path.join(self.template_dir, fn)
         else:
             filename = os.path.join(self.functions_dir, fn + '.py')
-        read_data = None
-        with open(filename, encoding='UTF-8') as f:
-            read_data = f.read()
         return cherrypy.lib.static.serve_file(filename, 'application/x-download',
                                  'attachment', fn + '.py')
 
@@ -399,7 +376,6 @@ class FilesController(RESTResource):
 
 
         filename = os.path.join(self.functions_dir, filename + '.py')
-        read_data = None
         with open(filename, 'w', encoding='UTF-8') as f:
             f.write(params)
 
@@ -441,9 +417,6 @@ class FilesController(RESTResource):
 
         self.logger.info("FilesController.get_logics_config({})".format(fn))
         filename = os.path.join(self.logics_dir, fn)
-        read_data = None
-        with open(filename, encoding='UTF-8') as f:
-            read_data = f.read()
         return cherrypy.lib.static.serve_file(filename, 'application/x-download',
                                  'attachment', fn)
 
@@ -463,7 +436,6 @@ class FilesController(RESTResource):
 
 
         filename = os.path.join(self.logics_dir, filename)
-        read_data = None
         with open(filename, 'w', encoding='UTF-8') as f:
             f.write(params)
 
@@ -489,7 +461,7 @@ class FilesController(RESTResource):
                 if not file.find(".") == 0:  # filter .gitignore etc.
                     self.items = Items.get_instance()
                     item = self.items.return_item(file)
-                    no_cache_file = False;
+                    no_cache_file = False
                     if item is None:
                         self.logger.debug("cachecheck: no item {}".format(file))
                         no_cache_file = True
@@ -544,7 +516,6 @@ class FilesController(RESTResource):
 
         old_shng_status = self._sh.shng_status
         if old_shng_status['code'] != 20:
-            response = {'result': 'error', 'text': "SmartHomeNG is not in state 'running'"}
             return
 
         self._sh.shng_status = {'code': 101, 'text': 'Restore: Uploading'}
@@ -575,7 +546,6 @@ class FilesController(RESTResource):
         # !!! make restore-directory empty !!!
 
         fn = os.path.join(restore_dir, filename)
-        read_data = None
         with open(fn, 'w+b') as f:
             f.write(params)
         self.logger.info("FilesController.restore_config(): Configuration '{}' uploaded".format(filename))
