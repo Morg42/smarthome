@@ -397,6 +397,73 @@ class FilesController(RESTResource):
         result = {"result": "ok"}
         return json.dumps(result)
 
+
+    # ======================================================================
+    #  Create (POST) methods - refuse to overwrite existing files
+    #
+    def create_items_config(self, filename):
+        """
+        Create a new items configuration file.
+        Returns HTTP 409 Conflict if a file with that name already exists.
+        """
+        params = self.get_body(text=True)
+        if params is None:
+            self.logger.warning("FilesController.create_items_config(): Bad request")
+            raise cherrypy.HTTPError(status=411)
+
+        filepath = os.path.join(self.items_dir, filename + '.yaml')
+        if os.path.exists(filepath):
+            self.logger.warning("FilesController.create_items_config(): file already exists: {}".format(filepath))
+            raise cherrypy.HTTPError(status=409, message='File already exists')
+
+        with open(filepath, 'w', encoding='UTF-8') as f:
+            f.write(params)
+        self.logger.info("FilesController.create_items_config(): created '{}'".format(filepath))
+        return json.dumps({"result": "ok"})
+
+
+    def create_scenes_config(self, filename):
+        """
+        Create a new scene configuration file.
+        Returns HTTP 409 Conflict if a file with that name already exists.
+        """
+        params = self.get_body(text=True)
+        if params is None:
+            self.logger.warning("FilesController.create_scenes_config(): Bad request")
+            raise cherrypy.HTTPError(status=411)
+
+        filepath = os.path.join(self.scenes_dir, filename + '.yaml')
+        if os.path.exists(filepath):
+            self.logger.warning("FilesController.create_scenes_config(): file already exists: {}".format(filepath))
+            raise cherrypy.HTTPError(status=409, message='File already exists')
+
+        with open(filepath, 'w', encoding='UTF-8') as f:
+            f.write(params)
+        self.logger.info("FilesController.create_scenes_config(): created '{}'".format(filepath))
+        return json.dumps({"result": "ok"})
+
+
+    def create_functions_config(self, filename):
+        """
+        Create a new function library file.
+        Returns HTTP 409 Conflict if a file with that name already exists.
+        """
+        params = self.get_body(text=True)
+        if params is None:
+            self.logger.warning("FilesController.create_functions_config(): Bad request")
+            raise cherrypy.HTTPError(status=411)
+
+        filepath = os.path.join(self.functions_dir, filename + '.py')
+        if os.path.exists(filepath):
+            self.logger.warning("FilesController.create_functions_config(): file already exists: {}".format(filepath))
+            raise cherrypy.HTTPError(status=409, message='File already exists')
+
+        with open(filepath, 'w', encoding='UTF-8') as f:
+            f.write(params)
+        self.logger.info("FilesController.create_functions_config(): created '{}'".format(filepath))
+        return json.dumps({"result": "ok"})
+
+
     # ======================================================================
     #  /api/files/logics
     #
@@ -643,12 +710,16 @@ class FilesController(RESTResource):
 
     def add(self, id='', filename=''):
         """
-        Handle POST requests for server API
+        Handle POST requests for server API (create new files, refuse to overwrite)
         """
         self.logger.info("FilesController.add(id='{}', filename='{}')".format(id, filename))
 
-        #if (id == 'restore' and filename != ''):
-        #    return self.restore_config(filename)
+        if (id == 'items' and filename != ''):
+            return self.create_items_config(filename)
+        elif (id == 'scenes' and filename != ''):
+            return self.create_scenes_config(filename)
+        elif (id == 'functions' and filename != ''):
+            return self.create_functions_config(filename)
 
         return None
 
