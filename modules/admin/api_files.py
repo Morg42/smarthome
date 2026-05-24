@@ -35,7 +35,7 @@ import bin.shngversion
 from lib.item_conversion import convert_yaml as convert_yaml
 from lib.item_conversion import parse_for_convert as parse_for_convert
 from lib.shtime import Shtime
-from lib.constants import (DIR_ETC, DIR_ITEMS, DIR_UF, DIR_SCENES, DIR_LOGICS, DIR_TPL, DIR_MODULES, BASE_LOG, BASE_STRUCT)
+from lib.constants import (DIR_ETC, DIR_ITEMS, DIR_STRUCTS, DIR_UF, DIR_SCENES, DIR_LOGICS, DIR_TPL, DIR_MODULES, BASE_LOG, BASE_STRUCT)
 
 
 # ======================================================================
@@ -53,6 +53,7 @@ class FilesController(RESTResource):
         self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)
+        self.structs_dir = self._sh.get_structsdir()
         self.items_dir = self._sh.get_config_dir(DIR_ITEMS)
         self.functions_dir = self._sh.get_config_dir(DIR_UF)
         self.scenes_dir = self._sh.get_config_dir(DIR_SCENES)
@@ -176,37 +177,80 @@ class FilesController(RESTResource):
     # ======================================================================
     #  /api/files/structs
     #
-    def get_struct_config(self):
+    def get_structs_filelist(self):
+        """Return sorted list of .yaml files in the structs directory, plus the
+        relative display path so the frontend can show the correct location
+        regardless of whether --config-etc is active."""
+        filelist = sorted(
+            fn for fn in os.listdir(self.structs_dir)
+            if fn.endswith('.yaml')
+        )
+        rel_dir = './' + os.path.relpath(self.structs_dir, self.base_dir)
+        self.logger.info("FilesController.get_structs_filelist(): dir={} files={}".format(rel_dir, filelist))
+        return json.dumps({"dir": rel_dir, "files": filelist})
 
-        self.logger.info("FilesController.get_struct_config()")
-        filename = self._sh.get_config_file(BASE_STRUCT)
-        if not(os.path.isfile(filename)):
-            open(filename, 'a', encoding='UTF-8').close()
-            self.logger.info("FilesController.get_struct_config(): created empty file {}".format(filename))
-        return cherrypy.lib.static.serve_file(filename, 'application/x-download',
-                                 'attachment', 'struct.yaml')
+
+    def get_struct_config(self, fn):
+        """Serve a single struct file by base-name (without extension)."""
+        self.logger.info("FilesController.get_struct_config({})".format(fn))
+        filepath = os.path.join(self.structs_dir, fn + '.yaml')
+        if not os.path.isfile(filepath):
+            open(filepath, 'a', encoding='UTF-8').close()
+            self.logger.info("FilesController.get_struct_config(): created empty file {}".format(filepath))
+        return cherrypy.lib.static.serve_file(filepath, 'application/x-download',
+                                              'attachment', fn + '.yaml')
 
 
-    def save_struct_config(self):
+    def save_struct_config(self, filename):
         """
-        Save struct configuration
+        Save a struct configuration file.
 
         :return: status dict
         """
-        params = None
         params = self.get_body(text=True)
         if params is None:
-            self.logger.warning("FilesController.save_struct_config(): Bad, request")
+            self.logger.warning("FilesController.save_struct_config(): Bad request")
             raise cherrypy.HTTPError(status=411)
-        self.logger.debug("FilesController.save_struct_config(): '{}'".format(params))
+        self.logger.debug("FilesController.save_struct_config({}): '{}'".format(filename, params))
 
-
-        filename = self._sh.get_config_file(BASE_STRUCT)
-        with open(filename, 'w', encoding='UTF-8') as f:
+        filepath = os.path.join(self.structs_dir, filename + '.yaml')
+        with open(filepath, 'w', encoding='UTF-8') as f:
             f.write(params)
 
-        result = {"result": "ok"}
-        return json.dumps(result)
+        return json.dumps({"result": "ok"})
+
+
+    def create_struct_config(self, filename):
+        """
+        Create a new struct configuration file.
+        Returns HTTP 409 Conflict if a file with that name already exists.
+        """
+        params = self.get_body(text=True)
+        if params is None:
+            self.logger.warning("FilesController.create_struct_config(): Bad request")
+            raise cherrypy.HTTPError(status=411)
+
+        filepath = os.path.join(self.structs_dir, filename + '.yaml')
+        if os.path.exists(filepath):
+            self.logger.warning("FilesController.create_struct_config(): file already exists: {}".format(filepath))
+            raise cherrypy.HTTPError(status=409, message='File already exists')
+
+        with open(filepath, 'w', encoding='UTF-8') as f:
+            f.write(params)
+        self.logger.info("FilesController.create_struct_config(): created '{}'".format(filepath))
+        return json.dumps({"result": "ok"})
+
+
+    def delete_struct_config(self, filename):
+        """
+        Delete a struct configuration file.
+
+        :return: status dict
+        """
+        self.logger.debug("FilesController.delete_struct_config(): '{}'".format(filename))
+        filepath = os.path.join(self.structs_dir, filename + '.yaml')
+        os.remove(filepath)
+        return json.dumps({"result": "ok"})
 
 
     # ======================================================================
@@ -645,9 +689,11 @@ class FilesController(RESTResource):
         if id == 'logging':
             cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
             return self.get_logging_config()
+        elif (id == 'structs' and filename == ''):
+            return self.get_structs_filelist()
         elif id == 'structs':
             cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
-            return self.get_struct_config()
+            return self.get_struct_config(filename)
 
         elif (id == 'items' and filename == ''):
             return self.get_items_filelist()
@@ -689,8 +735,8 @@ class FilesController(RESTResource):
 
         if id == 'logging':
             return self.save_logging_config()
-        elif id == 'structs':
-            return self.save_struct_config()
+        elif (id == 'structs' and filename != ''):
+            return self.save_struct_config(filename)
         elif (id == 'items' and filename != ''):
             return self.save_items_config(filename)
         elif (id == 'scenes' and filename != ''):
@@ -714,7 +760,9 @@ class FilesController(RESTResource):
         """
         self.logger.info("FilesController.add(id='{}', filename='{}')".format(id, filename))
 
-        if (id == 'items' and filename != ''):
+        if (id == 'structs' and filename != ''):
+            return self.create_struct_config(filename)
+        elif (id == 'items' and filename != ''):
             return self.create_items_config(filename)
         elif (id == 'scenes' and filename != ''):
             return self.create_scenes_config(filename)
@@ -733,6 +781,8 @@ class FilesController(RESTResource):
         """
         self.logger.info("FilesController.delete(id='{}', filename='{}')".format(id, filename))
 
+        if (id == 'structs' and filename != ''):
+            return self.delete_struct_config(filename)
         if (id == 'items' and filename != ''):
             return self.delete_items_config(filename)
         if (id == 'scenes' and filename != ''):
