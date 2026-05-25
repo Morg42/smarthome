@@ -104,8 +104,6 @@ class Admin(Module):
             self.pypi_timeout = self._parameters['pypi_timeout']
             self.itemtree_fullpath = self._parameters['itemtree_fullpath']
             self.itemtree_searchstart = self._parameters['itemtree_searchstart']
-            self.websocket_host = self._parameters['websocket_host']
-            self.websocket_port = self._parameters['websocket_port']
             self.log_chunksize = self._parameters['log_chunksize']
             self.developer_mode = self._parameters['developer_mode']
             self.rest_dispatch_force_exception = self._parameters['rest_dispatch_force_exception']
@@ -115,6 +113,43 @@ class Admin(Module):
                 "Module '{}': Inconsistent module (invalid metadata definition)".format(self._shortname))
             self._init_complete = False
             return
+
+        # Deprecation: websocket_host/websocket_port belong to the websocket module,
+        # not to the admin module.  Warn users who still have them in admin config.
+        _dep_host = self._parameters.get('websocket_host')
+        _dep_port = self._parameters.get('websocket_port')
+        _default_ws_port = 2424
+        if _dep_host:
+            self.logger.warning(
+                "Module '{}': Parameter 'websocket_host' is DEPRECATED in the admin module. "
+                "Configure it in the websocket module instead. The websocket module's value will be used.".format(self._shortname))
+        if _dep_port is not None and _dep_port != _default_ws_port:
+            self.logger.warning(
+                "Module '{}': Parameter 'websocket_port' is DEPRECATED in the admin module. "
+                "Configure it in the websocket module instead. The websocket module's value will be used.".format(self._shortname))
+
+        # Authoritative source: the websocket module itself.
+        self.websocket_host = None
+        self.websocket_port = str(_default_ws_port)
+        try:
+            mod_ws = Modules.get_instance().get_module('websocket')
+            if mod_ws is not None:
+                actual_port = mod_ws.get_port()
+                if actual_port:
+                    self.websocket_port = str(actual_port)
+                # Use the websocket module's bind IP only when it is a specific address;
+                # 0.0.0.0 / :: are wildcard bind addresses the browser cannot connect to.
+                ws_ip = getattr(mod_ws, 'ip', None)
+                if ws_ip and ws_ip not in ('0.0.0.0', '::', ''):
+                    self.websocket_host = ws_ip
+            else:
+                self.logger.warning(
+                    "Module '{}': Websocket module not found; falling back to admin module parameters.".format(self._shortname))
+                self.websocket_host = _dep_host or None
+                self.websocket_port = str(_dep_port) if _dep_port else str(_default_ws_port)
+        except Exception as e:
+            self.logger.warning(
+                "Module '{}': Could not read websocket module config: {}".format(self._shortname, e))
 
         mysuburl = ''
         if suburl != '':
