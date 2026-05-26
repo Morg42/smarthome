@@ -34,7 +34,7 @@ from lib.utils import Utils
 from lib.logic import Logics
 from lib.plugin import Plugins
 from lib.scheduler import Scheduler
-from lib.constants import (DIR_ETC, DIR_LOGICS, DIR_TPL, BASE_LOGIC)
+from lib.constants import (DIR_ETC, DIR_LOGICS, DIR_TPL, BASE_LOGIC, BASE_LOGIC_GROUPS)
 
 from .rest import RESTResource
 
@@ -262,12 +262,68 @@ class LogicsController(RESTResource):
 
 
     def save_group(self, name, params):
+        # Separate member list from group metadata before persisting
+        members = params.pop('members', None)
 
         self.logics._groups[name] = params
         self.logics._save_groups()
-        response = {'result': 'ok'}
 
+        if members is not None:
+            self._update_group_members(name, members)
+
+        response = {'result': 'ok'}
         return json.dumps(response)
+
+
+    def _update_group_members(self, groupname, new_members):
+        """
+        Batch-update logic_groupname in logic.yaml so that exactly the logics
+        listed in new_members belong to groupname.  Other group memberships of
+        each logic are left untouched.
+        """
+        logic_conf = shyaml.yaml_load_roundtrip(self._sh.get_config_file(BASE_LOGIC))
+        changed = False
+
+        for logicname, sect in logic_conf.items():
+            if not isinstance(sect, dict):
+                continue
+
+            raw = sect.get('logic_groupname', None)
+            if raw is None:
+                current = []
+            elif isinstance(raw, str):
+                current = [raw]
+            else:
+                current = list(raw)
+
+            in_new = logicname in new_members
+            in_cur = groupname in current
+
+            if in_new == in_cur:
+                continue  # nothing to do for this logic
+
+            if in_new:
+                current.append(groupname)
+            else:
+                current.remove(groupname)
+
+            # Write back: empty → remove key; single → scalar; multiple → list
+            if not current:
+                sect.pop('logic_groupname', None)
+            elif len(current) == 1:
+                sect['logic_groupname'] = current[0]
+            else:
+                sect['logic_groupname'] = current
+
+            # Keep the running logic in sync if it is loaded
+            running = self._sh.logics.return_logic(logicname)
+            if running is not None:
+                running.groupnames = current if current else None
+
+            changed = True
+
+        if changed:
+            shyaml.yaml_save_roundtrip(self._sh.get_config_file(BASE_LOGIC), logic_conf, False)
 
 
     def delete_group(self, name, params):

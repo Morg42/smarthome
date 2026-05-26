@@ -59,7 +59,7 @@ import lib.shyaml as shyaml
 from lib.utils import Utils
 
 from lib.constants import PLUGIN_PARSE_LOGIC
-from lib.constants import (YAML_FILE, DIR_LOGICS, DIR_ETC, BASE_LOGIC, BASE_ADMIN)
+from lib.constants import (YAML_FILE, DIR_LOGICS, DIR_ETC, BASE_LOGIC, BASE_ADMIN, BASE_LOGIC_GROUPS)
 
 from lib.item import Items
 from lib.plugin import Plugins
@@ -126,22 +126,43 @@ class Logics():
             if name != '_groups':
                 self._load_logic(name, _config)
 
-        # load /etc/admin.yaml
+        self._groups = self._load_groups()
+
+
+    def _load_groups(self):
+        """
+        Load logic group definitions from etc/logic_groups.yaml.
+        If that file does not yet exist, migrate the group definitions from
+        etc/admin.yaml (legacy location) and write logic_groups.yaml so the
+        migration only happens once.
+        """
+        groups_filename = self._sh.get_config_file(BASE_LOGIC_GROUPS)
+
+        if os.path.isfile(groups_filename):
+            groups_conf = shyaml.yaml_load_roundtrip(groups_filename)
+            if groups_conf is None:
+                return {}
+            return dict(groups_conf)
+
+        # --- first-run migration from admin.yaml ---
+        logger.info("Logics._load_groups: logic_groups.yaml not found – migrating from admin.yaml")
         admconf_filename = self._sh.get_config_file(BASE_ADMIN)
-        _admin_conf = shyaml.yaml_load_roundtrip(admconf_filename)
-        if _admin_conf.get('logics', None) is None:
-            self._groups = {}
-        else:
-            self._groups = _admin_conf['logics']['groups']
+        groups = {}
+        try:
+            _admin_conf = shyaml.yaml_load_roundtrip(admconf_filename)
+            if _admin_conf and _admin_conf.get('logics') and _admin_conf['logics'].get('groups'):
+                groups = dict(_admin_conf['logics']['groups'])
+        except Exception as e:
+            logger.warning(f"Logics._load_groups: could not read admin.yaml during migration: {e}")
+
+        shyaml.yaml_save_roundtrip(groups_filename, groups, create_backup=False)
+        logger.info(f"Logics._load_groups: migrated {len(groups)} group(s) to logic_groups.yaml")
+        return groups
 
 
     def _save_groups(self):
-
-        # load /etc/admin.yaml
-        admconf_filename = self._sh.get_config_file(BASE_ADMIN)
-        _admin_conf = shyaml.yaml_load_roundtrip(admconf_filename)
-        _admin_conf['logics']['groups'] = self._groups
-        shyaml.yaml_save_roundtrip(admconf_filename, _admin_conf, create_backup=True)
+        groups_filename = self._sh.get_config_file(BASE_LOGIC_GROUPS)
+        shyaml.yaml_save_roundtrip(groups_filename, self._groups, create_backup=True)
 
 
     def _read_logics(self, filename, directory):
