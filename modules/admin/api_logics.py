@@ -249,7 +249,32 @@ class LogicsController(RESTResource):
 
         logics_new = sorted(self.logic_findnew(logics_list), key=lambda k: k['name'])
         logics_sorted = sorted(logics_list, key=lambda k: k['name'])
-        self.logics_data = {'logics_new': logics_new, 'logics': logics_sorted, 'groups': self.logics._groups}
+
+        # Collect group names referenced by logics but not defined in logic_groups.yaml
+        known_groups = set(self.logics._groups.keys())
+        unknown_groups = {}  # {groupname: [logicname, ...]}
+        for logic in logics_sorted + logics_new:
+            raw = logic.get('group', None)
+            if not raw:
+                continue
+            refs = raw if isinstance(raw, list) else [raw]
+            for ref in refs:
+                if ref and ref not in known_groups:
+                    unknown_groups.setdefault(ref, [])
+                    if logic['name'] not in unknown_groups[ref]:
+                        unknown_groups[ref].append(logic['name'])
+        if unknown_groups:
+            for gname, lnames in unknown_groups.items():
+                self.logger.warning(
+                    f"Logic group '{gname}' is referenced by {lnames} but not defined in logic_groups.yaml"
+                )
+
+        self.logics_data = {
+            'logics_new': logics_new,
+            'logics': logics_sorted,
+            'groups': self.logics._groups,
+            'unknown_groups': unknown_groups,
+        }
         return json.dumps(self.logics_data)
 
 
