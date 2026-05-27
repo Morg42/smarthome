@@ -439,14 +439,16 @@ class LogicsController(RESTResource):
         return read_data
 
 
-    def set_logic_state(self, logicname, action, filename):
+    def set_logic_state(self, logicname, action, filename, newfilename=''):
         """
 
         :param logicname:
         :param action:
+        :param filename:
+        :param newfilename:
         :return:
 
-        valid actions are: 'enable', 'disable', 'trigger', 'unload', 'load', 'reload', 'delete', 'create'
+        valid actions are: 'enable', 'disable', 'trigger', 'unload', 'load', 'reload', 'delete', 'create', 'rename'
         """
         self.logger.info(f"LogicsController.set_logic_state(): logicname = {logicname}, action = {action}")
         if action == 'enable':
@@ -508,6 +510,71 @@ class LogicsController(RESTResource):
                 if not self.logics.load_logic(logicname):
                     self.logger.warning(f"Could not load logic '{logicname}', syntax error")
                 return json.dumps( {"result": "ok"} )
+
+        elif action == 'rename':
+            # filename  = new logic name (required)
+            # newfilename = new .py filename stem without extension (optional; keep current if empty)
+            new_logicname = filename
+            self.logger.info(f"set_logic_state: action={action}, old={logicname}, new_logicname={new_logicname}, newfilename={newfilename}")
+
+            if not new_logicname:
+                return json.dumps({"result": "error", "description": "New logic name is required"})
+            if new_logicname == logicname:
+                return json.dumps({"result": "error", "description": "New logic name is identical to the current name"})
+            if new_logicname in self.logics.return_defined_logics():
+                return json.dumps({"result": "error", "description": f"Logic name '{new_logicname}' is already in use"})
+
+            # Read current config section
+            conf = shyaml.yaml_load_roundtrip(self.logics._logic_conf)
+            old_section = conf.get(logicname, None)
+            if old_section is None:
+                return json.dumps({"result": "error", "description": f"Logic '{logicname}' not found in configuration"})
+
+            old_py_filename = old_section.get('filename', '')
+
+            # Determine target .py filename
+            if newfilename:
+                target_py_filename = newfilename.lower() + '.py'
+            else:
+                target_py_filename = old_py_filename
+
+            # Guard against shared files: reject if target filename is already used by any logic
+            if target_py_filename.lower() != old_py_filename.lower():
+                if self.logics.filename_used_count(target_py_filename) > 0:
+                    return json.dumps({"result": "error", "description": f"Filename '{target_py_filename}' is already used by another logic"})
+                # Rename the .py file on disk
+                old_path = os.path.join(self.logics.get_logics_dir(), old_py_filename)
+                new_path = os.path.join(self.logics.get_logics_dir(), target_py_filename)
+                try:
+                    os.rename(old_path, new_path)
+                    self.logger.info(f"set_logic_state(rename): renamed file '{old_py_filename}' → '{target_py_filename}'")
+                except OSError as e:
+                    return json.dumps({"result": "error", "description": f"Could not rename logic file: {e}"})
+
+            # Unload old logic before modifying config
+            if self.logics.is_logic_loaded(logicname):
+                self.logics.unload_logic(logicname)
+
+            # Build config_list from old section, substituting the (possibly new) filename
+            config_list = [['filename', target_py_filename, '']]
+            for key, value in old_section.items():
+                if key != 'filename':
+                    config_list.append([key, value, ''])
+
+            # Create new config section (writes to logic.yaml)
+            self.logics.update_config_section(True, new_logicname, config_list)
+
+            # Remove old config section directly (delete_logic would try to delete the file)
+            conf = shyaml.yaml_load_roundtrip(self.logics._logic_conf)
+            if logicname in conf:
+                del conf[logicname]
+                shyaml.yaml_save_roundtrip(self.logics._logic_conf, conf, True)
+                self.logger.info(f"set_logic_state(rename): removed old section '{logicname}' from logic.yaml")
+
+            # Load under the new name
+            self.logics.load_logic(new_logicname)
+            self.logger.info(f"set_logic_state(rename): logic '{logicname}' renamed to '{new_logicname}'")
+            return json.dumps({"result": "ok"})
 
         else:
             self.logger.warning("LogicsController.set_logic_state(): logic '"+logicname+"', action '"+action+"' is not supported")
@@ -590,7 +657,7 @@ class LogicsController(RESTResource):
     read.authentication_needed = True
 
 
-    def update(self, name='', action='', filename=''):
+    def update(self, name='', action='', filename='', newfilename=''):
         """
         Handle PUT requests for logics API
         """
@@ -617,8 +684,8 @@ class LogicsController(RESTResource):
                 self.logger.info(f"LogicsController.update: group={name}, action={action}, params={params}")
                 return self.delete_group(name, params)
             else:
-                self.logger.info(f"LogicsController.update: group={name}, action={action}, filename={filename}")
-                return self.set_logic_state(name, action, filename)
+                self.logger.info(f"LogicsController.update: group={name}, action={action}, filename={filename}, newfilename={newfilename}")
+                return self.set_logic_state(name, action, filename, newfilename)
 
         elif not action in ['create', 'load', 'delete', 'delete_with_code']:
             mylogic = self.logics.return_logic(name)
