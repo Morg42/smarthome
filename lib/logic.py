@@ -149,6 +149,13 @@ class Logics():
             return
 
         changed = False
+
+        # Strip legacy _groups section — group definitions belong in logic_groups.yaml only
+        if '_groups' in logic_conf:
+            del logic_conf['_groups']
+            changed = True
+            logger.info("Logics._cleanup_stale_group_refs: removed legacy '_groups' section from logic.yaml")
+
         for logicname, sect in logic_conf.items():
             if not isinstance(sect, dict):
                 continue

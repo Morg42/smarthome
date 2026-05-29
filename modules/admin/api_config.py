@@ -23,6 +23,7 @@
 import os
 import logging
 import json
+import pathlib
 import cherrypy
 
 from lib.module import Modules
@@ -214,6 +215,9 @@ class ConfigController(RESTResource):
             self.logger.info("  - index: admin = {}".format(result))
             return json.dumps(result)
 
+        if id == 'check_config_etc':
+            return self.check_config_etc()
+
         raise cherrypy.NotFound
 
     read.expose_resource = True
@@ -226,6 +230,9 @@ class ConfigController(RESTResource):
         Handle PUT requests
         """
         self.logger.info("ConfigController() update: config {}".format(id))
+        if id == 'enable_config_etc':
+            return self.enable_config_etc()
+
         if id in ['common', 'http', 'admin', 'mqtt', 'core']:
 
             # get http headers
@@ -288,6 +295,79 @@ class ConfigController(RESTResource):
     update.expose_resource = True
     update.authentication_needed = True
 
+
+    # ======================================================================
+    #  config_etc migration check
+    #
+    def check_config_etc(self):
+        """
+        Dry-run the config_etc migration and report conflicts / files to migrate.
+        Returns JSON with keys: result, already_enabled, safe, conflicts, to_migrate,
+        already_done, not_present.
+        """
+        base = pathlib.Path(self.base_dir)
+        etc = pathlib.Path(self.etc_dir)
+
+        core_conf = shyaml.yaml_load(self._sh.get_config_file(BASE_SH))
+        already_enabled = bool(core_conf.get('config_etc', False))
+
+        dirnames = ['items', 'logics', 'structs', 'scenes', 'functions']
+        conflicts = {}
+        to_migrate = {}
+        already_done = []
+        not_present = []
+
+        for dirname in dirnames:
+            old_dir = base / dirname
+            new_dir = etc / dirname
+            if not old_dir.exists():
+                if new_dir.exists():
+                    already_done.append(dirname)
+                else:
+                    not_present.append(dirname)
+                continue
+            dir_conflicts = []
+            dir_to_migrate = []
+            for entry in old_dir.glob('*'):
+                target = new_dir / entry.name
+                if target.exists():
+                    dir_conflicts.append(entry.name)
+                else:
+                    dir_to_migrate.append(entry.name)
+            if dir_conflicts:
+                conflicts[dirname] = dir_conflicts
+            if dir_to_migrate:
+                to_migrate[dirname] = dir_to_migrate
+
+        return json.dumps({
+            'result': 'ok',
+            'already_enabled': already_enabled,
+            'safe': len(conflicts) == 0,
+            'conflicts': conflicts,
+            'to_migrate': to_migrate,
+            'already_done': already_done,
+            'not_present': not_present,
+        })
+
+    # ======================================================================
+    #  Enable config_etc in smarthome.yaml
+    #
+    def enable_config_etc(self):
+        """
+        Write config_etc: true to etc/smarthome.yaml so migration runs on next restart.
+        """
+        try:
+            conf_file = self._sh.get_config_file(BASE_SH)
+            conf = shyaml.yaml_load_roundtrip(conf_file)
+            if conf is None:
+                conf = {}
+            conf['config_etc'] = True
+            shyaml.yaml_save_roundtrip(conf_file, conf, create_backup=True)
+            self.logger.info("enable_config_etc: config_etc set to True in smarthome.yaml")
+            return json.dumps({'result': 'ok'})
+        except Exception as e:
+            self.logger.error(f'enable_config_etc: {e}')
+            return json.dumps({'result': 'error', 'description': str(e)})
 
     def REST_instantiate(self,param):
         """

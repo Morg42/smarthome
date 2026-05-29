@@ -55,6 +55,7 @@ parameters:
 
     websocket_host:
         type: ip
+        default: 'None*'
         description:
             de: 'VERALTET: IP Adresse für den Websocket Zugriff - bitte im Websocket-Modul konfigurieren'
             en: 'DEPRECATED: ip address for websocket access - configure in the websocket module instead'

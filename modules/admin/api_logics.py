@@ -235,10 +235,26 @@ class LogicsController(RESTResource):
         Get list of logics with info for logic-list
         """
 
+        # Read group membership from the authoritative file so we never serve
+        # stale in-memory data from Logic.groupnames (which is only updated
+        # when a logic is loaded or when _update_group_members runs in the
+        # same process lifetime).
+        logic_conf_raw = shyaml.yaml_load(self._sh.get_config_file(BASE_LOGIC)) or {}
+        def _groups_from_conf(logicname):
+            sect = logic_conf_raw.get(logicname, {})
+            if not isinstance(sect, dict):
+                return []
+            raw = sect.get('logic_groupname', None)
+            if raw is None:
+                return []
+            return raw if isinstance(raw, list) else [raw]
+
         logics_list = []
 
         for ln in self.logics.return_loaded_logics():
             logic = self.fill_logicdict(ln)
+            # Override group with the on-disk value (always authoritative)
+            logic['group'] = _groups_from_conf(ln)
             if logic['logictype'] == 'Blockly':
                 logic['pathname'] = os.path.splitext(logic['pathname'])[0] + '.blockly'
             logics_list.append(logic)
@@ -305,9 +321,18 @@ class LogicsController(RESTResource):
         Batch-update logic_groupname in logic.yaml so that exactly the logics
         listed in new_members belong to groupname.  Other group memberships of
         each logic are left untouched.
+
+        The legacy ``_groups`` key (old format where group definitions were
+        stored inside logic.yaml) is stripped on every write so it cannot
+        accumulate stale data or confuse iteration.
         """
         logic_conf = shyaml.yaml_load_roundtrip(self._sh.get_config_file(BASE_LOGIC))
         changed = False
+
+        # Strip legacy _groups section — group definitions belong in logic_groups.yaml only
+        if '_groups' in logic_conf:
+            del logic_conf['_groups']
+            changed = True
 
         for logicname, sect in logic_conf.items():
             if not isinstance(sect, dict):
@@ -340,10 +365,10 @@ class LogicsController(RESTResource):
             else:
                 sect['logic_groupname'] = current
 
-            # Keep the running logic in sync if it is loaded
+            # Keep the running logic object in sync (lib/logic.py is authoritative)
             running = self._sh.logics.return_logic(logicname)
             if running is not None:
-                running.groupnames = current if current else None
+                running.groupnames = current  # [] is accepted; None was wrongly passed before
 
             changed = True
 
