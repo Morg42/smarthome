@@ -976,6 +976,8 @@ class Logics():
                     conf[section][key] = value
                     if comment != '':
                         conf[section].yaml_add_eol_comment(comment, key, column=50)
+            elif isinstance(value, list):
+                pass  # list values are written below in the `if active: if isinstance(value, list)` block
             else:
                 logger.warning("update_config_section: unsupported datatype for key '{}'".format(key))
 

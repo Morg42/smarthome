@@ -522,9 +522,17 @@ class LogicsController(RESTResource):
 
             if not new_logicname:
                 return json.dumps({"result": "error", "description": "New logic name is required"})
-            if new_logicname == logicname:
+
+            name_changed = new_logicname != logicname
+            # newfilename is only sent when the user actually changed the filename field
+            file_will_change = bool(newfilename)
+
+            if not name_changed and not file_will_change:
                 return json.dumps({"result": "error", "description": "New logic name is identical to the current name"})
-            if new_logicname in self.logics.return_defined_logics():
+
+            # "Already in use" only matters when the logic name itself changes;
+            # if only the filename case changes the name stays the same, which is fine.
+            if name_changed and new_logicname in self.logics.return_defined_logics():
                 return json.dumps({"result": "error", "description": f"Logic name '{new_logicname}' is already in use"})
 
             # Read current config section
@@ -553,6 +561,21 @@ class LogicsController(RESTResource):
                     self.logger.info(f"set_logic_state(rename): renamed file '{old_py_filename}' → '{target_py_filename}'")
                 except OSError as e:
                     return json.dumps({"result": "error", "description": f"Could not rename logic file: {e}"})
+
+            if not name_changed:
+                # Only the filename changed — update in-place: patch the filename key in the
+                # existing YAML section without doing a section delete + recreate, which would
+                # destroy the config when old_name == new_name.
+                if self.logics.is_logic_loaded(logicname):
+                    self.logics.unload_logic(logicname)
+                conf = shyaml.yaml_load_roundtrip(self.logics._logic_conf)
+                if logicname in conf:
+                    conf[logicname]['filename'] = target_py_filename
+                    shyaml.yaml_save_roundtrip(self.logics._logic_conf, conf, True)
+                    self.logger.info(f"set_logic_state(rename): updated filename for '{logicname}' → '{target_py_filename}'")
+                self.logics.load_logic(logicname)
+                self.logger.info(f"set_logic_state(rename): filename-only rename for '{logicname}' complete")
+                return json.dumps({"result": "ok"})
 
             # Unload old logic before modifying config
             if self.logics.is_logic_loaded(logicname):
