@@ -352,6 +352,9 @@ class LogicsController(RESTResource):
 
 
     def delete_group(self, name, params):
+        # Remove all logic_groupname references to this group from logic.yaml
+        # and from the in-memory Logic objects before deleting the group record.
+        self._update_group_members(name, [])
 
         del self.logics._groups[name]
         self.logics._save_groups()
