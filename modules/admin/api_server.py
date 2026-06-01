@@ -31,6 +31,7 @@ import bin.shngversion
 import lib.daemon
 import lib.backup as backup
 from lib.constants import (DIR_ETC, DIR_MODULES)
+from lib.shpypi import Shpypi
 
 
 # ======================================================================
@@ -95,7 +96,8 @@ class ServerController(RESTResource):
         response['default_language'] = self._sh.get_defaultlanguage()
         response['client_ip'] = client_ip
         http_user_dict = self.module.mod_http.get_user_dict()
-        response['login_required'] = http_user_dict.get('admin', {"password_hash": ""}).get("password_hash", "") != ""
+        pw_hash = http_user_dict.get('admin', {}).get('password_hash') or ''
+        response['login_required'] = pw_hash != ''
 
         return json.dumps(response)
 
@@ -271,6 +273,26 @@ class ServerController(RESTResource):
 
 
     # ======================================================================
+    #  /api/server/pypi
+    #
+    def pypi(self):
+        """
+        Returns PyPI package requirement and availability information.
+
+        Uses the Shpypi singleton's package_list when already populated so
+        that in-place updates by the scheduler's lookup_pypi_releasedata job
+        are reflected — mirroring the cache behaviour of the legacy endpoint.
+        """
+        shpypi = Shpypi.get_instance()
+        if shpypi.package_list:
+            source = shpypi.package_list
+        else:
+            source = shpypi.get_packagelist()
+        sorted_list = sorted(source, key=lambda k: k['sort'], reverse=False)
+        return json.dumps(sorted_list)
+
+
+    # ======================================================================
     #  GET /api/server/
     #
     def read(self, id=''):
@@ -285,6 +307,8 @@ class ServerController(RESTResource):
             return self.status()
         elif id == 'info':
             return self.info()
+        elif id == 'pypi':
+            return self.pypi()
 
         return None
 

@@ -34,7 +34,7 @@ from lib.utils import Utils
 from lib.logic import Logics
 from lib.plugin import Plugins
 from lib.scheduler import Scheduler
-from lib.constants import (DIR_ETC, DIR_LOGICS, DIR_TPL, BASE_LOGIC)
+from lib.constants import (DIR_ETC, DIR_LOGICS, DIR_TPL, BASE_LOGIC, BASE_LOGIC_GROUPS)
 
 from .rest import RESTResource
 
@@ -235,10 +235,26 @@ class LogicsController(RESTResource):
         Get list of logics with info for logic-list
         """
 
+        # Read group membership from the authoritative file so we never serve
+        # stale in-memory data from Logic.groupnames (which is only updated
+        # when a logic is loaded or when _update_group_members runs in the
+        # same process lifetime).
+        logic_conf_raw = shyaml.yaml_load(self._sh.get_config_file(BASE_LOGIC)) or {}
+        def _groups_from_conf(logicname):
+            sect = logic_conf_raw.get(logicname, {})
+            if not isinstance(sect, dict):
+                return []
+            raw = sect.get('logic_groupname', None)
+            if raw is None:
+                return []
+            return raw if isinstance(raw, list) else [raw]
+
         logics_list = []
 
         for ln in self.logics.return_loaded_logics():
             logic = self.fill_logicdict(ln)
+            # Override group with the on-disk value (always authoritative)
+            logic['group'] = _groups_from_conf(ln)
             if logic['logictype'] == 'Blockly':
                 logic['pathname'] = os.path.splitext(logic['pathname'])[0] + '.blockly'
             logics_list.append(logic)
@@ -249,7 +265,32 @@ class LogicsController(RESTResource):
 
         logics_new = sorted(self.logic_findnew(logics_list), key=lambda k: k['name'])
         logics_sorted = sorted(logics_list, key=lambda k: k['name'])
-        self.logics_data = {'logics_new': logics_new, 'logics': logics_sorted, 'groups': self.logics._groups}
+
+        # Collect group names referenced by logics but not defined in logic_groups.yaml
+        known_groups = set(self.logics._groups.keys())
+        unknown_groups = {}  # {groupname: [logicname, ...]}
+        for logic in logics_sorted + logics_new:
+            raw = logic.get('group', None)
+            if not raw:
+                continue
+            refs = raw if isinstance(raw, list) else [raw]
+            for ref in refs:
+                if ref and ref not in known_groups:
+                    unknown_groups.setdefault(ref, [])
+                    if logic['name'] not in unknown_groups[ref]:
+                        unknown_groups[ref].append(logic['name'])
+        if unknown_groups:
+            for gname, lnames in unknown_groups.items():
+                self.logger.warning(
+                    f"Logic group '{gname}' is referenced by {lnames} but not defined in logic_groups.yaml"
+                )
+
+        self.logics_data = {
+            'logics_new': logics_new,
+            'logics': logics_sorted,
+            'groups': self.logics._groups,
+            'unknown_groups': unknown_groups,
+        }
         return json.dumps(self.logics_data)
 
 
@@ -262,15 +303,83 @@ class LogicsController(RESTResource):
 
 
     def save_group(self, name, params):
+        # Separate member list from group metadata before persisting
+        members = params.pop('members', None)
 
         self.logics._groups[name] = params
         self.logics._save_groups()
-        response = {'result': 'ok'}
 
+        if members is not None:
+            self._update_group_members(name, members)
+
+        response = {'result': 'ok'}
         return json.dumps(response)
 
 
+    def _update_group_members(self, groupname, new_members):
+        """
+        Batch-update logic_groupname in logic.yaml so that exactly the logics
+        listed in new_members belong to groupname.  Other group memberships of
+        each logic are left untouched.
+
+        The legacy ``_groups`` key (old format where group definitions were
+        stored inside logic.yaml) is stripped on every write so it cannot
+        accumulate stale data or confuse iteration.
+        """
+        logic_conf = shyaml.yaml_load_roundtrip(self._sh.get_config_file(BASE_LOGIC))
+        changed = False
+
+        # Strip legacy _groups section — group definitions belong in logic_groups.yaml only
+        if '_groups' in logic_conf:
+            del logic_conf['_groups']
+            changed = True
+
+        for logicname, sect in logic_conf.items():
+            if not isinstance(sect, dict):
+                continue
+
+            raw = sect.get('logic_groupname', None)
+            if raw is None:
+                current = []
+            elif isinstance(raw, str):
+                current = [raw]
+            else:
+                current = list(raw)
+
+            in_new = logicname in new_members
+            in_cur = groupname in current
+
+            if in_new == in_cur:
+                continue  # nothing to do for this logic
+
+            if in_new:
+                current.append(groupname)
+            else:
+                current.remove(groupname)
+
+            # Write back: empty → remove key; single → scalar; multiple → list
+            if not current:
+                sect.pop('logic_groupname', None)
+            elif len(current) == 1:
+                sect['logic_groupname'] = current[0]
+            else:
+                sect['logic_groupname'] = current
+
+            # Keep the running logic object in sync (lib/logic.py is authoritative)
+            running = self._sh.logics.return_logic(logicname)
+            if running is not None:
+                running.groupnames = current  # [] is accepted; None was wrongly passed before
+
+            changed = True
+
+        if changed:
+            shyaml.yaml_save_roundtrip(self._sh.get_config_file(BASE_LOGIC), logic_conf, False)
+
+
     def delete_group(self, name, params):
+        # Remove all logic_groupname references to this group from logic.yaml
+        # and from the in-memory Logic objects before deleting the group record.
+        self._update_group_members(name, [])
 
         del self.logics._groups[name]
         self.logics._save_groups()
@@ -358,14 +467,16 @@ class LogicsController(RESTResource):
         return read_data
 
 
-    def set_logic_state(self, logicname, action, filename):
+    def set_logic_state(self, logicname, action, filename, newfilename=''):
         """
 
         :param logicname:
         :param action:
+        :param filename:
+        :param newfilename:
         :return:
 
-        valid actions are: 'enable', 'disable', 'trigger', 'unload', 'load', 'reload', 'delete', 'create'
+        valid actions are: 'enable', 'disable', 'trigger', 'unload', 'load', 'reload', 'delete', 'create', 'rename'
         """
         self.logger.info(f"LogicsController.set_logic_state(): logicname = {logicname}, action = {action}")
         if action == 'enable':
@@ -427,6 +538,94 @@ class LogicsController(RESTResource):
                 if not self.logics.load_logic(logicname):
                     self.logger.warning(f"Could not load logic '{logicname}', syntax error")
                 return json.dumps( {"result": "ok"} )
+
+        elif action == 'rename':
+            # filename  = new logic name (required)
+            # newfilename = new .py filename stem without extension (optional; keep current if empty)
+            new_logicname = filename
+            self.logger.info(f"set_logic_state: action={action}, old={logicname}, new_logicname={new_logicname}, newfilename={newfilename}")
+
+            if not new_logicname:
+                return json.dumps({"result": "error", "description": "New logic name is required"})
+
+            name_changed = new_logicname != logicname
+            # newfilename is only sent when the user actually changed the filename field
+            file_will_change = bool(newfilename)
+
+            if not name_changed and not file_will_change:
+                return json.dumps({"result": "error", "description": "New logic name is identical to the current name"})
+
+            # "Already in use" only matters when the logic name itself changes;
+            # if only the filename case changes the name stays the same, which is fine.
+            if name_changed and new_logicname in self.logics.return_defined_logics():
+                return json.dumps({"result": "error", "description": f"Logic name '{new_logicname}' is already in use"})
+
+            # Read current config section
+            conf = shyaml.yaml_load_roundtrip(self.logics._logic_conf)
+            old_section = conf.get(logicname, None)
+            if old_section is None:
+                return json.dumps({"result": "error", "description": f"Logic '{logicname}' not found in configuration"})
+
+            old_py_filename = old_section.get('filename', '')
+
+            # Determine target .py filename
+            if newfilename:
+                target_py_filename = newfilename.lower() + '.py'
+            else:
+                target_py_filename = old_py_filename
+
+            # Guard against shared files: reject if target filename is already used by any logic
+            if target_py_filename.lower() != old_py_filename.lower():
+                if self.logics.filename_used_count(target_py_filename) > 0:
+                    return json.dumps({"result": "error", "description": f"Filename '{target_py_filename}' is already used by another logic"})
+                # Rename the .py file on disk
+                old_path = os.path.join(self.logics.get_logics_dir(), old_py_filename)
+                new_path = os.path.join(self.logics.get_logics_dir(), target_py_filename)
+                try:
+                    os.rename(old_path, new_path)
+                    self.logger.info(f"set_logic_state(rename): renamed file '{old_py_filename}' → '{target_py_filename}'")
+                except OSError as e:
+                    return json.dumps({"result": "error", "description": f"Could not rename logic file: {e}"})
+
+            if not name_changed:
+                # Only the filename changed — update in-place: patch the filename key in the
+                # existing YAML section without doing a section delete + recreate, which would
+                # destroy the config when old_name == new_name.
+                if self.logics.is_logic_loaded(logicname):
+                    self.logics.unload_logic(logicname)
+                conf = shyaml.yaml_load_roundtrip(self.logics._logic_conf)
+                if logicname in conf:
+                    conf[logicname]['filename'] = target_py_filename
+                    shyaml.yaml_save_roundtrip(self.logics._logic_conf, conf, True)
+                    self.logger.info(f"set_logic_state(rename): updated filename for '{logicname}' → '{target_py_filename}'")
+                self.logics.load_logic(logicname)
+                self.logger.info(f"set_logic_state(rename): filename-only rename for '{logicname}' complete")
+                return json.dumps({"result": "ok"})
+
+            # Unload old logic before modifying config
+            if self.logics.is_logic_loaded(logicname):
+                self.logics.unload_logic(logicname)
+
+            # Build config_list from old section, substituting the (possibly new) filename
+            config_list = [['filename', target_py_filename, '']]
+            for key, value in old_section.items():
+                if key != 'filename':
+                    config_list.append([key, value, ''])
+
+            # Create new config section (writes to logic.yaml)
+            self.logics.update_config_section(True, new_logicname, config_list)
+
+            # Remove old config section directly (delete_logic would try to delete the file)
+            conf = shyaml.yaml_load_roundtrip(self.logics._logic_conf)
+            if logicname in conf:
+                del conf[logicname]
+                shyaml.yaml_save_roundtrip(self.logics._logic_conf, conf, True)
+                self.logger.info(f"set_logic_state(rename): removed old section '{logicname}' from logic.yaml")
+
+            # Load under the new name
+            self.logics.load_logic(new_logicname)
+            self.logger.info(f"set_logic_state(rename): logic '{logicname}' renamed to '{new_logicname}'")
+            return json.dumps({"result": "ok"})
 
         else:
             self.logger.warning("LogicsController.set_logic_state(): logic '"+logicname+"', action '"+action+"' is not supported")
@@ -509,7 +708,7 @@ class LogicsController(RESTResource):
     read.authentication_needed = True
 
 
-    def update(self, name='', action='', filename=''):
+    def update(self, name='', action='', filename='', newfilename=''):
         """
         Handle PUT requests for logics API
         """
@@ -536,8 +735,8 @@ class LogicsController(RESTResource):
                 self.logger.info(f"LogicsController.update: group={name}, action={action}, params={params}")
                 return self.delete_group(name, params)
             else:
-                self.logger.info(f"LogicsController.update: group={name}, action={action}, filename={filename}")
-                return self.set_logic_state(name, action, filename)
+                self.logger.info(f"LogicsController.update: group={name}, action={action}, filename={filename}, newfilename={newfilename}")
+                return self.set_logic_state(name, action, filename, newfilename)
 
         elif not action in ['create', 'load', 'delete', 'delete_with_code']:
             mylogic = self.logics.return_logic(name)

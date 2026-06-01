@@ -41,6 +41,7 @@ class PluginController(RESTResource):
 
     def __init__(self, module, jwt_secret=False):
         self._sh = module._sh
+        self.module = module
         self.base_dir = self._sh.get_basedir()
         self.plugins_dir = self._sh.get_config_dir(DIR_PLUGINS)
         self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])

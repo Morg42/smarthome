@@ -1,0 +1,24 @@
+%YAML 1.1
+---
+# Logic group definitions for SmartHomeNG
+# =========================================
+# Each top-level key is the group name (case-sensitive).
+#
+# Properties per group:
+#   title:        Short display title shown in the admin UI
+#   description:  (optional) Longer description of the group's purpose
+#
+# Group membership (which logics belong to a group) is stored in
+# etc/logic.yaml via the 'logic_groupname' field on each logic entry,
+# not here.  Use the admin UI (Logics → Groups) to manage membership.
+#
+# This file is automatically created on first start by migrating any
+# group definitions previously stored in etc/admin.yaml.
+
+Beispiele:
+    title: Beispiel Logiken für SmartHomeNG
+    description: In dieser Gruppe sind die Beispiel Logiken zusammengefasst, die mit SmartHomeNG installiert werden.
+
+Tools:
+    title: Logiken, die als Tools für SmartHomeNG dienen könnten
+    description: In dieser Gruppe sind Logiken zusammengefasst, die als Tools mit SmartHomeNG ausgeliefert wurden.
