@@ -59,7 +59,7 @@ import lib.shyaml as shyaml
 from lib.utils import Utils
 
 from lib.constants import PLUGIN_PARSE_LOGIC
-from lib.constants import (YAML_FILE, DIR_LOGICS, DIR_ETC, BASE_LOGIC, BASE_ADMIN)
+from lib.constants import (YAML_FILE, DIR_LOGICS, DIR_ETC, BASE_LOGIC, BASE_ADMIN, BASE_LOGIC_GROUPS)
 
 from lib.item import Items
 from lib.plugin import Plugins
@@ -126,22 +126,138 @@ class Logics():
             if name != '_groups':
                 self._load_logic(name, _config)
 
-        # load /etc/admin.yaml
+        self._groups = self._load_groups()
+        self._cleanup_stale_group_refs()
+
+
+    def _cleanup_stale_group_refs(self):
+        """
+        Startup self-healing: remove any ``logic_groupname`` values in
+        ``logic.yaml`` that reference a group not present in
+        ``logic_groups.yaml`` (i.e. not in ``self._groups``).
+
+        This fixes corrupted state left by an earlier ``delete_group()`` call
+        that did not clean up ``logic.yaml``, and ensures that deleted groups
+        never re-appear as "unknown groups" after a restart.
+
+        The method also updates the in-memory ``Logic`` objects so that the
+        corrected membership is visible immediately without a second restart.
+        """
+        known_groups = set(self._groups.keys())
+        logic_conf = shyaml.yaml_load_roundtrip(self._logic_conf)
+        if logic_conf is None:
+            return
+
+        changed = False
+
+        # Strip legacy _groups section — group definitions belong in logic_groups.yaml only
+        if '_groups' in logic_conf:
+            del logic_conf['_groups']
+            changed = True
+            logger.info("Logics._cleanup_stale_group_refs: removed legacy '_groups' section from logic.yaml")
+
+        for logicname, sect in logic_conf.items():
+            if not isinstance(sect, dict):
+                continue
+            raw = sect.get('logic_groupname', None)
+            if raw is None:
+                continue
+
+            if isinstance(raw, str):
+                current = [raw]
+            else:
+                current = list(raw)
+
+            cleaned = [g for g in current if g in known_groups]
+            if cleaned == current:
+                continue  # nothing stale here
+
+            stale = [g for g in current if g not in known_groups]
+            logger.info(
+                f"Logics._cleanup_stale_group_refs: removing stale group(s) "
+                f"{stale} from logic '{logicname}'"
+            )
+
+            if not cleaned:
+                sect.pop('logic_groupname', None)
+            elif len(cleaned) == 1:
+                sect['logic_groupname'] = cleaned[0]
+            else:
+                sect['logic_groupname'] = cleaned
+
+            # Sync the in-memory Logic object if it is loaded
+            running = self.return_logic(logicname)
+            if running is not None:
+                running.groupnames = cleaned if cleaned else []
+
+            changed = True
+
+        if changed:
+            shyaml.yaml_save_roundtrip(self._logic_conf, logic_conf, create_backup=False)
+            logger.info("Logics._cleanup_stale_group_refs: logic.yaml updated")
+
+
+    def _load_groups(self):
+        """
+        Load logic group definitions from etc/logic_groups.yaml.
+        If that file does not yet exist, migrate the group definitions from
+        etc/admin.yaml (legacy location) and write logic_groups.yaml so the
+        migration only happens once.
+
+        After a successful migration, admin.yaml is renamed to admin.yaml.bak
+        (overwriting any pre-existing backup) so that the migration can never
+        re-run and accidentally clobber groups that were added afterwards.
+        admin.yaml is the ONLY reader of that file; renaming it is safe.
+        """
+        groups_filename = self._sh.get_config_file(BASE_LOGIC_GROUPS)
+
+        if os.path.isfile(groups_filename):
+            groups_conf = shyaml.yaml_load_roundtrip(groups_filename)
+            # If admin.yaml still exists alongside logic_groups.yaml, retire it
+            # now so it can never re-seed a future migration and clobber groups.
+            admconf_filename = self._sh.get_config_file(BASE_ADMIN)
+            if os.path.isfile(admconf_filename):
+                bak_filename = admconf_filename + '.bak'
+                try:
+                    os.replace(admconf_filename, bak_filename)
+                    logger.info("Logics._load_groups: retired stale etc/admin.yaml → etc/admin.yaml.bak")
+                except OSError as e:
+                    logger.warning(f"Logics._load_groups: could not rename stale admin.yaml: {e}")
+            if groups_conf is None:
+                return {}
+            return dict(groups_conf)
+
+        # --- first-run migration from admin.yaml ---
+        logger.info("Logics._load_groups: logic_groups.yaml not found – migrating from admin.yaml")
         admconf_filename = self._sh.get_config_file(BASE_ADMIN)
-        _admin_conf = shyaml.yaml_load_roundtrip(admconf_filename)
-        if _admin_conf.get('logics', None) is None:
-            self._groups = {}
-        else:
-            self._groups = _admin_conf['logics']['groups']
+        groups = {}
+        try:
+            _admin_conf = shyaml.yaml_load_roundtrip(admconf_filename)
+            if _admin_conf and _admin_conf.get('logics') and _admin_conf['logics'].get('groups'):
+                groups = dict(_admin_conf['logics']['groups'])
+        except Exception as e:
+            logger.warning(f"Logics._load_groups: could not read admin.yaml during migration: {e}")
+
+        shyaml.yaml_save_roundtrip(groups_filename, groups, create_backup=False)
+        logger.info(f"Logics._load_groups: migrated {len(groups)} group(s) to logic_groups.yaml")
+
+        # Retire admin.yaml so this migration path can never re-run.
+        # os.replace() is atomic and overwrites an existing destination.
+        if os.path.isfile(admconf_filename):
+            bak_filename = admconf_filename + '.bak'
+            try:
+                os.replace(admconf_filename, bak_filename)
+                logger.info("Logics._load_groups: renamed etc/admin.yaml → etc/admin.yaml.bak")
+            except OSError as e:
+                logger.warning(f"Logics._load_groups: could not rename admin.yaml: {e} – "
+                               "migration may repeat on next start")
+
+        return groups
 
 
     def _save_groups(self):
-
-        # load /etc/admin.yaml
-        admconf_filename = self._sh.get_config_file(BASE_ADMIN)
-        _admin_conf = shyaml.yaml_load_roundtrip(admconf_filename)
-        _admin_conf['logics']['groups'] = self._groups
-        shyaml.yaml_save_roundtrip(admconf_filename, _admin_conf, create_backup=True)
+        groups_filename = self._sh.get_config_file(BASE_LOGIC_GROUPS)
+        shyaml.yaml_save_roundtrip(groups_filename, self._groups, create_backup=True)
 
 
     def _read_logics(self, filename, directory):
@@ -867,6 +983,8 @@ class Logics():
                     conf[section][key] = value
                     if comment != '':
                         conf[section].yaml_add_eol_comment(comment, key, column=50)
+            elif isinstance(value, list):
+                pass  # list values are written below in the `if active: if isinstance(value, list)` block
             else:
                 logger.warning("update_config_section: unsupported datatype for key '{}'".format(key))
 

@@ -665,10 +665,11 @@ class Plugins():
             return False
 
         logger.info(f'Reloading plugin {configname}, step 1a: checking multi instance loading')
-        for plg in _conf:
-            if plg.__module__ == mymodule and plg != configname:
+        for plg_name in _conf:
+            plg_instance = self.return_plugin(plg_name)
+            if plg_instance and plg_instance.__module__ == mymodule and plg_name != configname:
                 # TODO: possibly allow direct unloading of all plugin instances, possibly config option?
-                logger.error(f'Plugin {configname} also loaded as {plg} - unload all other instances first!')
+                logger.error(f'Plugin {configname} also loaded as {plg_name} - unload all other instances first!')
                 return False
 
         logger.info(f'Reloading plugin {configname}, step 2: unload plugin')

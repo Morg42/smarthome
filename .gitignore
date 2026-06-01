@@ -16,6 +16,7 @@ test.cache
 /.pytest_cache
 pyrightconfig.json
 pyproject.toml
+/.claude/
 
 # OSX specific files
 .DS_Store

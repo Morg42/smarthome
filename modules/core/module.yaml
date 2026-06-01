@@ -162,3 +162,25 @@ parameters:
         description:
             de: ""
             en: ""
+
+    config_etc:
+        type: bool
+        gui_type: yes_no
+        default: False
+        description:
+            de: "Konfigurationsverzeichnisse (items, logics, structs, scenes, functions) unterhalb von etc/ suchen. Die Migration erfolgt beim nächsten Neustart automatisch."
+            en: "Look for config directories (items, logics, structs, scenes, functions) below etc/. Migration runs automatically on next restart."
+
+    legacy_instances:
+        type: bool
+        gui_type: yes_no
+        default: True
+        description:
+            de: "Instanznamen aus dem 'instance'-Parameter in plugin.yaml verwenden (False = zukünftiges Standardverhalten)"
+            en: "Use instance names from 'instance' parameter in plugin.yaml (False = future default behaviour)"
+
+    pip_command:
+        type: str
+        description:
+            de: "PIP-Befehl, falls pip3 nicht automatisch gefunden wird (z.B. 'python3 -m pip')"
+            en: "PIP command to use if pip3 is not found automatically (e.g. 'python3 -m pip')"
