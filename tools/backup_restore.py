@@ -29,16 +29,18 @@ class BackupAndRestore:
         self.overwrite=False
 
     def backup(self, outfile, include=None, exclude=None):
-        if os.path.isfile(outfile) and self.overwrite == False:
+        if os.path.isfile(outfile) and not self.overwrite:
             raise ValueError("Outputfile exists "+ outfile)
-        if exclude != None:
+        if exclude is not None:
             self.backupdirs = set(self.backupdirs) - set(exclude)
-        if include != None:
+        if include is not None:
             self.backupdirs = self.backupdirs+include
-        if self.verbose: print (self.backupdirs)
+        if self.verbose:
+            print(self.backupdirs)
         for path in self.backupdirs:
             self.get_files(os.path.join(self.workdir, path))
-        if self.verbose: print (self.files)
+        if self.verbose:
+            print(self.files)
         tar = tarfile.open(outfile, "w:gz")
         for name in self.files:
             tar.add(name, filter=self.change_fileinfo)
@@ -57,14 +59,16 @@ class BackupAndRestore:
         tarinfo.uid = tarinfo.gid = 0
         tarinfo.uname = tarinfo.gname = "root"
         newname = os.path.sep.join(tarinfo.name.split(os.path.sep)[self.workdir_len:])
-        if self.verbose: print(newname)
+        if self.verbose:
+            print(newname)
         tarinfo.name = newname
         return tarinfo
 
     def restore(self, afile, outdir, selector=None):
 
         # added and adjusted fix for CVE-2007-4559) from https://stackoverflow.com/questions/10060069/safely-extract-zip-or-tar-using-python/10077309#10077309
-        resolved = lambda x: realpath(abspath(x))
+        def resolved(x):
+            return realpath(abspath(x))
 
         def badpath(path, base):
             # joinpath will ignore base if path is absolute
@@ -103,7 +107,7 @@ class BackupAndRestore:
         elif (afilelow.endswith("bz2") or afilelow.endswith("tbz")):
             extractor = tarfile.open
             readmode = "r:bz2"
-        if extractor != None:
+        if extractor is not None:
             tar = extractor(afile, readmode)
             try:
                 tar.extractall(path=outdir)
@@ -132,7 +136,7 @@ if __name__ == '__main__':
             bar.overwrite=True
         if args.backup:
             bar.backup(outfile=args.backupfile, include=args.include, exclude=args.exclude)
-        if args.restore != None:
+        if args.restore is not None:
             bar.restore(afile=args.backupfile, outdir=args.restore)
     except ValueError as e:
         print("")

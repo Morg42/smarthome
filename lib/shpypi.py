@@ -44,7 +44,7 @@ import re
 try:
     import requests
     import xmltodict
-except:
+except Exception:
     pass
 
 # Nicht hier importieren!!! shpypi muss auch ohne geladene Packages (hier: ruamel.yaml) lauffähig sein
@@ -116,7 +116,7 @@ class Shpypi:
         :return: shinfo instance
         :rtype: object or None
         """
-        if _shpypi_instance == None:
+        if _shpypi_instance is None:
             return None
         else:
             return _shpypi_instance
@@ -360,7 +360,7 @@ class Shpypi:
             if logging:
                 self.logger.warning("PIP command read from smarthome.yaml: '{}'".format(pip_command))
             return pip_command
-        except:
+        except Exception:
             pass
 
         if self.sh:
@@ -403,11 +403,11 @@ class Shpypi:
         req_type_display = req_type
         if req_type == 'conf_all':
             req_type_display = 'plugin'
-        complete_filename = os.path.join(self._sh_dir, 'requirements', req_type + '.txt')
+        os.path.join(self._sh_dir, 'requirements', req_type + '.txt')
         if logging:
             try:
                 self.logger.notice("Installing "+req_type_display+" requirements for the current user, please wait...")
-            except:
+            except AttributeError:
                 self.logger.warning("Installing "+req_type_display+" requirements for the current user, please wait...")
         else:
             print()
@@ -421,7 +421,7 @@ class Shpypi:
             msg = 'auto-determined'
         try:
             self.logger.notice(f"Using {msg} PIP: '{pip_command}'")
-        except:
+        except AttributeError:
             self.logger.warning(f"Using {msg} PIP: '{pip_command}'")
 
         req_filepath = os.path.join(self._sh_dir, 'requirements', req_type+'.txt')
@@ -450,7 +450,7 @@ class Shpypi:
                 if logging:
                     try:
                         self.logger.notice("Running in a virtualenv environment - installing " + req_type_display + " requirements only to current virtual environment, please wait...")
-                    except:
+                    except AttributeError:
                         self.logger.warning("Running in a virtualenv environment - installing " + req_type_display + " requirements only to current virtual environment, please wait...")
                 else:
                     print()
@@ -466,7 +466,7 @@ class Shpypi:
             if logging:
                 try:
                     self.logger.notice(req_type_display+" requirements installed")
-                except:
+                except AttributeError:
                     self.logger.warning(req_type_display+" requirements installed")
             else:
                 print(req_type_display+" requirements installed")
@@ -525,7 +525,7 @@ class Shpypi:
         req_dict = {}
         try:
             fobj = open(file_path, encoding='utf8')
-        except:
+        except OSError:
             return req_dict
 
         # process file
@@ -536,7 +536,7 @@ class Shpypi:
                 try:
                     line, line_pyvers = line_raw.split(';')
                     line_pyvers = ';' + line_pyvers
-                except:
+                except ValueError:
                     line = line_raw
                     line_pyvers = ''
 
@@ -605,7 +605,7 @@ class Shpypi:
         :rtype: int
         """
         list_index = next((index for (index, d) in enumerate(self.package_list) if d["name"] == name), None)
-        if list_index == None and add:
+        if list_index is None and add:
             package = {}
             package['name'] = name
             package['vers_installed'] = '-'
@@ -653,7 +653,7 @@ class Shpypi:
         for pkg_name in required_packages:
             if required_packages[pkg_name] != {}:   # ignore empty requirements (e.g. requirement exists only for other Python version
                 index = self.set_packagedata(pkg_name, add=True)
-                if index != None:
+                if index is not None:
                     package = self.package_list[index]
 
                     package['is_required'] = True
@@ -671,7 +671,7 @@ class Shpypi:
         self.logger.info("get_packagelist: installed_packages = {}".format(installed_packages))
         for pkg_name in installed_packages:
             index = self.set_packagedata(pkg_name, add=True)
-            if index != None:
+            if index is not None:
                 package = self.package_list[index]
 
                 package['vers_installed'] = installed_packages[pkg_name]
@@ -686,10 +686,10 @@ class Shpypi:
         for pkg_name in required_packages:
             if required_packages[pkg_name] != {}:   # ignore empty requirements (e.g. requirement exists only for other Python version
                 index = self.set_packagedata(pkg_name, add=False)
-                if index != None:
+                if index is not None:
                     package = self.package_list[index]
 
-                    if package['is_required'] == False:
+                    if not package['is_required']:
                         package['is_required_for_plugins'] = True
                         package['sort'] = self._build_sortstring(package)
 
@@ -708,10 +708,10 @@ class Shpypi:
         for pkg_name in required_packages:
             if required_packages[pkg_name] != {}:   # ignore empty requirements (e.g. requirement exists only for other Python version
                 index = self.set_packagedata(pkg_name, add=True)
-                if index != None:
+                if index is not None:
                     package = self.package_list[index]
 
-                    if package['is_required'] == False:
+                    if not package['is_required']:
                         package['is_required_for_docbuild'] = True
                         package['sort'] = self._build_sortstring(package)
 
@@ -732,7 +732,7 @@ class Shpypi:
                 index = self.set_packagedata(pkg_name, add=True)
                 package = self.package_list[index]
 
-                if package['is_required'] == False:
+                if not package['is_required']:
                     package['is_required_for_testsuite'] = True
                     package['sort'] = self._build_sortstring(package)
 
@@ -744,12 +744,7 @@ class Shpypi:
 
         self.pypi_timeout = 4
         # check if pypi service is reachable
-        if self.pypi_timeout <= 0:
-            pypi_available = False
-            # pypi_unavailable_message = translate('PyPI Prüfung deaktiviert')
-            pypi_unavailable_message = 'PyPI Prüfung deaktiviert'
-        else:
-            pypi_available = True
+        if self.pypi_timeout > 0:
             try:
                 import socket
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -757,8 +752,8 @@ class Shpypi:
                 # sock.connect(('pypi.python.org', 443))
                 sock.connect(('pypi.org', 443))
                 sock.close()
-            except:
-                pypi_available = False
+            except OSError:
+                pass
 
         # look for PyPI release data of the packages
         from lib.scheduler import Scheduler
@@ -776,7 +771,7 @@ class Shpypi:
     def lookup_pypi_releasedata(self, pypi_available=True):
         self.logger.debug("lookup_pypi_releasedata: pypi_available={}".format(pypi_available))
         for package in self.package_list:
-            if (package['is_required'] == True) or True:
+            if (package['is_required']) or True:
                 if pypi_available :
                     self.get_package_releases_data(package)
                     #scheduler.add(self, name, obj, prio=3, cron=None, cycle=None, value=None, offset=None, next=None, from_smartplugin=False):
@@ -861,7 +856,7 @@ class Shpypi:
 
         version_read = False
         reads = 0
-        while (version_read == False) and (reads < max_tries):
+        while (not version_read) and (reads < max_tries):
             package['pypi_version'] = '--'
             package['pypi_version_not_available_msg'] = '?'
             package['pypi_version_ok'] = False
@@ -876,7 +871,7 @@ class Shpypi:
                 package['pypi_version_ok'] = True
                 package['pypi_doc_url'] = 'https://pypi.org/pypi/' + package['name']
                 version_read = True
-            except:
+            except Exception:
                 pass
 
             self.logger.debug("get_package_releases_data ({}): Version {}".format(package['name'], package['pypi_version']))
@@ -1005,7 +1000,7 @@ class Shpypi:
         :rtype: str, str
         """
         version = ''
-        if not(type(reqstring) is str):
+        if type(reqstring) is not str:
             self.logger.warning('_split_operator: reqstring = {}'.format(reqstring))
         reqstring = reqstring.strip()
         for operator in ['==', '<=', '>=', '<', '>']:
@@ -1132,7 +1127,7 @@ class Shpypi:
             vi = 0
             try:
                 vi = int(v)
-            except:
+            except Exception:
                 pass
             vlist.append(vi)
 
@@ -1166,8 +1161,8 @@ class Requirements_files():
         self._conf_plugin_files = []
 
         self.shng_version = Version.format(version.split('-')[0])
-        l = sys.version_info
-        self.py_version = Version.format(str(l[0])+'.'+str(l[1])+'.'+str(l[2]))
+        vi = sys.version_info
+        self.py_version = Version.format(str(vi[0])+'.'+str(vi[1])+'.'+str(vi[2]))
 
         self.sh_basedir = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
         self.logger.debug("Requirements_files is using '{}' as base directory".format(self.sh_basedir))
@@ -1249,7 +1244,7 @@ class Requirements_files():
                     wrk2.append(r2)
                 packaged['req'] = wrk2
 
-            plglist = requirements[key]
+            requirements[key]
             packaged['used_by'] = requirements[key]
             packaged['key'] = packaged['pkg'] + '+' + packaged['py_vers']
             packagelist.append(packaged)

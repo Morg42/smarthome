@@ -71,7 +71,7 @@ def parse_basename(basename, configtype=''):
     return config
 
 
-def parse_itemsdir(itemsdir, item_conf, addfilenames=False, struct_dict={}):
+def parse_itemsdir(itemsdir, item_conf, addfilenames=False, struct_dict: dict | None = None):
     """
     Load and parse item configurations and merge it to the configuration tree
     The configuration is only specified by the name of the directory.
@@ -90,6 +90,8 @@ def parse_itemsdir(itemsdir, item_conf, addfilenames=False, struct_dict={}):
     :return: The resulting merged OrderedDict tree
     :rtype: OrderedDict
     """
+    if struct_dict is None:
+        struct_dict = {}
     logger.info(f"parse_itemsdir: Beginning to parse items directory {itemsdir}")
     for item_file in sorted(os.listdir(itemsdir)):
         if not item_file.startswith('.'):
@@ -106,7 +108,7 @@ def parse_itemsdir(itemsdir, item_conf, addfilenames=False, struct_dict={}):
     return item_conf
 
 
-def parse(filename, config=None, addfilenames=False, parseitems=False, struct_dict={}):
+def parse(filename, config=None, addfilenames=False, parseitems=False, struct_dict: dict | None = None):
     """
     Load and parse a configuration file and merge it to the configuration tree
     Depending on the extension of the filename, the apropriate parser is called
@@ -121,6 +123,8 @@ def parse(filename, config=None, addfilenames=False, parseitems=False, struct_di
     :return: The resulting merged OrderedDict tree
     :rtype: OrderedDict
     """
+    if struct_dict is None:
+        struct_dict = {}
     if filename.startswith('.'):
         return {}
     if filename.endswith(YAML_FILE) and os.path.isfile(filename):
@@ -130,7 +134,7 @@ def parse(filename, config=None, addfilenames=False, parseitems=False, struct_di
 
 # --------------------------------------------------------------------------------------
 
-def remove_keys(ydata, func, remove=[REMOVE_ATTR], level=0, msg=None, key_prefix=''):
+def remove_keys(ydata, func, remove: list | None = None, level=0, msg=None, key_prefix=''):
     """
     Removes given keys from a dict or OrderedDict structure
 
@@ -141,6 +145,8 @@ def remove_keys(ydata, func, remove=[REMOVE_ATTR], level=0, msg=None, key_prefix
     :type func: function
     :type level: int
     """
+    if remove is None:
+        remove = [REMOVE_ATTR]
     try:
         level_keys = list(ydata.keys())
         for key in level_keys:
@@ -604,7 +610,7 @@ def replace_struct_instance(path, subtree, instance):
     return
 
 
-def parse_yaml(filename, config=None, addfilenames=False, parseitems=False, struct_dict={}):
+def parse_yaml(filename, config=None, addfilenames=False, parseitems=False, struct_dict: dict | None = None):
     """
     Load and parse a yaml configuration file and merge it to the configuration tree
 
@@ -650,6 +656,8 @@ def parse_yaml(filename, config=None, addfilenames=False, parseitems=False, stru
     Valid characters for the items are a-z and A-Z plus any digit and underscore as second or further characters.
     Valid characters for the attributes are the same as for an item plus @ and *
     """
+    if struct_dict is None:
+        struct_dict = {}
     if os.path.basename(filename).startswith('test_'):
         logger.info(f"parse_yaml: Parsing file {os.path.basename(filename)}")
     if config is None:

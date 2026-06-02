@@ -255,7 +255,7 @@ def get_lastbackuptime():
             line = fd.readline()
             fd.close()
             return line
-    except:
+    except Exception:
         logger.warning("last_backup could not be read!")
     return ""
 
@@ -460,7 +460,7 @@ def restore_file(restorezip, arc_dir, filename, dest_dir, overwrite=False):
         zip_info = restorezip.getinfo(os.path.join(arc_dir, filename))
         if not zip_info.filename[-1] == '/':
             zip_info.filename = os.path.basename(zip_info.filename)
-    except Exception as ex:
+    except Exception:
         #logger.warning(f"Cannot get info for {arc_dir} file {filename} from zip")
         # don't try to restore a file stored in a subfolder from the parent folder
         return

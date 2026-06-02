@@ -27,7 +27,8 @@
 CPUINFO_VERSION = (9, 0, 0)
 CPUINFO_VERSION_STRING = '.'.join([str(n) for n in CPUINFO_VERSION])
 
-import os, sys
+import os
+import sys
 import platform
 import multiprocessing
 import ctypes
@@ -344,10 +345,10 @@ def _read_windows_registry_key(key_name, field_name):
 
 	try:
 		import _winreg as winreg
-	except ImportError as err:
+	except ImportError:
 		try:
 			import winreg
-		except ImportError as err:
+		except ImportError:
 			pass
 
 	key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_name)
@@ -359,7 +360,7 @@ def _read_windows_registry_key(key_name, field_name):
 # Make sure we are running on a supported system
 def _check_arch():
 	arch, bits = _parse_arch(DataSource.arch_string_raw)
-	if not arch in ['ARM_7', 'ARM_8',
+	if arch not in ['ARM_7', 'ARM_8',
 	                'LOONG_32', 'LOONG_64',
 	                'MIPS_32', 'MIPS_64',
 	                'PPC_32', 'PPC_64',
@@ -517,7 +518,7 @@ def _hz_friendly_to_full(hz_string):
 			scale = 0
 
 		hz = "".join(n for n in hz_string if n.isdigit() or n=='.').strip()
-		if not '.' in hz:
+		if '.' not in hz:
 			hz += '.0'
 
 		hz, scale = _hz_short_to_full(hz, scale)
@@ -605,14 +606,14 @@ def _friendly_bytes_to_int(friendly_bytes):
 			if input.endswith(pattern):
 				return int(input.split(pattern)[0].strip()) * multiplier
 
-	except Exception as err:
+	except Exception:
 		pass
 
 	return friendly_bytes
 
 def _parse_cpu_brand_string(cpu_string):
 	# Just return 0 if the processor brand does not have the Hz
-	if not 'hz' in cpu_string.lower():
+	if 'hz' not in cpu_string.lower():
 		return ('0.0', 0)
 
 	hz = cpu_string.lower()
@@ -886,7 +887,9 @@ def _is_selinux_enforcing(trace):
 
 	return (not can_selinux_exec_heap or not can_selinux_exec_memory)
 
-def _filter_dict_keys_with_empty_values(info, acceptable_values = {}):
+def _filter_dict_keys_with_empty_values(info, acceptable_values: dict | None = None):
+	if acceptable_values is None:
+		acceptable_values = {}
 	filtered_info = {}
 	for key in info:
 		value = info[key]
@@ -918,7 +921,9 @@ def _filter_dict_keys_with_empty_values(info, acceptable_values = {}):
 	return filtered_info
 
 class ASM:
-	def __init__(self, restype=None, argtypes=(), machine_code=[]):
+	def __init__(self, restype=None, argtypes=(), machine_code: list | None = None):
+		if machine_code is None:
+			machine_code = []
 		self.restype = restype
 		self.argtypes = argtypes
 		self.machine_code = machine_code
@@ -1013,7 +1018,9 @@ class CPUID:
 		# Figure out if SE Linux is on and in enforcing mode
 		self.is_selinux_enforcing = _is_selinux_enforcing(trace)
 
-	def _asm_func(self, restype=None, argtypes=(), machine_code=[]):
+	def _asm_func(self, restype=None, argtypes=(), machine_code: list | None = None):
+		if machine_code is None:
+			machine_code = []
 		asm = ASM(restype, argtypes, machine_code)
 		asm.compile()
 		return asm
@@ -1552,7 +1559,7 @@ def _get_cpu_info_from_cpuid_actual():
 		arch, bits = _parse_arch(DataSource.arch_string_raw)
 
 		# Return none if this is not an X86 CPU
-		if not arch in ['X86_32', 'X86_64']:
+		if arch not in ['X86_32', 'X86_64']:
 			trace.fail('Not running on X86_32 or X86_64. Skipping ...')
 			return trace.to_dict(info, True)
 
@@ -1598,7 +1605,7 @@ def _get_cpu_info_from_cpuid_actual():
 
 		info = _filter_dict_keys_with_empty_values(info)
 		trace.success()
-	except Exception as err:
+	except Exception:
 		from traceback import format_exc
 		err_string = format_exc()
 		trace._err = ''.join(['\t\t{0}\n'.format(n) for n in err_string.split('\n')]) + '\n'
@@ -1637,7 +1644,7 @@ def _get_cpu_info_from_cpuid():
 	arch, bits = _parse_arch(DataSource.arch_string_raw)
 
 	# Return {} if this is not an X86 CPU
-	if not arch in ['X86_32', 'X86_64']:
+	if arch not in ['X86_32', 'X86_64']:
 		g_trace.fail('Not running on X86_32 or X86_64. Skipping ...')
 		return {}
 
@@ -1665,7 +1672,7 @@ def _get_cpu_info_from_cpuid():
 			else:
 				output = _b64_to_obj(queue.get())
 				import pprint
-				pp = pprint.PrettyPrinter(indent=4)
+				pprint.PrettyPrinter(indent=4)
 				#pp.pprint(output)
 
 				if 'output' in output and output['output']:

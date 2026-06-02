@@ -104,7 +104,7 @@ class Tools():
         except Exception as e:
             if format(e) in connErrors:
                 # diese fehler bekommen einen status, der in der visu oder sonst genutzt werden kann
-                if errorItem != None:
+                if errorItem is not None:
                     errorItem(True,'_fetch_url')
             if warn_no_connect == 1:
                 logger.warning("Problem fetching {0}: {1}".format(url, e))

@@ -30,17 +30,18 @@
 CPUINFO_VERSION = (5, 0, 0)
 CPUINFO_VERSION_STRING = '.'.join([str(n) for n in CPUINFO_VERSION])
 
-import os, sys
+import os
+import sys
 import platform
 import multiprocessing
 import ctypes
 
 try:
     import _winreg as winreg
-except ImportError as err:
+except ImportError:
     try:
         import winreg
-    except ImportError as err:
+    except ImportError:
         pass
 
 IS_PY2 = sys.version_info[0] == 2
@@ -198,7 +199,7 @@ def _program_paths(program_name):
     paths = []
     exts = filter(None, os.environ.get('PATHEXT', '').split(os.pathsep))
     path = os.environ['PATH']
-    for p in os.environ['PATH'].split(os.pathsep):
+    for p in path.split(os.pathsep):
         p = os.path.join(p, program_name)
         if os.access(p, os.X_OK):
             paths.append(p)
@@ -229,7 +230,7 @@ def _run_and_get_stdout(command, pipe_command=None):
 # Make sure we are running on a supported system
 def _check_arch():
     arch, bits = _parse_arch(DataSource.arch_string_raw)
-    if not arch in ['X86_32', 'X86_64', 'ARM_7', 'ARM_8', 'PPC_64', 'S390X']:
+    if arch not in ['X86_32', 'X86_64', 'ARM_7', 'ARM_8', 'PPC_64', 'S390X']:
         raise Exception(f"py-cpuinfo currently only works on X86 and some ARM/PPC/S390X CPUs, but not on {arch}")
 
 def _obj_to_b64(thing):
@@ -250,7 +251,7 @@ def _b64_to_obj(thing):
         a = base64.b64decode(thing)
         b = pickle.loads(a)
         return b
-    except:
+    except Exception:
         return {}
 
 def _utf_to_str(input):
@@ -310,7 +311,7 @@ def _get_field(cant_be_number, raw_string, convert_to, default_value, *field_nam
     if retval and convert_to:
         try:
             retval = convert_to(retval)
-        except:
+        except Exception:
             retval = default_value
 
     # Return the default if there is no return value
@@ -344,7 +345,7 @@ def _to_decimal_string(ticks):
         ticks = float(ticks)
         ticks = '{0}'.format(ticks)
         return ticks
-    except:
+    except Exception:
         return '0.0'
 
 def _hz_short_to_full(ticks, scale):
@@ -363,7 +364,7 @@ def _hz_short_to_full(ticks, scale):
         left, right = hz.split('.')
         left, right = int(left), int(right)
         return (left, right)
-    except:
+    except Exception:
         return (0, 0)
 
 def _hz_friendly_to_full(hz_string):
@@ -379,13 +380,13 @@ def _hz_friendly_to_full(hz_string):
             scale = 0
 
         hz = "".join(n for n in hz_string if n.isdigit() or n=='.').strip()
-        if not '.' in hz:
+        if '.' not in hz:
             hz += '.0'
 
         hz, scale = _hz_short_to_full(hz, scale)
 
         return (hz, scale)
-    except:
+    except Exception:
         return (0, 0)
 
 def _hz_short_to_friendly(ticks, scale):
@@ -419,7 +420,7 @@ def _hz_short_to_friendly(ticks, scale):
         result = '{0:.4f} {1}'.format(float(result), symbol)
         result = result.rstrip('0')
         return result
-    except:
+    except Exception:
         return '0.0000 Hz'
 
 def _to_friendly_bytes(input):
@@ -444,7 +445,7 @@ def _to_friendly_bytes(input):
 
 def _parse_cpu_brand_string(cpu_string):
     # Just return 0 if the processor brand does not have the Hz
-    if not 'hz' in cpu_string.lower():
+    if 'hz' not in cpu_string.lower():
         return ('0.0', 0)
 
     hz = cpu_string.lower()
@@ -605,7 +606,7 @@ def _parse_dmesg_output(output):
             info['hz_actual'] = _hz_short_to_full(hz_actual, scale)
 
         return {k: v for k, v in info.items() if v}
-    except:
+    except Exception:
         #raise
         pass
 
@@ -700,7 +701,9 @@ class CPUID(object):
         # Figure out if SE Linux is on and in enforcing mode
         self.is_selinux_enforcing = _is_selinux_enforcing()
 
-    def _asm_func(self, restype=None, argtypes=(), byte_code=[]):
+    def _asm_func(self, restype=None, argtypes=(), byte_code: list | None = None):
+        if byte_code is None:
+            byte_code = []
         byte_code = bytes.join(b'', byte_code)
         address = None
 
@@ -1296,7 +1299,7 @@ def _get_cpu_info_from_cpuid_actual():
     arch, bits = _parse_arch(DataSource.arch_string_raw)
 
     # Return none if this is not an X86 CPU
-    if not arch in ['X86_32', 'X86_64']:
+    if arch not in ['X86_32', 'X86_64']:
         return {}
 
     # Return none if SE Linux is in enforcing mode
@@ -1368,7 +1371,7 @@ def _get_cpu_info_from_cpuid():
     arch, bits = _parse_arch(DataSource.arch_string_raw)
 
     # Return {} if this is not an X86 CPU
-    if not arch in ['X86_32', 'X86_64']:
+    if arch not in ['X86_32', 'X86_64']:
         return {}
 
     try:
@@ -1392,7 +1395,7 @@ def _get_cpu_info_from_cpuid():
                 return _b64_to_obj(output)
         else:
             return _get_cpu_info_from_cpuid_actual()
-    except:
+    except Exception:
         pass
 
     # Return {} if everything failed
@@ -1490,7 +1493,7 @@ def _get_cpu_info_from_proc_cpuinfo():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         #raise # NOTE: To have this throw on error, uncomment this line
         return {}
 
@@ -1530,7 +1533,7 @@ def _get_cpu_info_from_cpufreq_info():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         #raise # NOTE: To have this throw on error, uncomment this line
         return {}
 
@@ -1612,7 +1615,7 @@ def _get_cpu_info_from_lscpu():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         #raise # NOTE: To have this throw on error, uncomment this line
         return {}
 
@@ -1633,7 +1636,7 @@ def _get_cpu_info_from_dmesg():
 
     # If dmesg fails return {}
     returncode, output = DataSource.dmesg_a()
-    if output == None or returncode != 0:
+    if output is None or returncode != 0:
         return {}
 
     return _parse_dmesg_output(output)
@@ -1653,7 +1656,7 @@ def _get_cpu_info_from_ibm_pa_features():
 
         # If ibm,pa-features fails return {}
         returncode, output = DataSource.ibm_pa_features()
-        if output == None or returncode != 0:
+        if output is None or returncode != 0:
             return {}
 
         # Filter out invalid characters from output
@@ -1758,7 +1761,7 @@ def _get_cpu_info_from_ibm_pa_features():
         info = {k: v for k, v in info.items() if v}
 
         return info
-    except:
+    except Exception:
         return {}
 
 
@@ -1773,7 +1776,7 @@ def _get_cpu_info_from_cat_var_run_dmesg_boot():
 
     # If dmesg.boot fails return {}
     returncode, output = DataSource.cat_var_run_dmesg_boot()
-    if output == None or returncode != 0:
+    if output is None or returncode != 0:
         return {}
 
     return _parse_dmesg_output(output)
@@ -1791,7 +1794,7 @@ def _get_cpu_info_from_sysctl():
 
         # If sysctl fails return {}
         returncode, output = DataSource.sysctl_machdep_cpu_hw_cpufrequency()
-        if output == None or returncode != 0:
+        if output is None or returncode != 0:
             return {}
 
         # Various fields
@@ -1832,7 +1835,7 @@ def _get_cpu_info_from_sysctl():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         return {}
 
 
@@ -1857,7 +1860,7 @@ def _get_cpu_info_from_sysinfo_v1():
 
         # If sysinfo fails return {}
         returncode, output = DataSource.sysinfo_cpu()
-        if output == None or returncode != 0:
+        if output is None or returncode != 0:
             return {}
 
         # Various fields
@@ -1899,7 +1902,7 @@ def _get_cpu_info_from_sysinfo_v1():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         #raise # NOTE: To have this throw on error, uncomment this line
         return {}
 
@@ -1915,7 +1918,7 @@ def _get_cpu_info_from_sysinfo_v2():
 
         # If sysinfo fails return {}
         returncode, output = DataSource.sysinfo_cpu()
-        if output == None or returncode != 0:
+        if output is None or returncode != 0:
             return {}
 
         # Various fields
@@ -1974,7 +1977,7 @@ def _get_cpu_info_from_sysinfo_v2():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         #raise # NOTE: To have this throw on error, uncomment this line
         return {}
 
@@ -1990,7 +1993,7 @@ def _get_cpu_info_from_wmic():
             return {}
 
         returncode, output = DataSource.wmic_cpu()
-        if output == None or returncode != 0:
+        if output is None or returncode != 0:
             return {}
 
         # Break the list into key values pairs
@@ -2053,7 +2056,7 @@ def _get_cpu_info_from_wmic():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         #raise # NOTE: To have this throw on error, uncomment this line
         return {}
 
@@ -2154,7 +2157,7 @@ def _get_cpu_info_from_registry():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         return {}
 
 def _get_cpu_info_from_kstat():
@@ -2169,12 +2172,12 @@ def _get_cpu_info_from_kstat():
 
         # If isainfo fails return {}
         returncode, flag_output = DataSource.isainfo_vb()
-        if flag_output == None or returncode != 0:
+        if flag_output is None or returncode != 0:
             return {}
 
         # If kstat fails return {}
         returncode, kstat = DataSource.kstat_m_cpu_info()
-        if kstat == None or returncode != 0:
+        if kstat is None or returncode != 0:
             return {}
 
         # Various fields
@@ -2214,7 +2217,7 @@ def _get_cpu_info_from_kstat():
 
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         return {}
 
 def _get_cpu_info_from_platform_uname():
@@ -2243,7 +2246,7 @@ def _get_cpu_info_from_platform_uname():
         }
         info = {k: v for k, v in info.items() if v}
         return info
-    except:
+    except Exception:
         return {}
 
 def _get_cpu_info_internal():

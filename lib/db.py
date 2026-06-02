@@ -191,7 +191,7 @@ class Database():
                         try:
                             v = t(value)
                             break
-                        except:
+                        except Exception:
                             pass
                     self._params[key] = v
             elif isinstance(connect[0], OrderedDict):
@@ -263,13 +263,13 @@ class Database():
         """
         self.lock()
         cur = self.cursor()
-        version_table = re.sub('[^a-z0-9_]', '', self._name.lower()) + "_version";
+        version_table = re.sub('[^a-z0-9_]', '', self._name.lower()) + "_version"
         try:
             version, = self.fetchone("SELECT MAX(version) FROM " + version_table + ";", cur=cur)
-            if version == None:
+            if version is None:
                version = 0
-        except Exception as e:
-            self.logger.info("Missing table " + version_table + " error can be ignored, will be created now!");
+        except Exception:
+            self.logger.info("Missing table " + version_table + " error can be ignored, will be created now!")
             self.execute("CREATE TABLE " + version_table + "(version NUMERIC, updated BIGINT, rollout TEXT, rollback TEXT)", cur=cur)
             version = 0
         self.logger.info("Database [{}]: Version {} found".format(self._name, version))
@@ -333,7 +333,7 @@ class Database():
 
         c = None
         try:
-            if cur == None:
+            if cur is None:
                 c = self.cursor()
                 if c is not None:
                     result = c.execute(stmt, args)
@@ -371,7 +371,7 @@ class Database():
             locked = False
 
             try:
-                if self.connected() == False:
+                if not self.connected():
                     self.connect()
 
                 locked = self.lock(2)
@@ -400,7 +400,7 @@ class Database():
         the result. It accepts the same arguments as mentioned in the
         'execute()' method.
         """
-        if cur == None:
+        if cur is None:
             c = self.cursor()
             if c is None:
                 self.logger.warning(f"fetchone: No cursor defined for stmt {stmt} with params {params}")
@@ -420,7 +420,7 @@ class Database():
         This method can be used to fetch all rows from the result. It accepts
         the same arguments as mentioned in the 'execute()' method.
         """
-        if cur == None:
+        if cur is None:
             c = self.cursor()
             if c is not None:
                 self.execute(stmt, params, formatting=formatting, cur=c)

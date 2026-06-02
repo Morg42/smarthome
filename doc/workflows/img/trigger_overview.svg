@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 260" width="780" height="260" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="12">
+
+  <!-- background -->
+  <rect width="780" height="260" fill="#f8fafc" rx="6"/>
+
+  <!-- column widths: label=200, then 5 columns × 116 -->
+  <!-- row heights: header=48, then 5 rows × 40, total 48+200=248 -->
+
+  <!-- header cells -->
+  <rect x="200" y="0"   width="116" height="48" fill="#1e40af" rx="0"/>
+  <rect x="316" y="0"   width="116" height="48" fill="#1d4ed8" rx="0"/>
+  <rect x="432" y="0"   width="116" height="48" fill="#1e40af" rx="0"/>
+  <rect x="548" y="0"   width="116" height="48" fill="#1d4ed8" rx="0"/>
+  <rect x="664" y="0"   width="116" height="48" fill="#1e40af" rx="0"/>
+
+  <!-- header text -->
+  <text x="258" y="17" fill="white" text-anchor="middle" font-size="11" font-weight="bold">push</text>
+  <text x="258" y="31" fill="#bfdbfe" text-anchor="middle" font-size="10">(any branch)</text>
+  <text x="258" y="43" fill="#bfdbfe" text-anchor="middle" font-size="10">excl. release_doc</text>
+
+  <text x="374" y="17" fill="white" text-anchor="middle" font-size="11" font-weight="bold">push</text>
+  <text x="374" y="31" fill="#bfdbfe" text-anchor="middle" font-size="10">(develop only)</text>
+  <text x="374" y="43" fill="#bfdbfe" text-anchor="middle" font-size="10"> </text>
+
+  <text x="490" y="17" fill="white" text-anchor="middle" font-size="11" font-weight="bold">push</text>
+  <text x="490" y="31" fill="#bfdbfe" text-anchor="middle" font-size="10">(master only)</text>
+  <text x="490" y="43" fill="#bfdbfe" text-anchor="middle" font-size="10"> </text>
+
+  <text x="606" y="17" fill="white" text-anchor="middle" font-size="11" font-weight="bold">PR opened</text>
+  <text x="606" y="31" fill="#bfdbfe" text-anchor="middle" font-size="10">targeting</text>
+  <text x="606" y="43" fill="#bfdbfe" text-anchor="middle" font-size="10">develop</text>
+
+  <text x="722" y="17" fill="white" text-anchor="middle" font-size="11" font-weight="bold">PR opened</text>
+  <text x="722" y="31" fill="#bfdbfe" text-anchor="middle" font-size="10">wrong target</text>
+  <text x="722" y="43" fill="#bfdbfe" text-anchor="middle" font-size="10">branch</text>
+
+  <!-- row backgrounds (alternating) -->
+  <rect x="0" y="48"  width="780" height="40" fill="#f1f5f9"/>
+  <rect x="0" y="88"  width="780" height="40" fill="#e2e8f0"/>
+  <rect x="0" y="128" width="780" height="40" fill="#f1f5f9"/>
+  <rect x="0" y="168" width="780" height="40" fill="#e2e8f0"/>
+  <rect x="0" y="208" width="780" height="40" fill="#f1f5f9"/>
+
+  <!-- row labels -->
+  <text x="10" y="73"  fill="#1e293b" font-weight="bold" font-size="11">unittests.yml</text>
+  <text x="10" y="113" fill="#1e293b" font-weight="bold" font-size="11">codeql.yml</text>
+  <text x="10" y="148" fill="#1e293b" font-weight="bold" font-size="10">comment_pr_to_</text>
+  <text x="10" y="161" fill="#1e293b" font-weight="bold" font-size="10">wrong_branch.yml</text>
+  <text x="10" y="193" fill="#1e293b" font-weight="bold" font-size="11">builddevdoc.yml</text>
+  <text x="10" y="233" fill="#1e293b" font-weight="bold" font-size="11">buildreleasedoc.yml</text>
+
+  <!-- helper macros as reusable rects: YES=green, NO=light, COND=amber -->
+
+  <!-- unittests row (y=48): push(any)=YES, push(dev)=covered, push(master)=covered, PR→dev=YES, PR→wrong=NO -->
+  <rect x="206" y="54" width="104" height="28" fill="#16a34a" rx="4"/>
+  <text x="258" y="72" fill="white" text-anchor="middle" font-size="12" font-weight="bold">✓ fires</text>
+
+  <rect x="322" y="54" width="104" height="28" fill="#86efac" rx="4"/>
+  <text x="374" y="69" fill="#166534" text-anchor="middle" font-size="10">included in</text>
+  <text x="374" y="79" fill="#166534" text-anchor="middle" font-size="10">"any branch"</text>
+
+  <rect x="438" y="54" width="104" height="28" fill="#86efac" rx="4"/>
+  <text x="490" y="69" fill="#166534" text-anchor="middle" font-size="10">included in</text>
+  <text x="490" y="79" fill="#166534" text-anchor="middle" font-size="10">"any branch"</text>
+
+  <rect x="554" y="54" width="104" height="28" fill="#16a34a" rx="4"/>
+  <text x="606" y="72" fill="white" text-anchor="middle" font-size="12" font-weight="bold">✓ fires</text>
+
+  <rect x="670" y="54" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="722" y="72" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <!-- codeql row (y=88): push(any)=YES, covered, covered, PR→dev=YES, PR→wrong=NO -->
+  <rect x="206" y="94" width="104" height="28" fill="#16a34a" rx="4"/>
+  <text x="258" y="112" fill="white" text-anchor="middle" font-size="12" font-weight="bold">✓ fires</text>
+
+  <rect x="322" y="94" width="104" height="28" fill="#86efac" rx="4"/>
+  <text x="374" y="109" fill="#166534" text-anchor="middle" font-size="10">included in</text>
+  <text x="374" y="119" fill="#166534" text-anchor="middle" font-size="10">"any push"</text>
+
+  <rect x="438" y="94" width="104" height="28" fill="#86efac" rx="4"/>
+  <text x="490" y="109" fill="#166534" text-anchor="middle" font-size="10">included in</text>
+  <text x="490" y="119" fill="#166534" text-anchor="middle" font-size="10">"any push"</text>
+
+  <rect x="554" y="94" width="104" height="28" fill="#16a34a" rx="4"/>
+  <text x="606" y="112" fill="white" text-anchor="middle" font-size="12" font-weight="bold">✓ fires</text>
+
+  <rect x="670" y="94" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="722" y="112" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <!-- comment_pr row (y=128): all NO except PR→wrong=YES -->
+  <rect x="206" y="134" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="258" y="152" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <rect x="322" y="134" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="374" y="152" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <rect x="438" y="134" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="490" y="152" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <rect x="554" y="134" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="606" y="147" fill="#64748b" text-anchor="middle" font-size="10">excluded by</text>
+  <text x="606" y="157" fill="#64748b" text-anchor="middle" font-size="10">design</text>
+
+  <rect x="670" y="134" width="104" height="28" fill="#dc2626" rx="4"/>
+  <text x="722" y="147" fill="white" text-anchor="middle" font-size="10" font-weight="bold">✓ fires +</text>
+  <text x="722" y="158" fill="white" text-anchor="middle" font-size="10" font-weight="bold">👎 comment</text>
+
+  <!-- builddevdoc row (y=168): only push→develop=YES, manual implicit -->
+  <rect x="206" y="174" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="258" y="187" fill="#64748b" text-anchor="middle" font-size="10">only if</text>
+  <text x="258" y="197" fill="#64748b" text-anchor="middle" font-size="10">branch=develop</text>
+
+  <rect x="322" y="174" width="104" height="28" fill="#16a34a" rx="4"/>
+  <text x="374" y="192" fill="white" text-anchor="middle" font-size="12" font-weight="bold">✓ fires</text>
+
+  <rect x="438" y="174" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="490" y="192" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <rect x="554" y="174" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="606" y="192" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <rect x="670" y="174" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="722" y="192" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <!-- buildreleasedoc row (y=208): only push→master=YES -->
+  <rect x="206" y="214" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="258" y="227" fill="#64748b" text-anchor="middle" font-size="10">only if</text>
+  <text x="258" y="237" fill="#64748b" text-anchor="middle" font-size="10">branch=master</text>
+
+  <rect x="322" y="214" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="374" y="232" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <rect x="438" y="214" width="104" height="28" fill="#16a34a" rx="4"/>
+  <text x="490" y="232" fill="white" text-anchor="middle" font-size="12" font-weight="bold">✓ fires</text>
+
+  <rect x="554" y="214" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="606" y="232" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <rect x="670" y="214" width="104" height="28" fill="#e2e8f0" rx="4"/>
+  <text x="722" y="232" fill="#64748b" text-anchor="middle" font-size="12">— no</text>
+
+  <!-- grid lines -->
+  <line x1="200" y1="0"   x2="200" y2="248" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="316" y1="0"   x2="316" y2="248" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="432" y1="0"   x2="432" y2="248" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="548" y1="0"   x2="548" y2="248" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="664" y1="0"   x2="664" y2="248" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="0"   y1="48"  x2="780" y2="48"  stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="0"   y1="88"  x2="780" y2="88"  stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="0"   y1="128" x2="780" y2="128" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="0"   y1="168" x2="780" y2="168" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="0"   y1="208" x2="780" y2="208" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="0"   y1="248" x2="780" y2="248" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- outer border -->
+  <rect x="0" y="0" width="780" height="248" fill="none" stroke="#94a3b8" stroke-width="1.5" rx="6"/>
+
+  <!-- note about manual trigger -->
+  <text x="10" y="258" fill="#64748b" font-size="10">Note: all five workflows also support manual triggering via workflow_dispatch (not shown above).</text>
+</svg>

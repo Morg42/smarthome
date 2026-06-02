@@ -120,7 +120,7 @@ class TestConfigYaml(unittest.TestCase,ConfigBaseTests):
     fmt = 'yaml'
 
     def test_yamlread_multiline(self):
-        if verbose == True:
+        if verbose:
             print()
             print('=== TestConfigYaml:')
         conf = self.config('keyvalues')

@@ -88,7 +88,7 @@ class ConfigController(RESTResource):
                     self.core_confdata['holidays_custom'+str(i)] = json.dumps(self.holidays_confdata['custom'][i-1])
                 else:
                     self.core_confdata['holidays_custom' + str(i)] = self.holidays_confdata['custom'][i - 1]
-        except:
+        except Exception:
             pass
         return
 

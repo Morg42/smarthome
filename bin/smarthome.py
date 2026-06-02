@@ -138,7 +138,7 @@ if core_reqs == 0:
             # function call doesn't return; this process is replaced by the new one
             os.execv(python_bin, [python_bin] + sys.argv)
         except OSError as e:
-            print('Restart command {command} failed with error {}'.format(e))
+            print('Restart command {} failed with error {}'.format(python_bin, e))
             exit(0)
 
     try:
@@ -191,7 +191,7 @@ if __name__ == '__main__':
             locale.setlocale(locale.LC_ALL, 'C')
         else:
             locale.setlocale(locale.LC_ALL, '')
-    except:
+    except locale.Error:
         locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
     extern_conf_dir = BASE
@@ -212,7 +212,7 @@ if __name__ == '__main__':
         import rlcompleter  # noqa
         try:
             import readline
-        except:
+        except ImportError:
             print("ERROR: module 'readline' is not installed. Without this module the interactive mode can't be used")
             exit(1)
         import atexit

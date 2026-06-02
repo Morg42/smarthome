@@ -317,7 +317,7 @@ class Http(object):
         """
         return requests.auth.HTTPDigestAuth(user, password)
 
-    def post_json(self, url=None, params=None, verify=True, auth=None, json=None, files={}):
+    def post_json(self, url=None, params=None, verify=True, auth=None, json=None, files: dict | None = None):
         """
         Launch a POST request and return JSON answer as a dict or None on error.
 
@@ -334,6 +334,8 @@ class Http(object):
         :return: JSON answer decoded into a dict or None on whatever error occured
         :rtype: dict | None
         """
+        if files is None:
+            files = {}
         if self.__post(url=url, params=params, verify=verify, auth=auth, json=json, files=files):
             json = None
             try:
@@ -485,7 +487,7 @@ class Http(object):
         """
         return self._response
 
-    def __post(self, url=None, params=None, timeout=None, verify=True, auth=None, json=None, data=None, files={}):
+    def __post(self, url=None, params=None, timeout=None, verify=True, auth=None, json=None, data=None, files: dict | None = None):
         """
         Send POST request. Non-documented arguments are passed on to requests.request().
 
@@ -497,6 +499,8 @@ class Http(object):
         :return: True if POST was successful
         :rtype: bool
         """
+        if files is None:
+            files = {}
         url = self.baseurl + url if url else self.baseurl
         timeout = timeout if timeout else self.timeout
         data = json if json else data

@@ -1,4 +1,8 @@
+# Python runtime artifacts
 *.pyc
+*.egg-info/
+
+# Build & archive output
 *.jar
 *.tgz
 *.zip
@@ -7,36 +11,43 @@
 *.log
 
 # Unittest and coverage reports
-.cache
+.cache/
 .coverage
-.tox
+.tox/
 nosetests.xml
-*.egg-info
 test.cache
-/.pytest_cache
-pyrightconfig.json
-pyproject.toml
-/.claude/
 
-# OSX specific files
-.DS_Store
-.DS_Store?
-.AppleDouble
-.LSOverride
-.VolumeIcon.icns
-favicon.icns
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Type checker / static analysis
+pyrightconfig.json
 
 # PyCharm
 *.srctrl*
 
+# VSCode
+**/.vscode/
+
+# OSX specific files
+.DS_Store
+.DS_Store?
+.AppleDouble/
+.LSOverride
+.VolumeIcon.icns
+favicon.icns
+._*
+.Spotlight-V100/
+.Trashes/
+
+# Windows specific files
+ehthumbs.db
+Thumbs.db
+
+# Ignore all root-level dot-directories; whitelist those tracked in git
+/.*/
+!/.github/
+
 # Don't check in built documentation
-/doc/user/build
-/doc/user/source/plugins_doc
+/doc/user/build/
+/doc/user/source/plugins_doc/
 !/doc/user/source/plugins_doc/plugins_footer.rst
 !/doc/user/source/plugins_doc/plugins_gateway_header.rst
 !/doc/user/source/plugins_doc/plugins_interface_header.rst
@@ -47,28 +58,6 @@ Thumbs.db
 
 # Don't check in plugins to core repository
 /plugins/
-
-# don't check in requirements that are built each time SHNG starts
-requirements/all.txt
-requirements/base.txt
-requirements/conf_all.txt
-
-# don't check in directories under /var beside listed exeptions
-/var
-!/var/backup
-!/var/cache
-!/var/db
-!/var/log
-!/var/rrd
-!/var/run
-
-# ignore users tools settings
-/.idea
-**/.vscode/
-/custom_plugins
-/priv_tools
-/*.toml
-/.claude/
 
 # ./etc -- ignore everything
 /etc/
@@ -88,3 +77,23 @@ requirements/conf_all.txt
 # ./scenes -- ignore everything
 /scenes/
 
+# don't check in directories under /var beside listed exceptions
+/var/
+!/var/backup/
+!/var/cache/
+!/var/db/
+!/var/log/
+!/var/rrd/
+!/var/run/
+
+# don't check in requirements that are built each time SHNG starts
+requirements/all.txt
+requirements/base.txt
+requirements/conf_all.txt
+
+# ignore users tools settings
+/custom_plugins/
+/priv_tools/
+# ignore all root *.toml except pyproject.toml (ruff / build config)
+/*.toml
+!/pyproject.toml

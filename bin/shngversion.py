@@ -140,7 +140,7 @@ def _get_git_data(sub='', printout=False):
             commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], stderr=subprocess.STDOUT).decode().strip('\n')
             commit_short = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], stderr=subprocess.STDOUT).decode().strip('\n')
             describe = subprocess.check_output(['git', 'describe', '--all'], stderr=subprocess.STDOUT).decode().strip('\n')
-        except Exception as e:
+        except Exception:
             pass
     if printout:
         print()
@@ -160,9 +160,6 @@ def get_shng_main_version():
 def get_shng_plugins_version():
     plgversion = get_plugins_version().split('-')[0]
     return Version.format( plgversion )
-
-def get_shng_version():
-    return shNG_branch
 
 def get_shng_version():
     commit, commit_short, branch, describe = _get_git_data()
@@ -197,11 +194,11 @@ def get_plugins_version():
     VERSION = Version.format( get_shng_main_version() )
     try:
         PLUGINS_VERSION = plugin_vers.plugin_release()
-    except:
+    except AttributeError:
         PLUGINS_VERSION = VERSION
     try:
         PLUGINS_SOURCE_BRANCH = plugin_vers.plugin_branch()
-    except:
+    except AttributeError:
         PLUGINS_SOURCE_BRANCH = ''
 
     if branch == 'master':

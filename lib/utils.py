@@ -168,7 +168,7 @@ class Utils(object):
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(('10.255.255.255', 1))
             IP = s.getsockname()[0]
-        except:
+        except OSError:
             IP = '127.0.0.1'
         finally:
             if 's' in locals():
@@ -188,7 +188,7 @@ class Utils(object):
             s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
             s.connect(('fda2:ffff:ffff:ffff:ffff:ffff:ffff:ffff', 1))
             IP = s.getsockname()[0]
-        except:
+        except OSError:
             IP = '::1'
         finally:
             if 's' in locals():
@@ -635,7 +635,7 @@ class Version():
             vi = 0
             try:
                 vi = int(v)
-            except:
+            except Exception:
                 pass
             vlist.append(vi)
         vlist[3] += build
@@ -715,7 +715,7 @@ def execute_subprocess(commandline, wait=True):
     print("err='{}'".format(err))
     if wait:
         ## Wait for date to terminate. Get return returncode ##
-        p_status = p.wait()
+        p.wait()
     return str(result, encoding='utf-8', errors='strict')
 
 

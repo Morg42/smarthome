@@ -63,14 +63,12 @@ class PluginsController(RESTResource):
         """
         self.logger.info("PluginsController(): read")
 
-        default_language = self._sh.get_defaultlanguage()
-
         if self.plugin_data == {}:
             plugins_list = sorted(os.listdir(self.plugins_dir))
 
             self.logger.info("- plugins_list_sorted = {}".format(plugins_list))
             for p in plugins_list:
-                if not (p[0] in ['.', '_']):
+                if p[0] not in ['.', '_']:
                     if os.path.isfile(os.path.join(self.plugins_dir, p, 'plugin.yaml')):
                         plg_yaml = shyaml.yaml_load(os.path.join(os.path.join(self.plugins_dir, p, 'plugin.yaml')))
                         if plg_yaml is None:
@@ -114,18 +112,16 @@ class PluginsInstalledController(RESTResource):
             self.logger.error("PluginsInstalledController.read(): SmartHomeNG has not yet finished initialization")
             return json.dumps({})
 
-        default_language = self._sh.get_defaultlanguage()
-
         if self.plugin_data == {}:
             plugins_list = sorted(os.listdir(self.plugins_dir))
             self.logger.info("PluginsInstalledController.read(): plugin_list (sollte sortiert sein) = '{}'".format(plugins_list))
 
             self.logger.info("- plugins_list_sorted = {}".format(plugins_list))
             for p in plugins_list:
-                if not (p[0] in ['.', '_']):
+                if p[0] not in ['.', '_']:
                     if os.path.isfile(os.path.join(self.plugins_dir, p, 'plugin.yaml')):
                         plg_yaml = shyaml.yaml_load(os.path.join(os.path.join(self.plugins_dir, p, 'plugin.yaml')))
-                        if plg_yaml == None:
+                        if plg_yaml is None:
                             self.logger.warning("PluginsInstalledController.read(): Plugin '{}': plugin.yaml cannot be read".format(p))
                         else:
                             plg_data = plg_yaml.get('plugin', None)
@@ -237,15 +233,14 @@ class PluginsConfigController(RESTResource):
                 plg = _conf[confplg].get('class_path', '?')
             plginstance = self.plugins.return_plugin(confplg)
             _conf[confplg]['_loaded'] = plginstance is not None
-            typ = '?'
-            if plginstance != None:
+            if plginstance is not None:
                 # self.logger.warning("confplg {}: type(plginstance) = {}".format(confplg, type(plginstance)))
                 # self.logger.warning("confplg {}: type(plginstance.metadata) = {}".format(confplg, type(plginstance.metadata)))
                 try:
-                    typ = plginstance.metadata.get_string('type')
+                    plginstance.metadata.get_string('type')
                     _conf[confplg]['_meta'] = plginstance.metadata.meta
                     _conf[confplg]['_description'] = plginstance.metadata.meta['plugin']['description']
-                except:
+                except Exception:
                     self.logger.warning('confplg {}: Passed for plginstance = {}'.format(confplg, plginstance))
             else:
                 # nicht geladene Plugins
@@ -253,11 +248,10 @@ class PluginsConfigController(RESTResource):
                 plugin_name, metadata = self._get_pluginname_and_metadata(confplg, _conf[confplg])
                 # self.logger.warning("plugin_name = {}, meta = {}".format(plugin_name, metadata.meta))
 
-                typ = metadata.get_string('type')
                 _conf[confplg]['_meta'] = metadata.meta
                 try:
                     _conf[confplg]['_description'] = metadata.meta['plugin']['description']
-                except:
+                except (AttributeError, KeyError):
                     _conf[confplg]['_description'] = {}
                     _conf[confplg]['_description']['de'] = ''
                     _conf[confplg]['_description']['en'] = ''
@@ -322,9 +316,9 @@ class PluginsInfoController(RESTResource):
         :return:
         """
 
-        if self.plugins == None:
+        if self.plugins is None:
             self.plugins = Plugins.get_instance()
-        if self.plugins != None and self._sh.shng_status.get('code', 0) == 20:   # Running
+        if self.plugins is not None and self._sh.shng_status.get('code', 0) == 20:   # Running
             self._sh.scheduler._scheduler[self._blog_task_name]['cycle'] = {120 * 60 + randrange(60) : None}  # set scheduler cycle to test every 2 hours
             start = time.time()
             temp_blog_urls = {}
@@ -378,7 +372,7 @@ class PluginsInfoController(RESTResource):
         return a list of all configured plugin instances
         """
         self.logger.info("PluginsInfoController (index)")
-        if self.plugins == None:
+        if self.plugins is None:
             self.plugins = Plugins.get_instance()
 
         # get data for display of page
@@ -488,7 +482,7 @@ class PluginsInfoController(RESTResource):
             try:
                 plugin['stopped'] = not x.alive
                 plugin['stoppable'] = True
-            except:
+            except AttributeError:
                 plugin['stopped'] = False
                 plugin['stoppable'] = False
             if plugin['pluginname'] == 'backend':
@@ -528,7 +522,7 @@ class PluginsAPIController(RESTResource):
         """
         self.logger.info("PluginsAPIController (index)")
 
-        if self.plugins == None:
+        if self.plugins is None:
             self.plugins = Plugins.get_instance()
         self.plugin_list = []
         for x in self.plugins.return_plugins():

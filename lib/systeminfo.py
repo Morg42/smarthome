@@ -28,14 +28,14 @@ import subprocess
 try:
     import utils
     import cpuinfo
-except:
+except ImportError:
     import lib.utils as utils
     import lib.cpuinfo as cpuinfo
 
 try:
     import lib.shyaml as shyaml
     yaml_support = True
-except:
+except ImportError:
     yaml_support = False
 
 
@@ -139,7 +139,7 @@ class Systeminfo:
                                 continue
                             key, val = line.strip().split('=')
                             os_release[key] = val
-                except:
+                except OSError:
                     os_release = {}
         return os_release
 
@@ -278,7 +278,7 @@ class Systeminfo:
                 if cls.get_cpubrand() == cls._systeminfo_dict['systeminfo']['cpu_brand']:
                     # return time, if cpu brand has not changed since stored measurement
                     return cls.cpu_speed_class
-            except:
+            except (KeyError, TypeError):
                 return None
         return None     # None = No previous measurement stored
 
@@ -320,7 +320,7 @@ class Systeminfo:
 
         import timeit
 
-        _logger.notice(f"Testing cpu speed... (could take several minutes on slow computers)")
+        _logger.notice("Testing cpu speed... (could take several minutes on slow computers)")
 
         #cpu_speed = round(timeit.timeit('"|".join(str(i) for i in range(99999))', number=1000), 2)
         cpu_duration = round(timeit.timeit('"|".join(str(i) for i in range(50000))', number=1000), 2)

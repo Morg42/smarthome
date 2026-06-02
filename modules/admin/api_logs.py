@@ -50,7 +50,7 @@ class LogsController(RESTResource):
         try:
             roothandler = self.logging_conf['root']['handlers'][0]
             self.root_logname = os.path.splitext(os.path.basename(self.logging_conf['handlers'][roothandler]['filename']))[0]
-        except:
+        except (KeyError, IndexError):
             self.root_logname = ''
         self.logger.info("logging_conf: self.root_logname = {}".format(self.root_logname))
 

@@ -117,7 +117,7 @@ class PluginController(RESTResource):
         plg_found = False
         if id is not None:
             for confplg in _conf:
-                if (confplg == id) or (id == None):
+                if (confplg == id) or (id is None):
                     self.logger.info(f"PluginController(): index('{id}') - confplg {confplg}")
                     info['config'] = _conf[confplg]
                     plg_found = True
@@ -242,7 +242,7 @@ class PluginController(RESTResource):
                     response = {'result': 'error', 'description': "Configuration section '{}' does not exist".format(id)}
                 else:
                     self.logger.debug("update: params = {}".format(params))
-                    if params.get('config', {}).get('plugin_enabled', None) == True:
+                    if params.get('config', {}).get('plugin_enabled', None):
                         del params['config']['plugin_enabled']
                     plugin_conf[id] = params.get('config', {})
                     shyaml.yaml_save_roundtrip(config_filename, plugin_conf, False)

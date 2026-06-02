@@ -90,7 +90,7 @@ class Protocol():
             self.loop.create_task(self.update_visu(), name='update_visu')
             self.loop.create_task(self.update_all_series(), name='update_all_series')
 
-        self.logger.dbghigh(f"start_global_tasks: create_task(s) for update_visu() and update_all_series()")
+        self.logger.dbghigh("start_global_tasks: create_task(s) for update_visu() and update_all_series()")
         return
 
 
@@ -187,7 +187,7 @@ class Protocol():
         if self.update_visulog not in known_log_listeners:
             self._sh.add_event_listener(['log'], self.update_visulog)
         else:
-            self.logger.debug(f"self.update_visulog function already subscribed as event listener")
+            self.logger.debug("self.update_visulog function already subscribed as event listener")
 
         client_addr = self.client_address(websocket)
         client_ip = websocket.remote_address[0]
@@ -195,7 +195,7 @@ class Protocol():
         self.sv_clients[client_addr]['websocket'] = websocket
         try:
             self.sv_clients[client_addr]['hostname'] = socket.gethostbyaddr(client_ip)[0]
-        except:
+        except Exception:
             pass
         self.sv_clients[client_addr]['sw'] = ""
         self.logger.info(f"Client {self.build_log_info(client_addr)} started")
@@ -433,9 +433,9 @@ class Protocol():
                     items.append([path, prop_attr])
                     if self.update_visuitem not in item.get_method_triggers():
                         item.add_method_trigger(self.update_visuitem)
-                except KeyError as e:
+                except KeyError:
                     self.logger.warning(f"Property KeyError: Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]} with property {path_parts[1]}")
-                except AttributeError as e:
+                except AttributeError:
                     self.logger.warning(f"Property AttributeError: Client {self.build_log_info(client_addr)} requested to monitor property {path_parts[1]} of item {path_parts[0]}")
 
             else:
@@ -574,19 +574,14 @@ class Protocol():
             remove = []
             series_list = list(self.sv_update_series.keys())
             self.logger.info(f"update_all_series: {series_list=}")
-            if series_list != []:
-                txt = ''
-                if self.sv_ser_upd_cycle > 0:
-                    txt = " - Fixed update-cycle time"
-                #self.logger.info("update_all_series: series_list={}{}".format(series_list, txt))
             for client_addr in series_list:
                 self.logger.dbgmed(f"update_all_series: Updating client {self.build_log_info(client_addr)}")
-                if (client_addr in self.sv_clients) and not (client_addr in remove):
+                if (client_addr in self.sv_clients) and client_addr not in remove:
                     replys = await self.loop.run_in_executor(None, self.update_series, client_addr)
                     self.logger.dbgmed(f" - Updating {client_addr},  {replys=}...")
                     websocket = self.sv_clients[client_addr]['websocket']
                     for reply in replys:
-                        if (client_addr in self.sv_clients) and not (client_addr in remove):
+                        if (client_addr in self.sv_clients) and client_addr not in remove:
                             self.logger.dbgmed(f"   - reply {reply}  -->  Replys for client {client_addr}: {replys}")
                             try:
                                 await websocket.send(json.dumps(reply, default=self.json_serial))
@@ -767,7 +762,7 @@ class Protocol():
                     del (self.sv_update_series[client_addr])
                 self.logger.info(f"Series cancelation: Series updates for path {path} canceled")
                 answer = {'cmd': 'series_cancel', 'result': "Series updates for path {} canceled".format(path)}
-            except:
+            except Exception:
                 self.logger.warning(f"Series cancelation: No series for path {path} found in list")
                 answer = {'cmd': 'series_cancel', 'error': "No series for path {} found in list".format(path)}
         return answer
@@ -852,7 +847,7 @@ class Protocol():
                         continue
 
                     self.logger.warning(f"Could not send update to Client {self.build_log_info(client_addr)}: something is wrong with item path {item_name}, value={item_value}, source={source}")
-                except:
+                except Exception:
                     pass
 
             if len(items):  # only send an update if item/value pairs found to be send
@@ -876,7 +871,7 @@ class Protocol():
         remove = []
         logs_list = list(self.sv_monitor_logs.keys())
         for client_addr in logs_list:
-            if (client_addr in self.sv_clients) and not (client_addr in remove):
+            if (client_addr in self.sv_clients) and client_addr not in remove:
                 websocket = self.sv_clients[client_addr]['websocket']
 
                 if log_entry['name'] in self.sv_monitor_logs[client_addr]:
@@ -965,12 +960,12 @@ class Protocol():
         """
         self.logger.info(f"Client {self.build_log_info(client_addr)} requested a list of defined logics.")
         logiclist = []
-        for l in self.logics.return_loaded_logics():
-            linfo = self.logics.get_logic_info(l)
+        for logic_name in self.logics.return_loaded_logics():
+            linfo = self.logics.get_logic_info(logic_name)
             if linfo['visu_access']:
                 if linfo['userlogic']:
                     logic_def = collections.OrderedDict()
-                    logic_def['name'] = l
+                    logic_def['name'] = logic_name
                     logic_def['desc'] = linfo['description']
                     logic_def['enabled'] = 1
                     if not linfo['enabled']:

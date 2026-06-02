@@ -137,7 +137,7 @@ class Http(Module):
             self._starturl = self._parameters['starturl']
             self._connectionretries = self._parameters['connectionretries']
             self._webif_pagelength = self._parameters['webif_pagelength']
-        except:
+        except Exception:
             self.logger.critical("Inconsistent module (invalid metadata definition)")
             self._init_complete = False
             return
@@ -285,7 +285,6 @@ class Http(Module):
 
         self._build_hostmaps()
 
-        globaltemplates = self.gtemplates_dir
         #self.tplenv = Environment(loader=FileSystemLoader([os.path.join( self.webif_dir, 'templates' ), globaltemplates] ))
         self.tplenv = self.init_template_environment()
 
@@ -371,13 +370,13 @@ class Http(Module):
         self.logger.info("Module http: config dict: '{}'".format( config ) )
         self.logger.info(" - user '{}', password '{}', hashed_password '{}'".format( self._user, self._password, self._hashed_password ) )
 
-        if self._showpluginlist == True:
+        if self._showpluginlist:
             # Register the plugin-list as a cherrypy app
             self.root.plugins = _PluginsApp(self)
             self.register_webif(self.root.plugins, 'plugins', config)
 #                               pluginclass='', instance='', description='', webifname='')
 
-        if self._showservicelist == True:
+        if self._showservicelist:
             # Register the service-list as a cherrypy app
             self.root.services = _ServicesApp(self)
             self.register_service(self.root.services, 'services', config_services)
@@ -469,7 +468,7 @@ class Http(Module):
 
         user = self._user_dict.get(username, None)
         if user is None:
-            return False;
+            return False
         user_pwd_hash = user.get('password_hash', '')
         pwd_hash = Utils.create_hash(password)
 
@@ -509,7 +508,7 @@ class Http(Module):
         """
         tmpl = self.tplenv.get_template('error_page.html')
         errno = status.split()[0]
-        if (self._showtraceback == False) or (errno == '404'):
+        if (not self._showtraceback) or (errno == '404'):
             traceback = ''
         else:
             traceback = traceback.replace('\n', '<br>&nbsp;&nbsp;')
@@ -533,7 +532,7 @@ class Http(Module):
             try:
                 s.connect(("10.10.10.10", 80))
                 connected = True
-            except:
+            except OSError:
                 count += 1
                 self.logger.debug(f"Network access issue. Retry {count}/{self._connectionretries}")
                 time.sleep(5)
@@ -895,7 +894,7 @@ class Http(Module):
             self.logger.error(f"Cannot initialize visu for plugin '{pluginname}' - visu is already active for plugin '{self._visu_plugin}'")
 
         if visu_port is None or visu_port < 1024:
-            self.logger.error(f"Visu port is missing o given port is < 1024")
+            self.logger.error("Visu port is missing o given port is < 1024")
             return
 
         self._visu_user = 'visuuser'
@@ -906,8 +905,6 @@ class Http(Module):
         self._visu_realm = 'shng_http_visu'
         self._visuport = visu_port
 
-        mount = '/'
-        description = f'Visu of plugin {pluginname}'
 
         if use_global_basic_auth:
             conf['/']['tools.auth_basic.on'] = self._visu_basic_auth
@@ -1027,12 +1024,12 @@ class ModuleApp:
             if self.starturl in self.mod._applications.keys():
                 result = self.starturl
             else:
-                if self.mod._showpluginlist == True:
+                if self.mod._showpluginlist:
                     result = 'plugins'
                 else:
                     return ''
         else:
-            if self.mod._showservicelist == True:
+            if self.mod._showservicelist:
                 result = 'services'
             else:
                 return ''

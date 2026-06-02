@@ -78,16 +78,16 @@ def check_documentation_title(plg, lines):
         if line.strip().lower() == plg:
             break
     else:
-        mc.disp_error(f"The main title of the documentation is wrong",
+        mc.disp_error("The main title of the documentation is wrong",
                       f"The title of the main section of the documentation should only contain the name of the plugin in lowercase letters (in this case '{plg}').",
                       "!!! No further checks of the documentation have been made !!!")
         return
     if line.strip() != plg:
-        mc.disp_warning(f"The main title of the documentation is wrong",
+        mc.disp_warning("The main title of the documentation is wrong",
                       f"The title of the main section of the documentation should only contain the name of the plugin in lowercase letters (in this case '{plg}').")
 
     if len(lines[lineno + 1]) == 0:
-        mc.disp_error(f"The main title of the documentation was not found",
+        mc.disp_error("The main title of the documentation was not found",
                       "The lines above and below the name should contain an number of '=' characters",
                       "!!! No further checks of the documentation have been made !!!")
         return
@@ -99,7 +99,7 @@ def check_documentation_title(plg, lines):
         if lines[lineno-1] != '=' * len(lines[lineno]):
             mc.disp_warning(f"The line above the document title ({plg}) contains the wrong number of '='", "The line should have the same length as the document title. The lines above and below the title should only consist of a number of '=' characters.")
     else:
-        mc.disp_error(f"The main title of the documentation is wrong",
+        mc.disp_error("The main title of the documentation is wrong",
                       "The line above the name should contain a number of '=' characters", "The line should have the same length as the title.")
 
     global title_line
@@ -115,7 +115,8 @@ def find_documentation_sections(lines):
         try:
             if line != '' and lineno != title_line and lines[lineno+1] == '=' * len(lines[lineno]):
                 section_titles[line] = lineno
-        except: pass
+        except Exception:
+            pass
 
     if section_titles == {}:
         mc.disp_error("No sections (beside the document title) have been found.", "The line below the section title should have the same length as the section title. The line below the title should only consist of a number of '=' characters.")
@@ -138,28 +139,28 @@ def check_documentation_logo(lines):
             found = lineno
             break
     else:
-        mc.disp_warning(f"There has been no plugin logo included in the documentation",
-                        f"The logo should be included after the title with the following line: '.. image:: webif/static/img/plugin_logo.<extension>'. For an example how to include a plugin logo, take a look at the sample_plugin in the ../dev folder.",
+        mc.disp_warning("There has been no plugin logo included in the documentation",
+                        "The logo should be included after the title with the following line: '.. image:: webif/static/img/plugin_logo.<extension>'. For an example how to include a plugin logo, take a look at the sample_plugin in the ../dev folder.",
                         "The logo itself should be stored in the subdirectory 'webif/static/img' of the plugin, should be named 'plugin_logo' and have the extension of '.jpg', '.png' or '.svg'")
 
     # - Prüfen, ob das Logo an der richtigen Stelle im Dokument steht
     if found is not None:
         if found < title_line or found > next(iter(section_titles.values())):
-            mc.disp_error(f"The plugin logo should be includes below the document title and above the first section title", "The plugin logo should be the first information following the document title and be included before the beginning of the global description text.")
+            mc.disp_error("The plugin logo should be includes below the document title and above the first section title", "The plugin logo should be the first information following the document title and be included before the beginning of the global description text.")
         else:
             for lineno in range(title_line+2, found):
                 if lines[lineno] != '' and not lines[lineno].startswith('..'):
                     break
             if lineno != found-1:
                 mc.disp_error(
-                    f"The plugin logo should be includes below the document title and above the first section title",
+                    "The plugin logo should be includes below the document title and above the first section title",
                     "The plugin logo should be the first information following the document title and be included before the beginning of the global description text.")
 
     # - Prüfen ob ein Logo (im webif directory) abgelegt ist
     if (not os.path.isfile('webif/static/img/plugin_logo.jpg')) and \
             (not os.path.isfile('webif/static/img/plugin_logo.png')) and \
             (not os.path.isfile('webif/static/img/plugin_logo.svg')):
-        mc.disp_warning(f"No plugin logo has been found in the directory 'webif/static/img'")
+        mc.disp_warning("No plugin logo has been found in the directory 'webif/static/img'")
 
 
 def check_documentation(plg, quiet=False):
@@ -206,12 +207,12 @@ def check_documentation(plg, quiet=False):
                 if line == '.. index:: '+plg or line.find('.. index:: '+plg+' ') == 0 or line.find('.. index:: '+plg+';') == 0:
                     index2_line = lineno
             if index1_line is None or index2_line is None:
-                mc.disp_warning(f"No global index entries found for the documentation", "You should at least include two lines with index statements before the title of the documentation.", f"The index statements should be '.. index:: Plugins; {plg}' and '.. index:: {plg}'")
+                mc.disp_warning("No global index entries found for the documentation", "You should at least include two lines with index statements before the title of the documentation.", f"The index statements should be '.. index:: Plugins; {plg}' and '.. index:: {plg}'")
 
             # - Prüfen ob ein Abschnitt für das Webinterface existiert
             if webif_found:
-                if not 'Web Interface' in section_titles.keys():
-                    mc.disp_warning(f"No section 'Web Interface' with the documentation for the web interface of the plugin found.", "You should document, what the web interface of the plugin does and include pictures as an example.")
+                if 'Web Interface' not in section_titles.keys():
+                    mc.disp_warning("No section 'Web Interface' with the documentation for the web interface of the plugin found.", "You should document, what the web interface of the plugin does and include pictures as an example.")
 
     if not quiet:
         mc.print_errorcount('Documentation', mc.errors, mc.warnings, mc.hints)
@@ -280,7 +281,6 @@ def check_code(plg, quiet=False):
     mc.hints = 0
 
     code_filename = '__init__.py'
-    webif_code_filename = os.path.join('webif', '__init__.py')
     if not quiet:
         print()
         print(f"*** Checking python code of plugin '{plg}' (__init__.py, webif{os.sep}__init__.py):")
@@ -366,7 +366,7 @@ def check_code(plg, quiet=False):
 def check_one_plugin(plg, chk_meta, chk_code, chk_docu):
     try:
         os.chdir(plugindir)
-    except:
+    except OSError:
         print(f"ERROR: No plugin with name '{plg}' found.")
         print()
         exit(1)

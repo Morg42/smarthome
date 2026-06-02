@@ -211,14 +211,14 @@ def kill(pidfile, waittime=15, pid0_warning=True):
             p.terminate()
             try:
                 p.wait(timeout=waittime)
-            except Exception as e:
+            except Exception:
                 pass
             if p.is_running():
                 logger.warning("Trying to terminate SmartHomeNG timed out, killing process")
                 p.kill()
                 try:
                     p.wait(timeout=5)
-                except Exception as e:
+                except Exception:
                     pass
     elif pid != 0:
         logger.warning("No instance of SmartHomeNG running")

@@ -35,7 +35,7 @@ def _log(text):
 
     try:
         _logger.notice(text)
-    except:
+    except Exception:
         _logger.warning(text)
     return
 
@@ -45,7 +45,7 @@ def _cleanup_local_vars(locals):
     # clean up local vars
     local_vars = {}
     for lv in locals:
-        if not str(type(locals[lv])) in ["<class 'module'>", "<class 'lib.smarthome.SmartHome'>", "<class 'lib.shtime.Shtime'>", "<class 'lib.item.items.Items'>"] :
+        if str(type(locals[lv])) not in ["<class 'module'>", "<class 'lib.smarthome.SmartHome'>", "<class 'lib.shtime.Shtime'>", "<class 'lib.item.items.Items'>"] :
             local_vars[lv] = locals[lv]
     return local_vars
 
@@ -80,14 +80,14 @@ def log_who_called_me(with_localvars=False, with_globalvars=False, log_info=Fals
     func_file = str(sys._getframe(1).f_code.co_filename)
     try:
         test = ' (' + str(sys._getframe(2).f_locals['self'].__module__) + ')'
-    except:
+    except (AttributeError, KeyError):
         test = ''
 
     called_by = str(sys._getframe(2).f_code.co_name)
     in_class = ''
     try:
         in_class = 'class ' + str(sys._getframe(2).f_locals['self'].__class__.__name__) + test
-    except:
+    except (AttributeError, KeyError):
         in_class = 'unknown type ' + test
     if called_by == '<module>':
         called_by = _build_called_by_chain()
@@ -107,7 +107,7 @@ def log_who_called_me(with_localvars=False, with_globalvars=False, log_info=Fals
         else:
             _log(f"Function '{func}' in logic '{func_file}':")
             if called_by.find('->') > -1:
-                _log(f" - was called by the main routine of the logic")
+                _log(" - was called by the main routine of the logic")
             else:
                 _log(f" - was called by function '{called_by}()' of the logic")
     else:

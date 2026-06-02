@@ -728,7 +728,7 @@ class SDPConnectionSerial(SDPConnection):
         self.logger.debug(f'{self.__class__.__name__} _send called with {data_dict}')
 
         data = data_dict['payload']
-        if not type(data) in (bytes, bytearray, str):
+        if type(data) not in (bytes, bytearray, str):
             try:
                 data = str(data)
             except Exception as e:

@@ -372,7 +372,7 @@ class Logics():
         :return: logics instance
         :rtype: object or None
         """
-        if _logics_instance == None:
+        if _logics_instance is None:
             return None
         else:
             return _logics_instance
@@ -472,7 +472,7 @@ class Logics():
         :return: True: Logic is loaded
         :rtype: bool
         """
-        if self.return_logic(name) == None:
+        if self.return_logic(name) is None:
             return False
         else:
             return True
@@ -507,7 +507,7 @@ class Logics():
         else:
             info = {}
         logic = self.return_logic(name)
-        if logic == None:
+        if logic is None:
             return info
 
         info['name'] = logic._name
@@ -520,7 +520,7 @@ class Logics():
         info['crontab'] = logic._crontab
         try:
             info['watch_item'] = logic.watch_item
-        except:
+        except AttributeError:
             info['watch_item'] = ''
         info['userlogic'] = self.is_userlogic(logic.name)
         info['logictype'] = self.return_logictype(logic.name)
@@ -528,7 +528,7 @@ class Logics():
         info['pathname'] = logic._pathname
         try:
             info['description'] = logic.description
-        except:
+        except AttributeError:
             info['description'] = ''
         info['visu_access'] = self.visu_access(logic.name)
 #        info['watch_item_list'] = []
@@ -542,7 +542,7 @@ class Logics():
         try:
             if self.return_logic(name).visu_acl.lower() in ('true', 'yes', 'rw'):
                 return True
-        except Exception as e:
+        except Exception:
             pass
         return False
 
@@ -620,7 +620,7 @@ class Logics():
         """
         try:
             pathname = str(self.return_logic(name)._pathname)
-        except:
+        except AttributeError:
             return False
         return os.path.basename(os.path.dirname(pathname)) == DIR_LOGICS
 
@@ -645,7 +645,7 @@ class Logics():
             self.unload_logic(name)
 
         _config = self._read_logics(self._get_logic_conf_basename(), self.get_logics_dir())
-        if not (name in _config):
+        if name not in _config:
             logger.warning("load_logic: FAILED: Logic '{}', _config = {}".format( name, str(_config) ))
             logger.info("load_logics: Failed")
             return False
@@ -667,7 +667,7 @@ class Logics():
         """
         logger.info("Unload Logic: {}".format(name))
         mylogic = self.return_logic(name)
-        if mylogic == None:
+        if mylogic is None:
             return False
 
         mylogic._enabled = False
@@ -687,7 +687,7 @@ class Logics():
                 for item in self.items.match_items(entry):
                     try:
                         item.remove_logic_trigger(mylogic)
-                    except:
+                    except Exception:
                         logger.error("unload_logic: logic = '{}' - cannot remove logic_triggers".format(name))
         mylogic.watch_item = []
         self._delete_logic(name)
@@ -723,7 +723,7 @@ class Logics():
         if name in self._userlogics:
             try:
                 filename = self._userlogics[name].get('filename', '')
-            except:
+            except (KeyError, TypeError):
                 logger.warning("return_logictype: self._userlogics[name] = '{}'".format(str(self._userlogics[name])))
                 logger.warning("return_logictype: self._userlogics = '{}'".format(str(self._userlogics)))
         elif name in self._systemlogics:
@@ -772,7 +772,6 @@ class Logics():
         if config is not None:
             for section in config:
                 if section != '_groups':
-                    logic_dict = {}
                     filename = config[section]['filename']
                     blocklyname = os.path.splitext(os.path.basename(filename))[0]+'.xml'
                     logic_type = 'None'
@@ -855,7 +854,7 @@ class Logics():
                         if i in section_dict[key].ca.items:
                             try:
                                 c = section_dict[key].ca.items[i][0].value
-                            except:
+                            except (AttributeError, IndexError):
                                 logger.info("c: {}, Key: {}".format(c, key))
                                 c = ''
                             if len(c) > 0 and c[0] == '#':
@@ -870,7 +869,7 @@ class Logics():
                     if key in section_dict.ca.items:
                         try:
                             c = section_dict.ca.items[key][2].value    # if not list: loaded['a'].ca.items['b'][2].value
-                        except:
+                        except (AttributeError, IndexError):
                             logger.info("c2: {}, Key: {}".format(c, key))
                         if len(c) > 0 and c[0] == '#':
                             c = c[1:]
@@ -894,8 +893,8 @@ class Logics():
         conf = shyaml.yaml_load_roundtrip(self._logic_conf)
 
         logger.info("set_config_section_key: section={}, key={}, value={}".format(section, key, str(value)))
-        if value == None:
-            if conf[section].get(key, None) != None:
+        if value is None:
+            if conf[section].get(key, None) is not None:
                 del conf[section][key]
         else:
             conf[section][key] = value
@@ -943,15 +942,15 @@ class Logics():
             conf = shyaml.get_emptynode()
 
         # empty section
-        if conf.get(section, None) == None:
+        if conf.get(section, None) is None:
             conf[section] = shyaml.get_emptynode()
-        if conf[section].get('filename', None) != None:
+        if conf[section].get('filename', None) is not None:
             del conf[section]['filename']
-        if conf[section].get('cycle', None) != None:
+        if conf[section].get('cycle', None) is not None:
             del conf[section]['cycle']
-        if conf[section].get('crontab', None) != None:
+        if conf[section].get('crontab', None) is not None:
             del conf[section]['crontab']
-        if conf[section].get('watch_item', None) != None:
+        if conf[section].get('watch_item', None) is not None:
             del conf[section]['watch_item']
 
         # add entries to section
@@ -992,7 +991,6 @@ class Logics():
                 if isinstance(value, list):
                     # process a list of triggers
                     conf[section][key] = shyaml.get_commentedseq(value)
-                    listvalue = True
                     for i in range(len(value)):
                         if comment != '':
                             if comment[i] != '':

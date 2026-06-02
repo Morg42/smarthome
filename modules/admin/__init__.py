@@ -87,7 +87,7 @@ class Admin(Module):
 
         try:
             self.mod_http = Modules.get_instance().get_module('http')  # try/except to handle running in a core version that does not support modules
-        except:
+        except Exception:
             self.mod_http = None
         if self.mod_http is None:
             self.logger.error(
@@ -108,7 +108,7 @@ class Admin(Module):
             self.developer_mode = self._parameters['developer_mode']
             self.rest_dispatch_force_exception = self._parameters['rest_dispatch_force_exception']
             self.click_dropdown_header = self._parameters['click_dropdown_header']
-        except:
+        except Exception:
             self.logger.critical(
                 "Module '{}': Inconsistent module (invalid metadata definition)".format(self._shortname))
             self._init_complete = False

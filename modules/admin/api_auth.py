@@ -49,7 +49,7 @@ class AuthController(RESTResource):
         self.modules_dir = self._sh.get_config_dir(DIR_MODULES)
 
         if self.module.rest_dispatch_force_exception:
-            self.logger.notice(f"REST_dispatch_execute warnlevel is set to EXCEPTION")
+            self.logger.notice("REST_dispatch_execute warnlevel is set to EXCEPTION")
 
         #self._user_dict = user_dict
         self.send_hash = module.send_hash
@@ -137,7 +137,7 @@ class AuthController(RESTResource):
                     try:
                         # For PyJWT <= 1.7.1 (and maybe higher?)
                         response['token'] = jwt.encode(payload, self.jwt_secret, algorithm='HS256').decode('utf-8')
-                    except:
+                    except AttributeError:
                         # For PyJWT >= 2.3.0 (and maybe lower?)
                         response['token'] = jwt.encode(payload, self.jwt_secret, algorithm='HS256')
                     self.logger.info("AuthController.authenticate(): payload = {}".format(payload))
@@ -164,7 +164,7 @@ class AuthController(RESTResource):
             new_token['exp'] = self.module.shtime.now() + timedelta(hours=self.module.login_expiration)
             try:
                 response['token'] = jwt.encode(new_token, self.jwt_secret, algorithm='HS256').decode('utf-8')
-            except:
+            except AttributeError:
                 response['token'] = jwt.encode(new_token, self.jwt_secret, algorithm='HS256')
             decoded = jwt.decode(response['token'], self.jwt_secret, verify=True, algorithms='HS256')
             self.logger.debug("- renew_token(): re-decoded  token = {}".format(decoded))

@@ -125,7 +125,7 @@ class Scenes():
                                 if row[0][0] == '#':  # ignore comments
                                     continue
                                 self._add_scene_entry(item, row[0], row[1], row[2])
-                    except Exception as e:
+                    except Exception:
                         logger.warning(translate("Problem reading scene file {file}: No .yaml or .conf file found with this name", {'file': self.scene_file}))
                         continue
                 item.add_method_trigger(self._trigger)
@@ -143,9 +143,9 @@ class Scenes():
         :return: evaluated value or None
         :rtype: type of evaluated expression or None
         """
-        sh = self._sh
-        shtime = Shtime.get_instance()
-        items = Items.get_instance()
+        sh = self._sh  # noqa: F841  # eval setup
+        shtime = Shtime.get_instance()  # noqa: F841  # eval setup
+        items = Items.get_instance()  # noqa: F841  # eval setup
         import math
         import lib.userfunctions as uf
 
@@ -160,7 +160,7 @@ class Scenes():
     def _get_learned_value(self, scene, state, ditem):
         try:
             lvalue = self._learned_values[scene +'#'+ str(state) +'#'+ ditem.property.path]
-        except:
+        except KeyError:
             return None
         logger.debug(" - Return learned value {} for scene/state/ditem {}".format(lvalue, scene +'#'+ str(state) +'#'+ ditem.property.path))
         return lvalue
@@ -254,7 +254,7 @@ class Scenes():
         """
         Trigger a scene
         """
-        if not item.property.path in self._scenes:
+        if item.property.path not in self._scenes:
             return
         if str(item()&127) in self._scenes[item.property.path]:
             state = item()
@@ -335,7 +335,7 @@ class Scenes():
         :return: scenes instance
         :rtype: object of None
         """
-        if _scenes_instance == None:
+        if _scenes_instance is None:
             return None
         else:
             return _scenes_instance
@@ -380,7 +380,7 @@ class Scenes():
         action = str(action)
         try:
             return self._scenes[scenename][action][0][2]
-        except:
+        except Exception:
             logger.warning(translate("get_scene_action_name: " + "unable to get self._scenes['{scenename}']['{action}'][0][2] <- {res}", {'scenename': scenename, 'action': action, 'res': self._scenes[scenename][action][0]}))
             return ''
 

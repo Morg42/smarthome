@@ -76,7 +76,7 @@ class TestDbTests(unittest.TestCase, TestDbBase):
     def test_release_not_locked(self):
         db = self.db()
         with self.assertRaisesRegex(Exception, 'release unlocked lock'):
-	        db.release()
+            db.release()
 
     def test_commit(self):
         db = self.db()
@@ -187,7 +187,7 @@ class DbQueryBaseTests(TestDbBase):
         else:
           args_list = self.expect_args_argsreuse_list
           args_dict = self.expect_args_argsreuse_dict
-        if type(args[1]) == list:
+        if isinstance(args[1], list):
           self.assertEqual(args_list, args[1])
         else:
           self.assertEqual(args_dict, dict(args[1]))

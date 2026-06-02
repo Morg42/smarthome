@@ -45,9 +45,9 @@ class MqttPlugin(SmartPlugin):
         # get instance of MQTT module
         try:
             self.mod_mqtt = Modules.get_instance().get_module('mqtt')  # try/except to handle running in a core version that does not support modules
-        except:
+        except Exception:
             self.mod_mqtt = None
-        if self.mod_mqtt == None:
+        if self.mod_mqtt is None:
             self.logger.error("Module 'mqtt' not loaded. The plugin is not starting")
             self._init_complete = False
             return False
@@ -218,7 +218,7 @@ class MqttPlugin(SmartPlugin):
             self.shtime = Shtime.get_instance()
         try:
             return self.shtime.seconds_to_displaystring(int(self._broker['uptime']))
-        except Exception as e:
+        except Exception:
             return '-'
 
 
@@ -250,10 +250,10 @@ class MqttPlugin(SmartPlugin):
             # at least 1 item has subscribed to this topic
             for item_path in self._subscribed_topics[topic]:
                 item = self._subscribed_topics[topic][item_path].get('item', None)
-                if item != None:
+                if item is not None:
                     try:
                         log_info = (float(payload) != float(item()))
-                    except:
+                    except (ValueError, TypeError):
                         log_info = (str(payload) != str(item()))
                     if log_info:
                         self.logger.dbghigh(f"_on_mqtt_message: Received topic '{topic}', payload '{payload}' (item-type {item.type()}), QoS '{qos}', retain '{retain}' for item '{item.property.path}' (value={item()})")

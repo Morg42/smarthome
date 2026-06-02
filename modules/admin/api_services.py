@@ -99,9 +99,9 @@ class ServicesController(RESTResource):
         expanded_code = ''
 
         # set up environment for calculating eval-expression
-        sh = self._sh
-        shtime = Shtime.get_instance()
-        env = lib.env
+        sh = self._sh  # noqa: F841  # eval setup
+        shtime = Shtime.get_instance()  # noqa: F841  # eval setup
+        env = lib.env  # noqa: F841  # eval setup
         items = Items.get_instance()
         import math
         import lib.userfunctions as uf
@@ -135,7 +135,7 @@ class ServicesController(RESTResource):
         conf_code = self.strip_empty_lines(conf_code)
         yaml_code = ''
         ydata = parse_for_convert(conf_code=conf_code)
-        if ydata != None:
+        if ydata is not None:
             yaml_code = convert_yaml(ydata)
         return yaml_code
 
@@ -161,7 +161,7 @@ class ServicesController(RESTResource):
             check_result = 'ERROR: \n\n' + estr
         elif not isinstance(ydata, collections.OrderedDict):
             check_result = 'ERROR: \n\n' + 'No valid YAML code'
-        elif ydata != None:
+        elif ydata is not None:
             # found valid yaml code
 
             # Test if the loaded data items with 'struct' attribute
@@ -202,7 +202,7 @@ class ServicesController(RESTResource):
         # return json.dumps({'expression': 'Expandierter Ausdruck (Antwort vom Server)', 'result': '42 (Antwort vom Server)'})
         try:
             return json.dumps(result)
-        except:
+        except TypeError:
             return json.dumps({'expression': expanded_code, 'result': str(eval_result), 'type': result_type})
 
 
@@ -296,7 +296,7 @@ class ServicesController(RESTResource):
                 file_path = os.path.join(self.base_dir, 'var', 'cache', filename)
                 if os.path.isfile(file_path):
                     self.logger.info("cachefile_delete: cachefile '{}' deleted".format(file_path))
-                    os.remove(file_path);
+                    os.remove(file_path)
                     response = {'result': 'ok'}
 
         return json.dumps(response)

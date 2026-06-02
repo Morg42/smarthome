@@ -183,7 +183,7 @@ class Modules():
             classname = mod_conf.get(KEY_CLASS_NAME,'')
         try:
             classpath = mod_conf[KEY_CLASS_PATH]
-        except:
+        except KeyError:
             classpath = DIR_MODULES + '.' + module_name
         return (classname, classpath)
 
@@ -272,7 +272,7 @@ class Modules():
 
         self.loadedmodule._init_complete = False
         (module_params, params_ok, hide_params) = self.meta.check_parameters(args)
-        if params_ok == True:
+        if params_ok:
             if module_params != {}:
                 # initialize parameters the old way
                 argstring = ",".join(["{}={}".format(name, "'"+str(module_params.get(name,''))+"'") for name in arglist])
@@ -284,10 +284,10 @@ class Modules():
             self.loadedmodule._init_complete = True   # set to false by module, if an initalization error occurs
             exec(f"self.loadedmodule.__init__(self._sh{',' if len(arglist) else ''}{argstring})")
 
-        if self.loadedmodule._init_complete == True:
+        if self.loadedmodule._init_complete:
             try:
                 code_version = self.loadedmodule.version
-            except:
+            except AttributeError:
                 code_version = None    # if module code without version
             if self.meta.test_version(code_version):
                  logger.info(f"Modules: Loaded module '{name}' (class '{str(self.loadedmodule.__class__.__name__)}') v{self.meta.get_version()}: {self.meta.get_mlstring('description')}" )
@@ -325,7 +325,7 @@ class Modules():
         :return: modules instance
         :rtype: object of None
         """
-        if _modules_instance == None:
+        if _modules_instance is None:
             return None
         else:
             return _modules_instance
@@ -338,10 +338,10 @@ class Modules():
         :return: list of module names
         :rtype: list
         """
-        l = []
+        result = []
         for module_key in self._moduledict.keys():
-            l.append(module_key)
-        return l
+            result.append(module_key)
+        return result
 
 
     def get_module(self, name):

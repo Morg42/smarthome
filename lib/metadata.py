@@ -227,10 +227,10 @@ class Metadata():
             if self.plugin_functions is not None:
                 # self._test_definitions(self._plugin_functionlist, self.plugin_functions)
                 pass
-                dummy = self.get_plugin_function_defstrings(with_type=False, with_default=False)
-                dummy = self.get_plugin_function_defstrings(with_type=True, with_default=False)
-                dummy = self.get_plugin_function_defstrings(with_type=False, with_default=True)
-                dummy = self.get_plugin_function_defstrings(with_type=True, with_default=True)
+                self.get_plugin_function_defstrings(with_type=False, with_default=False)
+                self.get_plugin_function_defstrings(with_type=True, with_default=False)
+                self.get_plugin_function_defstrings(with_type=False, with_default=True)
+                self.get_plugin_function_defstrings(with_type=True, with_default=True)
             else:
                 logger.debug(self._log_premsg + "has no plugin-function definitions in metadata")
 
@@ -278,7 +278,7 @@ class Metadata():
             result['webif_pagelength']['description'] = self._sh.modules.get_module('http')._metadata.meta['parameters']['webif_pagelength'].get('description', {'en': 'No description found!'})
             try:
                 result['webif_pagelength']['default'] = self._sh.modules.get_module('http')._webif_pagelength
-            except:
+            except AttributeError:
                 result['webif_pagelength']['default'] = 0
 
         self.pluginsettings = self.meta.get(META_PLUGIN_SECTION)
@@ -313,11 +313,11 @@ class Metadata():
                             fp += ', '
                         fp += par
                         if with_type:
-                            if func_param_yaml[par].get('type', None) != None:
+                            if func_param_yaml[par].get('type', None) is not None:
                                 type = str(func_param_yaml[par].get('type', None))
                                 fp += ':' + type
                         if with_default:
-                            if func_param_yaml[par].get('default', None) != None:
+                            if func_param_yaml[par].get('default', None) is not None:
                                 default = str(func_param_yaml[par].get('default', None))
                                 if func_param_yaml[par].get('type', 'foo') == 'str':
                                     if default == 'None*':
@@ -345,7 +345,7 @@ class Metadata():
                 definition_dict[definition]['listlen'] = 0
                 if definition_dict[definition].get('type', FOO) == 'list':
                     logger.debug(self._log_premsg + "definition = '{}' of type '{}'".format(definition, str(definition_dict[definition].get('type', FOO)).lower()))
-                if not (typ in META_DATA_TYPES):
+                if typ not in META_DATA_TYPES:
                     # test for list with specified datatype
                     if typ.startswith('list(') and typ.endswith(')'):
                         logger.debug(self._log_premsg + "definition = '{}' of type '{}'".format(definition, str(definition_dict[definition].get('type', FOO)).lower()))
@@ -354,14 +354,13 @@ class Metadata():
                         listparam = listparam[:-1].strip().split(',')
                         if len(listparam) > 0:
                             if Utils.is_int(listparam[0]):
-                                l = int(listparam[0])
-                                if l < 0:
-                                    l = 0
-                                definition_dict[definition]['listlen'] = l
+                                listlen = int(listparam[0])
+                                if listlen < 0:
+                                    listlen = 0
+                                definition_dict[definition]['listlen'] = listlen
                                 listparam.pop(0)
                             if len(listparam) == 0:
                                 listparam = [FOO]
-                        subtyp = ''
                         if len(listparam) > 0:
                             listparam2 = []
                             for i in range(0,len(listparam)):
@@ -411,7 +410,7 @@ class Metadata():
         :return: value for the key
         :rtype: str
         """
-        if self.addon_metadata == None:
+        if self.addon_metadata is None:
             return ''
 
         return self.addon_metadata.get(key, '')
@@ -439,7 +438,7 @@ class Metadata():
             return ''
         try:
             result = key_dict.get(self._sh.get_defaultlanguage(), '')
-        except:
+        except (KeyError, TypeError):
             return ''
         if result == '':
             result = key_dict.get('en','')
@@ -496,8 +495,8 @@ class Metadata():
         :return: True if the Python version is in the supported range
         :rtype: bool
         """
-        l = sys.version_info
-        py_version = Version.format(str(l[0])+'.'+str(l[1])+'.'+str(l[2]))
+        vi = sys.version_info
+        py_version = Version.format(str(vi[0])+'.'+str(vi[1])+'.'+str(vi[2]))
         min_pyversion = Version.format(str(self.get_string('py_minversion')))
         max = str(self.get_string('py_maxversion'))
         if len(max.split('.')) == 2:
@@ -637,11 +636,11 @@ class Metadata():
         elif typ == 'dict':
             try:
                 d = dict(value)
-            except:
+            except (TypeError, ValueError):
                 import ast
                 try:
                     d = ast.literal_eval(value)
-                except:
+                except (ValueError, SyntaxError):
                     return False
             return (isinstance(d,dict))
         elif typ == 'ip':
@@ -727,11 +726,11 @@ class Metadata():
         elif typ == 'dict':
             try:
                 result = dict(value)
-            except:
+            except (TypeError, ValueError):
                 import ast
                 try:
                     result = ast.literal_eval(value)
-                except:
+                except (ValueError, SyntaxError):
                     result = {}
         elif typ in ['ip', 'ipv4', 'ipv6', 'mac']:
             result = str(value)
@@ -807,18 +806,18 @@ class Metadata():
         if definition is not None:
             if definition.get('type', 'foo') in ['int', 'float', 'num', 'scene']:
                 valid_min = definition.get('valid_min')
-                if valid_min != None:
+                if valid_min is not None:
                     if self._test_value(valid_min, definition):
                         if result < self._convert_valuetotype(definition.get('type', 'foo'), valid_min):
-                            if is_default == False:
+                            if not is_default:
                                 result = valid_min
                             else:
                                 result = valid_min
                 valid_max = definition.get('valid_max')
-                if valid_max != None:
+                if valid_max is not None:
                     if self._test_value(valid_max, definition):
                         if result > self._convert_valuetotype(definition.get('type', 'foo'), valid_max):
-                            if is_default == False:
+                            if not is_default:
                                 result = valid_max
                             else:
                                 result = valid_max
@@ -838,22 +837,22 @@ class Metadata():
 
             return result
 
-        elif self.parameters[param] != None:
+        elif self.parameters[param] is not None:
             logger.warning("_test_validity: old version for param={}, value={}".format(param, value))
             if self.parameters[param].get('type') in ['int', 'float', 'num', 'scene']:
                 valid_min = self.parameters[param].get('valid_min')
-                if valid_min != None:
+                if valid_min is not None:
                     if self._test_value(valid_min, self.parameters[param]):
                         if result < self._convert_valuetotype(self.get_parameter_type(param), valid_min):
-                            if is_default == False:
+                            if not is_default:
                                 result = valid_min
                             else:
                                 result = valid_min
                 valid_max = self.parameters[param].get('valid_max')
-                if valid_max != None:
+                if valid_max is not None:
                     if self._test_value(valid_max, self.parameters[param]):
                         if result > self._convert_valuetotype(self.get_parameter_type(param), valid_max):
-                            if is_default == False:
+                            if not is_default:
                                 result = valid_max
                             else:
                                 result = valid_max
@@ -1124,7 +1123,7 @@ class Metadata():
         """
         try:
             result = definitions[definition].get('key')
-        except:
+        except KeyError:
             result = None
         return result
 
@@ -1317,7 +1316,7 @@ class Metadata():
             vi = 0
             try:
                 vi = int(v)
-            except:
+            except Exception:
                 pass
             vlist.append(vi)
 
