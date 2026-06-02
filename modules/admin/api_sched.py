@@ -44,7 +44,7 @@ class SchedulersController(RESTResource):
 
         try:
             task_type = obj.__module__
-        except:
+        except AttributeError:
             task_type = '?'
 
         try:
@@ -54,7 +54,7 @@ class SchedulersController(RESTResource):
                 task_name = obj._path
             else:
                 task_name = obj.__name__
-        except:
+        except AttributeError:
             task_name = dir(obj)
 
         if task_type == 'lib.logic':
@@ -96,7 +96,7 @@ class SchedulersController(RESTResource):
         for entry in self._sh.scheduler._scheduler:
             schedule = dict()
             s = self._sh.scheduler._scheduler[entry]
-            if s['next'] != None and s['cycle'] != '' and s['cron'] != '':
+            if s['next'] is not None and s['cycle'] != '' and s['cron'] != '':
                 schedule['fullname'] = entry
                 schedule['name'] = entry
                 schedule['group'] = 'other'

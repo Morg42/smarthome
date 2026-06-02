@@ -48,8 +48,6 @@ if "-debug_tox" in arguments:
     logger.setLevel(logging.DEBUG)
     logger.debug("sys.path = {}".format(sys.path))
 
-import lib.shpypi as shpypi
-
 import bin.shngversion
 VERSION = bin.shngversion.get_shng_version()
 

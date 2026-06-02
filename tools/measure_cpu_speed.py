@@ -46,7 +46,7 @@ def read_cpuinfo():
             if line.startswith('model name'):
                 print('cpu '+ line)
                 break
-    except:
+    except OSError:
         print("cpu model name\t: Could not determine cpu model - unable to read /proc/cpuinfo")
         print()
 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     read_cpuinfo()
 
-    sys.stdout.write(f"test duration\t: ")
+    sys.stdout.write("test duration\t: ")
     sys.stdout.flush()
     print(f"{measure()} seconds")
     print()

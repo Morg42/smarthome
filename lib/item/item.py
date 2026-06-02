@@ -1944,7 +1944,7 @@ class Item():
         eval_expression = str(eval_expression)
         try:
             result = eval(eval_expression)
-        except NameError as e:
+        except NameError:
             _, ex, _ = sys.exc_info()  # err should be like "name 'foo' is not defined"
             err = str(ex)
             if err.startswith("name '") and err.endswith("' is not defined"):
@@ -2188,12 +2188,12 @@ class Item():
                 # logger.warning("Item {}: Evaluating trigger condition {}".format(self._path, self._trigger_condition))
                 try:
                     # set up environment for calculating eval-expression
-                    sh = self._sh
-                    shtime = self.shtime
-                    items = _items_instance
+                    sh = self._sh  # noqa: F841  # eval setup
+                    shtime = self.shtime  # noqa: F841  # eval setup
+                    items = _items_instance  # noqa: F841  # eval setup
                     import math  # noqa: I001
                     import lib.userfunctions as uf
-                    env = lib.env
+                    env = lib.env  # noqa: F841  # eval setup
 
                     cond = eval(self._trigger_condition)
                     logger.warning(f"Item '{self._path}': Condition result '{cond}' evaluating trigger condition {self._trigger_condition}")
@@ -2209,12 +2209,12 @@ class Item():
 
             if cond is True:
                 # set up environment for calculating eval-expression
-                sh = self._sh
-                shtime = self.shtime
-                items = _items_instance
+                sh = self._sh  # noqa: F841  # eval setup
+                shtime = self.shtime  # noqa: F841  # eval setup
+                items = _items_instance  # noqa: F841  # eval setup
                 import math
                 import lib.userfunctions as uf
-                env = lib.env
+                env = lib.env  # noqa: F841  # eval setup
 
                 try:
                     self.__prev_trigger_by = self.__triggered_by
@@ -2274,13 +2274,13 @@ class Item():
         """
 
         # set up environment for calculating eval-expression
-        sh = self._sh
-        shtime = self.shtime
-        items = _items_instance
+        sh = self._sh  # noqa: F841  # eval setup
+        shtime = self.shtime  # noqa: F841  # eval setup
+        items = _items_instance  # noqa: F841  # eval setup
         import math
         import lib.userfunctions as uf
         # uf.import_user_modules()  -  Modules were loaded during initialization phase of shng
-        env = lib.env
+        env = lib.env  # noqa: F841  # eval setup
 
         logger.info(f"Item '{self._path}': '{attr}' evaluating {on_dest} = {on_eval}")
 
@@ -2366,43 +2366,43 @@ class Item():
         # source
         # dest
         lvalue = self.property.last_value
-        mlvalue = self._log_mapping.get(lvalue, lvalue)
-        name = self._name
-        age = round(self._get_last_change_age(), 2)
+        mlvalue = self._log_mapping.get(lvalue, lvalue)  # noqa: F841  # eval setup
+        name = self._name  # noqa: F841  # eval setup
+        age = round(self._get_last_change_age(), 2)  # noqa: F841  # eval setup
         id = self._path
         if self.__parent == _items_instance:
-            pname = None
-            pid = None
+            pname = None  # noqa: F841  # eval setup
+            pid = None  # noqa: F841  # eval setup
         else:
-            pname = self.__parent._name
-            pid = self.__parent._path
-        mvalue = self._log_mapping.get(value, value)
-        lowlimit = self._log_rules_cache.get('lowlimit')
-        highlimit = self._log_rules_cache.get('highlimit')
-        filter = self._log_rules_cache.get('filter')
-        exclude = self._log_rules_cache.get('exclude')
-        sh = self._sh
+            pname = self.__parent._name  # noqa: F841  # eval setup
+            pid = self.__parent._path  # noqa: F841  # eval setup
+        mvalue = self._log_mapping.get(value, value)  # noqa: F841  # eval setup
+        lowlimit = self._log_rules_cache.get('lowlimit')  # noqa: F841  # eval setup
+        highlimit = self._log_rules_cache.get('highlimit')  # noqa: F841  # eval setup
+        filter = self._log_rules_cache.get('filter')  # noqa: F841  # eval setup
+        exclude = self._log_rules_cache.get('exclude')  # noqa: F841  # eval setup
+        sh = self._sh  # noqa: F841  # eval setup
         shtime = self.shtime
-        time = shtime.now().strftime("%H:%M:%S")
-        date = shtime.now().strftime("%d.%m.%Y")
-        stamp = shtime.now().timestamp()
-        now = str(shtime.now())
+        time = shtime.now().strftime("%H:%M:%S")  # noqa: F841  # eval setup
+        date = shtime.now().strftime("%d.%m.%Y")  # noqa: F841  # eval setup
+        stamp = shtime.now().timestamp()  # noqa: F841  # eval setup
+        now = str(shtime.now())  # noqa: F841  # eval setup
 
-        items = _items_instance
+        items = _items_instance  # noqa: F841  # eval setup
         try:
             entry = self._log_rules.get('itemvalue', None)
             if entry is not None:
                 item = self.get_absolutepath(entry.strip().replace("sh.", ""), KEY_LOG_CHANGE)
-                itemvalue = str(_items_instance.return_item(item).property.value)
+                itemvalue = str(_items_instance.return_item(item).property.value)  # noqa: F841  # eval setup
             else:
-                itemvalue = None
+                itemvalue = None  # noqa: F841  # eval setup
         except Exception as e:
             logger.error(f"{id}: Invalid item in log_text '{self._log_text}'"
                          f" or log_rules '{self._log_rules}' - Exception: {e}")
-            itemvalue = "INVALID"
+            itemvalue = "INVALID"  # noqa: F841  # eval setup
         import math
         import lib.userfunctions as uf
-        env = lib.env
+        env = lib.env  # noqa: F841  # eval setup
         self._log_text = self._log_text.replace("'", '"')
         try:
             # logger.warning(f"self._log_text: {self._log_text}, type={type(self._log_text)}")
@@ -2520,7 +2520,7 @@ class Item():
                     if high_limit <= float(value):
                         return
                 if filter_list != []:
-                    if not float(value) in filter_list:
+                    if float(value) not in filter_list:
                         return
                 elif exclude_list != []:
                     if float(value) in exclude_list:

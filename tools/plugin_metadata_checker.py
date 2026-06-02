@@ -90,7 +90,7 @@ def get_plugintype(plgName):
     try:
         with open(fn, "r") as myfile:
             code = myfile.read()
-    except:
+    except OSError:
         return 'None' \
                ''
     if (code.find('(SmartPlugin') == -1) and (code.find('( SmartPlugin') == -1) and \
@@ -103,7 +103,6 @@ def get_plugintype(plgName):
 def readMetadata(metaplugin, plugins_local):
 
     metafile = metaplugin + '/plugin.yaml'
-    plg_dict = {}
     plugin_yaml = {}
     if metaplugin in plugins_local:  # pluginsyaml_local
         if os.path.isfile(metafile):
@@ -168,22 +167,21 @@ def list_plugins(option, suboption=None, list_versions=False):
         sectionFunc = '-'
         sectionLogics = '-'
         sectionIStruct = ''
-        comment = ''
         shng_min_vers = '?'
         shng_max_vers = '?'
         py_min_vers = '?'
         py_max_vers = '?'
         metadata = readMetadata(plg, plugins_local)
-        if metadata == None:
+        if metadata is None:
             return
-        if metadata.get('plugin', None) == None:
+        if metadata.get('plugin', None) is None:
             sectionPlg = MISSING_TEXT
             plgstate = 'NOMETA'
         else:
             sectionPlg = 'Ok'
             version = metadata['plugin'].get('version', '-')
             plgstate = metadata['plugin'].get('state', '-')
-            if not plgstate in ['qa-passed', 'ready', 'develop', 'deprecated']:
+            if plgstate not in ['qa-passed', 'ready', 'develop', 'deprecated']:
                 plgstate = 'INVALID'
             shng_min_vers = str(metadata['plugin'].get('sh_minversion', '-'))
             shng_max_vers = str(metadata['plugin'].get('sh_maxversion', '-'))
@@ -194,7 +192,7 @@ def list_plugins(option, suboption=None, list_versions=False):
             if version == '-':
                 version = '?'
 
-            if metadata.get('parameters', None) == None:
+            if metadata.get('parameters', None) is None:
                 sectionParam = MISSING_TEXT
             elif metadata.get('parameters', None) == 'NONE':
                 sectionParam = 'Ok'
@@ -202,7 +200,7 @@ def list_plugins(option, suboption=None, list_versions=False):
                 sectionParam = 'Ok'
                 sectionParam += ' (' + str(len(metadata['parameters'])) + ')'
 
-            if metadata.get('item_attributes', None) == None:
+            if metadata.get('item_attributes', None) is None:
                 sectionIAttr = MISSING_TEXT
             elif metadata.get('item_attributes', None) == 'NONE':
                 sectionIAttr = 'Ok'
@@ -210,14 +208,14 @@ def list_plugins(option, suboption=None, list_versions=False):
                 sectionIAttr = 'Ok'
                 sectionIAttr += ' (' + str(len(metadata['item_attributes'])) + ')'
 
-            if metadata.get('item_structs', None) == None:
+            if metadata.get('item_structs', None) is None:
                 sectionIStruct = ''
             elif metadata.get('item_structs', None) == 'NONE':
                 sectionIStruct = ''
             else:
                 sectionIStruct = ',St'
 
-            if metadata.get('item_attributes', None) == None:
+            if metadata.get('item_attributes', None) is None:
                 sectionIAttr = MISSING_TEXT
             elif metadata.get('item_attributes', None) == 'NONE':
                 sectionIAttr = 'Ok'
@@ -225,7 +223,7 @@ def list_plugins(option, suboption=None, list_versions=False):
                 sectionIAttr = 'Ok'
                 sectionIAttr += ' (' + str(len(metadata['item_attributes'])) + sectionIStruct + ')'
 
-            if metadata.get('plugin_functions', None) == None:
+            if metadata.get('plugin_functions', None) is None:
                 sectionFunc = MISSING_TEXT
             elif metadata.get('plugin_functions', None) == 'NONE':
                 sectionFunc = 'Ok'
@@ -233,7 +231,7 @@ def list_plugins(option, suboption=None, list_versions=False):
                 sectionFunc = 'Ok'
                 sectionFunc += ' (' + str(len(metadata['plugin_functions'])) + ')'
 
-            if metadata.get('logic_parameters', None) == None:
+            if metadata.get('logic_parameters', None) is None:
                 sectionLogics = MISSING_TEXT
             elif metadata.get('logic_parameters', None) == 'NONE':
                 sectionLogics = 'Ok'
@@ -319,25 +317,24 @@ def disp_formatted3(lbl, typ, val=''):
 def display_definition(name, dict):
 
     val = ''
-    val2 = ''
-    if dict.get('mandatory', False) == True:
+    if dict.get('mandatory', False):
         val += 'Mandatory'
-    if dict.get('default', None) != None:
+    if dict.get('default', None) is not None:
         if val != '':
             val += ', '
         if dict.get('default', None) == 'None*':
             val += "default=None"
         else:
             val += "default='" + str(dict.get('default', None)) + "'"
-    if dict.get('valid_min', None) != None:
+    if dict.get('valid_min', None) is not None:
         if val != '':
             val += ', '
         val += "valid_min='" + str(dict.get('valid_min', None)) + "'"
-    if dict.get('valid_max', None) != None:
+    if dict.get('valid_max', None) is not None:
         if val != '':
             val += ', '
         val += "valid_max='" + str(dict.get('valid_max', None)) + "'"
-    if dict.get('valid_list', None) != None:
+    if dict.get('valid_list', None) is not None:
         if val != '':
             val += ', '
         val += "valid_list=" + str(dict.get('valid_list', None))
@@ -347,8 +344,7 @@ def display_definition(name, dict):
 def display_struct_definition(name, dict):
 
     val = ''
-    val2 = ''
-    if dict.get('default', None) != None:
+    if dict.get('default', None) is not None:
         if val != '':
             val += ', '
         if dict.get('default', None) == 'None*':
@@ -361,7 +357,7 @@ def display_struct_definition(name, dict):
 def display_def_description(name, dict):
     if name != '':
         print(name)
-    if dict.get('description', None) != None:
+    if dict.get('description', None) is not None:
         disp_formatted('- Description (DE)', dict['description'].get('de', '-'))
         disp_formatted('- Description (EN)', dict['description'].get('en', '-'))
 
@@ -371,16 +367,16 @@ def display_metadata(plg, with_description):
     plg_type = get_plugintype(plg)
     plugins_local = get_local_pluginlist()
     metadata = readMetadata(plg, plugins_local)
-    if metadata == None:
+    if metadata is None:
         return
     print("Display metadata for {} plugin '{}'".format(plg_type, plg))
     print()
 
-    if metadata.get('plugin', None) == None:
+    if metadata.get('plugin', None) is None:
         print("ERROR: Section 'plugin' not defined in metadata")
         print()
     else:
-        if metadata['plugin'].get('description', None) != None:
+        if metadata['plugin'].get('description', None) is not None:
             disp_formatted('Description (DE)', metadata['plugin']['description'].get('de', '-'))
             disp_formatted('Description (EN)', metadata['plugin']['description'].get('en', '-'))
             print()
@@ -409,7 +405,7 @@ def display_metadata(plg, with_description):
         return
 
     # Display section 'parameters'
-    if metadata.get('parameters', None) == None:
+    if metadata.get('parameters', None) is None:
         print("ERROR: Section 'parameters' not defined in metadata")
         print()
     elif metadata.get('parameters', None) == 'NONE':
@@ -431,7 +427,7 @@ def display_metadata(plg, with_description):
             print()
 
     # Display section 'item_attributes'
-    if metadata.get('item_attributes', None) == None:
+    if metadata.get('item_attributes', None) is None:
         print("ERROR: Section 'item_attributes' not defined in metadata")
         print()
     elif metadata.get('item_attributes', None) == 'NONE':
@@ -453,7 +449,7 @@ def display_metadata(plg, with_description):
             print()
 
     # Display section 'item_structs'
-    if metadata.get('item_structs', None) == None:
+    if metadata.get('item_structs', None) is None:
         print("ERROR: Section 'item_structs' not defined in metadata")
         print()
     elif metadata.get('item_structs', None) == 'NONE':
@@ -470,7 +466,7 @@ def display_metadata(plg, with_description):
         print()
 
     # Display section 'plugin_functions'
-    if metadata.get('plugin_functions', None) == None:
+    if metadata.get('plugin_functions', None) is None:
         print("ERROR: Section 'plugin_functions' not defined in metadata")
         print()
     elif metadata.get('plugin_functions', None) == 'NONE':
@@ -486,13 +482,13 @@ def display_metadata(plg, with_description):
             display_definition(func, func_dict)
             if with_description:
                 display_def_description('', func_dict)
-            if func_dict.get('parameters', None) != None:
+            if func_dict.get('parameters', None) is not None:
                 print("Parameters:")
                 for param in func_dict.get('parameters', None):
                     param_dict = func_dict['parameters'][param]
                     display_definition(param, param_dict)
                     if with_description:
-                        if param_dict.get('description', None) != None:
+                        if param_dict.get('description', None) is not None:
                             disp_formatted('- Description (DE)', param_dict['description'].get('de', '-'))
                             disp_formatted('- Description (EN)', param_dict['description'].get('en', '-'))
             print()
@@ -640,7 +636,7 @@ def check_metadata(plg, with_description, check_quiet=False, only_inc=False, lis
     plg_type = get_plugintype(plg).lower()
     plugins_local = get_local_pluginlist(pluginsdirectory)
     metadata = readMetadata(plg, plugins_local)
-    if metadata == None:
+    if metadata is None:
         return
     if not check_quiet:
         print(f"*** Check metadata of {plg_type}-plugin '{plg}' (plugin.yaml):")
@@ -654,18 +650,18 @@ def check_metadata(plg, with_description, check_quiet=False, only_inc=False, lis
         disp_error(f"Invalid plugin name '{plg}'.", f"Plugin names have to be lower case. Use '{plg.lower()}' instead")
 
     # Checking global metadata
-    if metadata.get('plugin', None) == None:
+    if metadata.get('plugin', None) is None:
         disp_error("No global metadata defined", "Make sure to create a section 'plugin' and fill it with the necessary entries", "Take a look at the plugin development documentation of SmartHomeNG")
         return
     else:
-        if metadata['plugin'].get('version', None) == None:
+        if metadata['plugin'].get('version', None) is None:
             disp_error('No version number given', "Add 'version:' to the plugin section")
-        if metadata['plugin'].get('classname', None) == None:
+        if metadata['plugin'].get('classname', None) is None:
             disp_error('No classname for the plugin', "Add 'classname:' to the plugin section and set it to the name of the Python class that implements the plugin")
 
-        if metadata['plugin'].get('type', None) == None:
+        if metadata['plugin'].get('type', None) is None:
             disp_warning('No plugin type set', "Add 'type:' to the plugin section")
-        if metadata['plugin'].get('maintainer', None) == None:
+        if metadata['plugin'].get('maintainer', None) is None:
             disp_warning('The maintainer of the plugin is not documented', "Add 'maintainer:' to the plugin section")
 
     if (plg_type != 'classic' and not list_classic):
@@ -673,9 +669,9 @@ def check_metadata(plg, with_description, check_quiet=False, only_inc=False, lis
         if metadata.get('plugin', None) is None:
             disp_error("No section 'plugin' in metadata found")
         else:
-            if metadata['plugin'].get('state', None) == None:
+            if metadata['plugin'].get('state', None) is None:
                 disp_error('No development state given for the plugin', "Add 'state:' to the plugin section and set it to one of the following values ['develop', 'ready', 'qa-passed']", "The state'qa-passed' should only be set by the shNG core team")
-            elif not metadata['plugin'].get('state', None) in ['qa-passed', 'ready', 'develop', 'deprecated', '-']:
+            elif metadata['plugin'].get('state', None) not in ['qa-passed', 'ready', 'develop', 'deprecated', '-']:
                 disp_error('An invalid development state is given for the plugin', "Set'state:' to one of the followind valid values ['develop', 'ready', 'qa-passed', 'deprecated']", "The state'qa-passed' should only be set by the shNG core team")
 
             doc_url = metadata['plugin'].get('documentation', '')
@@ -693,48 +689,48 @@ def check_metadata(plg, with_description, check_quiet=False, only_inc=False, lis
             if metadata['plugin'].get('support', '') == '':
                 disp_hint("The 'support' parameter is empty.", "Is there no support thread for this plugin in the knx-user-forum?", "Enter the url to the support thread in the 'support' parameter.")
 
-            if metadata['plugin'].get('multi_instance', None) == None:
+            if metadata['plugin'].get('multi_instance', None) is None:
                 disp_warning('It is not documented if wether the plugin is multi-instance capable or not', "Add 'multi_instance:' to the plugin section")
             else:
-                if not(metadata['plugin'].get('multi_instance', None) in [True, False]):
+                if metadata['plugin'].get('multi_instance', None) not in [True, False]:
                     disp_error('multi_instance has to be True or False')
-            if metadata['plugin'].get('restartable', None) == None:
+            if metadata['plugin'].get('restartable', None) is None:
                 disp_hint('It is not documented if wether the plugin is restartable or not [stop() and run()]', "Add 'restartable:' to the plugin section")
             else:
-                if not(metadata['plugin'].get('restartable', None) in [True, False, 'True', 'False', 'unknown']):
+                if metadata['plugin'].get('restartable', None) not in [True, False, 'True', 'False', 'unknown']:
                     disp_error('restartable has to be True, False or unknown')
-            if metadata['plugin'].get('sh_minversion', None) == None:
+            if metadata['plugin'].get('sh_minversion', None) is None:
                 disp_warning('No minimum version of the SmartHomeNG core given that is needed to run the plugin', "Add 'sh_minversion:' to the plugin section")
 
-            if metadata['plugin'].get('tester', None) == None:
+            if metadata['plugin'].get('tester', None) is None:
                 disp_hint('The tester(s) of the plugin are not documented', "Add 'tester:' to the plugin section")
 
         # Checking parameter metadata
-        if metadata.get('parameters', None) == None:
+        if metadata.get('parameters', None) is None:
             disp_error("No parameters defined in metadata", "When defining parameters, make sure that you define ALL parameters of the plugin, but dont define global parameters like 'instance'. If only a part of the parameters are defined in the metadata, the missing parameters won't be handed over to the plugin at runtime.", "If the plugin has no parameters, document this by writing 'parameters: NONE' to the metadata file.")
 
         # Checking item attribute metadata
-        if metadata.get('item_attributes', None) == None:
+        if metadata.get('item_attributes', None) is None:
             disp_error("No item attributes defined in metadata", "If the plugin defines no item attributes, document this by creating an empty section. Write 'item_attributes: NONE' to the metadata file.")
 
         # Checking item struct definitions
-        if metadata.get('item_structs', None) == None:
+        if metadata.get('item_structs', None) is None:
             disp_hint("No item structures defined in metadata", "If the plugin defines no item structures, document this by creating an empty section. Write 'item_structs: NONE' to the metadata file.")
 
 
         # Checking function metadata
-        if metadata.get('plugin_functions', None) == None:
+        if metadata.get('plugin_functions', None) is None:
             disp_error("No public functions of the plugin defined in metadata", "If the plugin defines no public functions, document this by creating an empty section. Write 'plugin_functions: NONE' to the metadata file.")
 
         # Checking logic parameter metadata
-        if metadata.get('logic_parameters', None) == None:
+        if metadata.get('logic_parameters', None) is None:
             disp_error("No logic parameters defined in metadata", "If the plugin defines no logic parameters, document this by creating an empty section. Write 'logic_parameters: NONE' to the metadata file.")
 
         # Checking if the descriptions are complete
-        if metadata.get('plugin', None) != None:
+        if metadata.get('plugin', None) is not None:
             test_description('plugin', '', metadata['plugin'].get('description', None))
 
-        if metadata.get('parameters', None) != None:
+        if metadata.get('parameters', None) is not None:
             if metadata.get('parameters', None) != 'NONE':
                 for par in metadata.get('parameters', None):
                     if par.lower() in ['instance', 'webif_pagelength']:
@@ -744,22 +740,22 @@ def check_metadata(plg, with_description, check_quiet=False, only_inc=False, lis
                         if not is_dict(par_dict):
                             disp_error("Definition of parameter '{}' is not a dict".format(par), '')
                         else:
-                            if par_dict.get('mandatory', False) != False and par_dict.get('default', None) != None:
+                            if par_dict.get('mandatory', False) and par_dict.get('default', None) is not None:
                                 disp_error("parameter '{}': mandatory and default cannot be used together".format(par), "If mandatory and a default value are specified togeather, mandatory has no effect, since a value for the parameter is already specified (the default value).")
                             test_description('parameter', par, par_dict.get('description', None))
 
-        if metadata.get('item_attributes', None) != None:
+        if metadata.get('item_attributes', None) is not None:
             if metadata.get('item_attributes', None) != 'NONE':
                 for par in metadata.get('item_attributes', None):
                     par_dict = metadata['item_attributes'][par]
                     if not is_dict(par_dict):
                         disp_error("Definition of item_attribute '{}' is not a dict".format(par), '')
                     else:
-                        if par_dict.get('mandatory', False) != False and par_dict.get('default', None) != None:
+                        if par_dict.get('mandatory', False) and par_dict.get('default', None) is not None:
                             disp_error("item '{}': mandatory and default cannot be used together".format(par), "If mandatory and a default value are specified togeather, mandatory has no effect, since a value for the parameter is already specified (the default value).")
                         test_description('item attribute', par, par_dict.get('description', None))
 
-        if metadata.get('item_structs', None) != None:
+        if metadata.get('item_structs', None) is not None:
             if metadata.get('item_structs', None) != 'NONE':
                 for par in metadata.get('item_structs', None):
                     par_dict = metadata['item_structs'][par]
@@ -768,20 +764,20 @@ def check_metadata(plg, with_description, check_quiet=False, only_inc=False, lis
                     else:
                         pass
 
-        if metadata.get('plugin_functions', None) != None:
+        if metadata.get('plugin_functions', None) is not None:
             if metadata.get('plugin_functions', None) != 'NONE':
                 for func in metadata.get('plugin_functions', None):
                     func_dict = metadata['plugin_functions'][func]
                     test_description('plugin function', func, func_dict.get('description', None))
 
                     # Check function parameters
-                    if func_dict.get('parameters', None) != None:
+                    if func_dict.get('parameters', None) is not None:
                         for par in func_dict.get('parameters', None):
                             par_dict = func_dict['parameters'][par]
                             test_description("parameter '"+par+"' of plugin function", func, par_dict.get('description', None))
 
     state = ''
-    if metadata.get('plugin', None) != None:
+    if metadata.get('plugin', None) is not None:
         state = metadata['plugin'].get('state', '-')
 
     if (plg_type == 'classic' and list_classic) or (plg_type != 'classic' and not list_classic):
@@ -810,7 +806,7 @@ def check_metadata(plg, with_description, check_quiet=False, only_inc=False, lis
 
 def check_plglist(option, list_classic=False):
     option = option.strip().lower()
-    header_displayed = False;
+    header_displayed = False
     plgcount = 0
     allplgcount = 0
     priv_plgcount = 0
@@ -823,24 +819,23 @@ def check_plglist(option, list_classic=False):
         sectionParam = '-'
         sectionIAttr = '-'
         sectionFunc = '-'
-        comment = ''
         metadata = readMetadata(plg, plugins_local)
-        if metadata == None:
+        if metadata is None:
             return
-        if metadata.get('plugin', None) == None:
+        if metadata.get('plugin', None) is None:
             sectionPlg = MISSING_TEXT
         else:
             sectionPlg = 'Ok'
             version = metadata['plugin'].get('version', '-')
             plgstate = metadata['plugin'].get('state', '-')
-            if not plgstate in ['qa-passed', 'ready', 'develop', '-']:
+            if plgstate not in ['qa-passed', 'ready', 'develop', '-']:
                 plgstate = 'INVALID'
         plgtype = get_plugintype(plg)
         if plgtype == 'Smart':
             if version == '-':
                 version = '?'
 
-            if metadata.get('parameters', None) == None:
+            if metadata.get('parameters', None) is None:
                 sectionParam = MISSING_TEXT
             elif metadata.get('parameters', None) == 'NONE':
                 sectionParam = 'Ok'
@@ -848,7 +843,7 @@ def check_plglist(option, list_classic=False):
                 sectionParam = 'Ok'
                 sectionParam += ' (' + str(len(metadata['parameters'])) + ')'
 
-            if metadata.get('item_attributes', None) == None:
+            if metadata.get('item_attributes', None) is None:
                 sectionIAttr = MISSING_TEXT
             elif metadata.get('item_attributes', None) == 'NONE':
                 sectionIAttr = 'Ok'
@@ -856,7 +851,7 @@ def check_plglist(option, list_classic=False):
                 sectionIAttr = 'Ok'
                 sectionIAttr += ' (' + str(len(metadata['item_attributes'])) + ')'
 
-            if metadata.get('plugin_functions', None) == None:
+            if metadata.get('plugin_functions', None) is None:
                 sectionFunc = MISSING_TEXT
             elif metadata.get('plugin_functions', None) == 'NONE':
                 sectionFunc = 'Ok'
@@ -916,7 +911,6 @@ def check_metadata_of_plugin(plg, quiet=False):
     # change the working diractory to the directory from which the converter is loaded (../tools)
     os.chdir(os.path.dirname(os.path.abspath(os.path.basename(__file__))))
 
-    plugindirectory = '../plugins'
     #pluginabsdirectory = os.path.abspath(plugindirectory)
     pluginabsdirectory = os.path.join(BASE, 'plugins')
 

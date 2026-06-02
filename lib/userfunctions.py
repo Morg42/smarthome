@@ -61,14 +61,14 @@ def import_user_module(m):
         _uf_version = '?.?.?'
         try:
             exec( f"globals()['_uf_version'] = {m}._VERSION" )
-        except:
+        except AttributeError:
             exec( f"{m}._VERSION = _uf_version" )
 
         global _uf_description
         _uf_description = '?'
         try:
             exec( f"globals()['_uf_description'] = {m}._DESCRIPTION" )
-        except:
+        except AttributeError:
             exec( f"{m}._DESCRIPTION = _uf_description" )
 
         _logger.notice(translate("Imported userfunctions from '{module}' v{version} - {description}", {'module': m, 'version':_uf_version, 'description': _uf_description}))

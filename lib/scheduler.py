@@ -456,9 +456,9 @@ class Scheduler(threading.Thread):
         :param items: None or list of items to register for update_item calls (if cycle time is calculated from expression containing item(s))
         """
         # set shtime and items if they were initialized to None in __init__  (potenital timing problem in init of shng)
-        if self.shtime == None:
+        if self.shtime is None:
             self.shtime = Shtime.get_instance()
-        if self.items == None:
+        if self.items is None:
             self.items = Items.get_instance()
         if self._lock.acquire():
             try:

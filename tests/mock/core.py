@@ -43,7 +43,7 @@ class MockScheduler():
         try:
             if isinstance(obj.__self__, SmartPlugin):
                 name = name +'_'+ obj.__self__.get_instance_name()
-        except:
+        except AttributeError:
             pass
 
     def remove(self, name):
@@ -174,7 +174,7 @@ class MockSmartHome():
         if self.items is None:
             try:
                 lib.item.items._items_instance = None
-            except:
+            except AttributeError:
                 lib.item._items_instance = None
             self.items = lib.item.Items(self)
         if self.plugins is None:
@@ -352,7 +352,7 @@ class MockSmartHome():
 
         if not self.logs.configure_logging():
             conf_basename = self._log_conf_basename + YAML_FILE + '.default'
-            print(f"       Trying default logging configuration from:")
+            print("       Trying default logging configuration from:")
             print(f"       {conf_basename}")
             print()
             #conf_dict = lib.shyaml.yaml_load(conf_basename + YAML_FILE + '.default', True)
@@ -458,7 +458,7 @@ class MockSmartHome():
 #            return None
         try:
             return lib.utils.Utils.to_bool(string)
-        except Exception as e:
+        except Exception:
             return None
 
 

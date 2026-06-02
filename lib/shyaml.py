@@ -50,7 +50,7 @@ try:
 #        logger.critical("shyaml: Loaded version of ruamel.yaml ({}) is too old".format(yaml.__version__))
 #        exit(1)
 
-except:
+except ImportError:
     EDITING_ENABLED = False
     logger.critical("shyaml: ruamel.yaml is not installed")
     exit(1)
@@ -60,7 +60,7 @@ indent_spaces = 4
 block_seq_indent = 0
 
 def editing_is_enabled():
-    return(EDITING_ENABLED == True)
+    return(EDITING_ENABLED)
 
 
 # ==================================================================================
@@ -78,7 +78,7 @@ def convert_linenumber(s, occ=1):
     lineold = s2[:s2.find(')')]
     try:
         linenew = str(int((int(lineold)+1)/2))
-    except:
+    except Exception:
         logger.warning('Unable to correct line number for yaml-file error. Wrong line number is {}'.format(lineold))
         linenew = str(lineold)
     lo = 'line '+lineold
@@ -333,11 +333,11 @@ def get_emptynode():
    return yaml.comments.CommentedMap([])
 
 
-def get_commentedseq(l):
+def get_commentedseq(lst):
    """
    Convert a list to a commented sequence
    """
-   return yaml.comments.CommentedSeq( l )
+   return yaml.comments.CommentedSeq( lst )
 
 
 def yaml_dump_roundtrip(data):
@@ -422,7 +422,7 @@ def _format_yaml_dump2(sdata):
         if len(line.strip()) == 0:
             try:
                 nextline = ldata[index+1]
-            except:
+            except IndexError:
                 nextline = ''
             indentprevline = len(ldata[index-1]) - len(ldata[index-1].lstrip(' '))
             indentnextline = len(nextline) - len(nextline.lstrip(' '))
@@ -471,9 +471,10 @@ def _format_yaml_dump2(sdata):
 def setInDict(dataDict, path, value):
     mapList = path.split('.')
     try:
-        for k in mapList[:-1]: dataDict = dataDict[k]
+        for k in mapList[:-1]:
+            dataDict = dataDict[k]
         dataDict[mapList[-1]] = value
-    except:
+    except (KeyError, TypeError):
         return False
     return True
 
@@ -626,14 +627,14 @@ class yamlfile():
         :param path: path of the leaf-node to modify
         :param value: new value of the leaf-node
         """
-        if value == None:
+        if value is None:
             try:
                 self.getnode(get_parent(path)).pop(get_key(path), None)
             except AttributeError:
                 pass
             if self.getnode(get_parent(path)) == yaml.comments.CommentedMap():
                 node = self.getnode(get_parent(get_parent(path)))
-                root = (node == None)
+                root = (node is None)
                 if root:
                     self.data[get_key(get_parent(path))] = None
                 else:
@@ -657,7 +658,7 @@ class yamlfile():
         except Exception as e:
             logger.error("shyaml.setleafvalue: Exception '{}'".format(str(e)))
         else:
-            if value != None:
+            if value is not None:
                 self.setvalue(branch+'.'+leaf, value)
 
     # ----------------------------------------------------------
@@ -714,8 +715,9 @@ class yamlfile():
         nodetype = '-'
         mapList = path.split('.')
         try:
-            for k in mapList: dataDict = dataDict[k]
-        except:
+            for k in mapList:
+                dataDict = dataDict[k]
+        except (KeyError, TypeError):
             nodetype = 'none'
             dataDict = None
         else:

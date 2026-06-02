@@ -13,13 +13,12 @@
 # e.g. blockly plugin which is in alpha stadium
 beautifulsoup4>=4.1.0
 
-# Flake8 is a Python static code analysis tool
-#flake8>=2.5.1
+# Ruff — fast Python linter (replaces flake8, pylint, isort in one tool)
+# Configuration lives in pyproject.toml [tool.ruff]
+ruff>=0.4.0
 
-# Pylint is a Python static code analysis tool
-# which looks for programming errors, helps enforcing a
-# coding standard, sniffs for code smells and
-# offers simple refactoring suggestions
+# Legacy linters — superseded by ruff, retained for reference
+#flake8>=2.5.1
 #pylint>=1.5.3
 
 # testing with pytest

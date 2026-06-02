@@ -70,7 +70,7 @@ class ThreadsController(RESTResource):
                 try:
                     # get_native_id() is supported for Python 3.8 and newer
                     thread['native_id'] = t.native_id
-                except:
+                except AttributeError:
                     thread['native_id'] = ''
                 try:
                     if t.is_alive():

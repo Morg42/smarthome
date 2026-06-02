@@ -65,7 +65,7 @@ class TestItem(unittest.TestCase):
 
     def load_items(self, filename, filetype=None):
         logger.warning("\n\nload_items: ===  Begin of method  ==\n")
-        if filetype == None:
+        if filetype is None:
             conf_filename = common.BASE + "/tests/resources/"+filename+ITEM_FILE_TYPE
         else:
             conf_filename = common.BASE + "/tests/resources/"+filename+filetype
@@ -73,7 +73,7 @@ class TestItem(unittest.TestCase):
         item_conf = lib.config.parse(conf_filename, item_conf)
         if item_conf == {}:
             logger.warning("\nconfig file '"+conf_filename+"' not found")
-        if verbose == True:
+        if verbose:
             logger.warning('\nload_items: item_conf.items()={}'.format(str(item_conf.items())))
         #lib.item._items_instance = None
         #self.items = lib.item.Items(self)
@@ -109,7 +109,7 @@ class TestItem(unittest.TestCase):
         """
         Tests various aspects around the handling of relative item references
         """
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('===== test_item_relative_references:')
 
@@ -132,7 +132,7 @@ class TestItem(unittest.TestCase):
         self.assertIsNotNone(it)
         self.assertEqual(it._type, 'foo')
 
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('=== eval_trigger Tests:')
         # Attribute with relative references
@@ -153,7 +153,7 @@ class TestItem(unittest.TestCase):
         self.assertEqual(it.get_absolutepath('item_tree.grandparent.parent.my_item', 'eval_trigger'), 'item_tree.grandparent.parent.my_item')
         self.assertEqual(it.get_absolutepath('abc', 'eval_trigger'), 'abc')
 
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('=== eval Tests:')
         it = self.sh.items.return_item("item_tree.grandparent.parent.my_item")
@@ -172,7 +172,7 @@ class TestItem(unittest.TestCase):
         self.assertNotEqual(it.get_stringwithabsolutepathes('sh.....changed_by()', 'sh.', '(', 'eval'), 'sh.item_tree.grandparent.changed_by()')
         self.assertEqual(it.get_stringwithabsolutepathes('sh....self.changed_by()', 'sh.', '(', 'eval'), 'sh.item_tree.grandparent.changed_by()')
 
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('=== plugin-attribute Tests:')
         # Attribute with relative references
@@ -211,7 +211,7 @@ class TestItem(unittest.TestCase):
         """
         Tests about the autotimer attribut and value casting
         """
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('===== test_item_autotimers:')
 #        if verbose == True:
@@ -476,7 +476,7 @@ class TestItem(unittest.TestCase):
     def create_item(self, smarthome, parent, path, config):
         try:
             item = lib.item.item.Item(smarthome, parent, path, config)
-        except:
+        except AttributeError:
             item = lib.item.Item(smarthome, parent, path, config)
         return item
 
@@ -488,7 +488,7 @@ class TestItem(unittest.TestCase):
             item._fadingdetails['delta'] = delta
             item._fadingdetails['caller'] = 'test'
             lib.item.helpers.fadejob(item)
-        except:
+        except AttributeError:
             lib.item._fadejob(item, dest, step, delta)
 
 
@@ -518,7 +518,7 @@ class TestItem(unittest.TestCase):
 
     def test_set(self):
 
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('===== test_set:')
         sh = MockSmartHome()
@@ -535,7 +535,7 @@ class TestItem(unittest.TestCase):
         item.set('14')
 
     def test_cast_duration(self):
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('===== test_item_relative_references:')
         sh = MockSmartHome()
@@ -550,7 +550,7 @@ class TestItem(unittest.TestCase):
         self.assertFalse(item._cast_duration(None))
 
     def test_call(self):
-        if verbose == True:
+        if verbose:
             logger.warning('')
             logger.warning('===== test_call:')
         sh = MockSmartHome()
@@ -705,20 +705,20 @@ class TestItem(unittest.TestCase):
 
         try:
             lib.item.item.cache_write(value=v, filename=fn, cformat=f)
-        except:
+        except AttributeError:
             lib.item._cache_write(value=v, filename=fn, cformat=f)
 
         date = cachedvalue = None
         try:
             date, cachedvalue = lib.item.item.cache_read(filename=fn, tz=TZ, cformat=f)
-        except:
+        except AttributeError:
             date, cachedvalue = lib.item._cache_read(filename=fn, tz=TZ, cformat=f)
         #logger.warning(type(cachedvalue))
         self.assertEqual(v, cachedvalue)
 
 
     def test_item_jsondump(self):
-        sh = MockSmartHome()
+        MockSmartHome()
 
         self.load_items('item_dumps', YAML_FILE)
 

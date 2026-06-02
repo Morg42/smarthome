@@ -240,7 +240,7 @@ class SmartHome():
 
                     if err_files:
                         many = len(err_files) > 1
-                        print(f"While migrating {conf} dir, the following file{'s' if many else ''} caused conflicts with existing files: ");
+                        print(f"While migrating {conf} dir, the following file{'s' if many else ''} caused conflicts with existing files: ")
                         print("\n".join([f'{of} (existing target: {nf})' for of, nf in err_files]))
                         print("Please check and move or remove files manually")
                         errs = True
@@ -408,7 +408,7 @@ class SmartHome():
             self._logger_main.notice(f" - Loglevel NOTICE is set to value {logging.getLevelName('NOTICE')} because handler of root logger is set to level WARNING or higher - Set level of handler '{self.logs.root_handler_name}' to 'NOTICE'!")
 
         default_encoding = locale.getpreferredencoding()  # returns cp1252 on windows
-        if not (default_encoding in ['UTF8', 'UTF-8']):
+        if default_encoding not in ['UTF8', 'UTF-8']:
             self._logger.warning(f"Encoding should be UTF8 but is instead {default_encoding}")
 
         if self._extern_conf_dir != BASE:
@@ -499,7 +499,7 @@ class SmartHome():
             try:
                 if not any(utf in os.environ['LANG'].lower() for utf in ['utf-8', 'utf8']):
                     self._logger.error("Locale for the enviroment is not set to a valid value. Set the LANG environment variable to a value supporting UTF-8")
-            except:
+            except Exception:
                 self._logger.error("Locale for the enviroment is not set. Defaulting to en_US.UTF-8")
                 os.environ["LANG"] = 'en_US.UTF-8'
                 os.environ["LC_ALL"] = 'en_US.UTF-8'
@@ -894,7 +894,7 @@ class SmartHome():
             if thread.name != 'Main':
                 try:
                     thread.join(1)
-                except Exception as e:
+                except Exception:
                     pass
 
         if threading.active_count() > 1:
@@ -946,7 +946,7 @@ class SmartHome():
             command = python_bin + ' ' + os.path.join(self._base_dir, 'bin', 'smarthome.py') + ' -r'
             self._logger.info(f"Restart command = '{command}'")
             try:
-                p = subprocess.Popen(command, shell=True)
+                subprocess.Popen(command, shell=True)
                 exit(5)  # exit code 5 -> for systemctl to restart SmartHomeNG
             except subprocess.SubprocessError as e:
                 self._logger.error(f"Restart command '{command}' failed with error {e}")
@@ -1047,7 +1047,7 @@ class SmartHome():
                 at['id'] = t.ident
                 try:
                     at['native_id'] = t.native_id
-                except:
+                except AttributeError:
                     at['native_id'] = ''
                 at['name'] = t.name
                 all_threads.append(at)
@@ -1086,7 +1086,7 @@ class SmartHome():
                     obj = getattr(module, sym)
                     if isinstance(obj, type):
                         objects[obj] = sys.getrefcount(obj)
-                except:
+                except Exception:
                     pass
         return objects
 
@@ -1109,14 +1109,14 @@ class SmartHome():
             n_func = '- use the ' + n_func + ' instead'
         try:
             d_test = ' (' + str(sys._getframe(2).f_locals['self'].__module__) + ')'
-        except:
+        except (AttributeError, KeyError):
             d_test = ''
 
         called_by = str(sys._getframe(2).f_code.co_name)
         in_class = ''
         try:
             in_class = 'class ' + str(sys._getframe(2).f_locals['self'].__class__.__name__) + d_test
-        except:
+        except (AttributeError, KeyError):
             in_class = 'a logic?' + d_test
         if called_by == '<module>':
             called_by = str(sys._getframe(3).f_code.co_name)
@@ -1136,7 +1136,7 @@ class SmartHome():
         if not hasattr(self, 'dep_id_list'):
             self.dep_id_list = []
         id_str = d_func + '|' + in_class + '|' + called_by
-        if not id_str in self.dep_id_list:
+        if id_str not in self.dep_id_list:
             self._logger.warning(f"DEPRECATED: Used function '{d_func}', called in '{in_class}' by '{called_by}' {n_func}")
             self.dep_id_list.append(id_str)
         return
@@ -1162,7 +1162,7 @@ class SmartHome():
         self._deprecated_warning('lib.utils.Utils.to_bool(string) function')
         try:
             return lib.utils.Utils.to_bool(string)
-        except Exception as e:
+        except Exception:
             return None
 
 

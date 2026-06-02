@@ -22,7 +22,7 @@
 try:
     import holidays
     HOLIDAYS_imported = True
-except:
+except ImportError:
     HOLIDAYS_imported = False
 
 
@@ -105,7 +105,7 @@ class Shtime:
         :return: shinfo instance
         :rtype: object or None
         """
-        if _shtime_instance == None:
+        if _shtime_instance is None:
             return None
         else:
             return _shtime_instance
@@ -1195,13 +1195,13 @@ class Shtime:
                 # Test if class of self.holiday has an attribute 'state'
                 try:
                     state = self.holidays.state
-                except Exception as e:
+                except Exception:
                     state = self.holidays.subdiv
 
                 # Test if class of self.holiday has an attribute 'prov'
                 try:
                     prov = self.holidays.prov
-                except Exception as e:
+                except Exception:
                     prov = self.holidays.subdiv
                     state = None
 

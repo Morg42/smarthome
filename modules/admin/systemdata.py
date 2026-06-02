@@ -231,7 +231,7 @@ class SystemData:
                 plugin_name = _conf[plugin].get('class_path', '').strip()
                 if plugin_name == '':
                     plugin_name = 'plugins.' + _conf[plugin].get('plugin_name', '').strip()
-                if not plugin_name in plugin_names:  # only unique plugin names, e.g. if multiinstance is used
+                if plugin_name not in plugin_names:  # only unique plugin names, e.g. if multiinstance is used
                     plugin_names.append(plugin_name)
             self.logger.info(
                 "get_requirements_info: len(_conf) = {}, len(plugin_names) = {}, plugin_names = {}".format(
@@ -267,7 +267,7 @@ class SystemData:
             vi = 0
             try:
                 vi = int(v)
-            except:
+            except Exception:
                 pass
             v1.append(vi)
 
@@ -279,7 +279,7 @@ class SystemData:
             vi = 0
             try:
                 vi = int(v)
-            except:
+            except Exception:
                 pass
             v2.append(vi)
 
@@ -461,9 +461,6 @@ class SystemData:
         return req_result
 
     def check_requirement(self, package, req_str):
-        """
-        """
-        pyversion = "{0}.{1}".format(sys.version_info[0], sys.version_info[1])
         req_min = ''
         req_max = ''
         # split requirements
@@ -538,7 +535,7 @@ class SystemData:
                 #                sock.connect(('pypi.python.org', 443))
                 sock.connect(('pypi.org', 443))
                 sock.close()
-            except:
+            except OSError:
                 pypi_available = False
 #                pypi_unavailable_message = translate('PyPI nicht erreichbar')
                 pypi_unavailable_message = 'PyPI nicht erreichbar'
@@ -559,9 +556,9 @@ class SystemData:
                     self.logger.warning("size of data: {} - data: {}".format(len(available), available))
                     try:
                         package['version_available'] = available[0]
-                    except:
+                    except IndexError:
                         package['version_available'] = '-'
-                except:
+                except Exception:
 #                    package['version_available'] = [translate('Keine Antwort von PyPI')]
                     package['version_available'] = ['Keine Antwort von PyPI']
             else:
@@ -578,7 +575,7 @@ def parse_requirements(file_path):
     req_dict = {}
     try:
         fobj = open(file_path)
-    except:
+    except OSError:
         return req_dict
 
     for rline in fobj:

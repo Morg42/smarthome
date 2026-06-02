@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="760" height="380" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="760" height="380" fill="#f8fafc" rx="8"/>
+
+  <!-- ── TIMELINE AXIS ───────────────────────────────────────── -->
+  <line x1="30" y1="50" x2="730" y2="50" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- phase labels above the axis -->
+  <text x="80"  y="20" fill="#64748b" text-anchor="middle" font-size="11" font-weight="bold">1. Fork / branch push</text>
+  <text x="240" y="20" fill="#64748b" text-anchor="middle" font-size="11" font-weight="bold">2. PR opened</text>
+  <text x="440" y="20" fill="#64748b" text-anchor="middle" font-size="11" font-weight="bold">3. CI runs (in parallel)</text>
+  <text x="630" y="20" fill="#64748b" text-anchor="middle" font-size="11" font-weight="bold">4. Merge to develop</text>
+
+  <!-- phase dividers -->
+  <line x1="160" y1="10" x2="160" y2="380" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="320" y1="10" x2="320" y2="380" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="560" y1="10" x2="560" y2="380" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- ── TIMELINE NODES ─────────────────────────────────────── -->
+  <!-- node 1: push to fork -->
+  <circle cx="80" cy="50" r="8" fill="#1d4ed8"/>
+  <text x="80" y="75" fill="#1e293b" text-anchor="middle" font-size="11">push to fork</text>
+  <text x="80" y="89" fill="#64748b" text-anchor="middle" font-size="10">unittests.yml fires</text>
+  <text x="80" y="102" fill="#64748b" text-anchor="middle" font-size="10">on the fork (if enabled)</text>
+  <!-- small workflow badge -->
+  <rect x="26" y="112" width="108" height="20" fill="#1d4ed8" rx="3"/>
+  <text x="80" y="125" fill="white" text-anchor="middle" font-size="10">unittests (fork)</text>
+
+  <!-- node 2: PR opened -->
+  <circle cx="240" cy="50" r="8" fill="#7c3aed"/>
+  <!-- timeline arrow -->
+  <line x1="88" y1="50" x2="232" y2="50" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <text x="240" y="75" fill="#1e293b" text-anchor="middle" font-size="11">PR opened</text>
+  <text x="240" y="89" fill="#64748b" text-anchor="middle" font-size="10">GitHub creates</text>
+  <text x="240" y="102" fill="#64748b" text-anchor="middle" font-size="10">refs/pull/N/merge</text>
+  <!-- branch guard badge -->
+  <rect x="180" y="112" width="120" height="20" fill="#dc2626" rx="3"/>
+  <text x="240" y="125" fill="white" text-anchor="middle" font-size="10">comment_pr fires if wrong branch</text>
+
+  <!-- node 3: CI runs -->
+  <circle cx="440" cy="50" r="8" fill="#16a34a"/>
+  <line x1="248" y1="50" x2="432" y2="50" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- unittests badge - tests MERGED code -->
+  <rect x="330" y="70" width="220" height="48" fill="#16a34a" rx="4"/>
+  <text x="440" y="87"  fill="white" text-anchor="middle" font-size="11" font-weight="bold">unittests.yml</text>
+  <text x="440" y="101" fill="#bbf7d0" text-anchor="middle" font-size="10">Tests refs/pull/N/merge</text>
+  <text x="440" y="113" fill="#bbf7d0" text-anchor="middle" font-size="10">(PR code merged into develop)</text>
+
+  <!-- codeql badge -->
+  <rect x="330" y="125" width="220" height="48" fill="#7c3aed" rx="4"/>
+  <text x="440" y="142" fill="white" text-anchor="middle" font-size="11" font-weight="bold">codeql.yml</text>
+  <text x="440" y="156" fill="#ddd6fe" text-anchor="middle" font-size="10">Scans PR's exact commit</text>
+  <text x="440" y="168" fill="#ddd6fe" text-anchor="middle" font-size="10">(fork-aware checkout)</text>
+
+  <!-- ruff annotation note -->
+  <rect x="330" y="180" width="220" height="36" fill="#854d0e" rx="4"/>
+  <text x="440" y="197" fill="white" text-anchor="middle" font-size="11" font-weight="bold">ruff lint (inside unittests)</text>
+  <text x="440" y="210" fill="#fef9c3" text-anchor="middle" font-size="10">inline annotations on PR diff</text>
+
+  <!-- node 4: merge -->
+  <circle cx="630" cy="50" r="8" fill="#0f766e"/>
+  <line x1="448" y1="50" x2="622" y2="50" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <text x="630" y="75"  fill="#1e293b" text-anchor="middle" font-size="11">merge to develop</text>
+  <text x="630" y="89"  fill="#64748b" text-anchor="middle" font-size="10">push event fires again</text>
+  <text x="630" y="102" fill="#64748b" text-anchor="middle" font-size="10">on upstream/develop</text>
+
+  <rect x="572" y="112" width="116" height="20" fill="#16a34a" rx="3"/>
+  <text x="630" y="125" fill="white" text-anchor="middle" font-size="10">unittests (on merged code)</text>
+  <rect x="572" y="137" width="116" height="20" fill="#7c3aed" rx="3"/>
+  <text x="630" y="150" fill="white" text-anchor="middle" font-size="10">codeql (on merged code)</text>
+  <rect x="572" y="162" width="116" height="20" fill="#0f766e" rx="3"/>
+  <text x="630" y="175" fill="white" text-anchor="middle" font-size="10">builddevdoc</text>
+
+  <!-- ── RESULT ANNOTATIONS ──────────────────────────────────── -->
+  <rect x="20" y="240" width="720" height="1" fill="#cbd5e1"/>
+
+  <text x="30" y="262" fill="#475569" font-weight="bold" font-size="12">What the PR author sees on their PR page:</text>
+
+  <!-- green check -->
+  <rect x="30"  y="278" width="14" height="14" fill="#16a34a" rx="2"/>
+  <text x="50"  y="290" fill="#1e293b" font-size="12">unittests / Python 3.10  — ✓ or ✗ (hard gate — fails block merge)</text>
+
+  <rect x="30"  y="298" width="14" height="14" fill="#16a34a" rx="2"/>
+  <text x="50"  y="310" fill="#1e293b" font-size="12">unittests / Python 3.11, 3.12, 3.13, 3.14  — same</text>
+
+  <rect x="30"  y="318" width="14" height="14" fill="#7c3aed" rx="2"/>
+  <text x="50"  y="330" fill="#1e293b" font-size="12">CodeQL Analysis  — security findings appear in Security tab (does not block merge)</text>
+
+  <rect x="30"  y="338" width="14" height="14" fill="#854d0e" rx="2"/>
+  <text x="50"  y="350" fill="#1e293b" font-size="12">ruff lint  — inline code annotations visible in the Files Changed tab (advisory only)</text>
+
+  <rect x="30"  y="358" width="14" height="14" fill="#dc2626" rx="2"/>
+  <text x="50"  y="370" fill="#1e293b" font-size="12">wrong-branch comment  — only appears if PR was opened against a branch other than develop</text>
+</svg>

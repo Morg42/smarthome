@@ -78,7 +78,7 @@ class Logs():
             config_filename = self._sh.get_config_file(BASE_LOG)
         config_dict = self.load_logging_config(config_filename, ignore_notfound=True)
 
-        if config_dict == None:
+        if config_dict is None:
             print()
             print(f"ERROR: Invalid logging configuration in file '{config_filename}'")
             print()
@@ -128,7 +128,7 @@ class Logs():
             root_handler = config_dict['handlers'][ root_handler_name ]
             root_handler_level = root_handler.get('level', '?')
             self.root_handler_name = root_handler_name
-        except:
+        except (KeyError, IndexError):
             root_handler_level = '?'
 
         if root_handler_level.upper() in ['NOTICE', 'INFO', 'DEBUG']:
@@ -349,8 +349,8 @@ class Logs():
 
     def get_all_handlernames(self):
         if self._all_handlers == {}:
-            l = logging.getLogger(self._all_handlers_logger_name)
-            for h in l.handlers:
+            lg = logging.getLogger(self._all_handlers_logger_name)
+            for h in lg.handlers:
                 self._all_handlers[h.name] = h
 
         return sorted(self._all_handlers.keys())
@@ -771,11 +771,11 @@ class ShngTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
     TimedRotatingFilehandler with a different naming scheme for rotated files
     """
     def __init__(self, filename, when='MIDNIGHT', interval=1, backupCount=0, encoding=None, delay=False, utc=False):
-        year = datetime.datetime.now().strftime("%Y")
-        month = datetime.datetime.now().strftime("%m")
-        day = datetime.datetime.now().strftime("%d")
-        hour = datetime.datetime.now().strftime("%H")
-        stamp = datetime.datetime.now().timestamp()
+        year = datetime.datetime.now().strftime("%Y")  # noqa: F841  # eval setup
+        month = datetime.datetime.now().strftime("%m")  # noqa: F841  # eval setup
+        day = datetime.datetime.now().strftime("%d")  # noqa: F841  # eval setup
+        hour = datetime.datetime.now().strftime("%H")  # noqa: F841  # eval setup
+        stamp = datetime.datetime.now().timestamp()  # noqa: F841  # eval setup
         try:
             filename = eval(f"f'{filename}'")
         except Exception:
@@ -884,7 +884,9 @@ class ShngMemLogHandler(logging.StreamHandler):
     LogHandler used by MemLog
     """
     def __init__(self, logname='undefined', maxlen=35, level=logging.NOTSET,
-            mapping=['time', 'thread', 'level', 'message'], cache=False):
+            mapping: list | None = None, cache=False):
+        if mapping is None:
+            mapping = ['time', 'thread', 'level', 'message']
         super().__init__()
         self.setLevel(level)
 

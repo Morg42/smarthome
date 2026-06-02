@@ -409,7 +409,7 @@ class SDPProtocolJsonrpc(SDPProtocol):
         # we don't return a response (this goes via on_data_received)
         return None
 
-    def _send_rpc_message(self, command: str, ddict: dict = {}, message_id: str | None = None, repeat: int = 0):
+    def _send_rpc_message(self, command: str, ddict: dict | None = None, message_id: str | None = None, repeat: int = 0):
         """
         Send a JSON RPC message.
         The JSON string is extracted from the supplied command and the given parameters.
@@ -419,6 +419,8 @@ class SDPProtocolJsonrpc(SDPProtocol):
         :param message_id: the message ID to be used. If none, use the internal counter
         :param repeat: counter for how often the message has been repeated
         """
+        if ddict is None:
+            ddict = {}
         self.logger.debug(f'preparing message to send command {command} with data {ddict}, try #{repeat}')
 
         if message_id is None:
@@ -586,41 +588,41 @@ class SDPProtocolResend(SDPProtocol):
 
         def convert_and_compare(value: Any, compare_value: Any) -> bool:
             value_type = type(value)
-            if value_type == type(compare_value):
+            if value_type is type(compare_value):
                 return compare_value == value
 
-            if value_type == int:
+            if value_type is int:
                 try:
                     converted_value = int(compare_value)
                 except ValueError:
                     return False
-            elif value_type == float:
+            elif value_type is float:
                 try:
                     converted_value = float(compare_value)
                 except ValueError:
                     return False
-            elif value_type == bool:
+            elif value_type is bool:
                 if compare_value.lower() == "true":
                     converted_value = True
                 elif compare_value.lower() == "false":
                     converted_value = False
                 else:
                     converted_value = None
-            elif value_type == list:
+            elif value_type is list:
                 try:
                     converted_value = ast.literal_eval(compare_value)
                     if not isinstance(converted_value, list):
                         return False
                 except (ValueError, SyntaxError):
                     return False
-            elif value_type == dict:
+            elif value_type is dict:
                 try:
                     converted_value = ast.literal_eval(compare_value)
                     if not isinstance(converted_value, dict):
                         return False
                 except (ValueError, SyntaxError):
                     return False
-            elif value_type == str:
+            elif value_type is str:
                 converted_value = compare_value
             else:
                 return False

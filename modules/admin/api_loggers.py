@@ -50,23 +50,23 @@ class LoggersController(RESTResource):
         loggerlist = []
         try:
             wrk_loggerDict = logging.Logger.manager.loggerDict
-            for l in dict(wrk_loggerDict):
-                lg = logging.Logger.manager.loggerDict[l]
+            for name in dict(wrk_loggerDict):
+                lg = logging.Logger.manager.loggerDict[name]
                 try:
                     not_conf = lg.not_conf
-                except:
+                except AttributeError:
                     not_conf = False
                 if not_conf:
-                    self.logger.info(f"get_active_loggers: not_conf {l=} - {lg=}")
+                    self.logger.info(f"get_active_loggers: not_conf {name=} - {lg=}")
                 else:
                     try:
                         h = lg.handlers
-                    except:
+                    except AttributeError:
                         h = []
                     if len(h) > 0:
                         # handlers do exist
                         if (len(h) > 1) or (len(h) == 1 and str(h[0]) != '<NullHandler (NOTSET)>'):
-                            loggerlist.append(l)
+                            loggerlist.append(name)
                             # self.logger.info("ld Handler = {} h = {} -> {}".format(l, h, lg))
                         else:
                             pass
@@ -75,14 +75,14 @@ class LoggersController(RESTResource):
                         # no handlers exist
                         try:
                             lv = lg.level
-                        except:
+                        except AttributeError:
                             lv = 0
                         if lv > 0:
-                            loggerlist.append(l)
+                            loggerlist.append(name)
                             # self.logger.info("ld Level   = {}, lv = {} -> {}".format(l, lv, lg))
                         else:
                             pass
-                            loggerlist.append(l)
+                            loggerlist.append(name)
                             #self.logger.info(f"get_active_loggers: {l} - {lv=} - {wrk_loggerDict[l]}")
         except Exception as e:
             self.logger.exception("Logger Exception: {}".format(e))
@@ -103,9 +103,9 @@ class LoggersController(RESTResource):
             logging_config = self._sh.logs.load_logging_config_for_edit()
             try:
                 oldlevel = logging_config['loggers'][logger]['level']
-            except:
+            except KeyError:
                 oldlevel = None
-            if oldlevel != None:
+            if oldlevel is not None:
                 logging_config['loggers'][logger]['level'] = level
                 self._sh.logs.save_logging_config(logging_config)
                 #self.logger.info("Saved changed logger configuration to ../etc/logging.yaml}")
@@ -133,7 +133,7 @@ class LoggersController(RESTResource):
         # remove existing handlers from logger, which are not in the list of handlers to configure
         handlers = list(logger.handlers)
         for h in handlers:
-            if not h.name in handlerlist:
+            if h.name not in handlerlist:
                 self.logger.info(f"set_handlers: - Remove handler '{h.name}' from logger '{logger_name}'")
                 logger.removeHandler(h)
 
@@ -169,7 +169,7 @@ class LoggersController(RESTResource):
                     hl.append(h.name)
                 except Exception as e:
                     self.logger.notice(f"get_logger_active_configuration: Exception {h=} - {h.__class__.__name__=} - {e}")
-        except:
+        except (AttributeError, TypeError):
             return handlernames
 
         return list(set(handlernames + hl))
@@ -193,7 +193,7 @@ class LoggersController(RESTResource):
             hl.append(h.__class__.__name__)
             try:
                 bl.append(h.baseFilename)
-            except:
+            except AttributeError:
                 bl.append('')
 
         active['handlers'] = hl
@@ -227,7 +227,7 @@ class LoggersController(RESTResource):
         self.logger.info("loggerlist = {}".format(loggerlist))
 
         for logger in loggerlist:
-            if loggers.get(logger, None) == None:
+            if loggers.get(logger, None) is None:
                 # self.logger.info("active but not configured logger = {}".format(logger))
                 loggers[logger] = {}
                 loggers[logger]['logger_name'] = logger

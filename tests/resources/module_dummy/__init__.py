@@ -40,7 +40,7 @@ class dummy():
 
         try:
             self._dummy = self._parameters['dummy']
-        except:
+        except KeyError:
             self.logger.critical("Module '{}': Inconsistent module (invalid metadata definition)".format(self.shortname))
             self._init_complete = False
             return

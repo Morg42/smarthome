@@ -1,4 +1,8 @@
-import psutil, sys, time, os, json
+import psutil
+import sys
+import time
+import os
+import json
 
 def clear():
     if os.name == "nt":
@@ -46,7 +50,7 @@ def get_threadinfo():
     try:
         with open(os.path.join(base_dir, 'var', 'run', 'threadinfo.json')) as f:
             threadinfo_list = json.load(f )
-    except:
+    except (OSError, ValueError):
         print_info = True
 
     for ti in threadinfo_list:
@@ -63,7 +67,7 @@ print("- stored in directory: {}".format(base_dir))
 print("- running process id : {}".format(shng_pid))
 print("- number of threads .: {}".format(len(threadinfo)))
 print()
-if print_info == True:
+if print_info:
     print("ATTENTION: To get thread names listed,\n           enable 'threadinfo_export' in ../etc/smarthome.yaml")
     print()
 
@@ -82,19 +86,18 @@ while True:
             print()
             print("   Percent   PID     Thread Id      Thread Name")
             for line in threads:
-                l = line
-                thread = threadinfo.get(int(l[1]), {'id': '?', 'name':l[2]})
+                thread = threadinfo.get(int(line[1]), {'id': '?', 'name':line[2]})
                 if thread is not None:
                     thread_name = thread['name']
                     thread_id = thread['id']
-                elif int(l[1]) == int(shng_pid):
+                elif int(line[1]) == int(shng_pid):
                     thread_name = 'SmartHomeNG'
                     thread_id = '   __Main__    '
                 else:
                     thread_name = '?'
                     thread_id = '       ?       '
-                percent = float(l[0])
-                pid = int(l[1])
+                percent = float(line[0])
+                pid = int(line[1])
                 if not (thread_name.startswith( ('CP Server','HTTPServer', 'ThreadPoolExecutor') ) and percent <= 0.08):
                     if percent >= 0.0:
                         print("{p:10.6f}%{pid:6} {id} - {t:15}".format(p=percent, pid=pid, id=thread_id, t=thread_name))
@@ -105,7 +108,7 @@ while True:
         time.sleep(2)
 
     except KeyboardInterrupt:
-        if print_info == True:
+        if print_info:
             print()
             print("ATTENTION: To get thread names listed,\n           enable 'threadinfo_export' in ../etc/smarthome.yaml")
         print()

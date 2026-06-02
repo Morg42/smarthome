@@ -61,7 +61,7 @@ if sys.version_info > (3, 3):
         sh.env.system.disksize(du.total, logic.lname)
         sh.env.system.diskusage(du.used, logic.lname)
         sh.env.system.diskusagepercent(round(du.used / du.total * 100.0, 2), logic.lname)
-    except:
+    except Exception:
         logger.error("Statistics could not be read using base directory {}".format(absolute_pathname))
 
 if sh.moon:

@@ -295,9 +295,6 @@ class RESTResource:
                 decoded = jwt.decode(token, self.jwt_secret, verify=True, algorithms='HS256')
             except Exception as e:
                 self.logger.debug("REST_test_jwt_token(): Exception = {}".format(e))
-                se = format(e)
-                if se.endswith('expired'):
-                    error_text = format(e)
                 token = ''
                 decoded = {}
         self.logger.debug("REST_test_jwt_token(): decoded jwt token = {}".format(decoded))
@@ -378,11 +375,11 @@ class RESTResource:
         if method in self.REST_map:
             try:
                 m = getattr(self,self.REST_map[method])
-            except:
+            except Exception:
                 self.logger.info("REST_dispatch *1: Unsupported method  = {} for resource '{}'".format(method, resource))
                 raise cherrypy.HTTPError(status=404)
             result = self.REST_dispatch_execute(m, method, root, resource, **params)
-            if result != None:
+            if result is not None:
                 return result
             else:
                 raise cherrypy.NotFound
@@ -390,11 +387,11 @@ class RESTResource:
             if method in self.REST_defaults:
                 try:
                     m = getattr(self,self.REST_defaults[method])
-                except:
+                except Exception:
                     self.logger.info("REST_dispatch: Unsupported method  = {} for resource '{}'".format(method, resource))
                     raise cherrypy.HTTPError(status=404)
                 result = self.REST_dispatch_execute(m, method, root, resource, **params)
-                if result != None:
+                if result is not None:
                     return result
                 else:
                     raise cherrypy.NotFound

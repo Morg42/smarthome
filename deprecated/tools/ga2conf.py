@@ -137,7 +137,7 @@ if __name__ == '__main__':
                 ga_attributes = parts[0].split(',')
 
                 for ga_attribute in ga_attributes:
-                    if not ga_attribute in item['sh_attributes'].keys():
+                    if ga_attribute not in item['sh_attributes'].keys():
                         item['sh_attributes'][ga_attribute] = []
                     item['sh_attributes'][ga_attribute].append(ga_str)
                 
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                     for part in parts[1].split('|'):
                         p = part.split('=')
                         if len(p) == 2:
-                            if not p[0] in item['sh_attributes'].keys():
+                            if p[0] not in item['sh_attributes'].keys():
                                 item['sh_attributes'][p[0]] = []
                             item['sh_attributes'][p[0]].append(p[1].strip())
     

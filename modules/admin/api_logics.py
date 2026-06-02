@@ -105,18 +105,18 @@ class LogicsController(RESTResource):
             # SmartHomeNG has not yet initialized the logics module (still starting up)
             return
 
-        if self.plugins == None:
+        if self.plugins is None:
             self.plugins = Plugins.get_instance()
         self.yaml_updates = (self.logics.return_config_type() == '.yaml')
 
         # find out if blockly plugin is loaded
-        if self.blockly_plugin_loaded == None:
+        if self.blockly_plugin_loaded is None:
             self.blockly_plugin_loaded = False
             for x in self.plugins.return_plugins():
                 try:
                     if x.get_shortname() == 'blockly':
                         self.blockly_plugin_loaded = True
-                except:
+                except Exception:
                     pass
 
     def fill_logicdict(self, logicname):
@@ -142,7 +142,7 @@ class LogicsController(RESTResource):
             mylogic['cycle'] = ''
             if hasattr(self.logics.return_logic(logicname), 'cycle'):
                 mylogic['cycle'] = loaded_logic.cycle
-                if mylogic['cycle'] == None:
+                if mylogic['cycle'] is None:
                     mylogic['cycle'] = ''
 
             mylogic['crontab'] = ''
@@ -176,19 +176,19 @@ class LogicsController(RESTResource):
 
         return mylogic
 
-    def list_to_editstring(self, l):
+    def list_to_editstring(self, lst):
         """
         """
-        if type(l) is str:
-            self.logger.debug("list_to_editstring: >{}<  -->  >{}<".format(l, l))
-            return l
+        if type(lst) is str:
+            self.logger.debug("list_to_editstring: >{}<  -->  >{}<".format(lst, lst))
+            return lst
 
         edit_string = ''
-        for entry in l:
+        for entry in lst:
             if edit_string != '':
                 edit_string += ' | '
             edit_string += str(entry)
-        self.logger.debug("list_to_editstring: >{}<  -->  >{}<".format(l, edit_string))
+        self.logger.debug("list_to_editstring: >{}<  -->  >{}<".format(lst, edit_string))
         return edit_string
 
     def logic_findnew(self, loadedlogics):
@@ -204,8 +204,8 @@ class LogicsController(RESTResource):
         for configlogic in _config:
             if configlogic != '_groups':
                 found = False
-                for l in loadedlogics:
-                    if configlogic == str(l['name']):
+                for logic in loadedlogics:
+                    if configlogic == str(logic['name']):
                         found = True
                 if not found:
                     self.logger.info("LogicsController (logic_findnew): name = {}".format(configlogic))
@@ -655,7 +655,7 @@ class LogicsController(RESTResource):
                 if param == 'logic_description':
                     # change descriptipn for the running logic too
                     self._sh.logics.return_logic(logicname).description = value
-                if value == None:
+                if value is None:
                     sect.pop(param, None)
                 else:
                     self.logger.info(f"- param = {param}, value = {value}, type(value) = {Utils.get_type(value)}")
@@ -738,7 +738,7 @@ class LogicsController(RESTResource):
                 self.logger.info(f"LogicsController.update: group={name}, action={action}, filename={filename}, newfilename={newfilename}")
                 return self.set_logic_state(name, action, filename, newfilename)
 
-        elif not action in ['create', 'load', 'delete', 'delete_with_code']:
+        elif action not in ['create', 'load', 'delete', 'delete_with_code']:
             mylogic = self.logics.return_logic(name)
             if mylogic is None:
                 self.logger.info(f"Error: No loaded logic with name '{name}' found")

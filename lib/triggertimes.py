@@ -294,9 +294,11 @@ class TriggerTime():
     @staticmethod
     def get_next_in_sorted_list( entry, items, minentry, maxentry):
         newlist = sorted([i for i in items if i >= minentry and i <= maxentry])
-        if entry in newlist: return entry, True
+        if entry in newlist:
+            return entry, True
         result = [i for i in newlist if i > entry]
-        if len(result) == 0: return None, False
+        if len(result) == 0:
+            return None, False
         return min(result), False
 
 
@@ -395,7 +397,7 @@ class Crontab(TriggerTime):
             # find our how many parameters are given with this crontab and save them to the class variables
             try:
                 parameter_set = triggertime.strip().split()
-            except:
+            except Exception:
                 logger.error(f"crontab entry '{triggertime}' can not be split up into parts")
                 return False
 
@@ -439,7 +441,7 @@ class Crontab(TriggerTime):
             self.weekday_range = Crontab.integer_range(self.wday, 0, 6)
             self._is_valid = True
 
-        logger.debug(f'Leave Crontab.parse_triggertime()')
+        logger.debug('Leave Crontab.parse_triggertime()')
 
     def __str__(self):
         r = f"""{self._triggertime} is {'' if self._is_valid else 'not'} valid, parameter count {self.parameter_count}:
@@ -846,7 +848,7 @@ class Skytime(TriggerTime):
                 # find out how many parameters are given with this triggertime and save them to the class variables
                 try:
                     parameter_set = triggertime.strip().split()
-                except:
+                except Exception:
                     logger.error(f"skytime entry '{triggertime}' can not be split up into 1 or 4 parts")
                     return False
 
@@ -945,7 +947,7 @@ class Skytime(TriggerTime):
                                     logger.debug(f"get next eventtime for {self.event} with degree offset {self.doff}, minute offset {self.moff} beginning with {searchtime}")
                                     eventtime = mappings[self.event](self.doff, self.moff, dt=searchtime)
                                     logger.debug(f"eventtime found is {eventtime.astimezone(Skytime.sh.shtime.tzinfo())}")
-                                except:
+                                except Exception:
                                     eventtime = None
                                 if eventtime is None:
                                     eventtime = get_invalid_time()

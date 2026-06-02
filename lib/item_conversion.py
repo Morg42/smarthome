@@ -34,7 +34,7 @@ RUAMEL_YAML_INSTALLED = False
 try:
     import ruamel.yaml as yaml
     RUAMEL_YAML_INSTALLED = True
-except:
+except ImportError:
     print('ERROR: module ruamel.yaml not found')
     print('')
     print('Please install ruamel.yaml using the command:')
@@ -87,7 +87,7 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
     lastline_was_comment = False
     last_comment_nr = 0
 
-    if filename != None:
+    if filename is not None:
         print("- parsing '{}'".format(os.path.basename(filename)), end="")
         with open(filename, 'r', encoding='UTF-8') as f:
             lines = iter(f.readlines())
@@ -239,7 +239,7 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
                     try:
                         ivalue = int(svalue)
                         item[attr] = ivalue
-                    except:
+                    except ValueError:
                         item[attr] = svalue.replace('\t', ' ')
 
         return config
@@ -295,7 +295,7 @@ def yaml_save(filename, data):
     sdata = convert_yaml(data)
 
     print(", saving to '{}'".format(os.path.basename(filename)+'.yaml'))
-    if store_raw_output == True:
+    if store_raw_output:
         with open(filename+'_raw.yaml', 'w', encoding='UTF-8') as outfile:
             outfile.write( sdata )
 

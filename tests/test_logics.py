@@ -125,7 +125,6 @@ class TestLogics(unittest.TestCase):
         readback = self.logics.read_config_section('logic_up2')
         fnb = readback[0]
         ctb = readback[1]
-        wib = readback[2]
         self.assertEqual(fn,fnb)
         self.assertEqual(ct,ctb)
         # self.assertEqual(wi,wib)          # accept missing comments until new ruamel.yaml API is checked
@@ -141,7 +140,6 @@ class TestLogics(unittest.TestCase):
         readback = self.logics.read_config_section('logic_up2')
         fnb = readback[0]
         ctb = readback[1]
-        wib = readback[2]
         self.assertEqual(fn,fnb)
         self.assertEqual(ct,ctb)
         # self.assertEqual(wi,wib)          # accept missing comments until new ruamel.yaml API is checked

@@ -99,13 +99,12 @@ class ScenesController(RESTResource):
         """
         Handle GET requests for scenes API
         """
-        if self.items == None:
+        if self.items is None:
             self.items = Items.get_instance()
 
         from lib.scene import Scenes
         get_param_func = getattr(Scenes, "get_instance", None)
         if callable(get_param_func):
-            supported = True
             self.scenes = Scenes.get_instance()
             scene_list = []
             if self.scenes is not None:
@@ -138,8 +137,6 @@ class ScenesController(RESTResource):
                 self.logger.debug("scenes_html: disp_action_list for scene {} = {}".format(scene, disp_action_list))
 
                 disp_scene_list.append(scene_dict)
-        else:
-            supported = False
         return json.dumps(disp_scene_list)
 
     read.expose_resource = True

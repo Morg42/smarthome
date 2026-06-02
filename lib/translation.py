@@ -121,7 +121,7 @@ def load_translations(translation_type='global', from_dir='bin', translation_id=
     filename = os.path.join(_base_dir, relative_filename)
     trans_dict = shyaml.yaml_load(filename, ordered=False, ignore_notfound=True)
 
-    if trans_dict != None:
+    if trans_dict is not None:
         logger.info(f"load_translations: translation_id={translation_id} from {relative_filename}")
         if translation_type == 'global':
             for translation_section in trans_dict.keys():
@@ -159,7 +159,7 @@ def reload_translations():
         translation_type = _translation_files[id]['type']
         filename = _translation_files[id]['filename']
         trans_dict = shyaml.yaml_load(filename, ordered=False, ignore_notfound=True)
-        if trans_dict != None:
+        if trans_dict is not None:
             if translation_type == 'global':
                 for translation_section in trans_dict.keys():
                     if translation_section.endswith('_translations'):
@@ -185,8 +185,6 @@ def _get_translation(translation_lang, txt, plugin_translations=None, module_tra
     """
 
     translations = {}
-    translationtype_to_log = ''
-    translationinfo_to_log = ''
     if plugin_translations is not None:
         if plugin_translations in _translations.keys():
             translations = _translations[plugin_translations].get(txt, {})

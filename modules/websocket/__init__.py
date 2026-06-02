@@ -87,7 +87,7 @@ class Websocket(Module):
             self.use_tls = False
 
         if self.ip == '0.0.0.0':
-            self.logger.info(f"Listening on IP .: all local IPs")
+            self.logger.info("Listening on IP .: all local IPs")
         else:
             self.logger.info(f"Listening on IP .: {self.ip}")
         self.logger.info(f"port / tls_port .: {self.port} / {self.tls_port}")

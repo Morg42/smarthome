@@ -88,7 +88,7 @@ class Protocol():
             self.loop.create_task(self.update_visu(), name='update_visu')
             self.loop.create_task(self.update_all_series(), name='update_all_series')
 
-        self.logger.dbghigh(f"start_global_tasks: create_task(s) for update_visu() and update_all_series()")
+        self.logger.dbghigh("start_global_tasks: create_task(s) for update_visu() and update_all_series()")
         return
 
 
@@ -160,7 +160,7 @@ class Protocol():
         if self.update_visulog not in known_log_listeners:
             self._sh.add_event_listener(['log'], self.update_visulog)
         else:
-            self.logger.debug(f"self.update_visulog function already subscribed as event listener")
+            self.logger.debug("self.update_visulog function already subscribed as event listener")
 
         client_addr = self.client_address(websocket)
         client_ip = websocket.remote_address[0]
@@ -168,7 +168,7 @@ class Protocol():
         self.adm_clients[client_addr]['websocket'] = websocket
         try:
             self.adm_clients[client_addr]['hostname'] = socket.gethostbyaddr(client_ip)[0]
-        except:
+        except Exception:
             pass
         self.adm_clients[client_addr]['sw'] = ""
         self.logger.info(f"Client {self.build_log_info(client_addr)} started")
@@ -183,7 +183,6 @@ class Protocol():
             async for message in websocket:
                 data = json.loads(message)
                 command = data.get("cmd", '')
-                protocol = 'wss' if websocket.secure else 'ws '
                 # self.logger.warning("{} <CMD  : '{}'   -   from {}".format(protocol, data, client_addr))
                 self.logger.info(f"{self.build_log_info(client_addr)} sent '{data}'")
                 answer = {"error": "unhandled command"}
@@ -384,7 +383,7 @@ class Protocol():
                             item.add_method_trigger(self.update_visuitem)
                     else:
                         self.logger.error(f"prepare_monitor: No item '{path}' found (requested by client {self.build_log_info(client_addr)}")
-                except KeyError as e:
+                except KeyError:
                     self.logger.warning(f"KeyError: Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]} which can not be found")
                 else:
                     newmonitor_items.append(path)
@@ -395,9 +394,9 @@ class Protocol():
                     prop_attr = getattr(prop, path_parts[1])
                     items.append([path, prop_attr])
                     newmonitor_items.append(path)
-                except KeyError as e:
+                except KeyError:
                     self.logger.warning(f"Property KeyError: Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]} with property {path_parts[1]}")
-                except AttributeError as e:
+                except AttributeError:
                     self.logger.warning(f"Property AttributeError: Client {self.build_log_info(client_addr)} requested to monitor property {path_parts[1]} of item {path_parts[0]}")
 
             else:
@@ -534,18 +533,13 @@ class Protocol():
         while keep_running:
             remove = []
             series_list = list(self.adm_update_series.keys())
-            if series_list != []:
-                txt = ''
-                if self.adm_ser_upd_cycle > 0:
-                    txt = " - Fixed update-cycle time"
-                #self.logger.info("update_all_series: series_list={}{}".format(series_list, txt))
             for client_addr in series_list:
-                if (client_addr in self.adm_clients) and not (client_addr in remove):
+                if (client_addr in self.adm_clients) and client_addr not in remove:
                     self.logger.debug(f"update_all_series: Updating client {self.build_log_info(client_addr)}...")
                     websocket = self.adm_clients[client_addr]['websocket']
                     replys = await self.loop.run_in_executor(None, self.update_series, client_addr)
                     for reply in replys:
-                        if (client_addr in self.adm_clients) and not (client_addr in remove):
+                        if (client_addr in self.adm_clients) and client_addr not in remove:
                             self.logger.dbgmed(f"update_all_series: reply {reply}  -->  Replys for client {self.build_log_info(client_addr)}: {replys}")
                             try:
                                 await websocket.send(json.dumps(reply, default=self.json_serial))
@@ -724,7 +718,7 @@ class Protocol():
                     del (self.adm_update_series[client_addr])
                 self.logger.info(f"Series cancelation: Series updates for path {path} canceled")
                 answer = {'cmd': 'series_cancel', 'result': "Series updates for path {} canceled".format(path)}
-            except:
+            except Exception:
                 self.logger.warning(f"Series cancelation: No series for path {path} found in list")
                 answer = {'cmd': 'series_cancel', 'error': "No series for path {} found in list".format(path)}
         return answer
@@ -788,7 +782,7 @@ class Protocol():
 
                 try:
                     # self.logger.debug("Send update to Client {0} for candidate {1} and item_name {2}?".format(client_addr, candidate, item_name))
-                    self.logger.info(f"update_item:")
+                    self.logger.info("update_item:")
                     path_parts = candidate.split('.property.')
                     if path_parts[0] != item_name:
                         continue
@@ -820,7 +814,7 @@ class Protocol():
                         continue
 
                     self.logger.warning(f"Could not send update to Client {self.build_log_info(client_addr)}: something is wrong with item path {item_name}, value={item_value}, source={source}")
-                except:
+                except Exception:
                     pass
 
             if len(items):  # only send an update if item/value pairs found to be send
@@ -844,7 +838,7 @@ class Protocol():
         remove = []
         logs_list = list(self.adm_monitor_logs.keys())
         for client_addr in logs_list:
-            if (client_addr in self.adm_clients) and not (client_addr in remove):
+            if (client_addr in self.adm_clients) and client_addr not in remove:
                 websocket = self.adm_clients[client_addr]['websocket']
 
                 log_entry['cmd'] = 'log'

@@ -75,7 +75,7 @@ class SampleModule(Module):
             self._init_complete = False
             return
 
-        ip = Utils.get_local_ipv4_address()  # remove line if `ip` unused
+        ip = Utils.get_local_ipv4_address()  # noqa: F841  # sample code # remove line if `ip` unused
 
     def start(self):
         """

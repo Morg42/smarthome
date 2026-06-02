@@ -321,7 +321,7 @@ class Mqtt(Module):
         """
         try:
             return self.shtime.seconds_to_displaysting(int(self._broker['uptime']))
-        except:
+        except (ValueError, TypeError, ZeroDivisionError):
             return '-'
 
 
@@ -418,7 +418,7 @@ class Mqtt(Module):
             if not (isinstance(bool_values, list) and len(bool_values) == 2):
                 self.logger.warning("subscribe_topic: topic '{}', source '{}': Invalid bool_values specified ('{}') - Ignoring bool_values".format(topic, source, bool_values))
 
-        if not payload_type.lower() in ['str', 'num', 'bool', 'list', 'dict', 'scene', 'bytes', 'dict/str']:
+        if payload_type.lower() not in ['str', 'num', 'bool', 'list', 'dict', 'scene', 'bytes', 'dict/str']:
             self.logger.warning("Invalid payload-datatype '{}' specified for {} '{}', ignored".format(payload_type, source_type, callback))
             payload_type = 'str'
 
@@ -608,7 +608,7 @@ class Mqtt(Module):
         #qos = item.get('qos', None)
         #qos = self._subscribed_topics[topic]['qos']
         qos = None
-        if qos == None:
+        if qos is None:
             qos = self.qos
         return int(qos)
 
@@ -843,7 +843,7 @@ class Mqtt(Module):
             if bool_values:
                 try:
                     data = bool(bool_values.index(str_data.strip()))
-                except:
+                except ValueError:
                     data = Utils.to_bool(str_data, default=False)
             else:
                 data = Utils.to_bool(str_data, default=False)
@@ -877,7 +877,7 @@ class Mqtt(Module):
                     data = {}
                 else:
                     data = json.loads(str_data)
-            except Exception as e:
+            except Exception:
                 data = str_data
         else:
             self.logger.warning("cast_from_mqtt: Casting '{}' to '{}' is not implemented".format(raw_data, datatype))

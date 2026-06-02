@@ -211,7 +211,7 @@ class SmartPlugin(SmartObject, Utils):
         """
         pass
 
-    def deinit(self, items=[]) -> None:
+    def deinit(self, items: list | None = None) -> None:
         """
         This method "deinitializes" the plugin, i.e. prepares for unloading.
         The plugin is stopped and all (or all provided) items are un-registered.
@@ -226,6 +226,8 @@ class SmartPlugin(SmartObject, Utils):
         if self.alive:
             self.stop()
 
+        if items is None:
+            items = []
         if not items:
             items = self.get_item_list()
         elif not isinstance(items, list):
@@ -241,7 +243,7 @@ class SmartPlugin(SmartObject, Utils):
 #
 #
 
-    def add_item(self, item, config_data_dict: dict = {}, mapping=None, updating: bool = False) -> bool:
+    def add_item(self, item, config_data_dict: dict | None = None, mapping=None, updating: bool = False) -> bool:
         """
         For items that are used/handled by a plugin, this method stores the configuration information
         that is individual for the plugin. The configuration information is/has to be stored in a dictionary
@@ -274,6 +276,8 @@ class SmartPlugin(SmartObject, Utils):
         :return: True, if the information has been added
         :rtype: bool
         """
+        if config_data_dict is None:
+            config_data_dict = {}
         if item.property.path in self._plg_item_dict:
 
             # if called again (e.g. from lib/item/item.py) with updating == True,
@@ -1315,7 +1319,7 @@ class SmartPlugin(SmartObject, Utils):
         try:
             # try/except to handle running in a core version that does not support modules
             self.mod_http = Modules.get_instance().get_module('http')
-        except:
+        except Exception:
             self.mod_http = None
         if self.mod_http is None:
             self.logger.warning("Module 'http' not loaded. Not initializing the web interface for the plugin")
@@ -1373,7 +1377,7 @@ class SmartPluginWebIf():
         """
         try:
             from jinja2 import Environment, FileSystemLoader
-        except:
+        except Exception:
             pass
 
         mytemplates = self.plugin.path_join(self.webif_dir, 'templates')

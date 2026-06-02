@@ -108,7 +108,7 @@ class ItemData:
         wrk = wrk.replace('<', '&lt;')
         try:
             return str(ast.literal_eval(wrk))
-        except:
+        except Exception:
             self.logger.error(f"escape_complex_value: cannot handle value = '{wrk}'")
             return ''
 
@@ -332,7 +332,6 @@ class ItemData:
         if self.items is None:
             self.items = Items.get_instance()
         self.logger.info("item_change_value_html: item '{}' set to value '{}'".format(item_path, value))
-        item_data = []
         try:
             item = self.items.return_item(item_path)
         except Exception as e:
@@ -359,14 +358,14 @@ class ItemData:
             s = '-'
         return s
 
-    def list_to_displaystring(self, l):
+    def list_to_displaystring(self, lst):
         """
         """
-        if type(l) is str:
-            return l
+        if type(lst) is str:
+            return lst
 
         edit_string = ''
-        for entry in l:
+        for entry in lst:
             if edit_string != '':
                 edit_string += ' | '
             edit_string += str(entry)

@@ -69,7 +69,7 @@ def get_process_info(command, wait=True, append_error=False):
 
     if wait:
         ## Wait for date to terminate. Get return returncode ##
-        p_status = p.wait()
+        p.wait()
 
     return str(result, encoding='utf-8', errors='strict')
 
@@ -238,7 +238,7 @@ class SystemController(RESTResource):
         response['backup_stem'] = ''
         try:
             response['backup_stem'] = self._sh._backup_name_stem
-        except:
+        except Exception:
             pass
         response['last_backup'] = backup.get_lastbackuptime()
 
