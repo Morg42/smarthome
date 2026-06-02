@@ -68,6 +68,7 @@ requirements/conf_all.txt
 /custom_plugins
 /priv_tools
 /*.toml
+/.claude/
 
 # ./etc -- ignore everything
 /etc/
