@@ -98,6 +98,13 @@ class ServerController(RESTResource):
         http_user_dict = self.module.mod_http.get_user_dict()
         pw_hash = http_user_dict.get('admin', {}).get('password_hash') or ''
         response['login_required'] = pw_hash != ''
+        # Include websocket connection info so the frontend can set wsPort/wsHost
+        # during APP_INITIALIZER (getServerBasicinfo) rather than waiting for the
+        # later getServerinfo() call from TopNavigationComponent.  Without these
+        # fields the frontend starts routing with wsPort='' and WebSocket-dependent
+        # components (e.g. resource graphs) skip their connection on first load.
+        response['websocket_port'] = self.websocket_port
+        response['websocket_host'] = self.websocket_host
 
         return json.dumps(response)
 

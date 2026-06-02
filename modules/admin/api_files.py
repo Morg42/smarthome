@@ -191,12 +191,18 @@ class FilesController(RESTResource):
 
 
     def get_struct_config(self, fn):
-        """Serve a single struct file by base-name (without extension)."""
+        """Serve a single struct file by base-name (without extension).
+
+        If the file does not yet exist, return empty content without creating
+        the file. Creating an empty file on GET would block the startup migration
+        of etc/struct.yaml → structs/global_structs.yaml with a spurious warning.
+        """
         self.logger.info("FilesController.get_struct_config({})".format(fn))
         filepath = os.path.join(self.structs_dir, fn + '.yaml')
         if not os.path.isfile(filepath):
-            open(filepath, 'a', encoding='UTF-8').close()
-            self.logger.info("FilesController.get_struct_config(): created empty file {}".format(filepath))
+            cherrypy.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+            cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{fn}.yaml"'
+            return b''
         return cherrypy.lib.static.serve_file(filepath, 'application/x-download',
                                               'attachment', fn + '.yaml')
 
