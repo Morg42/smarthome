@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 420" font-family="Helvetica, Arial, sans-serif">
+  <rect width="680" height="420" fill="#f9f9f9"/>
+
+  <text x="340" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">Database Schema</text>
+
+  <!-- ── {item} table ── -->
+  <rect x="60" y="50" width="220" height="290" rx="6" fill="#fff" stroke="#4a86e8" stroke-width="2"/>
+  <!-- header -->
+  <rect x="60" y="50" width="220" height="36" rx="6" fill="#4a86e8"/>
+  <rect x="60" y="70" width="220" height="16" fill="#4a86e8"/>
+  <text x="170" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">{prefix}item</text>
+  <text x="170" y="88" text-anchor="middle" font-size="9" fill="#cce" font-style="italic">latest-value snapshot</text>
+
+  <!-- column rows -->
+  <line x1="60" y1="96" x2="280" y2="96" stroke="#dde" stroke-width="1"/>
+  <!-- id PK -->
+  <rect x="60" y="96" width="220" height="28" fill="#edf3ff"/>
+  <text x="80" y="115" font-size="10" font-weight="bold" fill="#2a5db0">id</text>
+  <text x="170" y="115" text-anchor="middle" font-size="10" fill="#555">INTEGER  PK  AUTO</text>
+
+  <line x1="60" y1="124" x2="280" y2="124" stroke="#eee" stroke-width="1"/>
+  <text x="80" y="143" font-size="10" fill="#333">name</text>
+  <text x="170" y="143" text-anchor="middle" font-size="10" fill="#555">VARCHAR(255)</text>
+
+  <line x1="60" y1="152" x2="280" y2="152" stroke="#eee" stroke-width="1"/>
+  <text x="80" y="171" font-size="10" fill="#333">time</text>
+  <text x="170" y="171" text-anchor="middle" font-size="10" fill="#555">BIGINT  (ms epoch)</text>
+
+  <line x1="60" y1="180" x2="280" y2="180" stroke="#eee" stroke-width="1"/>
+  <text x="80" y="199" font-size="10" fill="#333">val_str</text>
+  <text x="170" y="199" text-anchor="middle" font-size="10" fill="#555">TEXT  nullable</text>
+
+  <line x1="60" y1="208" x2="280" y2="208" stroke="#eee" stroke-width="1"/>
+  <text x="80" y="227" font-size="10" fill="#333">val_num</text>
+  <text x="170" y="227" text-anchor="middle" font-size="10" fill="#555">REAL  nullable</text>
+
+  <line x1="60" y1="236" x2="280" y2="236" stroke="#eee" stroke-width="1"/>
+  <text x="80" y="255" font-size="10" fill="#333">val_bool</text>
+  <text x="170" y="255" text-anchor="middle" font-size="10" fill="#555">BOOLEAN  nullable</text>
+
+  <line x1="60" y1="264" x2="280" y2="264" stroke="#eee" stroke-width="1"/>
+  <text x="80" y="283" font-size="10" fill="#333">changed</text>
+  <text x="170" y="283" text-anchor="middle" font-size="10" fill="#555">BIGINT  (ms epoch)</text>
+
+  <!-- indexes note -->
+  <line x1="60" y1="296" x2="280" y2="296" stroke="#dde" stroke-width="1"/>
+  <text x="170" y="313" text-anchor="middle" font-size="9" fill="#888">UNIQUE INDEX (id)</text>
+  <text x="170" y="328" text-anchor="middle" font-size="9" fill="#888">INDEX (name)</text>
+
+  <!-- ── {log} table ── -->
+  <rect x="400" y="50" width="240" height="340" rx="6" fill="#fff" stroke="#34a853" stroke-width="2"/>
+  <!-- header -->
+  <rect x="400" y="50" width="240" height="36" rx="6" fill="#34a853"/>
+  <rect x="400" y="70" width="240" height="16" fill="#34a853"/>
+  <text x="520" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">{prefix}log</text>
+  <text x="520" y="88" text-anchor="middle" font-size="9" fill="#cec" font-style="italic">historical log</text>
+
+  <!-- columns -->
+  <line x1="400" y1="96" x2="640" y2="96" stroke="#dde" stroke-width="1"/>
+  <rect x="400" y="96" width="240" height="28" fill="#edfff0"/>
+  <text x="420" y="115" font-size="10" font-weight="bold" fill="#1e7e34">item_id</text>
+  <text x="530" y="115" text-anchor="middle" font-size="10" fill="#555">INTEGER  FK → item.id</text>
+
+  <line x1="400" y1="124" x2="640" y2="124" stroke="#eee" stroke-width="1"/>
+  <text x="420" y="143" font-size="10" fill="#333">time</text>
+  <text x="530" y="143" text-anchor="middle" font-size="10" fill="#555">BIGINT  (ms epoch)</text>
+
+  <line x1="400" y1="152" x2="640" y2="152" stroke="#eee" stroke-width="1"/>
+  <text x="420" y="171" font-size="10" fill="#333">duration</text>
+  <text x="530" y="171" text-anchor="middle" font-size="10" fill="#555">BIGINT  (ms active)</text>
+
+  <line x1="400" y1="180" x2="640" y2="180" stroke="#eee" stroke-width="1"/>
+  <text x="420" y="199" font-size="10" fill="#333">val_str</text>
+  <text x="530" y="199" text-anchor="middle" font-size="10" fill="#555">TEXT  nullable</text>
+
+  <line x1="400" y1="208" x2="640" y2="208" stroke="#eee" stroke-width="1"/>
+  <text x="420" y="227" font-size="10" fill="#333">val_num</text>
+  <text x="530" y="227" text-anchor="middle" font-size="10" fill="#555">REAL  nullable</text>
+
+  <line x1="400" y1="236" x2="640" y2="236" stroke="#eee" stroke-width="1"/>
+  <text x="420" y="255" font-size="10" fill="#333">val_bool</text>
+  <text x="530" y="255" text-anchor="middle" font-size="10" fill="#555">BOOLEAN  nullable</text>
+
+  <line x1="400" y1="264" x2="640" y2="264" stroke="#eee" stroke-width="1"/>
+  <text x="420" y="283" font-size="10" fill="#333">changed</text>
+  <text x="530" y="283" text-anchor="middle" font-size="10" fill="#555">BIGINT  (ms epoch)</text>
+
+  <line x1="400" y1="292" x2="640" y2="292" stroke="#eee" stroke-width="1"/>
+  <!-- val_quality — highlighted as new -->
+  <rect x="400" y="292" width="240" height="28" fill="#fff3cd"/>
+  <text x="420" y="311" font-size="10" font-weight="bold" fill="#9c6e00">val_quality</text>
+  <text x="530" y="311" text-anchor="middle" font-size="10" fill="#555">TINYINT  DEFAULT 0  ★ new</text>
+
+  <!-- indexes note -->
+  <line x1="400" y1="320" x2="640" y2="320" stroke="#dde" stroke-width="1"/>
+  <text x="520" y="338" text-anchor="middle" font-size="9" fill="#888">UNIQUE INDEX (item_id, time)</text>
+  <text x="520" y="353" text-anchor="middle" font-size="9" fill="#888">INDEX (item_id, changed)</text>
+
+  <!-- FK relationship arrow -->
+  <defs>
+    <marker id="fk" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto">
+      <path d="M8,0 L0,4 L8,8" fill="none" stroke="#999" stroke-width="1.2"/>
+    </marker>
+  </defs>
+  <path d="M400,110 Q340,110 340,140 Q340,165 280,165" fill="none" stroke="#999" stroke-width="1.3" stroke-dasharray="4,2" marker-end="url(#fk)"/>
+  <text x="330" y="105" text-anchor="middle" font-size="9" fill="#999">FK</text>
+
+  <!-- val_quality legend -->
+  <rect x="60" y="380" width="560" height="30" rx="4" fill="#fff3cd" stroke="#f9ab00" stroke-width="1"/>
+  <text x="340" y="400" text-anchor="middle" font-size="10" fill="#9c6e00">★  val_quality: 0 = valid measurement (default, all legacy rows)  ·  1 = no-data gap (excluded from aggregations)</text>
+</svg>
