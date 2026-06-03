@@ -4,11 +4,12 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>onewire &mdash; Dokumentation v1.10.0 v1.10.0 (Stand 19. Januar 2024) Dokumentation</title>
+  <title>onewire &mdash; Dokumentation v1.12.0 v1.12.0 (Stand 09. Mai 2026) Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/treeview.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
 
   
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
@@ -23,10 +24,12 @@
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
         <script src="../../_static/translations.js"></script>
+        <script src="../../_static/treeview.js"></script>
+        <script src="../../_static/design-tabs.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="../../genindex.html" />
     <link rel="search" title="Suche" href="../../search.html" />
-    <link rel="next" title="raumfeld_ng" href="../raumfeld_ng/user_doc.html" />
+    <link rel="next" title="panasonic_ac" href="../panasonic_ac/user_doc.html" />
     <link rel="prev" title="mpd" href="../mpd/user_doc.html" /> 
 </head>
 
@@ -39,7 +42,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Dokumentation v1.10.0
+            Dokumentation v1.12.0
               <img src="../../_static/logo_long_inverse3.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -52,9 +55,17 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../einleitung.html">Einleitung</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.10</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../was_ist_neu.html#neuerungen-bei-plugins">Neuerungen bei Plugins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../was_ist_neu.html#tipps-tricks">Tipps &amp; Tricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../was_war_neu.html">Neuerungen der letzten Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-11">Neuerungen im Release v1.11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-10">Neuerungen im Release v1.10</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../was_war_neu.html#neuerungen-bei-plugins">Neuerungen bei Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../was_war_neu.html#neuerungen-fur-plugin-entwickler">Neuerungen für Plugin Entwickler</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../was_war_neu.html#tipps-tricks">Tipps &amp; Tricks</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a><ul>
@@ -79,47 +90,47 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html">SmartHomeNG installieren</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#zusatzliche-linux-pakete-installieren">zusätzliche Linux Pakete installieren</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#smarthomeng-quellcode-laden">SmartHomeNG Quellcode laden</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#weitere-python-bibliotheken-installieren">Weitere Python Bibliotheken installieren</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#erstmaliger-start-von-smarthomeng">Erstmaliger Start von SmartHomeNG</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#smarthomeng-starten">SmartHomeNG starten</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#uberprufen-ob-smarthomeng-lauft">Überprüfen, ob SmartHomeNG läuft</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#initiale-konfiguration-per-gui">Initiale Konfiguration per GUI</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#smarthomeng-konfigurieren">SmartHomeNG konfigurieren</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#erstmalige-konfiguration-per-kommandozeile-fur-fortgeschrittene">Erstmalige Konfiguration per Kommandozeile (für Fortgeschrittene)</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#smarthome-yaml">smarthome.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#logging-yaml">logging.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#logic-yaml">logic.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#module-yaml">module.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#id1">SmartHomeNG starten</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smarthomeng.html#admin-interface">Admin Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html">smartVISU installieren</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html#webserver-und-zusatzliche-pakete-installieren">Webserver und zusätzliche Pakete installieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html#smartvisu-quellcode-laden">SmartVISU Quellcode laden</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html#zugriff-auf-die-smartvisu-testen">Zugriff auf die SmartVISU testen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html#eigene-visu-seiten-anlegen">Eigene Visu Seiten anlegen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html#smartvisu-kurzanleitung">SmartVISU Kurzanleitung</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html#smarthomeng-plugin-visu-smartvisu">SmartHomeNG Plugin <strong>visu_smartvisu</strong></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/02_smartvisu.html#mischung-von-generierten-und-manuell-erstellten-seiten">Mischung von generierten und manuell erstellten Seiten</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/03_mosquitto.html">MQTT Broker installieren</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_mosquitto.html#mosquitto-installieren">Mosquitto installieren</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_mosquitto.html#mosquitto-als-service-einrichten">Mosquitto als Service einrichten</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_mosquitto.html#mosquitto-konfigurieren">Mosquitto konfigurieren</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html">SmartHomeNG installieren</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#zusatzliche-linux-pakete-installieren">zusätzliche Linux Pakete installieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#smarthomeng-quellcode-laden">SmartHomeNG Quellcode laden</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#weitere-python-bibliotheken-installieren">Weitere Python Bibliotheken installieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#erstmaliger-start-von-smarthomeng">Erstmaliger Start von SmartHomeNG</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#smarthomeng-starten">SmartHomeNG starten</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#uberprufen-ob-smarthomeng-lauft">Überprüfen, ob SmartHomeNG läuft</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html">smartVISU installieren</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html#zusatzliche-pakete-installieren">zusätzliche Pakete installieren</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html#smartvisu-quellcode-laden">SmartVISU Quellcode laden</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html#zugriff-auf-die-smartvisu-testen">Zugriff auf die SmartVISU testen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html#eigene-visu-seiten-anlegen">Eigene Visu Seiten anlegen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html#nachinstallation-der-kurzanleitung">Nachinstallation der Kurzanleitung</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html#smarthomeng-plugin-visu-smartvisu">SmartHomeNG Plugin <strong>visu_smartvisu</strong></a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/04_smartvisu.html#mischung-von-generierten-und-manuell-erstellten-seiten">Mischung von generierten und manuell erstellten Seiten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#initiale-konfiguration-per-gui">Initiale Konfiguration per GUI</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#smarthomeng-konfigurieren">SmartHomeNG konfigurieren</a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#erstmalige-konfiguration-per-kommandozeile-fur-fortgeschrittene">Erstmalige Konfiguration per Kommandozeile (für Fortgeschrittene)</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#smarthome-yaml">smarthome.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#logging-yaml">logging.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#plugin-yaml">plugin.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#logic-yaml">logic.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#module-yaml">module.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#id1">SmartHomeNG starten</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/03_smarthomeng.html#admin-interface">Admin Interface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/04_mosquitto.html">MQTT Broker installieren</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_mosquitto.html#mosquitto-installieren">Mosquitto installieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_mosquitto.html#mosquitto-als-service-einrichten">Mosquitto als Service einrichten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/04_mosquitto.html#mosquitto-konfigurieren">Mosquitto konfigurieren</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/05_knxd.html">knxd installieren</a><ul>
@@ -143,8 +154,24 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/08_shng_daemon.html">SmartHomeNG als Dienst <span class="bluesup">update</span></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/08_shng_daemon.html#einrechten-des-dienstes">Einrechten des Dienstes</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/08_shng_daemon.html#nutzung-eines-virtuellen-environments-neu">Nutzung eines virtuellen Environments <span class="redsup">neu</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/08_shng_daemon.html#nutzung-eines-virtuellen-environments">Nutzung eines virtuellen Environments</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/08_shng_daemon.html#starten-des-dienstes">Starten des Dienstes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/09_node_js.html">Node.js <span class="redsup">new</span></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/09_node_js.html#node-js-installation">Node.js Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/09_node_js.html#zigbee2mqtt-gateway-installieren">Zigbee2MQTT Gateway installieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/09_node_js.html#mobilealerts-proxy-installieren">MobileAlerts Proxy installieren</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/09_node_js.html#mobilealerts-proxy-konfigurieren">MobileAlerts Proxy konfigurieren</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/komplettanleitung/09_node_js.html#mobilealerts-proxy-als-dienst-einrichten">MobileAlerts Proxy als Dienst einrichten</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/komplettanleitung/10_esphome.html">ESPHome Dashboard <span class="redsup">new</span></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/10_esphome.html#esphome-dashboard-starten-und-testen">ESPHome Dashboard starten und testen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/10_esphome.html#esphome-dashboard-als-dienst-einrichten">ESPHome Dashboard als Dienst einrichten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../installation/komplettanleitung/10_esphome.html#starten-des-dienstes">Starten des Dienstes</a></li>
 </ul>
 </li>
 </ul>
@@ -167,8 +194,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../installation/update_upgrade.html#upgrade-von-smarthome-py">Upgrade von Smarthome.py</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../installation/update_upgrade.html#id1">Vorgehensweise</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../installation/update_upgrade.html#plugins">Plugins</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/update_upgrade.html#items">Items</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../installation/update_upgrade.html#logiken">Logiken</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../installation/update_upgrade.html#konfiguration">Konfiguration</a></li>
 </ul>
 </li>
 </ul>
@@ -181,15 +207,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../konfiguration/konfiguration.html">Konfiguration <span class="greensup">Update</span></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html">Allgemeines zur Konfiguration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#verzeichnisse-in-smarthomeng">Verzeichnisse in SmartHomeNG</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#dateien-im-verzeichnis-etc">Dateien im Verzeichnis <em>../etc</em></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#dateien-im-verzeichnis-etc">Dateien im Verzeichnis <code class="docutils literal notranslate"><span class="pre">etc</span></code></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#smarthome-yaml">smarthome.yaml</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#plugin-yaml">plugin.yaml</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#logic-yaml">logic.yaml</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#weitere-dateien">Weitere Dateien</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#dateien-im-verzeichnis-functions">Dateien im Verzeichnis <em>../functions</em></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#dateien-im-verzeichnis-items">Dateien im Verzeichnis <em>../items</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#dateien-im-verzeichnis-etc-functions">Dateien im Verzeichnis <code class="docutils literal notranslate"><span class="pre">etc/functions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfiguration_ueberblick.html#dateien-im-verzeichnis-etc-items">Dateien im Verzeichnis <code class="docutils literal notranslate"><span class="pre">etc/items</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -213,16 +239,14 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html">Konfiguration über Dateien</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnisse">Verzeichnisse</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-etc">Verzeichnis <em>../etc</em></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-items">Verzeichnis <em>../items</em></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-logics">Verzeichnis <em>../logics</em></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-scenes">Verzeichnis <em>../scenes</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-etc">Verzeichnis <em>etc</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-etc-items">Verzeichnis <em>etc/items</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-etc-logics">Verzeichnis <em>etc/logics</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#verzeichnis-etc-scenes">Verzeichnis <em>etc/scenes</em></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#aufbau-der-konfigurationsdateien">Aufbau der Konfigurationsdateien</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#neues-dateiformat-yaml-dateien">Neues Dateiformat - .yaml Dateien</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#vorteile-von-yaml">Vorteile von YAML</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#altes-dateiformat-conf-dateien">Altes Dateiformat - .conf Dateien</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#formate-von-values-in-yaml-dateien">Formate von Values in YAML Dateien</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/konfigdateien.html#yaml-syntax">YAML Syntax</a><ul>
@@ -245,9 +269,9 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/logic.html">logic.yaml</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/logging.html">logging.yaml</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/struct.html">struct.yaml und struct_*.yaml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/struct.html">global_struct.yaml</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/items.html">items/*.yaml</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/items.html#item-definitionen-im-verzeichnis-items">Item Definitionen im Verzeichnis <strong>../items</strong></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/items.html#item-definitionen-im-verzeichnis-etc-items">Item Definitionen im Verzeichnis <code class="docutils literal notranslate"><span class="pre">etc/items</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/logics.html">logics/*.py</a><ul>
@@ -255,7 +279,7 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/scenes.html">scenes/*.yaml</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/scenes.html#szenen-definitionen-im-verzeichnis-scenes">Szenen Definitionen im Verzeichnis <strong>../scenes</strong></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/konfigurationsdateien/scenes.html#szenen-definitionen-im-verzeichnis-etc-scenes">Szenen Definitionen im Verzeichnis <code class="docutils literal notranslate"><span class="pre">etc/scenes</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -274,8 +298,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/standard_attribute/standard_attribute.html">Standard Attribute <span class="bluesup">Update</span></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/autotimer.html"><em>autotimer</em></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/crontab.html">crontab <span class="bluesup">Update</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/autotimer.html">autotimer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/crontab.html">crontab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/cycle.html">cycle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/enforce_updates.html">enforce_updates</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/enforce_change.html">enforce_change</a></li>
@@ -285,12 +309,13 @@
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/eval.html#attribut-eval-on-trigger-only">Attribut <em>eval_on_trigger_only</em></a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html">Hysterese</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html">Hysterese <span class="bluesup">Update</span></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#hysteresis-input"><cite>hysteresis_input</cite></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#hysteresis-upper-threshold"><cite>hysteresis_upper_threshold</cite></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#hysteresis-lower-threshold"><cite>hysteresis_lower_threshold</cite></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#beispiele">Beispiele</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#initialisierung-eines-hysterese-items">Initialisierung eines Hysterese Items</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#zusatzliche-statusinformationen">zusätzliche Statusinformationen</a></li>
 </ul>
 </li>
@@ -308,11 +333,11 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/struct.html">struct</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/type.html"><cite>type</cite></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/type.html"><cite>type</cite> <span class="bluesup">Update</span></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/item_zugriff.html">Zugriff auf die Werte von Items</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#lesen-einer-item-wertes">Lesen einer Item Wertes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#lesen-eines-item-wertes">Lesen eines Item Wertes</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#zugriff-auf-ein-listen-element-neu">Zugriff auf ein Listen-Element <span class="redsup">neu</span></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#zugriff-auf-ein-dict-element-neu">Zugriff auf ein Dict-Element <span class="redsup">neu</span></a></li>
 </ul>
@@ -323,12 +348,17 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#weitere-parameter-item-zugriff">Weitere Parameter Item Zugriff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#erweiterter-zugriff-auf-list-und-dict-items-neu">Erweiterter Zugriff auf List- und Dict-Items <span class="redsup">neu</span></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#list-items">List-Items</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#dict-items">Dict-Items</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/plugin_attribute.html">Plugin-spezifische Attribute</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#vererbung-von-attributen-update">Vererbung von Attributen <span class="bluesup">update</span></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#zugriff-auf-attribute-anderer-items-update">Zugriff auf Attribute anderer Items <span class="bluesup">update</span></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#platzhalter-in-attributwerten-neu">Platzhalter in Attributwerten <span class="redsup">neu</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#zugriff-auf-attribute-anderer-items">Zugriff auf Attribute anderer Items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#platzhalter-in-attributwerten">Platzhalter in Attributwerten</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/attributes_relative_referenzen.html">Relative Item Referenzen</a><ul>
@@ -348,8 +378,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../konfiguration/item_structs.html">structs (Item Strukturen)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#uberblick">Überblick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../konfiguration/item_structs.html">structs (Item Strukturen) <span class="greensup">Update</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#uberblick-update">Überblick <span class="greensup">Update</span></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/item_structs.html#vererbte-attribute-new">Vererbte Attribute <span class="redsup">new</span></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#struct-templates-in-plugins">struct-Templates in Plugins</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/item_structs.html#anwendung">Anwendung</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/item_structs.html#multi-instance-unterstutzung">Multi-Instance Unterstützung</a></li>
@@ -373,29 +406,28 @@
 <li class="toctree-l2"><a class="reference internal" href="../../konfiguration/module/module.html">Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/module/module_http.html">Module http</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/module/module_http.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_http.html#datei-etc-module-yaml">Datei <em>../etc/module.yaml</em></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_http.html#datei-etc-module-yaml">Datei <em>etc/module.yaml</em></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/module/module_websocket.html">Module websocket <span class="redsup">Neu</span></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../konfiguration/module/module_websocket.html#anforderungen">Anforderungen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/module/module_websocket.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_websocket.html#datei-etc-module-yaml">Datei <em>../etc/module.yaml</em></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_websocket.html#datei-etc-module-yaml">Datei <em>etc/module.yaml</em></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/module/module_admin.html">Module admin</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/module/module_admin.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_admin.html#datei-etc-module-yaml">Datei <em>../etc/module.yaml</em></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_admin.html#datei-etc-module-yaml">Datei <em>etc/module.yaml</em></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/module/module_mqtt.html">Module mqtt</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../konfiguration/module/module_mqtt.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_mqtt.html#datei-etc-module-yaml">Datei <em>../etc/module.yaml</em></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../konfiguration/module/module_mqtt.html#datei-etc-module-yaml">Datei <em>etc/module.yaml</em></a></li>
 </ul>
 </li>
 </ul>
@@ -477,19 +509,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../database/user_doc.html#datenbankfunktionen-fur-einzelauswertungen">Datenbankfunktionen für Einzelauswertungen</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../datalog/user_doc.html">datalog</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../datalog/user_doc.html#ersatz-durch-bordmittel">Ersatz durch Bordmittel</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../datalog/user_doc.html#beispiel">Beispiel</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../datalog/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../datalog/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../datalog/user_doc.html#items-yaml">items.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../datalog/user_doc.html#web-interface">Web Interface</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../db_addon/user_doc.html">db_addon</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../db_addon/user_doc.html#anforderungen">Anforderungen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../db_addon/user_doc.html#hinweise">Hinweise</a><ul>
@@ -519,7 +538,7 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../db_addon/user_doc.html#erlauterungen-zu-temperatursummen">Erläuterungen zu Temperatursummen</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#grunlandtemperatursumme">Grünlandtemperatursumme</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#wachstumsgradtag">Wachstumsgradtag</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#wachstumsgradtage">Wachstumsgradtage</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#warmesumme">Wärmesumme</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#kaltesumme">Kältesumme</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#tagesmitteltemperatur">Tagesmitteltemperatur</a></li>
@@ -535,6 +554,15 @@
 <li class="toctree-l5"><a class="reference internal" href="../executor/user_doc.html#beispiel-python-code">Beispiel Python Code</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../githubplugin/user_doc.html">githubplugin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../githubplugin/user_doc.html#beschreibung">Beschreibung</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../githubplugin/user_doc.html#anforderungen">Anforderungen</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../githubplugin/user_doc.html#notwendige-software">Notwendige Software</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../githubplugin/user_doc.html#konfiguration">Konfiguration</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../influxdb/user_doc.html">influxdb</a><ul>
@@ -565,52 +593,13 @@
 <li class="toctree-l4"><a class="reference internal" href="../influxdb2/user_doc.html#web-interface">Web Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../memlog/user_doc.html">memlog</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#ersatz-durch-bordmittel">Ersatz durch Bordmittel</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#beispiel-logik">Beispiel Logik</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#beispiel-item">Beispiel Item</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#logic-yaml">logic.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#einsatz-in-logiken">Einsatz in Logiken</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#funktionsaufruf">Funktionsaufruf</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#beispiel">Beispiel</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#web-interface">Web Interface</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../operationlog/user_doc.html">operationlog</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#ersatz-durch-bordmittel">Ersatz durch Bordmittel</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#beispiel-logik">Beispiel Logik</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#beispiel-item">Beispiel Item</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#logics-yaml">logics.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#funktionen">Funktionen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#web-interface">Web Interface</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../rrd/user_doc.html">rrd</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../rrd/user_doc.html#anforderungen">Anforderungen</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#notwendige-software">Notwendige Software</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#vergleich-zwischen-datenbank-plugin-und-rrdtool">Vergleich zwischen Datenbank-Plugin und rrdtool:</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#vergleich-zwischen-datenbank-plugin-influxdb-und-rrdtool">Vergleich zwischen Datenbank-Plugin, InfluxDB und rrdtool:</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../rrd/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#logic-yaml">logic.yaml</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#funktionen">Funktionen</a></li>
 </ul>
 </li>
@@ -758,6 +747,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#neukonfiguration-der-hierarchie">Neukonfiguration der Hierarchie</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#auflosen-von-zustanden">Auflösen von Zuständen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#zustandsnamen">Zustandsnamen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#ignorieren-von-bedingungen">Ignorieren von Bedingungen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#cli">CLI</a></li>
 </ul>
 </li>
@@ -804,6 +794,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../uzsu/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../uzsu/user_doc.html#smartvisu">SmartVISU</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#standard-einstellungen">Standard Einstellungen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#einmal-schaltung">Einmal-Schaltung</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#experteneinstellungen">Experteneinstellungen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#zeitserie">Zeitserie</a></li>
 </ul>
@@ -813,30 +804,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../uzsu/user_doc.html#web-interface">Web Interface</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../uzsu/user_doc.html#beispiel">Beispiel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../uzsu/user_doc.html#datenformat">Datenformat</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../visu_smartvisu/user_doc.html">visu_smartvisu</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../visu_smartvisu/user_doc.html#mischung-von-generierten-und-manuell-erstellten-seiten">Mischung von generierten und manuell erstellten Seiten</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../visu_smartvisu/user_doc.html#empfohlenes-vorgehen-fur-manuell-erstellte-seiten">Empfohlenes Vorgehen für manuell erstellte Seiten</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../visu_smartvisu/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_smartvisu/user_doc.html#weiterfuhrende-informationen">Weiterführende Informationen</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../visu_websocket/user_doc.html">visu_websocket</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../visu_websocket/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../visu_websocket/user_doc.html#web-interface">Web Interface</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#beispiele">Beispiele</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../visu_websocket/user_doc.html#informationen-fur-entwickler">Informationen für Entwickler</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#websocket-interface">WebSocket Interface</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#requests-sent-from-the-visu-to-smarthomeng">Requests sent from the Visu to SmartHomeNG</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#requests-sent-from-smarthomeng-to-the-visu">Requests sent from SmartHomeNG to the Visu</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -961,6 +928,21 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../hue3/user_doc.html">hue3</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../hue3/user_doc.html#plugin-instanz-hinzufugen">Plugin Instanz hinzufügen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hue3/user_doc.html#konfiguration">Konfiguration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#bridge-verbinden">Bridge verbinden</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#verwendung-von-structs">Verwendung von structs</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#item-attribute">Item Attribute</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../hue3/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#beispiele">Beispiele</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../knx/user_doc.html">knx</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../knx/user_doc.html#konfiguration">Konfiguration</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../knx/user_doc.html#plugin-yaml">plugin.yaml</a></li>
@@ -1037,6 +1019,24 @@
 <li class="toctree-l4"><a class="reference internal" href="#web-interface">Web Interface</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#tab-1-items">Tab 1: Items</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#tab-2-1-wire-busse">Tab 2: 1-Wire Busse</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../panasonic_ac/user_doc.html">panasonic_ac</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#anforderungen">Anforderungen</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#notwendige-software">Notwendige Software</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#plugin-instanz-hinzufugen">Plugin Instanz hinzufügen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#konfiguration">Konfiguration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#verwendung-von-structs">Verwendung von structs</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#item-attribute">Item Attribute</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#beispiele">Beispiele</a></li>
 </ul>
 </li>
 </ul>
@@ -1272,7 +1272,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../vicare/user_doc.html#supported-hardware">Supported Hardware</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../vicare/user_doc.html#web-interface">Web Interface</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#beispiele">Beispiele</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#id1">Allgemein</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#reiter">Reiter</a></li>
 </ul>
 </li>
 </ul>
@@ -1325,26 +1326,6 @@
 <li class="toctree-l5"><a class="reference internal" href="../asterisk/user_doc.html#funktionen">Funktionen</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../avdevice/user_doc.html">avdevice</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#items">Items</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-instanz-funktion">avdevice_zone[0-4]&#64;[Instanz]: [Funktion]</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-speakers-instanz-funktion">avdevice_zone[0-4]_speakers&#64;[Instanz]: [Funktion]</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-depend-instanz-funktion">avdevice_zone[0-4]_depend&#64;[Instanz]: [Funktion]</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-init-instanz-funktion">avdevice_zone[0-4]_init&#64;[Instanz]: [Funktion]</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#kommandos">Kommandos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#struct-vorlagen">Struct Vorlagen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#ubersetzungen">Übersetzungen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#wildcards">Wildcards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#web-interface">Web Interface</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#fehlerbehebung">Fehlerbehebung</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../avm/user_doc.html">avm</a><ul>
@@ -1405,20 +1386,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#vorgehen-bei-funktionserweiterung-des-plugins-bzw-erganzung-weiterer-werte-fur-itemattribut-avm-data-type">Vorgehen bei Funktionserweiterung des Plugins bzw. Ergänzung weiterer Werte für Itemattribut <cite>avm_data_type</cite></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../avm_smarthome/user_doc.html">avm_smarthome</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#reguirements">Reguirements</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#historie">Historie</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#web-interface-des-plugins">Web Interface des Plugins</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#items">Items</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#devices">Devices</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#thermostat">Thermostat</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#relais">Relais</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#alarm">Alarm</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../byd_bat/user_doc.html">byd_bat</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../byd_bat/user_doc.html#anforderungen">Anforderungen</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../byd_bat/user_doc.html#notwendige-software">Notwendige Software</a></li>
@@ -1428,6 +1395,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../byd_bat/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../byd_bat/user_doc.html#web-interface">Web Interface</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../byd_bat/user_doc.html#beispiele">Beispiele</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../casambi_bt/user_doc.html">casambi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#konfiguration">Konfiguration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#gateway-hardware">Gateway Hardware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#anforderungen">Anforderungen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#beispiele">Beispiele</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../casambi_bt/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../casambi_bt/user_doc.html#id1">Beispiele</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#changelog">Changelog</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../denon/user_doc.html">denon</a><ul>
@@ -1484,24 +1464,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../helios_tcp/user_doc.html#einrichtung">Einrichtung</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../helios_tcp/user_doc.html#verknupfung-von-items">Verknüpfung von Items</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../helios_tcp/user_doc.html#variablen">Variablen</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../husky/user_doc.html">husky</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#anforderungen">Anforderungen</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#notwendige-software">Notwendige Software</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#unterstutzte-gerate">Unterstützte Geräte</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#logic-yaml">logic.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#funktionen">Funktionen</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#beispiele">Beispiele</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#web-interface">Web Interface</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#credits">Credits</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../husky2/user_doc.html">husky2</a><ul>
@@ -1614,6 +1576,12 @@
 <li class="toctree-l4"><a class="reference internal" href="../pioneer/user_doc.html#web-interface">Web Interface</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../piusv/user_doc.html">piusv</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../piusv/user_doc.html#unterstutzte-gerate">Unterstützte Geräte</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../piusv/user_doc.html#konfiguration">Konfiguration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../piusv/user_doc.html#web-interface">Web Interface</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../pluggit/user_doc.html">pluggit</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../pluggit/user_doc.html#einfuhrung">Einführung</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pluggit/user_doc.html#vorteile-gegenuber-der-plugin-version-v1-2-3">Vorteile gegenüber der Plugin Version v1.2.3</a></li>
@@ -1662,8 +1630,32 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../sma_mb/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#items-yaml">items.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#beispiele-fur-die-plugin-yaml">Beispiele für die plugin.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#beispiel-fur-items-yaml">Beispiel für items.yaml</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../smartmeter/user_doc.html">smartmeter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#anforderungen">Anforderungen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#unterstutzte-hardware">Unterstützte Hardware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#konfiguration">Konfiguration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#beispiele-fur-die-plugin-yaml">Beispiele für die plugin.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#einrichtungsverfahren">Einrichtungsverfahren:</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#optional">Optional</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#item-konfiguration-ermittlung-von-obis-codes">Item-Konfiguration / Ermittlung von OBIS-Codes</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#hintergrundinformationen-zu-obis-codes">Hintergrundinformationen zu OBIS-Codes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#obis-codebeispiele">OBIS-Codebeispiele</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#werte-aus-den-codezeilen-ermitteln">Werte aus den Codezeilen ermitteln</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#item-konfiguration">Item-Konfiguration</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#item-konfiguration-automatisch-erstellen">Item-Konfiguration automatisch erstellen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#beispiele">Beispiele</a></li>
 </ul>
 </li>
 </ul>
@@ -1930,16 +1922,10 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../jsonread/user_doc.html">jsonread</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#anforderungen">Anforderungen</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#notwendige-software">Notwendige Software</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#unterstutzte-gerate">Unterstützte Geräte</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#anforderungen">Anforderungen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#konfiguration">Konfiguration</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#plugin-yaml">plugin.yaml</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#logic-yaml">logic.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#funktionen">Funktionen</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#web-interface">Web Interface</a></li>
@@ -2076,6 +2062,7 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../telegram/user_doc.html#anwendungen">Anwendungen</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../telegram/user_doc.html#menugestutzte-interaktion-zwischen-telegram-und-smarthomeng">Menugestützte Interaktion zwischen Telegram und SmartHomeNG</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../telegram/user_doc.html#changelog">Changelog</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../telegram/user_doc.html#web-interface">Web Interface</a></li>
@@ -2131,18 +2118,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../withings_health/user_doc.html#web-interface">Web Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../wunderground/user_doc.html">wunderground</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../wunderground/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../wunderground/user_doc.html#web-interface">Web Interface</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../wunderground/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../wunderground/user_doc.html#beispiele">Beispiele</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../plugins_doc/plugins_unclassified.html">Nicht klassifizierte Plugins</a><ul class="simple">
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../plugins_doc/plugins_unclassified.html">Nicht klassifizierte Plugins</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../plugins_doc/plugins_all.html">Alle Plugins</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../alexa4p3/user_doc.html">alexa4p3</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../alexa4p3/user_doc.html#konfiguration">Konfiguration</a><ul>
@@ -2236,26 +2216,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../avdevice/user_doc.html">avdevice</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#items">Items</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-instanz-funktion">avdevice_zone[0-4]&#64;[Instanz]: [Funktion]</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-speakers-instanz-funktion">avdevice_zone[0-4]_speakers&#64;[Instanz]: [Funktion]</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-depend-instanz-funktion">avdevice_zone[0-4]_depend&#64;[Instanz]: [Funktion]</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avdevice/user_doc.html#avdevice-zone-0-4-init-instanz-funktion">avdevice_zone[0-4]_init&#64;[Instanz]: [Funktion]</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#kommandos">Kommandos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#struct-vorlagen">Struct Vorlagen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#ubersetzungen">Übersetzungen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#wildcards">Wildcards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#web-interface">Web Interface</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avdevice/user_doc.html#fehlerbehebung">Fehlerbehebung</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../avm/user_doc.html">avm</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#allgemeine-informationen">Allgemeine Informationen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#konfiguration-der-fritz-box">Konfiguration der Fritz!Box</a></li>
@@ -2314,20 +2274,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../avm/user_doc.html#vorgehen-bei-funktionserweiterung-des-plugins-bzw-erganzung-weiterer-werte-fur-itemattribut-avm-data-type">Vorgehen bei Funktionserweiterung des Plugins bzw. Ergänzung weiterer Werte für Itemattribut <cite>avm_data_type</cite></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../avm_smarthome/user_doc.html">avm_smarthome</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#reguirements">Reguirements</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#historie">Historie</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../avm_smarthome/user_doc.html#web-interface-des-plugins">Web Interface des Plugins</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#items">Items</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#devices">Devices</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#thermostat">Thermostat</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#relais">Relais</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../avm_smarthome/user_doc.html#alarm">Alarm</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../blockly/user_doc.html">blockly</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../blockly/user_doc.html#voraussetzungen">Voraussetzungen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../blockly/user_doc.html#konfiguration">Konfiguration</a></li>
@@ -2358,6 +2304,19 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../casambi/user_doc.html#changelog">Changelog</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../casambi_bt/user_doc.html">casambi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#konfiguration">Konfiguration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#gateway-hardware">Gateway Hardware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#anforderungen">Anforderungen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#beispiele">Beispiele</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../casambi_bt/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../casambi_bt/user_doc.html#id1">Beispiele</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../casambi_bt/user_doc.html#changelog">Changelog</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../cli/user_doc.html">cli</a><ul>
@@ -2401,19 +2360,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../database/user_doc.html#datenbankfunktionen-fur-einzelauswertungen">Datenbankfunktionen für Einzelauswertungen</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../datalog/user_doc.html">datalog</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../datalog/user_doc.html#ersatz-durch-bordmittel">Ersatz durch Bordmittel</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../datalog/user_doc.html#beispiel">Beispiel</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../datalog/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../datalog/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../datalog/user_doc.html#items-yaml">items.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../datalog/user_doc.html#web-interface">Web Interface</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../db_addon/user_doc.html">db_addon</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../db_addon/user_doc.html#anforderungen">Anforderungen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../db_addon/user_doc.html#hinweise">Hinweise</a><ul>
@@ -2443,7 +2389,7 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../db_addon/user_doc.html#erlauterungen-zu-temperatursummen">Erläuterungen zu Temperatursummen</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#grunlandtemperatursumme">Grünlandtemperatursumme</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#wachstumsgradtag">Wachstumsgradtag</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#wachstumsgradtage">Wachstumsgradtage</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#warmesumme">Wärmesumme</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#kaltesumme">Kältesumme</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../db_addon/user_doc.html#tagesmitteltemperatur">Tagesmitteltemperatur</a></li>
@@ -2571,6 +2517,15 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../githubplugin/user_doc.html">githubplugin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../githubplugin/user_doc.html#beschreibung">Beschreibung</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../githubplugin/user_doc.html#anforderungen">Anforderungen</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../githubplugin/user_doc.html#notwendige-software">Notwendige Software</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../githubplugin/user_doc.html#konfiguration">Konfiguration</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../gpio/user_doc.html">gpio</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../gpio/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gpio/user_doc.html#beschreibung">Beschreibung</a></li>
@@ -2610,22 +2565,19 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../husky/user_doc.html">husky</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#anforderungen">Anforderungen</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#notwendige-software">Notwendige Software</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#unterstutzte-gerate">Unterstützte Geräte</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hue3/user_doc.html">hue3</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../hue3/user_doc.html#plugin-instanz-hinzufugen">Plugin Instanz hinzufügen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hue3/user_doc.html#konfiguration">Konfiguration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#bridge-verbinden">Bridge verbinden</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#verwendung-von-structs">Verwendung von structs</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#item-attribute">Item Attribute</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#logic-yaml">logic.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../husky/user_doc.html#funktionen">Funktionen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hue3/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../hue3/user_doc.html#beispiele">Beispiele</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#beispiele">Beispiele</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#web-interface">Web Interface</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../husky/user_doc.html#credits">Credits</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../husky2/user_doc.html">husky2</a><ul>
@@ -2706,16 +2658,10 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../jsonread/user_doc.html">jsonread</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#anforderungen">Anforderungen</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#notwendige-software">Notwendige Software</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#unterstutzte-gerate">Unterstützte Geräte</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#anforderungen">Anforderungen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#konfiguration">Konfiguration</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#plugin-yaml">plugin.yaml</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#logic-yaml">logic.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../jsonread/user_doc.html#funktionen">Funktionen</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../jsonread/user_doc.html#web-interface">Web Interface</a></li>
@@ -2781,26 +2727,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../mailsend/user_doc.html">mailsend</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../mailsend/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../mailsend/user_doc.html#web-interface">Web Interface</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../memlog/user_doc.html">memlog</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#ersatz-durch-bordmittel">Ersatz durch Bordmittel</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#beispiel-logik">Beispiel Logik</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#beispiel-item">Beispiel Item</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#logic-yaml">logic.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#einsatz-in-logiken">Einsatz in Logiken</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#funktionsaufruf">Funktionsaufruf</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../memlog/user_doc.html#beispiel">Beispiel</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../memlog/user_doc.html#web-interface">Web Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../mieleathome/user_doc.html">mieleathome</a><ul>
@@ -2981,22 +2907,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../openweathermap/user_doc.html#hinweise">Hinweise</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../operationlog/user_doc.html">operationlog</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#ersatz-durch-bordmittel">Ersatz durch Bordmittel</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#beispiel-logik">Beispiel Logik</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#beispiel-item">Beispiel Item</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../operationlog/user_doc.html#logics-yaml">logics.yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#funktionen">Funktionen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../operationlog/user_doc.html#web-interface">Web Interface</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../oppo/user_doc.html">oppo</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../oppo/user_doc.html#konfiguration">Konfiguration</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../oppo/user_doc.html#plugin-yaml">plugin.yaml</a></li>
@@ -3005,6 +2915,24 @@
 <li class="toctree-l4"><a class="reference internal" href="../oppo/user_doc.html#struct-vorlagen">Struct Vorlagen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../oppo/user_doc.html#kommandos">Kommandos</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../oppo/user_doc.html#web-interface">Web Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../panasonic_ac/user_doc.html">panasonic_ac</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#anforderungen">Anforderungen</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#notwendige-software">Notwendige Software</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#plugin-instanz-hinzufugen">Plugin Instanz hinzufügen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#konfiguration">Konfiguration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#verwendung-von-structs">Verwendung von structs</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#item-attribute">Item Attribute</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../panasonic_ac/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../panasonic_ac/user_doc.html#beispiele">Beispiele</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../philips_tv/user_doc.html">philips_tv</a><ul>
@@ -3042,6 +2970,12 @@
 <li class="toctree-l5"><a class="reference internal" href="../piratewthr/user_doc.html#beispiele">Beispiele</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../piusv/user_doc.html">piusv</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../piusv/user_doc.html#unterstutzte-gerate">Unterstützte Geräte</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../piusv/user_doc.html#konfiguration">Konfiguration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../piusv/user_doc.html#web-interface">Web Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../pluggit/user_doc.html">pluggit</a><ul>
@@ -3157,13 +3091,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../rrd/user_doc.html">rrd</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../rrd/user_doc.html#anforderungen">Anforderungen</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#notwendige-software">Notwendige Software</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#vergleich-zwischen-datenbank-plugin-und-rrdtool">Vergleich zwischen Datenbank-Plugin und rrdtool:</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#vergleich-zwischen-datenbank-plugin-influxdb-und-rrdtool">Vergleich zwischen Datenbank-Plugin, InfluxDB und rrdtool:</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../rrd/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#items-yaml">items.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#logic-yaml">logic.yaml</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../rrd/user_doc.html#funktionen">Funktionen</a></li>
 </ul>
 </li>
@@ -3228,8 +3159,32 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../sma_mb/user_doc.html#konfiguration">Konfiguration</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#plugin-yaml">plugin.yaml</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#items-yaml">items.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#beispiele-fur-die-plugin-yaml">Beispiele für die plugin.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../sma_mb/user_doc.html#beispiel-fur-items-yaml">Beispiel für items.yaml</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../smartmeter/user_doc.html">smartmeter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#anforderungen">Anforderungen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#unterstutzte-hardware">Unterstützte Hardware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#konfiguration">Konfiguration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#beispiele-fur-die-plugin-yaml">Beispiele für die plugin.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#einrichtungsverfahren">Einrichtungsverfahren:</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#optional">Optional</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#item-konfiguration-ermittlung-von-obis-codes">Item-Konfiguration / Ermittlung von OBIS-Codes</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#hintergrundinformationen-zu-obis-codes">Hintergrundinformationen zu OBIS-Codes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#obis-codebeispiele">OBIS-Codebeispiele</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#werte-aus-den-codezeilen-ermitteln">Werte aus den Codezeilen ermitteln</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#item-konfiguration">Item-Konfiguration</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../smartmeter/user_doc.html#web-interface">Web Interface</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#item-konfiguration-automatisch-erstellen">Item-Konfiguration automatisch erstellen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../smartmeter/user_doc.html#beispiele">Beispiele</a></li>
 </ul>
 </li>
 </ul>
@@ -3537,6 +3492,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#neukonfiguration-der-hierarchie">Neukonfiguration der Hierarchie</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#auflosen-von-zustanden">Auflösen von Zuständen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#zustandsnamen">Zustandsnamen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#ignorieren-von-bedingungen">Ignorieren von Bedingungen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../stateengine/user_doc/13_sonstiges.html#cli">CLI</a></li>
 </ul>
 </li>
@@ -3588,6 +3544,7 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../telegram/user_doc.html#anwendungen">Anwendungen</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../telegram/user_doc.html#menugestutzte-interaktion-zwischen-telegram-und-smarthomeng">Menugestützte Interaktion zwischen Telegram und SmartHomeNG</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../telegram/user_doc.html#changelog">Changelog</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../telegram/user_doc.html#web-interface">Web Interface</a></li>
@@ -3640,6 +3597,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../uzsu/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../uzsu/user_doc.html#smartvisu">SmartVISU</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#standard-einstellungen">Standard Einstellungen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#einmal-schaltung">Einmal-Schaltung</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#experteneinstellungen">Experteneinstellungen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../uzsu/user_doc.html#zeitserie">Zeitserie</a></li>
 </ul>
@@ -3667,7 +3625,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../vicare/user_doc.html#supported-hardware">Supported Hardware</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../vicare/user_doc.html#web-interface">Web Interface</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#beispiele">Beispiele</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#id1">Allgemein</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../vicare/user_doc.html#reiter">Reiter</a></li>
 </ul>
 </li>
 </ul>
@@ -3697,30 +3656,6 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../viessmann/user_doc.html#web-interface">Web Interface</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../viessmann/user_doc.html#standalone-modus">Standalone-Modus</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../visu_smartvisu/user_doc.html">visu_smartvisu</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../visu_smartvisu/user_doc.html#mischung-von-generierten-und-manuell-erstellten-seiten">Mischung von generierten und manuell erstellten Seiten</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../visu_smartvisu/user_doc.html#empfohlenes-vorgehen-fur-manuell-erstellte-seiten">Empfohlenes Vorgehen für manuell erstellte Seiten</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../visu_smartvisu/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_smartvisu/user_doc.html#weiterfuhrende-informationen">Weiterführende Informationen</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../visu_websocket/user_doc.html">visu_websocket</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../visu_websocket/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../visu_websocket/user_doc.html#web-interface">Web Interface</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#beispiele">Beispiele</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../visu_websocket/user_doc.html#informationen-fur-entwickler">Informationen für Entwickler</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#websocket-interface">WebSocket Interface</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#requests-sent-from-the-visu-to-smarthomeng">Requests sent from the Visu to SmartHomeNG</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../visu_websocket/user_doc.html#requests-sent-from-smarthomeng-to-the-visu">Requests sent from SmartHomeNG to the Visu</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../webpush/user_doc.html">webpush</a><ul>
@@ -3781,15 +3716,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../wol/user_doc.html#web-interface">Web Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../wunderground/user_doc.html">wunderground</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../wunderground/user_doc.html#konfiguration">Konfiguration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../wunderground/user_doc.html#web-interface">Web Interface</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../wunderground/user_doc.html#aufruf-des-webinterfaces">Aufruf des Webinterfaces</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../wunderground/user_doc.html#beispiele">Beispiele</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../xiaomi_vac/user_doc.html">xiaomi_vac</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../xiaomi_vac/user_doc.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../xiaomi_vac/user_doc.html#funktionen">Funktionen</a></li>
@@ -3836,24 +3762,30 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../logiken/logics.html">Logiken</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../visualisierung/visualisierung.html">Visualisierung mit smartVISU <span class="greensup">Update</span></a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../visualisierung/visualisierung.html">Visualisierung mit smartVISU</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../visualisierung/visualisierung.html#uberblick">Überblick</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../visualisierung/visualisierung.html#generierung-der-visu-seiten">Generierung der Visu Seiten</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../visualisierung/changes_in_1.8.html">Änderungen ab v1.8</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../visualisierung/automatic_generation.html">Automatische Generierung</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/automatic_generation.html#features-der-generierung">Features der Generierung</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/automatic_generation.html#zusatzliche-infos-in-der-navigation-anzeigen">Zusätzliche Infos in der Navigation anzeigen</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/automatic_generation.html#generierung-einer-konfigurations-navigation">Generierung einer Konfigurations-Navigation</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/automatic_generation.html#trenner-in-der-navigation">Trenner in der Navigation</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/automatic_generation.html#unterschiedliche-visu-styles">Unterschiedliche Visu-Styles</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/automatic_generation.html#unterschiedliche-blockgroszen">Unterschiedliche Blockgrößen</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/automatic_generation.html#unterschiedliche-blocktypen">Unterschiedliche Blocktypen</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/automatic_generation.html#manuell-erstellte-seiten">Manuell erstellte Seiten</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../visualisierung/automatic_generation.html">Automatische Generierung</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../visualisierung/features.html">Features der Generierung</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/features.html#zusatzliche-infos-in-der-navigation-anzeigen">Zusätzliche Infos in der Navigation anzeigen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/features.html#generierung-einer-konfigurations-navigation">Generierung einer Konfigurations-Navigation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/features.html#trenner-in-der-navigation">Trenner in der Navigation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/features.html#unterschiedliche-visu-styles">Unterschiedliche Visu-Styles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/features.html#unterschiedliche-blockgroszen">Unterschiedliche Blockgrößen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/features.html#unterschiedliche-blocktypen">Unterschiedliche Blocktypen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/features.html#manuell-erstellte-seiten">Manuell erstellte Seiten</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/deprecated_widgets.html">Warnungen für Deprecated Widgets</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../visualisierung/top_navigation.html">Top Navigation auf Visu Seiten <span class="redsup">Neu</span></a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/automatic_generation.html#deprecated-widget-warnings">Deprecated Widget Warnings</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/automatic_generation.html#navigation-structure-definition">Navigation Structure Definition</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/automatic_generation.html#seiten-aus-mehreren-sub-trees">Seiten aus mehreren Sub-Trees</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../visualisierung/navigation_structure.html">Navigation Structure Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../visualisierung/multiple_subtrees.html">Seiten aus mehreren Sub-Trees</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../visualisierung/deprecated_widgets.html">Warnungen für Deprecated Widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../visualisierung/top_navigation.html">Top Navigation auf Visu Seiten <span class="redsup">Neu</span></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../visualisierung/top_navigation.html#top-navigation-mit-icons">Top Navigation mit Icons</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../visualisierung/item_attributes.html">Item Attribute zur Generierung</a><ul>
@@ -3903,7 +3835,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../admin/admin.html">Administrations-Interface <span class="greensup">Update</span></a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../admin/admin.html">Administrations-Interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../admin/system.html">System</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../admin/system.html#system-eigenschaften">System Eigenschaften</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../admin/system.html#ubersicht">Übersicht</a></li>
@@ -4043,15 +3975,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../../beispiele/structs/item_strukturen_kopieren.html">Item Strukturen bequem kopieren</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../beispiele/plugins/plugins.html">Plugins</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../beispiele/plugins/plugin_aus_develop.html">Ein Plugin aus develop installieren</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../beispiele/plugins/plugins.html">Plugins <span class="greensup">Update</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../beispiele/plugins/plugin_aus_develop.html">Ein Plugin aus develop installieren <span class="greensup">Update</span></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../beispiele/plugins/plugin_aus_develop.html#konfiguration-anpassen">Konfiguration anpassen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../beispiele/plugins/plugin_aus_develop.html#plugin-manuell-installieren">Plugin manuell installieren</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../beispiele/plugins/plugin_aus_develop.html#plugins-repository-aufrufen">Plugins Repository aufrufen</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../beispiele/plugins/plugin_aus_develop.html#plugins-repository-download">Plugins Repository Download</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../beispiele/plugins/plugin_aus_develop.html#gewunschtes-plugin-installieren">Gewünschtes Plugin installieren</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -4076,7 +4002,10 @@
 <li class="toctree-l5"><a class="reference internal" href="../../beispiele/umzug.html#samba">Samba</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../beispiele/umzug.html#smarthomeng-konfiguration-sichern">SmartHomeNG Konfiguration sichern</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../beispiele/umzug.html#daten-vom-alten-system-kopieren">Daten vom alten System Kopieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../beispiele/umzug.html#kopieren-privater-tools">Kopieren privater Tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../beispiele/umzug.html#kopieren-privater-plugins">Kopieren privater Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../beispiele/umzug.html#smarthomeng-konfiguration">SmartHomeNG Konfiguration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../beispiele/umzug.html#kopieren-weiterer-daten">Kopieren weiterer Daten</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../beispiele/umzug.html#item-cache-verzeichnis-kopieren">Item cache Verzeichnis kopieren</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../beispiele/umzug.html#database-verzeichnis-kopieren">database Verzeichnis kopieren</a></li>
@@ -4175,12 +4104,19 @@
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/mqttplugin_class.html#lib.model.mqttplugin.MqttPlugin"><code class="docutils literal notranslate"><span class="pre">MqttPlugin</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html">Plugin</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#kommandos">Kommandos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#protokoll">Protokoll</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#verbindung">Verbindung</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#datatypes">DataTypes</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#commands">Commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html">Class SmartDevicePlugin</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#plugin">Plugin</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#kommandos">Kommandos</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#protokoll">Protokoll</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#verbindung">Verbindung</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#datatypes">DataTypes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#commands">Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#klassendefinition">Klassendefinition</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#lib.model.smartdeviceplugin.SmartDevicePlugin"><code class="docutils literal notranslate"><span class="pre">SmartDevicePlugin</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="../../entwicklung/plugins/kurzanleitung/plugin_metadata.html">Plugin-Metadata <span class="bluesup">update</span></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../entwicklung/plugins/kurzanleitung/plugin_metadata.html#detaillierte-beschreibung">Detaillierte Beschreibung</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../entwicklung/plugins/kurzanleitung/plugin_metadata.html#plugin">plugin</a></li>
@@ -4317,7 +4253,6 @@
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.nested_put"><code class="docutils literal notranslate"><span class="pre">nested_put()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.parse"><code class="docutils literal notranslate"><span class="pre">parse()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.parse_basename"><code class="docutils literal notranslate"><span class="pre">parse_basename()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.parse_conf"><code class="docutils literal notranslate"><span class="pre">parse_conf()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.parse_itemsdir"><code class="docutils literal notranslate"><span class="pre">parse_itemsdir()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.parse_yaml"><code class="docutils literal notranslate"><span class="pre">parse_yaml()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.remove_comments"><code class="docutils literal notranslate"><span class="pre">remove_comments()</span></code></a></li>
@@ -4328,6 +4263,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.remove_reserved"><code class="docutils literal notranslate"><span class="pre">remove_reserved()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.remove_special_listentries"><code class="docutils literal notranslate"><span class="pre">remove_special_listentries()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.replace_struct_instance"><code class="docutils literal notranslate"><span class="pre">replace_struct_instance()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.sanitize_items"><code class="docutils literal notranslate"><span class="pre">sanitize_items()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.search_for_struct_in_items"><code class="docutils literal notranslate"><span class="pre">search_for_struct_in_items()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.set_attr_for_subtree"><code class="docutils literal notranslate"><span class="pre">set_attr_for_subtree()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/config.html#lib.config.strip_quotes"><code class="docutils literal notranslate"><span class="pre">strip_quotes()</span></code></a></li>
@@ -4352,6 +4288,7 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../lib/log.html">lib.log</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/log.html#lib.log.DateTimeRotatingFileHandler"><code class="docutils literal notranslate"><span class="pre">DateTimeRotatingFileHandler</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/log.html#lib.log.EnglishLocale"><code class="docutils literal notranslate"><span class="pre">EnglishLocale</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/log.html#lib.log.Log"><code class="docutils literal notranslate"><span class="pre">Log</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/log.html#lib.log.Logs"><code class="docutils literal notranslate"><span class="pre">Logs</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/log.html#lib.log.ShngMemLogHandler"><code class="docutils literal notranslate"><span class="pre">ShngMemLogHandler</span></code></a></li>
@@ -4449,7 +4386,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../referenz/referenz.html">Referenz <span class="greensup">Update</span></a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../referenz/referenz.html">Referenz <span class="bluesup">Update</span></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../referenz/smarthomeng/smarthomeng.html">SmartHomeNG (der Core)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/smarthomeng/kommandozeilen_optionen.html">Kommandozeilen-Optionen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/smarthomeng/ablauf_startup.html">Ablauf des Starts von SmartHomeNG</a><ul>
@@ -4485,10 +4422,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/smarthomeng/feiertage.html">Feiertage</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../referenz/items/items.html">Items</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../referenz/items/items.html">Items <span class="bluesup">Update</span></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/standard_attribute/standard_attribute.html">Standard Attribute <span class="bluesup">Update</span></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/autotimer.html"><em>autotimer</em></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/crontab.html">crontab <span class="bluesup">Update</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/autotimer.html">autotimer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/crontab.html">crontab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/cycle.html">cycle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/enforce_updates.html">enforce_updates</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/enforce_change.html">enforce_change</a></li>
@@ -4498,12 +4435,13 @@
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/eval.html#attribut-eval-on-trigger-only">Attribut <em>eval_on_trigger_only</em></a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html">Hysterese</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html">Hysterese <span class="bluesup">Update</span></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#hysteresis-input"><cite>hysteresis_input</cite></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#hysteresis-upper-threshold"><cite>hysteresis_upper_threshold</cite></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#hysteresis-lower-threshold"><cite>hysteresis_lower_threshold</cite></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#konfiguration">Konfiguration</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#beispiele">Beispiele</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#initialisierung-eines-hysterese-items">Initialisierung eines Hysterese Items</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/standard_attribute/hysteresis.html#zusatzliche-statusinformationen">zusätzliche Statusinformationen</a></li>
 </ul>
 </li>
@@ -4521,11 +4459,11 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/struct.html">struct</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/type.html"><cite>type</cite></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/standard_attribute/type.html"><cite>type</cite> <span class="bluesup">Update</span></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/item_zugriff.html">Zugriff auf die Werte von Items</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#lesen-einer-item-wertes">Lesen einer Item Wertes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#lesen-eines-item-wertes">Lesen eines Item Wertes</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#zugriff-auf-ein-listen-element-neu">Zugriff auf ein Listen-Element <span class="redsup">neu</span></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#zugriff-auf-ein-dict-element-neu">Zugriff auf ein Dict-Element <span class="redsup">neu</span></a></li>
 </ul>
@@ -4536,12 +4474,17 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#weitere-parameter-item-zugriff">Weitere Parameter Item Zugriff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/item_zugriff.html#erweiterter-zugriff-auf-list-und-dict-items-neu">Erweiterter Zugriff auf List- und Dict-Items <span class="redsup">neu</span></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#list-items">List-Items</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/items/item_zugriff.html#dict-items">Dict-Items</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/plugin_attribute.html">Plugin-spezifische Attribute</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#vererbung-von-attributen-update">Vererbung von Attributen <span class="bluesup">update</span></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#zugriff-auf-attribute-anderer-items-update">Zugriff auf Attribute anderer Items <span class="bluesup">update</span></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#platzhalter-in-attributwerten-neu">Platzhalter in Attributwerten <span class="redsup">neu</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#zugriff-auf-attribute-anderer-items">Zugriff auf Attribute anderer Items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/items/plugin_attribute.html#platzhalter-in-attributwerten">Platzhalter in Attributwerten</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/items/attributes_relative_referenzen.html">Relative Item Referenzen</a><ul>
@@ -4624,11 +4567,11 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/logiken/logiken_logic_objekt.html">Die Objekte <strong>logic</strong> und <strong>logics</strong></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_logic_objekt.html#das-logic-objekt">Das <code class="docutils literal notranslate"><span class="pre">logic</span></code> Objekt</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/logiken/logiken_logic_objekt.html#das-trigger-dictionary">Das <code class="docutils literal notranslate"><span class="pre">trigger</span></code> Dictionary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_logic_objekt.html#das-logic-objekt">Das <strong>logic</strong> Objekt</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/logiken/logiken_logic_objekt.html#das-trigger-dictionary">Das <strong>trigger</strong> Dictionary</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_logic_objekt.html#das-logics-objekt">Das <code class="docutils literal notranslate"><span class="pre">logics</span></code> Objekt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_logic_objekt.html#das-logics-objekt">Das <strong>logics</strong> Objekt</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/logiken/logiken_logging.html">Logging in Logiken</a><ul>
@@ -4691,16 +4634,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html">Funktionen und Klassen in Logiken</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#funktionen-in-logiken">Funktionen in Logiken</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#bis-smarthomeng-v1-9-2">bis SmartHomeNG v1.9.2</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#ab-smarthomeng-v1-9-3">ab SmartHomeNG v1.9.3</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#klassen-in-logiken">Klassen in Logiken</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#id1">bis SmartHomeNG v1.9.2</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#id2">ab SmartHomeNG v1.9.3</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#funktionen-in-logiken">Funktionen in Logiken</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/logiken/logiken_funktionen.html#klassen-in-logiken">Klassen in Logiken</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/logiken/logiken_mqtt.html">Nutzung von MQTT in Logiken</a><ul>
@@ -4826,6 +4761,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../referenz/plugins/plugins.html">Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../referenz/plugins/asyncio_support.html">asyncio Unterstützung in Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/asyncio_support.html#methoden-zur-unterstutzung-von-asyncio">Methoden zur Unterstützung von asyncio</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/plugins/plugin_typen/plugin_typen.html">Plugin Typen</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/plugin_typen.html#classic-plugin">Classic Plugin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/plugin_typen.html#smartplugin">SmartPlugin</a><ul>
@@ -4837,13 +4776,8 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/plugins/plugin_typen/plugin_typen.html#smartdeviceplugin">SmartDevicePlugin</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html">Plugin</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#kommandos">Kommandos</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#protokoll">Protokoll</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#verbindung">Verbindung</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#datatypes">DataTypes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin.html#commands">Commands</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html">Class SmartDevicePlugin</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../referenz/plugins/plugin_typen/smartdeviceplugin_class.html#klassendefinition">Klassendefinition</a></li>
 </ul>
 </li>
 </ul>
@@ -4897,22 +4831,23 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/userfunctions/userfunctions.html#reload-von-userfunctions">Reload von Userfunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../referenz/userfunctions/userfunctions.html#zusatzliche-python-module">Zusätzliche Python Module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../referenz/python/python.html">Python Environment <span class="bluesup">Update</span></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../referenz/python/python.html">Python Environment</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../referenz/python/support_skripte.html">Support Skripte für SmartHomeNG</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/support_skripte.html#make-venv-skript">make_venv Skript</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/support_skripte.html#act-skript">act Skript</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../referenz/python/virtual_environments.html">Virtuelle Python Environments <span class="bluesup">Update</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../referenz/python/virtual_environments.html">Virtuelle Python Environments</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/virtual_environments.html#installation-von-venv-bzw-virtualenv">Installation von venv bzw. virtualenv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/virtual_environments.html#erstellung-von-virtuellen-environments">Erstellung von virtuellen Environments</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/virtual_environments.html#loschen-eines-virtuellen-environment">Löschen eines virtuellen Environment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/virtual_environments.html#virtuelle-environements-als-dienst">Virtuelle Environements als Dienst</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../referenz/python/python_installation.html">Python Version Installieren <span class="redsup">Neu</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../referenz/python/python_installation.html">Python Version Installieren</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/python_installation.html#installation-von-benotigten-paketen">Installation von benötigten Paketen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/python_installation.html#download-des-source-codes">Download des Source Codes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../referenz/python/python_installation.html#das-archiv-auspacken">Das Archiv auspacken</a></li>
@@ -4968,6 +4903,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../lib/network.html#lib.network.Connections.monitor"><code class="docutils literal notranslate"><span class="pre">Connections.monitor()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/network.html#lib.network.Connections.unmonitor"><code class="docutils literal notranslate"><span class="pre">Connections.unmonitor()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/network.html#lib.network.Connections.check"><code class="docutils literal notranslate"><span class="pre">Connections.check()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/network.html#lib.network.Connections.close"><code class="docutils literal notranslate"><span class="pre">Connections.close()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../lib/network.html#lib.network.Http"><code class="docutils literal notranslate"><span class="pre">Http</span></code></a><ul>
@@ -5025,12 +4961,15 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/orb.html">lib.orb</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb"><code class="docutils literal notranslate"><span class="pre">Orb</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.aware_datetime_to_utc"><code class="docutils literal notranslate"><span class="pre">Orb.aware_datetime_to_utc()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.get_observer_and_orb"><code class="docutils literal notranslate"><span class="pre">Orb.get_observer_and_orb()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.midnight"><code class="docutils literal notranslate"><span class="pre">Orb.midnight()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.noon"><code class="docutils literal notranslate"><span class="pre">Orb.noon()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.pos"><code class="docutils literal notranslate"><span class="pre">Orb.pos()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.rise"><code class="docutils literal notranslate"><span class="pre">Orb.rise()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.set"><code class="docutils literal notranslate"><span class="pre">Orb.set()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.unaware_datetime_to_utc"><code class="docutils literal notranslate"><span class="pre">Orb.unaware_datetime_to_utc()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/orb.html#lib.orb.Orb.utc_to_local"><code class="docutils literal notranslate"><span class="pre">Orb.utc_to_local()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -5078,6 +5017,9 @@
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.check_hashed_password"><code class="docutils literal notranslate"><span class="pre">Utils.check_hashed_password()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.create_hash"><code class="docutils literal notranslate"><span class="pre">Utils.create_hash()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.execute_subprocess"><code class="docutils literal notranslate"><span class="pre">Utils.execute_subprocess()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_all_addresses_for_addressfamily"><code class="docutils literal notranslate"><span class="pre">Utils.get_all_addresses_for_addressfamily()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_all_local_ipv4_addresses"><code class="docutils literal notranslate"><span class="pre">Utils.get_all_local_ipv4_addresses()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_all_local_ipv6_addresses"><code class="docutils literal notranslate"><span class="pre">Utils.get_all_local_ipv6_addresses()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_local_ipv4_address"><code class="docutils literal notranslate"><span class="pre">Utils.get_local_ipv4_address()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_local_ipv6_address"><code class="docutils literal notranslate"><span class="pre">Utils.get_local_ipv6_address()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_type"><code class="docutils literal notranslate"><span class="pre">Utils.get_type()</span></code></a></li>
@@ -5201,6 +5143,9 @@
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.check_hashed_password"><code class="docutils literal notranslate"><span class="pre">Utils.check_hashed_password()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.create_hash"><code class="docutils literal notranslate"><span class="pre">Utils.create_hash()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.execute_subprocess"><code class="docutils literal notranslate"><span class="pre">Utils.execute_subprocess()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_all_addresses_for_addressfamily"><code class="docutils literal notranslate"><span class="pre">Utils.get_all_addresses_for_addressfamily()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_all_local_ipv4_addresses"><code class="docutils literal notranslate"><span class="pre">Utils.get_all_local_ipv4_addresses()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_all_local_ipv6_addresses"><code class="docutils literal notranslate"><span class="pre">Utils.get_all_local_ipv6_addresses()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_local_ipv4_address"><code class="docutils literal notranslate"><span class="pre">Utils.get_local_ipv4_address()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_local_ipv6_address"><code class="docutils literal notranslate"><span class="pre">Utils.get_local_ipv6_address()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../lib/utils.html#lib.utils.Utils.get_type"><code class="docutils literal notranslate"><span class="pre">Utils.get_type()</span></code></a></li>
@@ -5241,6 +5186,80 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ - Häufig gestellte Fragen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../release/release.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../release/1_x_x.html">Release 1.xx.x - xx. xxx 2026</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_x_x.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_x_x.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#allgmein">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#bugfixes-im-core">Bugfixes im CORE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#updates-in-the-core">Updates in the CORE</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_x_x.html#anderungen-bei-plugins">Änderungen bei Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#id1">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#neue-plugins">Neue Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#plugin-updates">Plugin Updates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#outdated-plugins">Outdated Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_x_x.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_x_x.html#dokumentation">Dokumentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../release/1_12_0.html">Release 1.12.0 - 06. Mai 2026</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_0.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_0.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#allgmein">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#bugfixes-im-core">Bugfixes im CORE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#updates-in-the-core">Updates in the CORE</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_0.html#anderungen-bei-plugins">Änderungen bei Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#id1">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#plugin-updates">Plugin Updates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#outdated-plugins">Outdated Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_0.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#dokumentation">Dokumentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../release/1_11_0.html">Release 1.11.0 - 30. Mär 2025</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_11_0.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_11_0.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#allgmein">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#bugfixes-im-core">Bugfixes im CORE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#updates-in-the-core">Updates in the CORE</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_11_0.html#anderungen-bei-plugins">Änderungen bei Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#id1">Allgmein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#neue-plugins">Neue Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#plugin-updates">Plugin Updates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#outdated-plugins">Outdated Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_11_0.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_11_0.html#dokumentation">Dokumentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../release/1_10.html">Release 1.10 - 29. Jan 2024</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../release/1_10.html#uberblick">Überblick</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../release/1_10.html#minimum-python-version">Minimum Python Version</a></li>
@@ -5581,7 +5600,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Dokumentation v1.10.0</a>
+          <a href="../../index.html">Dokumentation v1.12.0</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -5602,7 +5621,7 @@
              
   <span class="target" id="index-0"></span><section id="onewire">
 <span id="index-1"></span><h1>onewire<a class="headerlink" href="#onewire" title="Permalink to this heading"></a></h1>
-<a class="reference internal image-reference" href="../../_images/plugin_logo33.png"><img alt="plugin logo" class="align-left" src="../../_images/plugin_logo33.png" style="width: 150.0px; height: 150.0px;" /></a>
+<a class="reference internal image-reference" href="../../_images/plugin_logo35.png"><img alt="plugin logo" class="align-left" src="../../_images/plugin_logo35.png" style="width: 150.0px; height: 150.0px;" /></a>
 <p>Der 1-Wire bzw. One-Wire oder Eindraht-Bus ist ein Bussystem das mit 2 oder 3 Einzeladern betrieben werden wird.
 Es gibt einen parasitären Modus in dem nur 2 Adern genutzt werden und einen Modus in dem eine Zusatzspannung von 5V genutzt wird.</p>
 <p>Es gibt für dieses System recht günstige Sensoren so das die Nutzung zur
@@ -5717,7 +5736,7 @@ Item des Busmasters (z.B. <code class="docutils literal notranslate"><span class
 die ID noch im Zwischenspeicher ist. Der temporäre Speicher wird alle 10 Minuten geleert.</p>
 <p>Beispielhafte Zuweisung in einer Logik:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Start.py Logik, ist mit in der logics.yaml mit ``crontab: init`` eingetragen</span>
-<span class="k">def</span> <span class="nf">sabotagealarm</span><span class="p">(</span><span class="n">ibutton_id</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sabotagealarm</span><span class="p">(</span><span class="n">ibutton_id</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
     <span class="n">sh</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s2">&quot;iButton-Alert&quot;</span><span class="p">,</span><span class="s2">&quot;Jemand nutzt einen unbekannten iButton (</span><span class="si">{0}</span><span class="s2">) am 1-Wire Busmaster </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ibutton_id</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
     <span class="c1"># sh.take_picture()</span>
     <span class="c1"># ...</span>
@@ -5809,7 +5828,7 @@ die ID noch im Zwischenspeicher ist. Der temporäre Speicher wird alle 10 Minute
 <li><p>Zeitpunkt des letzten Updates des Item Wertes</p></li>
 <li><p>Zeitpunkt der letzten Änderung des Item Wertes</p></li>
 </ul>
-<img alt="../../_images/webif_tab13.jpg" class="screenshot" src="../../_images/webif_tab13.jpg" />
+<img alt="../../_images/webif_tab14.jpg" class="screenshot" src="../../_images/webif_tab14.jpg" />
 <p>Falls das entsprechende 1-Wire Device seit dem letzten Start von SmartHomeNG noch nicht erkannt wurde, werden für das
 Item die Werte Sensor, Geräteklasse und Wert in rot angezeigt. In diesem Fall fehlt beim Wert auch die Maßeinheit, da
 die Information zur Maßeinheit aus dem 1-Wire Device stammt. Der angezeigte Wert des Items ist in diesem Fall der
@@ -5830,7 +5849,7 @@ angezeigt:</p>
 <li><p>Ob Items zu diesem Device definiert sind und wenn ja, wie viele</p></li>
 <li><p>Die vom Device unterstützten Keys für Sensoren bzw. I/O Kanäle</p></li>
 </ul>
-<img alt="../../_images/webif_tab22.jpg" class="screenshot" src="../../_images/webif_tab22.jpg" />
+<img alt="../../_images/webif_tab23.jpg" class="screenshot" src="../../_images/webif_tab23.jpg" />
 </section>
 </section>
 </section>
@@ -5840,13 +5859,13 @@ angezeigt:</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../mpd/user_doc.html" class="btn btn-neutral float-left" title="mpd" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
-        <a href="../raumfeld_ng/user_doc.html" class="btn btn-neutral float-right" title="raumfeld_ng" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../panasonic_ac/user_doc.html" class="btn btn-neutral float-right" title="panasonic_ac" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2016-2024 SmartHomeNG Team  -  SmartHomeNG is based on smarthome.py © Marcus Popp.</p>
+    <p>&#169; Copyright 2016-2025 SmartHomeNG Team  -  SmartHomeNG is based on smarthome.py © Marcus Popp.</p>
   </div>
 
    

@@ -12,7 +12,7 @@ Plugin 'tasmota' Konfiguration
    :alt: plugin logo
    :width: 300px
    :height: 300px
-   :scale: 50 %
+   :scale: 50%
    :align: left
 
 .. |br| raw:: html
@@ -37,7 +37,7 @@ Anforderungen
 
 
 
- - Minimum SmartHomeNG Version: **1.9.3**
+ - Minimum SmartHomeNG Version: **1.10.0.3**
 
 Konfiguration
 =============
@@ -107,6 +107,18 @@ Zu lesendes/schreibendes Attribut des Tasmota Devices. Achtung: Nicht jedes Attr
  - Datentyp: **str**
  - Standardwert: **relay**
 
+
+tasmota_button
+==============
+
+
+Nummer der gedrückten Taste im Tasmota Device
+
+ - Datentyp: **int**
+ - Standardwert: **1**
+
+ - Minimalwert: **1**
+ - Maximalwert: **4**
 
 tasmota_relay
 =============
@@ -192,6 +204,15 @@ Zigbee Control Group: Werte werden an diese Gruppe gesendet. Gruppennachrichten 
 
  - Datentyp: **num**
 
+
+============
+Item-Structs
+============
+
+
+Das Plugin stellt die folgenden Item-Structs zur Verfügung. Diese Informationen sind aus der `plugin.yaml` entnommen und möglicherweise nicht vollständig.
+
+**Keine**
 
 ===============
 Logik Parameter

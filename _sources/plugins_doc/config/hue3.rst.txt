@@ -1,0 +1,318 @@
+.. |_| unicode:: 0xA0
+
+
+===========================
+Plugin 'hue3' Konfiguration
+===========================
+
+
+.. index:: Plugins; hue3 Konfiguration
+
+.. image:: /plugins/hue3/webif/static/img/plugin_logo.png
+   :alt: plugin logo
+   :width: 300px
+   :height: 300px
+   :scale: 50%
+   :align: left
+
+.. |br| raw:: html
+
+   <br />
+
+Im folgenden sind etwaige Anforderungen und unterstützte Hardware beschrieben. Danach folgt die               Beschreibung, wie das Plugin **hue3** konfiguriert wird. Außerdem ist im folgenden               beschrieben, wie das Plugin in den Item Definitionen genutzt werden kann. [#f1]_ 
+
+Es handelt sich bei diesem Plugin um ein **gateway Plugin**.
+
+**ACHTUNG**: Dieses Plugin ist als develop gekennzeichnet. Es kann daher sein, dass es                  noch nicht sämtliche Funktionen unterstützt oder noch fehlerhaft ist.
+
+
+
+Beschreibung
+============
+
+Anbindung des Philips/Signify Hue Systems über eine Hue Bridge unter Nutzung des neuen API v2
+
+
+Anforderungen
+=============
+
+
+
+
+ - Minimum SmartHomeNG Version: **1.10.0**
+
+Konfiguration
+=============
+
+
+Im folgenden ist beschrieben, wie das Plugin **hue3** konfiguriert wird. Außerdem ist im folgenden beschrieben, wie das Plugin in den Item Definitionen genutzt werden kann.
+
+
+=========
+Parameter
+=========
+
+
+Das Plugin verfügt über folgende Parameter, die in der Datei ``../etc/plugin.yaml`` konfiguriert werden:
+
+
+bridge_ip
+=========
+
+
+IP Adresse der Philips/Signify Hue Bridge Dieser Parameter wird durch das Plugins in den Konfigurationsdaten abgelegt. Er ist in der Admin GUI nicht änderbar
+
+ - Datentyp: **ip**
+
+
+bridge_serial
+=============
+
+
+Seriennummer der Philips/Signify Hue Bridge Dieser Parameter wird durch das Plugins in den Konfigurationsdaten abgelegt. Er ist in der Admin GUI nicht änderbar
+
+ - Datentyp: **str**
+
+
+bridge_user
+===========
+
+
+Username/Anwendungsschlüssel um auf die Philips/Signify Hue Bridge zuzugreifen Dieser Parameter wird durch das Plugins in den Konfigurationsdaten abgelegt. Er ist in der Admin GUI nicht änderbar
+
+ - Datentyp: **str**
+
+
+default_transitionTime
+======================
+
+
+Zeit in sekunden welche die Leuchte benötigt um in einen neuen Zustand überzugehen
+
+ - Datentyp: **float**
+ - Standardwert: **0.4**
+
+ - Minimalwert: **0**
+
+==============
+Item Attribute
+==============
+
+
+Das Plugin unterstützt folgende Item Attribute, die in den Dateien im Verzeichnis  ``../items`` verwendet werden:
+
+
+hue3_function
+=============
+
+
+Anzusteuernde Funktion für die gewählte Resource/ID
+
+ - Datentyp: **str**
+
+ - Mögliche Werte:
+
+   - 
+   - **on**
+   - **bri**
+   - **bri_inc**
+   - **xy**
+   - **ct**
+   - **dict**
+   - **name**
+   - **reachable**
+   - **connectivity**
+   - **type**
+   - **modelid**
+   - **swversion**
+   - **activate**
+   - **activate_scene**
+   - **modify_scene**
+   - **alert**
+   - **effect**
+   - **daylight**
+   - **sunriseoffset**
+   - **sunsetoffset**
+   - **temperature**
+   - **motion**
+   - **presence**
+   - **lightlevel**
+   - **status**
+   - **event**
+   - **initial_press**
+   - **repeat**
+   - **short_release**
+   - **long_release**
+   - **power_status**
+   - **battery_level**
+
+
+hue3_id
+=======
+
+
+ID der anzusteuernden resouce. Der Typ der resource wird mit 'hue3_recource' festgelegt.
+
+ - Datentyp: **str**
+
+
+hue3_resource
+=============
+
+
+Anzusteuernde Resource, falls nicht angegeben wird 'light' angenommen
+
+ - Datentyp: **str**
+
+ - Mögliche Werte:
+
+   - **light**
+   - **group**
+   - **scene**
+   - **sensor**
+   - **button**
+   - **device**
+   - **device_power**
+
+
+hue3_transition_time
+====================
+
+
+Zeit für Übergang (in sec)
+
+ - Datentyp: **num**
+
+
+============
+Item-Structs
+============
+
+
+Das Plugin stellt die folgenden Item-Structs zur Verfügung. Diese Informationen sind aus der `plugin.yaml` entnommen und möglicherweise nicht vollständig.
+
+
+_light_basic
+============
+
+interne Vorlage-Struktur für eine Hue Leuchte (basic)
+
+.. treeview::
+     - :dir:`folder` **_light_basic** (`foo`, interne Vorlage-Struktur für eine Hue Leuchte (basic))
+         - :dir:`file` **onoff** (`bool`, ---)
+         - :dir:`file` **level** (`num`, ---)
+         - :dir:`file` **level_inc** (`num`, ---)
+         - :dir:`file` **ct** (`num`, ---)
+         - :dir:`file` **dict** (`dict`, ---)
+         - :dir:`file` **alert** (`str`, ---)
+         - :dir:`file` **effect** (`str`, ---)
+
+
+_light_extended
+===============
+
+interne Vorlage-Struktur für eine Hue Leuchte (extended attributes)
+
+.. treeview::
+     - :dir:`folder` **_light_extended** (`foo`, interne Vorlage-Struktur für eine Hue Leuchte (extended attributes))
+         - :dir:`file` **lightname** (`str`, ---)
+         - :dir:`file` **reachable** (`bool`, ---)
+         - :dir:`file` **connectivity** (`str`, ---)
+
+
+group
+=====
+
+Vorlage-Struktur für eine Hue Gruppe
+
+.. treeview::
+     - :dir:`folder` **group** (`foo`, Vorlage-Struktur für eine Hue Gruppe)
+         - :dir:`file` **onoff** (`bool`, ---)
+         - :dir:`file` **level** (`num`, ---)
+         - :dir:`file` **alert** (`str`, ---)
+
+
+group_activate_scene
+====================
+
+Vorlage-Struktur zum aktivieren von Hue Szenen
+
+.. treeview::
+     - :dir:`file` **group_activate_scene** (`str`, Vorlage-Struktur zum aktivieren von Hue Szenen)
+
+
+light
+=====
+
+Vorlage-Struktur für eine Hue Leuchte
+
+.. treeview::
+     - :dir:`folder` **light** (`foo`, Vorlage-Struktur für eine Hue Leuchte)
+         - :dir:`file` **xy** (`list`, ---)
+
+
+light_extended
+==============
+
+Vorlage-Struktur für eine Hue Leuchte mit erweiteten Attributen/Sub-Items
+
+.. treeview::
+     - :dir:`file` **light_extended** (`foo`, Vorlage-Struktur für eine Hue Leuchte mit erweiteten Attributen/Sub-Items)
+
+
+light_ww
+========
+
+Vorlage-Struktur für eine Hue Leuchte (warm white)
+
+.. treeview::
+     - :dir:`file` **light_ww** (`foo`, Vorlage-Struktur für eine Hue Leuchte (warm white))
+
+
+light_ww_extended
+=================
+
+Vorlage-Struktur für eine Hue Leuchte mit erweiteten Attributen/Sub-Items (warm white)
+
+.. treeview::
+     - :dir:`file` **light_ww_extended** (`foo`, Vorlage-Struktur für eine Hue Leuchte mit erweiteten Attributen/Sub-Items (warm white))
+
+
+light_xy
+========
+
+Vorlage-Struktur für eine Hue Leuchte (Farbe nur über xy)
+
+.. treeview::
+     - :dir:`folder` **light_xy** (`foo`, Vorlage-Struktur für eine Hue Leuchte (Farbe nur über xy))
+         - :dir:`file` **xy** (`list`, ---)
+
+
+light_xy_extended
+=================
+
+Vorlage-Struktur für eine Hue Leuchte mit erweiteten Attributen/Sub-Items (Farbe nur über xy)
+
+.. treeview::
+     - :dir:`file` **light_xy_extended** (`foo`, Vorlage-Struktur für eine Hue Leuchte mit erweiteten Attributen/Sub-Items (Farbe nur über xy))
+
+
+===============
+Logik Parameter
+===============
+
+
+Das Plugin verfügt über folgende Parameter, die in der Datei ``../etc/logic.yaml`` konfiguriert werden:
+
+Keine Logik Parameter in den Metadaten beschrieben - **Bitte in der README nachsehen** (siehe Fußnote)
+
+================
+Plugin Functions
+================
+
+
+Das Plugin verfügt über folgende öffentliche Funktionen, die z.B. in Logiken aufgerufen werden können.
+
+**Keine**
+
+.. [#f1] Diese Seite wurde aus den Metadaten des Plugins erzeugt.

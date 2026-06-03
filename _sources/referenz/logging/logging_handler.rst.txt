@@ -11,7 +11,7 @@ Logging Handler
 ===============
 
 Zusätzlich zu den Logging Handlern, die im Standard Logging Modul von Python definiert, bringt SmartHomeNG
-weitere Handler mit, die bei der Konfiguration in ../etc/logging.yaml verwendet werden können.
+weitere Handler mit, die bei der Konfiguration in ``etc/logging.yaml`` verwendet werden können.
 
 |
 
@@ -38,7 +38,7 @@ in der GUI eines Betriebssystems geöffnet werden.
 Benutzung des Handlers
 ----------------------
 
-In der Datei ``../etc/logging.yaml`` wird der Handler als Ersatz für **TimedRotatingFileHandler** eingesetzt.
+In der Datei ``etc/logging.yaml`` wird der Handler als Ersatz für **TimedRotatingFileHandler** eingesetzt.
 Dort wo im Abschnitt ``handler:`` bisher der Handler **TimedRotatingFileHandler** konfiguriert ist:
 
 .. code-block:: yaml
@@ -69,6 +69,15 @@ wird anstelle des ``class:`` Attributes der Handler **ShngTimedRotatingFileHandl
             filename: ./var/log/smarthome-warnings.log
             encoding: utf8
 
+Mögliche Angaben für ``when:`` sind:
+
+- 'S': jede Sekunde
+- 'M': jede Minute
+- 'H': jede Stunde
+- 'D': täglich
+- 'W0', 'W1', ..., 'W6': Tag der Woche (0 = Montag, 1 = Dienstag, ..., 6 = Sonntag)
+- 'midnight': Mitternacht, gleich wir 'D', also täglich
+
 |
 
 DateTimeRotatingFileHandler
@@ -78,6 +87,12 @@ Dieser Handler ermöglicht wie das operationlog und datalog Plugin, die Logdatei
 entsprechend der aktuellen Uhrzeit zu benennen. Gleich wie beim oben beschriebenen
 ShngTimedRotatingFileHandler kann angegeben werden, in welchem zeitlichen Abstand
 eine neue Datei erstellt werden soll und wieviele Backup-Versionen erhalten bleiben.
+Dabei sind zusätzlich mögliche Angaben für ``when:``:
+
+- 'W': jede Woche, also jeden Montag mitternachts, identisch zu W0
+- 'MO': monatlich, also jeden 1. eines Monats mitternachts
+- 'Y': jährlich, also jedes Jahr am 1. Jänner mitternachts
+
 Der Handler stellt mehrere Platzhalter für Dateinamen und Ordner zur Verfügung.
 Monat, Tag, Stunde und Minute werden im Normalfall mit einer Ziffer
 ohne vorgestellter 0 geschrieben, außer man setzt dezidiert ein ``:02`` hinten dran.
@@ -148,7 +163,7 @@ und der Handler wird in den konfigurierten Loggern als (zusätzlicher) Logger ko
 Benutzung des Handlers
 ----------------------
 
-In der Datei ``../etc/logging.yaml`` wird der **ShngMemLogHandler** im Abschnitt ``handler:`` konfiguriert.
+In der Datei ``etc/logging.yaml`` wird der **ShngMemLogHandler** im Abschnitt ``handler:`` konfiguriert.
 
 .. code-block:: yaml
 
