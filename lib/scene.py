@@ -380,8 +380,8 @@ class Scenes():
         action = str(action)
         try:
             return self._scenes[scenename][action][0][2]
-        except Exception:
-            logger.warning(translate("get_scene_action_name: " + "unable to get self._scenes['{scenename}']['{action}'][0][2] <- {res}", {'scenename': scenename, 'action': action, 'res': self._scenes[scenename][action][0]}))
+        except (KeyError, IndexError) as e:
+            logger.warning(translate("get_scene_action_name: " + "unable to get self._scenes['{scenename}']['{action}'][0][2]: {e}", {'scenename': scenename, 'action': action, 'e': e}))
             return ''
 
     def return_scene_value_actions(self, name, state):
