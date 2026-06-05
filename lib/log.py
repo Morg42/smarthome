@@ -747,6 +747,8 @@ class EnglishLocale(logging.Formatter):
         return formatted
 
     def _convert_strftime_to_babel(self, fmt: str) -> str:
+        if fmt is None:
+            return None
         mapping = {
             '%a': 'EEE', '%A': 'EEEE',
             '%w': 'e', '%d': 'dd',
