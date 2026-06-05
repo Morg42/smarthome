@@ -76,7 +76,14 @@ class _MockSh:
     _default_language = 'de'
 
     def get_config_file(self, basename, extension='.yaml'):
-        """Return full path to etc/<basename>.yaml so _initialize_holidays works."""
+        """Return full path to a holidays config that exists in CI.
+        Prefers tests/resources/etc/<basename>.yaml (committed to the repo)
+        over etc/<basename>.yaml (instance-specific, absent in CI)."""
+        tests_etc = os.path.join(os.path.dirname(__file__), 'resources', 'etc')
+        candidate = os.path.join(tests_etc, basename + extension)
+        if os.path.isfile(candidate):
+            return candidate
+        # Fall back to the real etc/ directory (works locally)
         base_dir = os.path.join(os.path.dirname(__file__), '..')
         return os.path.join(base_dir, 'etc', basename + extension)
 

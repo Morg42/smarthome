@@ -1173,16 +1173,16 @@ class Shtime:
                 prov=location.get('province', None)
                 state=location.get('state', None)
                 try:
-                    self.holidays = holidays.CountryHoliday(country, years=self.years, prov=prov, state=state)
+                    self.holidays = holidays.country_holidays(country, years=self.years, subdiv=prov or state)
                 except KeyError as e:
                     self.logger.error("Error initializing self.holidays: {}".format(e))
                 try:
-                    self.public_holidays = holidays.CountryHoliday(country, years=self.years, prov=prov, state=state)
+                    self.public_holidays = holidays.country_holidays(country, years=self.years, subdiv=prov or state)
                 except KeyError as e:
                     self.logger.error("Error initializing self.public_holidays: {}".format(e))
             else:
-                self.holidays = holidays.CountryHoliday('US', years=self.years, prov=None, state=None)
-                self.public_holidays = holidays.CountryHoliday('US', years=self.years, prov=None, state=None)
+                self.holidays = holidays.country_holidays('US', years=self.years)
+                self.public_holidays = holidays.country_holidays('US', years=self.years)
 
             if self.holidays is not None:
                 c_logtext = self.translate('not defined')
