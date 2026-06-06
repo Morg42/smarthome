@@ -108,6 +108,13 @@ from ._parsing import (
     parse_autotimer_attribute as _parse_autotimer_attribute,
     build_trigger_condition_eval as _build_trigger_condition_eval,
 )
+from ._stackinfo import (
+    get_class_from_frame as _get_class_from_frame,
+    get_calling_item_from_frame as _get_calling_item_from_frame,
+    get_stack_info as _get_stack_info,
+)
+from ._fade import fade as _fade
+from ._json import jsonvars as _jsonvars, to_json as _to_json
 
 _items_instance = None
 
@@ -660,69 +667,8 @@ class Item():
         return _cast_duration(self, time, test=test)
 
 
-    def _cast_duration_old(self, time, test=False):
-
-        if isinstance(time, str):
-            try:
-                time = time.strip()
-                time_in_sec = 0
-
-                wrk = time.split('h')
-                if len(wrk) > 1:
-                    time_in_sec += int(wrk[0]) * 60 * 60
-                    time = wrk[1].strip()
-
-                wrk = time.split('m')
-                if len(wrk) > 1:
-                    time_in_sec += int(wrk[0]) * 60
-                    time = wrk[1].strip()
-
-                wrk = time.split('s')
-                if len(wrk) > 1:
-                    time_in_sec += int(wrk[0])
-                    # time = wrk[1].strip()
-                elif wrk[0] != '':
-                    time_in_sec += int(wrk[0])
-            except Exception as e:
-                if not test:
-                    logger.warning(f"Item {self._path} - _cast_duration: (time={time}) - problem: {e}")
-                time_in_sec = False
-
-        elif isinstance(time, int):
-            time_in_sec = int(time)
-        elif isinstance(time, float):
-            time_in_sec = int(time)
-        else:
-            if not test:
-                logger.warning(f"Item {self._path} - _cast_duration: (time={time}) problem: unable to convert to int")
-            time_in_sec = False
-        return time_in_sec
-
-
-    def _build_cycledict(self, value):
-        """
-        builds a dict for a cycle parameter from a duration_value_string
-
-        This dict is to be passed to the scheduler to circumvent the parameter
-        parsing within the scheduler, which can't to casting
-
-        :param value: raw attribute string containing duration, value (and compatibility)
-        :return: cycle-dict for a call to scheduler.add
-        """
-        # try:
-        #     result = int(value)
-        # except ValueError:
-        #     time, value, compat = split_duration_value_string(value, ATTRIB_COMPAT_DEFAULT)
-        #     time = self._cast_duration(time)
-        #     value = self._castvalue_to_itemtype(value, compat)
-        #     cycle = {time: value}
-        #     result = cycle
-        time, value, compat = split_duration_value_string(value, ATTRIB_COMPAT_DEFAULT)
-        time = self._cast_duration(time)
-        value = self._castvalue_to_itemtype(value, compat)
-        cycle = {time: value}
-        result = cycle
-        return result
+    # _cast_duration_old — removed (superseded by _cast_duration / _casting.cast_duration)
+    # _build_cycledict   — removed (dead code, never called)
 
 
     """
@@ -1222,56 +1168,16 @@ class Item():
 #
 
     def get_class_from_frame(self, fr):
-        # https://stackoverflow.com/questions/2203424/python-how-to-retrieve-class-information-from-a-frame-object
-        # import inspect
-        args, _, _, value_dict = inspect.getargvalues(fr)
-        # we check the first parameter for the frame function is
-        # named 'self'
-
-        # if len(args) and args[0] == 'self' and False:    # Don't execute this if-branch
-        #     # in that case, 'self' will be referenced in value_dict
-        #     instance = value_dict.get('self', None)
-        #     if instance:
-        #         # return its class
-#       #          return getattr(instance, '__class__', None)
-        #         return getattr(instance, '__class__', f"args={args}  - value_dict={value_dict}")
-
-        # return None otherwise
-        return f"args={args}  - value_dict={value_dict}"
+        """Return debug frame string — delegates to _stackinfo.get_class_from_frame()."""
+        return _get_class_from_frame(self, fr)
 
     def get_calling_item_from_frame(self, fr):
-        # Info from: https://stackoverflow.com/questions/2203424/python-how-to-retrieve-class-information-from-a-frame-object
-        # import inspect
-        args, _, _, value_dict = inspect.getargvalues(fr)
-        # we check the first parameter for the frame function is
-        # named 'self'
-
-        # if len(args) and args[0] == 'self' and False:
-        #     # in that case, 'self' will be referenced in value_dict
-        #     instance = value_dict.get('self', None)
-        #     if instance:
-        #         return getattr(instance, '__class__', f"args={args}  - value_dict={value_dict}")
-
-        return f"{value_dict.get('self', None)}"
+        """Return calling item string from frame — delegates to _stackinfo.get_calling_item_from_frame()."""
+        return _get_calling_item_from_frame(self, fr)
 
     def get_stack_info(self):
-
-        # msg = "call stack:"
-        # msg += f" {inspect.stack()[1][3]}() / {inspect.stack()[2][3]}() / {inspect.stack()[3][3]}() / {inspect.stack()[4][4]}() / {inspect.stack()[5][5]}()"
-        msg = ''
-        for level in range(4, 5):
-            try:
-                # f_code.__class__.__name__ == 'code'
-                # f_code.__class__.__class__.__name__ == 'type'
-                # msg += f" - f_code={inspect.stack()[level].frame.f_code}   -  classname={inspect.stack()[level].frame.f_code.__class__.__class__.__class__.__name__}   -   dir(__class__.__class__.__class__)={dir(inspect.stack()[level].frame.f_code.__class__.__class__.__class__)}"
-                if inspect.stack()[level].function == '__run_eval':
-                    msg += f"Item '{self.get_calling_item_from_frame(inspect.stack()[level].frame)}'"
-                else:
-                    msg += f"{inspect.stack()[level].function}()"
-            except Exception as ex:
-                msg += f" - error getting code {ex}"
-
-        return msg
+        """Return caller info from call stack — delegates to _stackinfo.get_stack_info()."""
+        return _get_stack_info(self)
 
 
     def __get_dictentry(self, key, default):
@@ -1720,28 +1626,10 @@ class Item():
 
 
     def fade(self, dest, step=1, delta=1, caller=None, stop_fade=None, continue_fade=None, instant_set=True, update=False):
-        """
-        fades an item value to a given destination value
-
-        :param dest: destination value of fade job
-        :param step: step size for fading
-        :param delta: time interval between value changes
-        :param caller: Used as a source for upcoming item changes. Caller will always be "Fader"
-        :param stop_fade: list of callers that can stop the fading (all others won't stop it!)
-        :param continue_fade: list of callers that can continue fading exclusively (all others will stop it)
-        :param instant_set: If set to True, first fade value is set immediately after fade method is called, otherwise only after delta time
-        :param update: If set to True, an ongoing fade will be updated by the new parameters on the fly
-        """
-        if stop_fade and not isinstance(stop_fade, list):
-            logger.warning(f"stop_fade parameter {stop_fade} for fader {self} has to be a list. Ignoring")
-            stop_fade = None
-        if continue_fade and not isinstance(continue_fade, list):
-            logger.warning(f"continue_fade parameter {continue_fade} for fader {self} has to be a list. Ignoring")
-            continue_fade = None
-        dest = float(dest)
-        if not self._fading or (self._fading and update):
-            self._fadingdetails = {'value': self._value, 'dest': dest, 'step': step, 'delta': delta, 'caller': caller, 'stop_fade': stop_fade, 'continue_fade': continue_fade, 'instant_set': instant_set}
-        self._sh.trigger(self._path, fadejob, value={'item': self})
+        """Fade item value to dest — delegates to _fade.fade()."""
+        _fade(self, dest, step=step, delta=delta, caller=caller,
+              stop_fade=stop_fade, continue_fade=continue_fade,
+              instant_set=instant_set, update=update)
 
     def return_children(self):
         for child in self.__children:
@@ -1819,17 +1707,9 @@ class Item():
                 for item in self.__children]
 
     def jsonvars(self):
-        """
-        Translation method from object members to json
-        :return: Key / Value pairs from object members
-        """
-        return {"id": self._path,
-                "name": self._name,
-                "value": self._value,
-                "type": self._type,
-                "attributes": self.conf,
-                "children": self.get_children_path()
-                }
+        """Return serialisable attribute dict — delegates to _json.jsonvars()."""
+        return _jsonvars(self)
 
     def to_json(self):
-        return json.dumps(self.jsonvars(), sort_keys=True, indent=2)
+        """Return pretty-printed JSON string — delegates to _json.to_json()."""
+        return _to_json(self)
