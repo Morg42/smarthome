@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 660" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="940" height="660" fill="#f8f9fa" rx="8"/>
+
+  <!-- ── BEFORE label ── -->
+  <text x="190" y="32" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">BEFORE</text>
+
+  <!-- Monolith box -->
+  <rect x="30" y="48" width="320" height="560" rx="6" fill="#fff" stroke="#c0392b" stroke-width="2.5"/>
+  <rect x="30" y="48" width="320" height="32" rx="6" fill="#c0392b"/>
+  <rect x="30" y="68" width="320" height="12" fill="#c0392b"/>
+  <text x="190" y="69" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">item.py  ·  3 017 lines</text>
+
+  <!-- Concern blocks inside monolith -->
+  <rect x="46" y="92"  width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="104" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">TypeHandler / ListHandler / DictHandler</text>
+  <text x="190" y="118" text-anchor="middle" font-size="10" fill="#666">inner class definitions</text>
+
+  <rect x="46" y="133" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="145" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">ItemHistory  (14 private __attributes)</text>
+  <text x="190" y="159" text-anchor="middle" font-size="10" fill="#666">last/prev change, update, trigger, value</text>
+
+  <rect x="46" y="174" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="186" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">log_change  (_log_on_change et al.)</text>
+  <text x="190" y="200" text-anchor="middle" font-size="10" fill="#666">rules, text builders, level resolution</text>
+
+  <rect x="46" y="215" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="227" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">eval / on_change / on_update</text>
+  <text x="190" y="241" text-anchor="middle" font-size="10" fill="#666">__run_eval, _run_on_xxx, __run_on_*</text>
+
+  <rect x="46" y="256" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="268" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Hysteresis state machine</text>
+  <text x="190" y="282" text-anchor="middle" font-size="10" fill="#666">__run_hysteresis, timers, state query</text>
+
+  <rect x="46" y="297" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="309" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Path resolution</text>
+  <text x="190" y="323" text-anchor="middle" font-size="10" fill="#666">get_absolutepath, get_stringwith…, find_attribute</text>
+
+  <rect x="46" y="338" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="350" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Autotimer / cycle / scheduler</text>
+  <text x="190" y="364" text-anchor="middle" font-size="10" fill="#666">timer(), autotimer(), get_attr_time/value</text>
+
+  <rect x="46" y="379" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="391" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Value casting</text>
+  <text x="190" y="405" text-anchor="middle" font-size="10" fill="#666">_castvalue_to_itemtype, _cast_duration</text>
+
+  <rect x="46" y="420" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="432" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Trigger registration</text>
+  <text x="190" y="446" text-anchor="middle" font-size="10" fill="#666">add/remove/get logic, method, item triggers</text>
+
+  <rect x="46" y="461" width="288" height="34" rx="4" fill="#fde8e8" stroke="#e88"/>
+  <text x="190" y="473" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Attribute parsing</text>
+  <text x="190" y="487" text-anchor="middle" font-size="10" fill="#666">_parse_eval, _parse_on_xx, _build_trigger_condition</text>
+
+  <rect x="46" y="502" width="288" height="90" rx="4" fill="#f5f5f5" stroke="#bbb"/>
+  <text x="190" y="519" text-anchor="middle" font-size="11" fill="#555" font-weight="bold">Core (stays in item.py)</text>
+  <text x="190" y="535" text-anchor="middle" font-size="10" fill="#777">__init__  ·  __call__  ·  __update</text>
+  <text x="190" y="549" text-anchor="middle" font-size="10" fill="#777">cast  ·  properties  ·  public API</text>
+  <text x="190" y="563" text-anchor="middle" font-size="10" fill="#777">trigger registration  ·  fade</text>
+  <text x="190" y="577" text-anchor="middle" font-size="10" fill="#aaa">1 835 lines remaining</text>
+
+  <!-- Arrow -->
+  <text x="390" y="338" text-anchor="middle" font-size="26" fill="#555">→</text>
+
+  <!-- ── AFTER label ── -->
+  <text x="685" y="32" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">AFTER</text>
+
+  <!-- item.py (smaller) -->
+  <rect x="490" y="48" width="170" height="175" rx="6" fill="#fff" stroke="#2980b9" stroke-width="2.5"/>
+  <rect x="490" y="48" width="170" height="32" rx="6" fill="#2980b9"/>
+  <rect x="490" y="68" width="170" height="12" fill="#2980b9"/>
+  <text x="575" y="69" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">item.py  ·  1 835 lines</text>
+
+  <rect x="504" y="92" width="142" height="19" rx="3" fill="#eaf4fb" stroke="#7cb9e8"/>
+  <text x="575" y="105" text-anchor="middle" font-size="10" fill="#333">Core logic (delegates outward)</text>
+  <rect x="504" y="116" width="142" height="19" rx="3" fill="#eaf4fb" stroke="#7cb9e8"/>
+  <text x="575" y="129" text-anchor="middle" font-size="10" fill="#333">Public API / properties</text>
+  <rect x="504" y="140" width="142" height="19" rx="3" fill="#eaf4fb" stroke="#7cb9e8"/>
+  <text x="575" y="153" text-anchor="middle" font-size="10" fill="#333">~110 one-line delegates</text>
+  <rect x="504" y="164" width="142" height="19" rx="3" fill="#eaf4fb" stroke="#7cb9e8"/>
+  <text x="575" y="177" text-anchor="middle" font-size="10" fill="#333">4 proxy methods/properties</text>
+  <rect x="504" y="188" width="142" height="19" rx="3" fill="#eaf4fb" stroke="#7cb9e8"/>
+  <text x="575" y="201" text-anchor="middle" font-size="10" fill="#333">__init__  ·  __call__  ·  __update</text>
+
+  <!-- Sub-modules — right column (10 modules, 48px step, starting y=48) -->
+  <!-- _typehandler -->
+  <rect x="690" y="48"  width="220" height="40" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="800" y="63" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_typehandler.py</text>
+  <text x="800" y="79" text-anchor="middle" font-size="10" fill="#555">TypeHandler / ListHandler / DictHandler  · 157</text>
+
+  <!-- _history -->
+  <rect x="690" y="96"  width="220" height="40" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="800" y="111" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_history.py</text>
+  <text x="800" y="127" text-anchor="middle" font-size="10" fill="#555">ItemHistory  ·  6 write paths  ·  14 getters  · 187</text>
+
+  <!-- _logchange -->
+  <rect x="690" y="144" width="220" height="40" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="800" y="159" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_logchange.py</text>
+  <text x="800" y="175" text-anchor="middle" font-size="10" fill="#555">log_on_change / get_rule / build_text  · 286</text>
+
+  <!-- _eval -->
+  <rect x="690" y="192" width="220" height="40" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="800" y="207" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_eval.py</text>
+  <text x="800" y="223" text-anchor="middle" font-size="10" fill="#555">run_eval / run_on_update / run_on_change  · 289</text>
+
+  <!-- _hysteresis -->
+  <rect x="690" y="240" width="220" height="40" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="800" y="255" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_hysteresis.py</text>
+  <text x="800" y="271" text-anchor="middle" font-size="10" fill="#555">run_hysteresis / state / data  · 286</text>
+
+  <!-- _pathresolution -->
+  <rect x="690" y="288" width="220" height="40" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="800" y="303" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_pathresolution.py</text>
+  <text x="800" y="319" text-anchor="middle" font-size="10" fill="#555">get_absolutepath / find_attribute / …  · 277</text>
+
+  <!-- _autotimer -->
+  <rect x="690" y="336" width="220" height="40" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="800" y="351" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_autotimer.py</text>
+  <text x="800" y="367" text-anchor="middle" font-size="10" fill="#555">timer / autotimer / get_attr_time / …  · 282</text>
+
+  <!-- _casting  (round 2 — slightly different green) -->
+  <rect x="690" y="384" width="220" height="40" rx="5" fill="#fff" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="5,2"/>
+  <text x="800" y="399" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e8449">_casting.py</text>
+  <text x="800" y="415" text-anchor="middle" font-size="10" fill="#555">castvalue_to_itemtype / cast_duration  · 184</text>
+
+  <!-- _triggers -->
+  <rect x="690" y="432" width="220" height="40" rx="5" fill="#fff" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="5,2"/>
+  <text x="800" y="447" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e8449">_triggers.py</text>
+  <text x="800" y="463" text-anchor="middle" font-size="10" fill="#555">add/remove/get logic, method, item  · 156</text>
+
+  <!-- _parsing -->
+  <rect x="690" y="480" width="220" height="40" rx="5" fill="#fff" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="5,2"/>
+  <text x="800" y="495" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e8449">_parsing.py</text>
+  <text x="800" y="511" text-anchor="middle" font-size="10" fill="#555">parse_* / build_trigger_condition  · 326</text>
+
+  <!-- Connectors: item.py right edge to sub-modules -->
+  <line x1="660" y1="68"  x2="688" y2="68"  stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="116" x2="688" y2="116" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="164" x2="688" y2="164" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="212" x2="688" y2="212" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="260" x2="688" y2="260" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="308" x2="688" y2="308" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="356" x2="688" y2="356" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="404" x2="688" y2="404" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="452" x2="688" y2="452" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="500" x2="688" y2="500" stroke="#aaa" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Vertical spine connecting item.py to all connectors -->
+  <line x1="660" y1="68"  x2="660" y2="500" stroke="#aaa" stroke-width="1.2"/>
+
+  <!-- Legend for round 2 modules -->
+  <rect x="690" y="535" width="10" height="10" fill="#fff" stroke="#27ae60" stroke-width="1.8" rx="1"/>
+  <text x="704" y="544" font-size="10" fill="#555">Round 1 (7 modules)</text>
+  <rect x="810" y="535" width="10" height="10" fill="#fff" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="5,2" rx="1"/>
+  <text x="824" y="544" font-size="10" fill="#555">Round 2 (3 modules)</text>
+
+  <!-- Metrics footer -->
+  <rect x="30" y="618" width="880" height="28" rx="5" fill="#eaf4fb" stroke="#7cb9e8"/>
+  <text x="470" y="636" text-anchor="middle" font-size="12" fill="#1a6496">
+    item.py: 3 017 → 1 835 lines (−39 %)  ·  10 sub-modules  ·  2 430 lines extracted  ·  all 1 009 tests pass
+  </text>
+</svg>

@@ -127,6 +127,7 @@ class MockSmartHome():
         #self.version = VERSION
 
         self.version = bin.shngversion.shNG_version
+        self.plugins_version = bin.shngversion.get_plugins_version()
 
         MODE = 'default'
         self._mode = MODE
