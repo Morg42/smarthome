@@ -324,3 +324,154 @@ def build_trigger_condition_eval(item, trigger_condition):
         result = '(' + result + ')'
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# get_attribute_value
+# ---------------------------------------------------------------------------
+
+def get_attribute_value(item, attr_ref: str, current_attr: str,
+                        default: str = '', ignore_current_item: bool = False) -> str:
+    """
+    Resolve a relative attribute reference to its value.
+
+    If *attr_ref* contains a colon (``item:attr`` syntax) the referenced
+    attribute is looked up on an ancestor item.  A leading run of dots in the
+    item-part selects the ancestor level (one dot = current item, two dots =
+    parent, etc.).
+
+    When *ignore_current_item* is ``True`` and the item part resolves to the
+    current item, the raw *attr_ref* is returned unchanged — used to break
+    infinite loops during attribute expansion.
+
+    :param item:               ``Item`` instance.
+    :param attr_ref:           Raw attribute reference string.
+    :param current_attr:       Name of the attribute currently being processed
+                               (used as fallback attr name when the colon
+                               syntax omits the attribute part).
+    :param default:            Value returned when the attribute is not found.
+    :param ignore_current_item: Skip resolution for the current item.
+    :return:                   Resolved value string (or *attr_ref* unchanged).
+    :rtype:                    str
+    """
+    value = attr_ref
+    attr_ref = attr_ref.strip()
+    if ':' in attr_ref:
+        fromattr = attr_ref.split(':')[1]
+        if fromattr in ['', '.']:
+            fromattr = current_attr
+
+        fromitem = attr_ref.split(':')[0]
+        if fromitem == '.' and ignore_current_item:
+            return value
+
+        if all(x == '.' for x in fromitem):
+            level = len(fromitem) - 1
+            value = item.find_attribute(fromattr, default, level=level, strict=True)
+    return value
+
+
+# ---------------------------------------------------------------------------
+# build_on_xx_list
+# ---------------------------------------------------------------------------
+
+def build_on_xx_list(on_dest_list, on_eval_list):
+    """
+    Reconstruct an ``on_change``/``on_update`` attribute list from its
+    split destination and eval components.
+
+    Each entry is either plain ``eval`` (when *on_dest* is empty) or
+    ``dest = eval``.  Both scalar and list inputs are supported.
+
+    Called from ``lib/item/property.py`` to reconstruct the human-readable
+    attribute value from the parsed internal representation.
+
+    :param on_dest_list: Destination item path(s) — string or list of strings.
+    :param on_eval_list: Eval expression(s) — string or list of strings.
+    :return:             List of formatted ``on_xx`` strings.
+    :rtype:              list
+    """
+    on_list = []
+    if on_dest_list is not None:
+        if isinstance(on_dest_list, list):
+            for on_dest, on_eval in zip(on_dest_list, on_eval_list):
+                if on_dest != '':
+                    on_list.append(on_dest.strip() + ' = ' + on_eval)
+                else:
+                    on_list.append(on_eval)
+        else:
+            if on_dest_list != '':
+                on_list.append(on_dest_list + ' = ' + on_eval_list)
+            else:
+                on_list.append(on_eval_list)
+    return on_list
+
+
+# ---------------------------------------------------------------------------
+# init_prerun
+# ---------------------------------------------------------------------------
+
+def init_prerun(item):
+    """
+    Wire up eval triggers and hysteresis triggers before the first item run.
+
+    Called from ``Items.load_itemdefinitions`` after all items are loaded
+    so that cross-item references (``eval_trigger``, ``hysteresis_input``)
+    can be resolved.
+
+    For each trigger path in ``item._trigger``:
+    - Matches live Item objects via the Items singleton.
+    - Warns if no match is found.
+    - Appends *item* to each match's ``_items_to_trigger`` list (excluding
+      self-references).
+    - Rewrites the magic eval keywords ``and``, ``or``, ``sum``, ``avg``,
+      ``max``, ``min`` into proper Python expressions over the trigger items.
+
+    For ``hysteresis_input``:
+    - Looks up the triggering item.
+    - Appends *item* to ``_hysteresis_items_to_trigger`` on that item.
+
+    :param item: ``Item`` instance.
+    """
+    from lib.item.items import Items
+    items_instance = Items.get_instance()
+
+    if item._trigger:
+        _items = []
+        for trigger in item._trigger:
+            if items_instance.match_items(trigger) == [] and item._eval:
+                logger.warning(
+                    f"item '{item._path}': trigger item '{trigger}' "
+                    f"not found for function '{item._eval}'"
+                )
+            _items.extend(items_instance.match_items(trigger))
+        for triggered in _items:
+            if triggered != item:
+                triggered._items_to_trigger.append(item)
+        if item._eval:
+            items_expr = ['sh.' + str(x.id()) + '()' for x in _items]
+            if item._eval == 'and':
+                item._eval = ' and '.join(items_expr)
+            elif item._eval == 'or':
+                item._eval = ' or '.join(items_expr)
+            elif item._eval == 'sum':
+                item._eval = ' + '.join(items_expr)
+            elif item._eval == 'avg':
+                item._eval = '({0})/{1}'.format(' + '.join(items_expr), len(items_expr))
+            elif item._eval == 'max':
+                item._eval = 'max({0})'.format(','.join(items_expr))
+            elif item._eval == 'min':
+                item._eval = 'min({0})'.format(','.join(items_expr))
+
+    if item._hysteresis_input:
+        triggering_item = items_instance.return_item(item._hysteresis_input)
+        if triggering_item is None:
+            logger.error(
+                f"item '{item._path}': trigger item '{item._hysteresis_input}' "
+                f"not found for function 'hysteresis'"
+            )
+        else:
+            if triggering_item != item:
+                if item._hysteresis_log:
+                    logger.notice(f"_init_prerun: Adding to triggering_item {item}")
+                triggering_item._hysteresis_items_to_trigger.append(item)

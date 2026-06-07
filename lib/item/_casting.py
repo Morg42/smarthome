@@ -43,6 +43,7 @@ callers (``_autotimer.py``, ``_build_cycledict``, etc.) remain unchanged.
 """
 
 import logging
+import sys
 
 from lib.constants import ATTRIB_COMPAT_LATEST
 
@@ -182,3 +183,74 @@ def cast_duration(item, time, test=False):
         time_in_sec = False
 
     return time_in_sec
+
+
+# ---------------------------------------------------------------------------
+# run_attribute_eval
+# ---------------------------------------------------------------------------
+
+def run_attribute_eval(item, eval_expression, result_type='num', result_error=''):
+    """
+    Evaluate an expression string used in item attributes such as
+    ``autotimer``, ``cycle``, ``hysteresis_upper_threshold``, and
+    ``hysteresis_lower_threshold``.
+
+    The eval environment provides: ``sh``, ``shtime``, ``items``, ``math``,
+    ``uf`` (lib.userfunctions), ``env`` (lib.env) — matching the environment
+    used by the main item eval path.
+
+    On ``NameError`` the undefined name is replaced by a quoted string and
+    evaluation is retried.  Any other exception or a non-numeric result when
+    ``result_type='num'`` is expected both log an error and return
+    *result_error* / ``0`` respectively.
+
+    :param item:            ``Item`` instance.
+    :param eval_expression: Expression string to evaluate.
+    :param result_type:     ``'num'`` (default) or ``'str'``.
+    :param result_error:    Value returned on evaluation error (default ``''``).
+    :return:                Evaluated result.
+    """
+    from lib.item.items import Items
+    import lib.env
+    import lib.userfunctions as uf  # noqa: F401 (used in eval environment)
+    import math                     # noqa: F401 (used in eval environment)
+
+    sh = item._sh                   # noqa: F841 (used in eval environment)
+    shtime = item.shtime            # noqa: F841 (used in eval environment)
+    items = Items.get_instance()    # noqa: F841 (used in eval environment)
+    env = lib.env                   # noqa: F841 (used in eval environment)
+
+    eval_expression = str(eval_expression)
+    try:
+        result = eval(eval_expression)
+    except NameError:
+        _, ex, _ = sys.exc_info()
+        err = str(ex)
+        if err.startswith("name '") and err.endswith("' is not defined"):
+            var = err[6:-16]
+        eval_expression2 = eval_expression.replace(var, "'" + var + "'")
+        try:
+            result = eval('"' + eval_expression2 + '"')
+        except Exception as e:
+            logger.error(
+                f"Item '{item._path}': run_attribute_eval({eval_expression2}): "
+                f"Problem evaluating '{eval_expression2}' - Exception {e}"
+            )
+            result = result_error
+    except Exception as e:
+        logger.error(
+            f"Item '{item._path}': run_attribute_eval({eval_expression}): "
+            f"Problem evaluating '{eval_expression}' - Exception {e}"
+        )
+        result = result_error
+
+    if result_type == 'num':
+        if not isinstance(result, (int, float)):
+            logger.error(
+                f"Item '{item._path}': run_attribute_eval({eval_expression}): "
+                f"Attribute expression '{eval_expression}' evaluated to a "
+                f"non-numeric value '{result}', using 0 instead"
+            )
+            result = 0
+
+    return result

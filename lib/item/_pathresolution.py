@@ -275,3 +275,19 @@ def expand_relativepathes(item, attr, begintag, endtag):
                 _checkforentry(entry)
     elif attr in item.conf:
         _checkforentry(attr)
+
+
+# ---------------------------------------------------------------------------
+# get_attr
+# ---------------------------------------------------------------------------
+
+def get_attr(item, attr, default=''):
+    """
+    Return the value of *attr* from *item*'s own configuration dict.
+
+    :param item:    ``Item`` instance.
+    :param attr:    Attribute name to look up.
+    :param default: Value returned when *attr* is absent (default ``''``).
+    :return:        Attribute value or *default*.
+    """
+    return item.conf.get(attr, default)

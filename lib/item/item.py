@@ -74,6 +74,7 @@ from ._pathresolution import (
     find_attribute as _find_attribute,
     split_destitem_from_value as _split_destitem_from_value,
     expand_relativepathes as _expand_relativepathes,
+    get_attr as _get_attr_fn,
 )
 from ._autotimer import (
     get_attr_time as _get_attr_time,
@@ -87,6 +88,7 @@ from ._autotimer import (
 from ._casting import (
     castvalue_to_itemtype as _castvalue_to_itemtype,
     cast_duration as _cast_duration,
+    run_attribute_eval as _run_attribute_eval_fn,
 )
 from ._triggers import (
     add_logic_trigger as _add_logic_trigger,
@@ -107,6 +109,14 @@ from ._parsing import (
     parse_cycle_attribute as _parse_cycle_attribute,
     parse_autotimer_attribute as _parse_autotimer_attribute,
     build_trigger_condition_eval as _build_trigger_condition_eval,
+    get_attribute_value as _get_attribute_value_fn,
+    build_on_xx_list as _build_on_xx_list_fn,
+    init_prerun as _init_prerun_fn,
+)
+from ._lifecycle import remove as _remove_item
+from ._navigation import (
+    return_parent_item as _return_parent_item,
+    is_top_of_item_tree as _is_top_of_item_tree_fn,
 )
 from ._stackinfo import (
     get_class_from_frame as _get_class_from_frame,
@@ -596,55 +606,12 @@ class Item():
                     self.add_method_trigger(update)
 
     def remove(self):
-        """
-        Cleanup item usage before item deletion
-        Calls all plugins to remove the item and its references.
-        :return: success
-        :rtype: bool
-        """
-        incompatible = []
-
-        for plugin in self.plugins.return_plugins():
-            if hasattr(plugin, PLUGIN_REMOVE_ITEM):
-                try:
-                    plugin.remove_item(self)
-                except Exception as e:
-                    logger.warning(f"while removing item {self} from plugin {plugin}, the following error occurred: {e}")
-            else:
-                incompatible.append(plugin.get_shortname())
-
-        if incompatible:
-            logger.warning(f"while removing item {self}, the following plugins were incompatible: {', '.join(incompatible)}")
-            return False
-
-        return True
+        """Notify plugins of item deletion — delegates to _lifecycle.remove()."""
+        return _remove_item(self)
 
     def _get_attribute_value(self, attr_ref: str, current_attr: str, default: str = '', ignore_current_item: bool = False) -> str:
-        """
-        Get the value of an other attribute using a relative reference
-
-        :param attr_ref: Reference to attribute
-        :param ignore_current_item: Skip attributes of current item (needed in attr loop)
-
-        :return: Value of the referenced attribute or '' if given number of parents are not present
-        """
-        value = attr_ref
-        attr_ref = attr_ref.strip()
-        if ':' in attr_ref:
-            fromattr = attr_ref.split(':')[1]
-            if fromattr in ['', '.']:
-                fromattr = current_attr
-
-            fromitem = attr_ref.split(':')[0]
-            # needed for attr loop
-            if fromitem == '.' and ignore_current_item:
-                return value
-
-            # if fromitem is only dots
-            if all(x == '.' for x in fromitem):
-                level = len(fromitem) - 1
-                value = self.find_attribute(fromattr, default, level=level, strict=True)
-        return value
+        """Resolve relative attribute reference — delegates to _parsing.get_attribute_value()."""
+        return _get_attribute_value_fn(self, attr_ref, current_attr, default=default, ignore_current_item=ignore_current_item)
 
 
     def find_attribute(self, attr, default: str = '', level: int = -1, strict: bool = False) -> str:
@@ -719,23 +686,8 @@ class Item():
     """
 
     def _build_on_xx_list(self, on_dest_list, on_eval_list):
-        """
-        build on_xx data   (seens to be never called???)
-        """
-        on_list = []
-        if on_dest_list is not None:
-            if isinstance(on_dest_list, list):
-                for on_dest, on_eval in zip(on_dest_list, on_eval_list):
-                    if on_dest != '':
-                        on_list.append(on_dest.strip() + ' = ' + on_eval)
-                    else:
-                        on_list.append(on_eval)
-            else:
-                if on_dest_list != '':
-                    on_list.append(on_dest_list + ' = ' + on_eval_list)
-                else:
-                    on_list.append(on_eval_list)
-        return on_list
+        """Reconstruct on_change/on_update list — delegates to _parsing.build_on_xx_list()."""
+        return _build_on_xx_list_fn(on_dest_list, on_eval_list)
 
     # -----------------------------------------------------------------------
     # History getters — delegate to self._history (lib/item/_history.py)
@@ -1003,54 +955,12 @@ class Item():
 
 
     def _get_attr(self, attr, default=''):
-        """
-        Get attribute value from actual item
-
-        :param attr: Get the value from this attribute of the parent item
-        :return: value from attribute of parent item
-        """
-        pitem = self
-        pattr_value = pitem.conf.get(attr, default)
-        return pattr_value
+        """Get attribute from item's own conf — delegates to _pathresolution.get_attr()."""
+        return _get_attr_fn(self, attr, default=default)
 
 
-    def _get_attr_from_parent(self, attr, default=''):
-        """
-        Get attribute value from parent item
-
-        :param attr: Get the value from this attribute of the parent item
-        :return: value from attribute of parent item
-        """
-        pitem = self.return_parent()
-        pattr_value = pitem.conf.get(attr, default)
-        return pattr_value
-
-
-    def _get_attr_from_grandparent(self, attr, default=''):
-        """
-        Get attribute value from grandparent item
-
-        :param attr: Get the value from this attribute of the grandparent item
-        :return: value from attribute of grandparent item
-        """
-        pitem = self.return_parent()
-        gpitem = pitem.return_parent()
-        gpattr_value = gpitem.conf.get(attr, default)
-        return gpattr_value
-
-
-    def _get_attr_from_greatgrandparent(self, attr, default=''):
-        """
-        Get attribute value from grandparent item
-
-        :param attr: Get the value from this attribute of the grandparent item
-        :return: value from attribute of grandparent item
-        """
-        pitem = self.return_parent()
-        gpitem = pitem.return_parent()
-        ggpitem = gpitem.return_parent()
-        ggpattr_value = ggpitem.conf.get(attr, default)
-        return ggpattr_value
+    # _get_attr_from_parent / _get_attr_from_grandparent / _get_attr_from_greatgrandparent
+    # — removed (dead code, never called)
 
 
     def _build_trigger_condition_eval(self, trigger_condition):
@@ -1202,49 +1112,8 @@ class Item():
 
 
     def _init_prerun(self):
-        """
-        Build eval expressions from special functions and triggers before first run
-
-        Called from Items.load_itemdefinitions
-        """
-        if self._trigger:
-            # Only if item has an eval_trigger
-            _items = []
-            for trigger in self._trigger:
-                if _items_instance.match_items(trigger) == [] and self._eval:
-                    logger.warning(f"item '{self._path}': trigger item '{trigger}' not found for function '{self._eval}'")
-                _items.extend(_items_instance.match_items(trigger))
-            for item in _items:
-                if item != self:  # prevent loop
-                    item._items_to_trigger.append(self)
-            if self._eval:
-                # Build eval statement from trigger items (joined by given function)
-                items = ['sh.' + str(x.id()) + '()' for x in _items]
-                if self._eval == 'and':
-                    self._eval = ' and '.join(items)
-                elif self._eval == 'or':
-                    self._eval = ' or '.join(items)
-                elif self._eval == 'sum':
-                    self._eval = ' + '.join(items)
-                elif self._eval == 'avg':
-                    self._eval = '({0})/{1}'.format(' + '.join(items), len(items))
-                elif self._eval == 'max':
-                    self._eval = 'max({0})'.format(','.join(items))
-                elif self._eval == 'min':
-                    self._eval = 'min({0})'.format(','.join(items))
-
-        if self._hysteresis_input:
-            # Only if item has a hysteresis_input attribute
-            triggering_item = _items_instance.return_item(self._hysteresis_input)
-            if triggering_item is None:  # triggering item was not found
-                logger.error(f"item '{self._path}': trigger item '{self._hysteresis_input}' not found for function 'hysteresis'")
-            # elif self._hysteresis_upper_threshold < self._hysteresis_lower_threshold:
-            #    logger.error(f"item '{self._path}': Hysteresis upper threshod is lower than lower threshod")
-            else:
-                if triggering_item != self:  # prevent loop
-                    if self._hysteresis_log:
-                        logger.notice(f"_init_prerun: Adding to triggering_item {self}")
-                    triggering_item._hysteresis_items_to_trigger.append(self)
+        """Wire eval/hysteresis triggers before first run — delegates to _parsing.init_prerun()."""
+        _init_prerun_fn(self)
 
 
     def _init_start_scheduler(self):
@@ -1283,49 +1152,8 @@ class Item():
         return self.__run_attribute_eval(eval_expression, result_type, result_error)
 
     def __run_attribute_eval(self, eval_expression, result_type='num', result_error: Any = ''):
-        """
-        Evaluates an expression string for item attributes like
-         - autotimer
-         - cycle
-         - hysteresis_upper_threshold
-         - hysteresis_lower_threshold
-
-        :param eval_expression: string to evaluate
-        :param result_type: type for the result (num | str)
-        :return:
-        """
-
-        # set up environment for calculating eval-expression
-        sh = self._sh                   # noqa (needed for eval environment)
-        shtime = self.shtime            # noqa (needed for eval environment)
-        items = _items_instance         # noqa (needed for eval environment)
-        import math                     # noqa (needed for eval environment)
-        import lib.userfunctions as uf  # noqa (needed for eval environment)
-        env = lib.env                   # noqa (needed for eval environment)
-
-        eval_expression = str(eval_expression)
-        try:
-            result = eval(eval_expression)
-        except NameError:
-            _, ex, _ = sys.exc_info()  # err should be like "name 'foo' is not defined"
-            err = str(ex)
-            if err.startswith("name '") and err.endswith("' is not defined"):
-                var = err[6:-16]
-            eval_expression2 = eval_expression.replace(var, "'" + var + "'")        
-            try:
-                result = eval('"' + eval_expression2 + '"')
-            except Exception as e:
-                logger.error(f"Item '{self._path}': __run_attribute_eval({eval_expression2}): Problem evaluating '{eval_expression2}' - Exception {e}")
-                result = result_error
-        except Exception as e:
-            logger.error(f"Item '{self._path}': __run_attribute_eval({eval_expression}): Problem evaluating '{eval_expression}' - Exception {e}")
-            result = result_error
-        if result_type == 'num':
-            if not isinstance(result, (int, float)):
-                logger.error(f"Item '{self._path}': __run_attribute_eval({eval_expression}): Attribute expression '{eval_expression}' evaluated to a non-numeric value '{result}', using 0 instead")
-                result = 0
-
-        return result
+        """Evaluate attribute expression — delegates to _casting.run_attribute_eval()."""
+        return _run_attribute_eval_fn(self, eval_expression, result_type=result_type, result_error=result_error)
 
 
     def __run_hysteresis(self, value=None, caller='Hysteresis', source=None, dest=None):
@@ -1418,6 +1246,11 @@ class Item():
     def _methods_to_trigger(self):
         """Proxy for __methods_to_trigger — used by _triggers.py."""
         return self.__methods_to_trigger
+
+    @property
+    def _parent(self):
+        """Proxy for __parent — used by _navigation.py."""
+        return self.__parent
 
     def __update(self, value, caller='Logic', source=None, dest=None, key=None, index=None):
         def check_external_change(entry_type, entry_value):
@@ -1636,43 +1469,12 @@ class Item():
             yield child
 
     def return_parent(self, level: int = 1, strict: bool = False):
-        """
-        Return ancestor item of given level
-
-        If item doesn't have <level> ancestors, and...
-        - strict is set, return None
-        - strict is not set, return the highest found ancestor
-
-        If level is < 1, method returns this item
-
-        :param level: number of parent-levels
-        :ptype level: int
-        :param strict: define if level is max-level or exact level
-        :ptype strict: bool
-        :return: ancestor item (or this item, or None)
-        :rtype: object | None
-        """
-
-        # for performance reasons, add a shortcut
-        # also for compatibility, as self.__parent is not accessible from outside
-        if level == 1:
-            return self.__parent
-
-        item = self
-        while level >= 1:
-            if item._is_top_of_item_tree():
-                if strict:
-                    return
-                else:
-                    return item
-            item = item.return_parent()
-            level -= 1
-
-        return item
+        """Return ancestor item at given level — delegates to _navigation.return_parent_item()."""
+        return _return_parent_item(self, level=level, strict=strict)
 
     def _is_top_of_item_tree(self):
-        global _items_instance
-        return self.__parent is None or self.__parent is _items_instance
+        """Return True if item has no parent in tree — delegates to _navigation.is_top_of_item_tree()."""
+        return _is_top_of_item_tree_fn(self)
 
     def set(self, value, caller='Logic', source=None, dest=None, prev_change=None, last_change=None):
         """
