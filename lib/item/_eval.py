@@ -46,12 +46,86 @@ All functions access only single-underscore attributes and public methods on
 the Item to avoid Python name-mangling problems.  The one exception is calling
 item._update_item() — a thin public proxy that Item exposes for this purpose
 (it delegates to the private Item.__update()).
+
+Eval namespace
+--------------
+All eval calls use the explicit namespace built by :func:`_make_eval_env`.
+See its docstring for the full list of names available to user expressions.
 """
 
 import logging
 import lib.env
 
+# COMPAT-SHIM: remove this import together with _eval_compat.py
+from ._eval_compat import _eval_with_legacy_fallback, _EVAL_FAILED
+
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# _make_eval_env
+# ---------------------------------------------------------------------------
+
+def _make_eval_env(item, value=None, caller=None, source=None, dest=None) -> dict:
+    """
+    Build the standard eval namespace for item expressions.
+
+    This is the single authoritative definition of what names are available
+    inside ``eval``, ``on_change``, and ``on_update`` expressions.
+
+    Documented names
+    ~~~~~~~~~~~~~~~~
+    * ``sh``      — the SmartHomeNG instance (same as ``item._sh``)
+    * ``shtime``  — the Shtime library (date/time helpers)
+    * ``items``   — the Items singleton (``items.return_item(...)``)
+    * ``math``    — Python ``math`` module
+    * ``uf``      — loaded user-functions (``lib.userfunctions``)
+    * ``env``     — ``lib.env`` (environment/platform info)
+    * ``value``   — the trigger value passed to the current eval call
+    * ``datetime`` — Python ``datetime`` module (documented in examples)
+    * ``time``    — Python ``time`` module (documented in item.py comment)
+
+    Additional names (not documented, but technically accessible today)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * ``caller`` — string identifying what triggered the eval
+    * ``source`` — source item path or ``None``
+    * ``dest``   — destination or ``None``
+    * ``item``   — the ``Item`` instance itself
+
+    :param item:   ``Item`` instance being evaluated.
+    :param value:  Current trigger value (``None`` for attribute evals).
+    :param caller: Caller label (``None`` for attribute evals).
+    :param source: Source path (``None`` for attribute evals).
+    :param dest:   Destination (``None`` for attribute evals).
+    :returns:      Namespace dict suitable for passing to ``eval()``.
+    """
+    import math
+    import time
+    import datetime
+    import lib.userfunctions as uf
+    from lib.item.items import Items
+
+    return {
+        # ── documented public API ──────────────────────────────────────────
+        'sh':       item._sh,
+        'shtime':   item.shtime,
+        'items':    Items.get_instance(),
+        'math':     math,
+        'uf':       uf,
+        'env':      lib.env,
+        # ── trigger call parameters ───────────────────────────────────────
+        'value':    value,
+        'caller':   caller,
+        'source':   source,
+        'dest':     dest,
+        # ── modules documented in official examples ────────────────────────
+        'datetime': datetime,
+        'time':     time,
+        # ── item itself (not documented but was accessible before) ─────────
+        'item':     item,
+        # ── builtins ──────────────────────────────────────────────────────
+        '__builtins__': __builtins__,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -94,21 +168,19 @@ def run_eval(item, value=None, caller='Eval', source=None, dest=None):
     if not item._eval:
         return
 
+    # Build the eval namespace once; reused for both condition and main eval.
+    _ns = _make_eval_env(item, value=value, caller=caller, source=source, dest=dest)
+
     # Test if a conditional trigger is defined
     if item._trigger_condition is not None:
         try:
-            # set up environment for calculating eval-expression
-            sh     = item._sh         # noqa: F841
-            shtime = item.shtime      # noqa: F841
-
-            from lib.item.items import Items
-            items = Items.get_instance()  # noqa: F841
-
-            import math               # noqa: F401, F841
-            import lib.userfunctions as uf  # noqa: F401, F841
-            env    = lib.env          # noqa: F841
-
-            cond = eval(item._trigger_condition)
+            try:
+                cond = eval(item._trigger_condition, _ns)
+            except Exception as _ce:                                             # COMPAT-SHIM
+                cond = _eval_with_legacy_fallback(                               # COMPAT-SHIM
+                    item._trigger_condition, _ns, item, 'trigger_condition', _ce)# COMPAT-SHIM
+                if cond is _EVAL_FAILED:                                         # COMPAT-SHIM
+                    raise _ce                                                    # COMPAT-SHIM
             logger.warning(
                 f"Item '{item._path}': Condition result '{cond}'"
                 f" evaluating trigger condition {item._trigger_condition}"
@@ -128,17 +200,6 @@ def run_eval(item, value=None, caller='Eval', source=None, dest=None):
 
     if cond is not True:
         return
-
-    # set up environment for calculating eval-expression
-    sh     = item._sh          # noqa: F841
-    shtime = item.shtime       # noqa: F841
-
-    from lib.item.items import Items
-    items = Items.get_instance()  # noqa: F841
-
-    import math                # noqa: F401, F841
-    import lib.userfunctions as uf  # noqa: F401, F841
-    env    = lib.env           # noqa: F841
 
     try:
         item._history.record_trigger(caller, source, item.shtime)
@@ -166,10 +227,17 @@ def run_eval(item, value=None, caller='Eval', source=None, dest=None):
             # if crontab: init = x is set, x is transferred as a string;
             # re-try eval with x converted to float for that case
             try:
-                value = eval(item._eval)
-            except Exception:
-                value = item.cast(value)
-                value = eval(item._eval)
+                try:
+                    value = eval(item._eval, _ns)
+                except Exception:
+                    _ns['value'] = item.cast(_ns.get('value'))
+                    value = eval(item._eval, _ns)
+            except Exception as _e:                                              # COMPAT-SHIM
+                _fb = _eval_with_legacy_fallback(                                # COMPAT-SHIM
+                    item._eval, _ns, item, 'eval', _e)                           # COMPAT-SHIM
+                if _fb is _EVAL_FAILED:                                          # COMPAT-SHIM
+                    raise _e                                                     # COMPAT-SHIM
+                value = _fb                                                      # COMPAT-SHIM
 
     except Exception as e:
         # Adding "None" as the "destination" information at end of triggered_by
@@ -209,17 +277,11 @@ def run_on_xxx(item, path, value, on_dest, on_eval, attr='?',
     :param on_eval: eval expression string
     :param attr:    descriptive label ('On_Change' or 'On_Update')
     """
-    # set up environment for calculating eval-expression
-    sh     = item._sh       # noqa: F841
-    shtime = item.shtime    # noqa: F841
+    _ns = _make_eval_env(item, value=value, caller=caller, source=source, dest=dest)
+    _ns['path'] = path      # path is also available as a convenience name
 
     from lib.item.items import Items
     _items_instance = Items.get_instance()
-    items = _items_instance  # noqa: F841
-
-    import math             # noqa: F401, F841
-    import lib.userfunctions as uf  # noqa: F401, F841
-    env    = lib.env        # noqa: F841
 
     logger.info(f"Item '{path}': '{attr}' evaluating {on_dest} = {on_eval}")
 
@@ -235,34 +297,39 @@ def run_on_xxx(item, path, value, on_dest, on_eval, attr='?',
             if test.lower().find(',caller=') == -1 and test.lower().find(',source=') > -1:
                 on_eval = on_eval[:-1] + ", caller='" + attr + "')"
 
-    # try evaluating the expression (this also assigns value when no-dest syntax is used)
+    # evaluate the expression
+    dest_value = None
     try:
-        dest_value = eval(on_eval)
-    except Exception as e:
-        logger.warning(
-            f"Item {path}: '{attr}' item-value='{value}'"
-            f" problem evaluating {on_eval}: {e}"
-        )
-    else:
-        if dest_value is not None:
-            if on_dest != '':
-                dest_item = _items_instance.return_item(on_dest)
-                if dest_item is not None:
-                    dest_item._update_item(dest_value, caller=attr, source=path)
-                    logger.debug(
-                        f" - : '{attr}' finally evaluating {on_dest} = {on_eval},"
-                        f" result={dest_value}"
-                    )
-                else:
-                    logger.error(
-                        f"Item {path}: '{attr}' has not found dest_item '{on_dest}'"
-                        f" = {on_eval}, result={dest_value}"
-                    )
+        dest_value = eval(on_eval, _ns)
+    except Exception as _e:
+        dest_value = _eval_with_legacy_fallback(                                 # COMPAT-SHIM
+            on_eval, _ns, item, f'{attr} on_eval', _e)                          # COMPAT-SHIM
+        if dest_value is _EVAL_FAILED:                                           # COMPAT-SHIM
+            logger.warning(                                                      # COMPAT-SHIM
+                f"Item {path}: '{attr}' item-value='{value}'"                   # COMPAT-SHIM
+                f" problem evaluating {on_eval}: {_e}"                          # COMPAT-SHIM
+            )                                                                    # COMPAT-SHIM
+            dest_value = None                                                    # COMPAT-SHIM
+
+    if dest_value is not None:
+        if on_dest != '':
+            dest_item = _items_instance.return_item(on_dest)
+            if dest_item is not None:
+                dest_item._update_item(dest_value, caller=attr, source=path)
+                logger.debug(
+                    f" - : '{attr}' finally evaluating {on_dest} = {on_eval},"
+                    f" result={dest_value}"
+                )
             else:
-                _ = eval(on_eval)
-                logger.debug(f" - : '{attr}' finally evaluating {on_eval}, result={dest_value}")
+                logger.error(
+                    f"Item {path}: '{attr}' has not found dest_item '{on_dest}'"
+                    f" = {on_eval}, result={dest_value}"
+                )
         else:
-            logger.debug(f" - : '{attr}' {on_dest} not set (cause: eval=None)")
+            _ = eval(on_eval, _ns)
+            logger.debug(f" - : '{attr}' finally evaluating {on_eval}, result={dest_value}")
+    else:
+        logger.debug(f" - : '{attr}' {on_dest} not set (cause: eval=None)")
 
 
 # ---------------------------------------------------------------------------
