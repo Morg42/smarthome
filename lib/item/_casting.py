@@ -59,6 +59,10 @@ from .helpers import (
     cast_datetime,
 )
 
+from ._eval import _make_eval_env
+# COMPAT-SHIM: remove this import together with _eval_compat.py
+from ._eval_compat import _eval_with_legacy_fallback, _EVAL_FAILED
+
 logger = logging.getLogger('lib.item')
 
 # ---------------------------------------------------------------------------
@@ -195,13 +199,17 @@ def run_attribute_eval(item, eval_expression, result_type='num', result_error=''
     ``autotimer``, ``cycle``, ``hysteresis_upper_threshold``, and
     ``hysteresis_lower_threshold``.
 
-    The eval environment provides: ``sh``, ``shtime``, ``items``, ``math``,
-    ``uf`` (lib.userfunctions), ``env`` (lib.env) — matching the environment
-    used by the main item eval path.
+    The eval environment is built by :func:`_make_eval_env` and provides the
+    full documented set of names (``sh``, ``shtime``, ``items``, ``math``,
+    ``uf``, ``env``, ``datetime``, ``time``).  Because attribute expressions
+    do not have a trigger value, ``value`` / ``caller`` / ``source`` / ``dest``
+    are all ``None`` in this context.
 
     On ``NameError`` the undefined name is replaced by a quoted string and
-    evaluation is retried.  Any other exception or a non-numeric result when
-    ``result_type='num'`` is expected both log an error and return
+    evaluation is retried (existing behaviour).  If that quoting-retry also
+    fails, :func:`_eval_with_legacy_fallback` is tried (see
+    ``_eval_compat.py``).  Any remaining exception or a non-numeric result
+    when ``result_type='num'`` is expected both log an error and return
     *result_error* / ``0`` respectively.
 
     :param item:            ``Item`` instance.
@@ -210,39 +218,45 @@ def run_attribute_eval(item, eval_expression, result_type='num', result_error=''
     :param result_error:    Value returned on evaluation error (default ``''``).
     :return:                Evaluated result.
     """
-    from lib.item.items import Items
-    import lib.env
-    import lib.userfunctions as uf  # noqa: F401 (used in eval environment)
-    import math                     # noqa: F401 (used in eval environment)
-
-    sh = item._sh                   # noqa: F841 (used in eval environment)
-    shtime = item.shtime            # noqa: F841 (used in eval environment)
-    items = Items.get_instance()    # noqa: F841 (used in eval environment)
-    env = lib.env                   # noqa: F841 (used in eval environment)
+    # Attribute evals have no trigger value/caller/source/dest.
+    _ns = _make_eval_env(item)
 
     eval_expression = str(eval_expression)
     try:
-        result = eval(eval_expression)
-    except NameError:
-        _, ex, _ = sys.exc_info()
-        err = str(ex)
-        if err.startswith("name '") and err.endswith("' is not defined"):
-            var = err[6:-16]
-        eval_expression2 = eval_expression.replace(var, "'" + var + "'")
+        result = eval(eval_expression, _ns)
+    except NameError as _ne:
+        # Existing quoting-retry: replace the undefined name with a string
+        # literal and re-evaluate.  This handles expressions such as
+        # ``autotimer: high`` where ``high`` is meant as a plain string.
+        err = str(_ne)
+        var = err[6:-16] if (err.startswith("name '") and err.endswith("' is not defined")) else ''
+        eval_expression2 = eval_expression.replace(var, "'" + var + "'") if var else eval_expression
         try:
-            result = eval('"' + eval_expression2 + '"')
-        except Exception as e:
+            result = eval('"' + eval_expression2 + '"', _ns)
+        except Exception:
+            # quoting-retry failed; try legacy namespace              # COMPAT-SHIM
+            _fb = _eval_with_legacy_fallback(                         # COMPAT-SHIM
+                eval_expression, _ns, item, 'attribute_eval', _ne)   # COMPAT-SHIM
+            if _fb is _EVAL_FAILED:                                   # COMPAT-SHIM
+                logger.error(
+                    f"Item '{item._path}': run_attribute_eval({eval_expression2}): "
+                    f"Problem evaluating '{eval_expression2}' - Exception {_ne}"
+                )
+                result = result_error
+            else:                                                      # COMPAT-SHIM
+                result = _fb                                           # COMPAT-SHIM
+    except Exception as _e:
+        # COMPAT-SHIM: delete this try/except; restore the two lines below it
+        _fb = _eval_with_legacy_fallback(                             # COMPAT-SHIM
+            eval_expression, _ns, item, 'attribute_eval', _e)        # COMPAT-SHIM
+        if _fb is _EVAL_FAILED:                                       # COMPAT-SHIM
             logger.error(
-                f"Item '{item._path}': run_attribute_eval({eval_expression2}): "
-                f"Problem evaluating '{eval_expression2}' - Exception {e}"
+                f"Item '{item._path}': run_attribute_eval({eval_expression}): "
+                f"Problem evaluating '{eval_expression}' - Exception {_e}"
             )
             result = result_error
-    except Exception as e:
-        logger.error(
-            f"Item '{item._path}': run_attribute_eval({eval_expression}): "
-            f"Problem evaluating '{eval_expression}' - Exception {e}"
-        )
-        result = result_error
+        else:                                                          # COMPAT-SHIM
+            result = _fb                                               # COMPAT-SHIM
 
     if result_type == 'num':
         if not isinstance(result, (int, float)):

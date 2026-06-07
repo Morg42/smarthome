@@ -43,18 +43,8 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-# Register shng custom log levels before any shng import
-def _reg_levels():
-    for lvl, name in [(31, 'NOTICE'), (13, 'DBGHIGH'), (12, 'DBGMED'), (11, 'DBGLOW'), (9, 'DEVELOP')]:
-        if not hasattr(logging.getLoggerClass(), name.lower()):
-            def _make(l):
-                def _m(self, msg, *a, **kw):
-                    if self.isEnabledFor(l): self._log(l, msg, a, **kw)
-                return _m
-            logging.addLevelName(lvl, name)
-            setattr(logging, name, lvl)
-            setattr(logging.getLoggerClass(), name.lower(), _make(lvl))
-_reg_levels()
+import tests.common as common
+common.register_shng_log_levels()
 
 import lib.item
 import lib.item.item
@@ -415,7 +405,6 @@ class TestPropertyLastUpdate(_PropertyTestBase):
     def test_all_readonly(self):
         item = _make_item(self.sh, itype='num')
         for attr in ('last_update', 'last_update_age', 'last_update_by'):
-            orig = getattr(item.property, attr)
             setattr(item.property, attr, 'x')
             # Value must be unchanged (or at least not 'x')
             self.assertNotEqual(getattr(item.property, attr), 'x')

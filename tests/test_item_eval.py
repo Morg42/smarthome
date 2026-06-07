@@ -44,17 +44,8 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def _reg_levels():
-    for lvl, name in [(31,'NOTICE'),(13,'DBGHIGH'),(12,'DBGMED'),(11,'DBGLOW'),(9,'DEVELOP')]:
-        if not hasattr(logging.getLoggerClass(), name.lower()):
-            def _make(l):
-                def _m(self, msg, *a, **kw):
-                    if self.isEnabledFor(l): self._log(l, msg, a, **kw)
-                return _m
-            logging.addLevelName(lvl, name)
-            setattr(logging, name, lvl)
-            setattr(logging.getLoggerClass(), name.lower(), _make(lvl))
-_reg_levels()
+import tests.common as common
+common.register_shng_log_levels()
 
 import lib.item.item
 import lib.item.items

@@ -37,7 +37,6 @@ import sys
 
 import inspect
 
-import time             # for calls to time in eval
 import dateutil.tz as _tz
 
 from lib.shtime import Shtime

@@ -126,13 +126,19 @@ def log_on_change(item, value, caller, source=None, dest=None):
     }
 
     if item._type == 'num':
-        if low_limit  is not None and low_limit  > float(value): return
-        if high_limit is not None and high_limit <= float(value): return
-        if filter_list  and float(value) not in filter_list:      return
-        if exclude_list and float(value) in exclude_list:         return
+        if low_limit is not None and low_limit > float(value):
+            return
+        if high_limit is not None and high_limit <= float(value):
+            return
+        if filter_list and float(value) not in filter_list:
+            return
+        if exclude_list and float(value) in exclude_list:
+            return
     else:
-        if filter_list  and value not in filter_list:  return
-        if exclude_list and value in exclude_list:     return
+        if filter_list and value not in filter_list:
+            return
+        if exclude_list and value in exclude_list:
+            return
 
     if item._log_text is None:
         txt = build_standardtext(item, value, caller, source, dest)

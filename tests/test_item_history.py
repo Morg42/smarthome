@@ -40,17 +40,8 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def _reg_levels():
-    for lvl, name in [(31,'NOTICE'),(13,'DBGHIGH'),(12,'DBGMED'),(11,'DBGLOW'),(9,'DEVELOP')]:
-        if not hasattr(logging.getLoggerClass(), name.lower()):
-            def _make(l):
-                def _m(self, msg, *a, **kw):
-                    if self.isEnabledFor(l): self._log(l, msg, a, **kw)
-                return _m
-            logging.addLevelName(lvl, name)
-            setattr(logging, name, lvl)
-            setattr(logging.getLoggerClass(), name.lower(), _make(lvl))
-_reg_levels()
+import tests.common as common
+common.register_shng_log_levels()
 
 import lib.item.item
 import lib.item.items
@@ -134,7 +125,6 @@ class TestUpdateWithoutChange(_Base):
     def test_same_value_advances_prev_update(self):
         item = _item(self.sh)
         item(5)
-        t0 = item.property.last_update
         time.sleep(0.05)
         item(5)
         # prev_update should now hold what last_update was before the same-value write

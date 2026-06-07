@@ -41,17 +41,8 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def _reg_levels():
-    for lvl, name in [(31,'NOTICE'),(13,'DBGHIGH'),(12,'DBGMED'),(11,'DBGLOW'),(9,'DEVELOP')]:
-        if not hasattr(logging.getLoggerClass(), name.lower()):
-            def _make(l):
-                def _m(self, msg, *a, **kw):
-                    if self.isEnabledFor(l): self._log(l, msg, a, **kw)
-                return _m
-            logging.addLevelName(lvl, name)
-            setattr(logging, name, lvl)
-            setattr(logging.getLoggerClass(), name.lower(), _make(lvl))
-_reg_levels()
+import tests.common as common
+common.register_shng_log_levels()
 
 import lib.item.item
 import lib.item.items
@@ -116,9 +107,9 @@ class TestLogicTriggers(_Base):
             triggered = []
             def trigger(self, by, source, value):
                 _Logic.triggered.append((by, source, value))
-        l = _Logic()
-        l.name = name
-        return l
+        logic = _Logic()
+        logic.name = name
+        return logic
 
     def test_fresh_item_has_empty_logic_trigger_list(self):
         item = _item(self.sh, 'a')
@@ -286,7 +277,8 @@ class TestMethodTriggers(_Base):
     def test_method_not_called_after_removal(self):
         called = []
         item = _item(self.sh, 'a')
-        m = lambda i, c, s, d: called.append(1)
+        def m(i, c, s, d):
+            called.append(1)
         item.add_method_trigger(m)
         item.remove_method_trigger(m)
         item(99)

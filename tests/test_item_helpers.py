@@ -29,18 +29,8 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-# Register shng custom log levels before any shng import
-def _reg_levels():
-    for lvl, name in [(31, 'NOTICE'), (13, 'DBGHIGH'), (12, 'DBGMED'), (11, 'DBGLOW'), (9, 'DEVELOP')]:
-        if not hasattr(logging.getLoggerClass(), name.lower()):
-            def _make(l):
-                def _m(self, msg, *a, **kw):
-                    if self.isEnabledFor(l): self._log(l, msg, a, **kw)
-                return _m
-            logging.addLevelName(lvl, name)
-            setattr(logging, name, lvl)
-            setattr(logging.getLoggerClass(), name.lower(), _make(lvl))
-_reg_levels()
+import tests.common as common
+common.register_shng_log_levels()
 
 from lib.item.helpers import (
     cast_str, cast_list, cast_dict, cast_foo, cast_bool,
@@ -296,7 +286,7 @@ class TestCastTimestampWithShtime(unittest.TestCase):
 
     def test_datetime_to_timestamp(self):
         from lib.shtime import Shtime
-        shtime = Shtime.get_instance()
+        Shtime.get_instance()   # ensure singleton is initialised
         dt = datetime.datetime.now(tz=datetime.timezone.utc)
         ts = cast_timestamp(dt)
         self.assertIsInstance(ts, float)
