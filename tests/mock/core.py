@@ -127,6 +127,7 @@ class MockSmartHome():
         #self.version = VERSION
 
         self.version = bin.shngversion.shNG_version
+        self.plugins_version = bin.shngversion.get_plugins_version()
 
         MODE = 'default'
         self._mode = MODE
@@ -329,7 +330,7 @@ class MockSmartHome():
             if isinstance(value, dict):
                 child_path = attr
                 try:
-                    child = lib.item.Item(self, self, child_path, value)
+                    child = lib.item.item.Item(self, self, child_path, value)
                 except Exception as e:
                     print("Item {}: problem creating: {}".format(child_path, e))
                 else:

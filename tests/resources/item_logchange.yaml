@@ -1,0 +1,58 @@
+%YAML 1.1
+---
+# Item definitions for test_item_logchange.py
+# Various log_change / log_rules / log_text / log_mapping configurations
+# Logger name used across all items: 'item_changes'
+# Actual Python logger: logging.getLogger('items.item_changes')
+
+logged_basic:
+    type: num
+    log_change: item_changes
+
+logged_warning_level:
+    type: num
+    log_change: item_changes
+    log_level: WARNING
+
+logged_custom_text:
+    type: num
+    log_change: item_changes
+    log_text: '{id} = {value} via {caller}'
+
+logged_mapped_bool:
+    type: bool
+    log_change: item_changes
+    log_mapping:
+        - True: Switched On
+        - False: Switched Off
+
+logged_lowlimit:
+    type: num
+    log_change: item_changes
+    log_rules:
+        - lowlimit: 10
+
+logged_highlimit:
+    type: num
+    log_change: item_changes
+    log_rules:
+        - highlimit: 100
+
+logged_filter:
+    type: num
+    log_change: item_changes
+    log_rules:
+        - filter:
+            - 1
+            - 2
+            - 3
+
+logged_exclude:
+    type: num
+    log_change: item_changes
+    log_rules:
+        - exclude:
+            - 99
+
+no_log:
+    type: num

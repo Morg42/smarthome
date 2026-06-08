@@ -1,0 +1,23 @@
+%YAML 1.1
+---
+# Multi-level item tree for test_item_pathresolution.py
+# Attributes at different levels test find_attribute traversal
+zone:
+    zone_attr: living
+    shared_attr: from_zone
+
+    room:
+        type: foo
+        room_attr: kitchen
+        shared_attr: from_room
+
+        lamp:
+            type: bool
+            lamp_attr: ceiling
+
+            dimmer:
+                type: num
+
+orphan:
+    type: bool
+    orphan_attr: standalone

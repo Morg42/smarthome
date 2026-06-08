@@ -1,0 +1,24 @@
+%YAML 1.1
+---
+# Item definitions for test_item_typehandler.py
+# Tests TypeHandler / ListHandler / DictHandler inner classes of Item
+handlers:
+
+    list_with_values:
+        type: list
+        value:
+            - foo
+            - bar
+            - baz
+
+    list_empty:
+        type: list
+
+    dict_plain:
+        type: dict
+
+    bool_plain:
+        type: bool
+
+    num_plain:
+        type: num

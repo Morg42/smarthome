@@ -31,19 +31,8 @@ from unittest.mock import MagicMock, patch, call
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-# Register shng custom log levels
-import logging
-def _reg():
-    for lvl, name in [(31,'NOTICE'),(13,'DBGHIGH'),(12,'DBGMED'),(11,'DBGLOW'),(9,'DEVELOP')]:
-        if not hasattr(logging.getLoggerClass(), name.lower()):
-            def _make(l):
-                def _m(self, msg, *a, **kw):
-                    if self.isEnabledFor(l): self._log(l, msg, a, **kw)
-                return _m
-            logging.addLevelName(lvl, name)
-            setattr(logging, name, lvl)
-            setattr(logging.getLoggerClass(), name.lower(), _make(lvl))
-_reg()
+import tests.common as common
+common.register_shng_log_levels()
 
 import lib.scene as _scene_module
 from lib.scene import Scenes
@@ -308,8 +297,8 @@ class TestTriggerDispatch(unittest.TestCase):
         item = _mock_item('my_scene')
         # set state 0 in _scenes
         self.sc._scenes['my_scene'] = {'0': []}
-        with patch.object(self.sc, '_trigger_setstate') as mock_set, \
-             patch.object(self.sc, '_trigger_learnstate') as mock_learn:
+        with patch.object(self.sc, '_trigger_setstate'), \
+             patch.object(self.sc, '_trigger_learnstate'):
             # Simulate item() returning 0
             item.__class__ = type('Item', (), {'__call__': lambda s, *a, **kw: 0})
             mock_item = MagicMock()

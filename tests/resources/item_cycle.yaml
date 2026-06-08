@@ -1,0 +1,29 @@
+%YAML 1.1
+---
+# Item definitions for test_item_autotimer.py (cycle / crontab scheduler wiring)
+# Extends the autotimer coverage in item_timers.yaml
+
+cycles:
+
+    simple_cycle:
+        type: num
+        cycle: 30
+
+    cycle_with_value:
+        type: num
+        cycle: '60 = 99'
+
+    crontab_item:
+        type: num
+        crontab: '0 * * * *'
+
+    autotimer_armed:
+        type: num
+        autotimer: '5m = 42'
+
+    autotimer_expr_time:
+        type: num
+        autotimer: sh.cycles.autotimer_expr_time.ref_time() = 1 = latest
+
+        ref_time:
+            value: 120

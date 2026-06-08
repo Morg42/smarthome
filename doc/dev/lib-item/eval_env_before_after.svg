@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 560" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="560" fill="#f8f9fa" rx="8"/>
+
+  <!-- ══ BEFORE panel ══ -->
+  <rect x="20" y="20" width="415" height="520" fill="#fff" stroke="#ccc" stroke-width="1.5" rx="6"/>
+  <rect x="20" y="20" width="415" height="36" fill="#d9534f" rx="6"/>
+  <rect x="20" y="44" width="415" height="12" fill="#d9534f"/>
+  <text x="228" y="43" fill="white" font-size="15" font-weight="bold" text-anchor="middle">BEFORE  (ambient namespace)</text>
+
+  <text x="36" y="80" fill="#555" font-size="11">eval(expression)  — no explicit namespace</text>
+  <text x="36" y="96" fill="#555" font-size="11">Python sees locals() of the calling frame</text>
+  <text x="36" y="112" fill="#555" font-size="11">plus globals() of the calling module.</text>
+
+  <!-- locals box -->
+  <rect x="36" y="124" width="383" height="130" fill="#fff8e1" stroke="#f0ad4e" stroke-width="1.5" rx="4"/>
+  <text x="228" y="142" fill="#856404" font-size="11" font-weight="bold" text-anchor="middle">locals() — intentionally set up before eval()</text>
+  <text x="52" y="162" fill="#333" font-size="11">sh      → SmartHomeNG instance</text>
+  <text x="52" y="178" fill="#333" font-size="11">shtime  → Shtime library</text>
+  <text x="52" y="194" fill="#333" font-size="11">items   → Items singleton</text>
+  <text x="52" y="210" fill="#333" font-size="11">math    → Python math module</text>
+  <text x="52" y="226" fill="#333" font-size="11">uf      → lib.userfunctions</text>
+  <text x="52" y="242" fill="#333" font-size="11">env     → lib.env</text>
+
+  <!-- globals box -->
+  <rect x="36" y="266" width="383" height="248" fill="#fce8e8" stroke="#d9534f" stroke-width="1.5" rx="4"/>
+  <text x="228" y="284" fill="#721c24" font-size="11" font-weight="bold" text-anchor="middle">globals() — item.py module-level imports (leaked)</text>
+  <text x="52" y="304" fill="#333" font-size="11">datetime  ← documented in examples</text>
+  <text x="52" y="320" fill="#333" font-size="11">time      ← comment: "for calls to time in eval"</text>
+  <text x="52" y="336" fill="#333" stroke-dasharray="none" fill-opacity="0.6" font-size="11">os        undocumented / accidental</text>
+  <text x="52" y="352" fill="#333" fill-opacity="0.6" font-size="11">re</text>
+  <text x="52" y="368" fill="#333" fill-opacity="0.6" font-size="11">sys</text>
+  <text x="52" y="384" fill="#333" fill-opacity="0.6" font-size="11">json, copy, threading, ast, inspect, …</text>
+  <text x="52" y="400" fill="#333" fill-opacity="0.6" font-size="11">logging   (dangerous)</text>
+  <text x="52" y="416" fill="#333" fill-opacity="0.6" font-size="11">lib.config, lib.plugin, …</text>
+  <line x1="52" y1="432" x2="400" y2="432" stroke="#d9534f" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="52" y="450" fill="#721c24" font-size="11" font-weight="bold">⚠ Regression after extraction to _eval.py:</text>
+  <text x="52" y="468" fill="#721c24" font-size="11">  datetime and time disappeared from globals()</text>
+  <text x="52" y="484" fill="#721c24" font-size="11">  → NameError at runtime, no test caught it</text>
+  <text x="52" y="500" fill="#333" fill-opacity="0.5" font-size="11">value / caller / source / dest  (also in locals)</text>
+
+  <!-- ══ AFTER panel ══ -->
+  <rect x="485" y="20" width="415" height="520" fill="#fff" stroke="#ccc" stroke-width="1.5" rx="6"/>
+  <rect x="485" y="20" width="415" height="36" fill="#28a745" rx="6"/>
+  <rect x="485" y="44" width="415" height="12" fill="#28a745"/>
+  <text x="693" y="43" fill="white" font-size="15" font-weight="bold" text-anchor="middle">AFTER  (explicit namespace)</text>
+
+  <text x="501" y="80" fill="#555" font-size="11">eval(expression, _ns)  — namespace built by</text>
+  <text x="501" y="96" fill="#555" font-size="11">_make_eval_env(item, value, caller, source, dest)</text>
+  <text x="501" y="112" fill="#555" font-size="11">No module globals leak in.</text>
+
+  <!-- documented names box -->
+  <rect x="501" y="124" width="383" height="200" fill="#e8f5e9" stroke="#28a745" stroke-width="1.5" rx="4"/>
+  <text x="693" y="142" fill="#155724" font-size="11" font-weight="bold" text-anchor="middle">Documented — guaranteed always present</text>
+  <text x="517" y="162" fill="#333" font-size="11">sh        → SmartHomeNG instance</text>
+  <text x="517" y="178" fill="#333" font-size="11">shtime    → Shtime library</text>
+  <text x="517" y="194" fill="#333" font-size="11">items     → Items singleton</text>
+  <text x="517" y="210" fill="#333" font-size="11">math      → Python math module</text>
+  <text x="517" y="226" fill="#333" font-size="11">uf        → lib.userfunctions</text>
+  <text x="517" y="242" fill="#333" font-size="11">env       → lib.env</text>
+  <text x="517" y="258" fill="#333" font-size="11">value     → current trigger value</text>
+  <text x="517" y="274" fill="#333" font-size="11">datetime  → Python datetime module</text>
+  <text x="517" y="290" fill="#333" font-size="11">time      → Python time module</text>
+  <text x="517" y="306" fill="#333" font-size="11">__builtins__</text>
+
+  <!-- additional names box -->
+  <rect x="501" y="336" width="383" height="112" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="1.5" rx="4"/>
+  <text x="693" y="354" fill="#1a3a6e" font-size="11" font-weight="bold" text-anchor="middle">Additional — accessible, not formally documented</text>
+  <text x="517" y="374" fill="#333" font-size="11">caller    → who triggered the eval</text>
+  <text x="517" y="390" fill="#333" font-size="11">source    → source item path or None</text>
+  <text x="517" y="406" fill="#333" font-size="11">dest      → destination or None</text>
+  <text x="517" y="422" fill="#333" font-size="11">item      → the Item instance itself</text>
+
+  <!-- compat shim note -->
+  <rect x="501" y="460" width="383" height="64" fill="#fff3cd" stroke="#f0ad4e" stroke-width="1.5" rx="4"/>
+  <text x="693" y="478" fill="#856404" font-size="11" font-weight="bold" text-anchor="middle">Compat shim (temporary)</text>
+  <text x="517" y="496" fill="#856404" font-size="11">On NameError: retries with legacy namespace</text>
+  <text x="517" y="512" fill="#856404" font-size="11">Logs deprecation warning.  Remove: see below.</text>
+
+</svg>

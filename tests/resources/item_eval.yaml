@@ -1,0 +1,61 @@
+%YAML 1.1
+---
+# Item definitions for test_item_eval.py
+# Tests eval, eval_trigger, on_change, on_update config parsing and execution
+
+source_num:
+    type: num
+
+target_eval:
+    type: num
+    eval: sh.source_num()
+    eval_trigger: source_num
+
+trigger_a:
+    type: num
+
+trigger_b:
+    type: num
+
+combined_and:
+    type: bool
+    eval: and
+    eval_trigger:
+        - trigger_a
+        - trigger_b
+
+combined_sum:
+    type: num
+    eval: sum
+    eval_trigger:
+        - trigger_a
+        - trigger_b
+
+combined_avg:
+    type: num
+    eval: avg
+    eval_trigger:
+        - trigger_a
+        - trigger_b
+
+on_change_target:
+    type: num
+
+on_change_source:
+    type: num
+    on_change: on_change_target = value
+
+on_update_target:
+    type: num
+
+on_update_source:
+    type: num
+    on_update: on_update_target = value
+
+eval_constant:
+    type: num
+    eval: '42'
+
+eval_bad_expr:
+    type: num
+    eval: completely_undefined_name_xyz

@@ -28,19 +28,8 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-# Register shng custom log levels
-import logging
-def _reg():
-    for lvl, name in [(31,'NOTICE'),(13,'DBGHIGH'),(12,'DBGMED'),(11,'DBGLOW'),(9,'DEVELOP')]:
-        if not hasattr(logging.getLoggerClass(), name.lower()):
-            def _make(l):
-                def _m(self, msg, *a, **kw):
-                    if self.isEnabledFor(l): self._log(l, msg, a, **kw)
-                return _m
-            logging.addLevelName(lvl, name)
-            setattr(logging, name, lvl)
-            setattr(logging.getLoggerClass(), name.lower(), _make(lvl))
-_reg()
+import tests.common as common
+common.register_shng_log_levels()
 
 from lib.scheduler import _PriorityQueue, Scheduler
 import lib.scheduler as _scheduler_module
