@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# post-commit — informational ruff + pytest run after every commit.
+# Never exits non-zero: a commit that already landed cannot be undone here.
+# Pushes are gated by pre-push instead.
+
+SHNG_DIR="$(git rev-parse --show-toplevel)"
+cd "$SHNG_DIR" || exit 0
+
+RUFF="${SHNG_DIR}/venvs/shng/bin/ruff"
+[ -x "$RUFF" ] || RUFF="ruff"
+PYTEST="${SHNG_DIR}/venvs/shng/bin/pytest"
+[ -x "$PYTEST" ] || PYTEST="pytest"
+
+echo ""
+echo "── post-commit (shng) ──────────────────────────────────────────"
+
+if "$RUFF" check lib/ tests/ bin/ modules/ tools/ --quiet 2>&1; then
+    echo "  ruff  : OK"
+else
+    echo "  ruff  : issues found — run 'ruff check lib/ tests/ bin/ modules/ tools/' to review"
+fi
+
+if "$PYTEST" --tb=no -q 2>&1 | tail -4; then
+    :
+fi
+
+echo "────────────────────────────────────────────────────────────────"
+echo ""
+exit 0
