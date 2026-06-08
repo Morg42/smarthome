@@ -436,6 +436,8 @@ class Metadata():
         key_dict = self.addon_metadata.get(mlkey)
         if key_dict is None:
             return ''
+        if isinstance(key_dict, str):
+            return key_dict
         try:
             result = key_dict.get(self._sh.get_defaultlanguage(), '')
         except (KeyError, TypeError):
