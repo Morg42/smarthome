@@ -550,16 +550,17 @@ class TestEvalCompatShim(_Base):
                                        self.item, 'test', exc)
         self.assertTrue(len(cm.output) >= 1)
 
-    def test_non_name_error_original_exc_triggers_different_message(self):
-        """A non-NameError original_exc produces a different warning branch."""
+    def test_non_name_error_original_exc_returns_eval_failed(self):
+        """A non-NameError original_exc is returned as _EVAL_FAILED immediately.
+
+        Only NameError can be fixed by adding module names to the namespace.
+        Runtime errors (TypeError, ZeroDivisionError, KeyError, …) will fail
+        identically in both namespaces, so retrying is pointless noise.
+        """
         exc = TypeError("unsupported operand")
-        # os.getcwd() will succeed in legacy namespace; original exc is TypeError
-        with self.assertLogs('lib.item', level='WARNING') as cm:
-            result = _eval_with_legacy_fallback('os.getcwd()', self.ns,
-                                                self.item, 'test', exc)
-        self.assertIsNot(result, _EVAL_FAILED)
-        combined = ' '.join(cm.output)
-        self.assertIn('TypeError', combined)
+        result = _eval_with_legacy_fallback('os.getcwd()', self.ns,
+                                            self.item, 'test', exc)
+        self.assertIs(result, _EVAL_FAILED)
 
     def test_re_module_available_in_legacy(self):
         """The 're' module is part of the legacy namespace."""
