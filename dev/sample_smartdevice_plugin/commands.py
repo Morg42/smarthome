@@ -4,21 +4,25 @@
 
 """ commands for example plugin
 
-This section consists of a single dict which defines all the devices' commands.
-The first example illustrates the generic syntax and the possible attributes and
-the second example shows nested command definitions.
+This file shows three alternative styles for defining the ``commands`` dict.
+Choose ONE style for your plugin and rename it to ``commands``.  Delete
+(or keep as reference) the other two.
 
-If models are defined and commands with the same name are identical on different
-models, this definition syntax can be used. For specifying which commands are
-present on which model, see below.
-Alternatively, if commands with the same name are different on different models,
-see the third example for commands definition.
+Style 1 — flat dict: all commands at the top level.
+Style 2 — nested dict: commands grouped into sections.
+Style 3 — model-specific dict: commands grouped by device model (``ALL`` key
+          required for shared commands; individual model keys optional).
 
-In the first example, only one command is given to define possible keys and their
-values' meaning.
+The active definition (the one actually named ``commands``) at the bottom of
+this file uses Style 3 as the default starting point.  If your device has only
+one model, use Style 1 or 2 and just name it ``commands``.
 """
 
-commands = {
+# ---------------------------------------------------------------------------
+# Style 1 — flat: one command to illustrate every possible key and its meaning
+# (reference only — rename to ``commands`` and delete the others if you use this)
+# ---------------------------------------------------------------------------
+_commands_example_flat = {
     # name of the command as used in item attribute 'ex_command'
     # provided values are defaults; dicts default to None, but are shown to
     # illustrate valid contents
@@ -84,7 +88,11 @@ commands = {
         # - 'valid_list': list of allowed values, error if not in list
         # - 'valid_list_ci': ditto, but case insensitive
         # - 'valid_list_re': ditto, but all values are read as regexes (tested with re.fullmatch())
-        'cmd_settings': {'valid_min': 0, 'valid_max': 255, 'force_min': 0, 'force_max': 255, 'valid_list': [1, 2, 3, 4, 5]},
+        'cmd_settings': {
+            'valid_min': 0, 'valid_max': 255,
+            'force_min': 0, 'force_max': 255,
+            'valid_list': [1, 2, 3, 4, 5],
+        },
 
         # optional, specifies lookup table to use (see below)
         # if a lookup table is defined, the value from SmartHomeNG is looked up
@@ -188,7 +196,7 @@ commands = {
     }
 }
 
-""" commands: nested definitions
+""" commands: nested definitions (Style 2)
 
 If many commands are present, it might be beneficial to create a hierarchical
 structure via nested dicts. This is simple as nesting can - more or less - be
@@ -204,7 +212,11 @@ Note that the two commands 'cmd1' are completely independent, as the internal
 name includes the full path.
 """
 
-commands = {
+# ---------------------------------------------------------------------------
+# Style 2 — nested: commands grouped into a hierarchy
+# (reference only — rename to ``commands`` and delete the others if you use this)
+# ---------------------------------------------------------------------------
+_commands_example_nested = {
     'level1a': {
         'level2a': {
             'cmd1': {'contents': 'like first example'}
@@ -216,7 +228,7 @@ commands = {
     }
 }
 
-""" commands: model-specific definitions
+""" commands: model-specific definitions (Style 3 — ACTIVE)
 
 The following commands example is for a scenario where different models are
 configured and have overlapping command definitions with different contents.
@@ -233,6 +245,9 @@ In this case, the ``models`` dict (see next paragraph) is not necessary and
 will be ignored.
 """
 
+# ---------------------------------------------------------------------------
+# Style 3 — model-specific: active definition used at runtime
+# ---------------------------------------------------------------------------
 commands = {
     'ALL': {
         'cmd1': {'read': True, 'write': True, 'opcode': '1a', 'attrib': '...'},

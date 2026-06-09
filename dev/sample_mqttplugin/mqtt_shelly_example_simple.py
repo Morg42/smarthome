@@ -47,7 +47,7 @@ class Shelly(MqttPlugin):
         """
         Initalizes the plugin.
 
-        :param sh:  **Deprecated**: The instance of the smarthome object. For SmartHomeNG versions 1.4 and up: **Don't use it**!
+        :param sh:  **Deprecated**: The smarthome instance. For SmartHomeNG >= 1.4: **Don't use it**!
 
         If you need the sh object at all, use the method self.get_sh() to get it. There should be almost no need for
         a reference to the sh object any more.
