@@ -160,6 +160,14 @@ def _eval_with_legacy_fallback(expr: str,
     :returns:            The evaluated result, or :data:`_EVAL_FAILED` when
                          the legacy namespace also cannot evaluate *expr*.
     """
+    # The legacy namespace only adds module names (datetime, re, os, …).
+    # Runtime errors (ZeroDivisionError, KeyError, TypeError, …) will fail
+    # identically in both namespaces, so retrying is pointless — and logging
+    # a "failed with both namespaces" warning is misleading noise.
+    # Only NameError can be fixed by the wider namespace.
+    if not isinstance(original_exc, NameError):
+        return _EVAL_FAILED
+
     legacy_ns = _make_legacy_namespace(primary_ns)
     try:
         result = eval(expr, legacy_ns)

@@ -103,8 +103,8 @@ class ServerController(RESTResource):
         # later getServerinfo() call from TopNavigationComponent.  Without these
         # fields the frontend starts routing with wsPort='' and WebSocket-dependent
         # components (e.g. resource graphs) skip their connection on first load.
-        response['websocket_port'] = self.websocket_port
-        response['websocket_host'] = self.websocket_host
+        response['websocket_port'] = self.module.websocket_port
+        response['websocket_host'] = self.module.websocket_host
 
         return json.dumps(response)
 

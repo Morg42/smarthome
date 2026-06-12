@@ -226,15 +226,18 @@ def run_eval(item, value=None, caller='Eval', source=None, dest=None):
 
             # if crontab: init = x is set, x is transferred as a string;
             # re-try eval with x converted to float for that case
+            _first_exc = None                                                    # COMPAT-SHIM
             try:
                 try:
                     value = eval(item._eval, _ns)
-                except Exception:
+                except Exception as _e0:
+                    _first_exc = _e0                                             # COMPAT-SHIM
                     _ns['value'] = item.cast(_ns.get('value'))
                     value = eval(item._eval, _ns)
             except Exception as _e:                                              # COMPAT-SHIM
                 _fb = _eval_with_legacy_fallback(                                # COMPAT-SHIM
-                    item._eval, _ns, item, 'eval', _e)                           # COMPAT-SHIM
+                    item._eval, _ns, item, 'eval',                               # COMPAT-SHIM
+                    _first_exc if _first_exc is not None else _e)                # COMPAT-SHIM
                 if _fb is _EVAL_FAILED:                                          # COMPAT-SHIM
                     raise _e                                                     # COMPAT-SHIM
                 value = _fb                                                      # COMPAT-SHIM

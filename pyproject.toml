@@ -17,6 +17,12 @@ exclude = [
     "deprecated",
     "lib/env",    # logic scripts: sh/logic/logger injected at exec() time, not importable
     "examples",   # example logic scripts with the same injected-namespace pattern
+    "plugins/*/_pv_*",   # old/superseded plugin versions kept for reference
+    "plugins/helios/files",                       # sample logic scripts: sh/trigger/logic/shtime injected at exec() time
+    "plugins/wettercom/additional_files",         # sample script: sh/logger/dateutil injected at exec() time
+    "plugins/knx/Check_KNX.py",                   # sample script: sh injected at exec() time
+    "plugins/asterisk/agi",                       # AGI scripts: agi_callerid injected by Asterisk at exec() time
+    "plugins/database/tests",                     # test fixtures, not part of the plugin runtime
 ]
 
 [tool.ruff.lint]

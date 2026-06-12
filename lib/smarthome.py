@@ -1080,6 +1080,8 @@ class SmartHome():
         for module in list(sys.modules.values()):
             for sym in dir(module):
                 # skip deprecation warning on MacOS, these ciphers shouldn't be used anyway
+                if module.__name__ == 'cryptography.hazmat.primitives.asymmetric.ec' and sym.startswith('SECT'):
+                    continue
                 if module.__name__ == 'cryptography.hazmat.primitives.ciphers.algorithms' and sym in ['SECT233K1', 'Blowfish', 'CAST5', 'IDEA', 'SEED', 'TripleDES', 'ARC4']:
                     continue
                 try:
