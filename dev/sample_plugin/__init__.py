@@ -47,9 +47,10 @@ class SamplePlugin(SmartPlugin):
     are already available!
     """
 
-    PLUGIN_VERSION = '1.0.0'    # (must match the version specified in plugin.yaml), use '1.0.0' for your initial plugin Release
+    PLUGIN_VERSION = '1.0.0'    # must match the version in plugin.yaml; use '1.0.0' for initial release
+    ALLOW_MULTIINSTANCE = False  # set to True if the plugin can run as multiple instances simultaneously
 
-    def __init__(self, sh):
+    def __init__(self, sh=None, **kwargs):
         """
         Initalizes the plugin.
 
@@ -68,24 +69,26 @@ class SamplePlugin(SmartPlugin):
         # cycle time in seconds, only needed, if hardware/interface needs to be
         # polled for value changes by adding a scheduler entry in the run method of this plugin
         # (maybe you want to make it a plugin parameter?)
+        #
         # self._cycle = 60
 
         # if you want to use an item to toggle plugin execution, enable the
         # definition in plugin.yaml and uncomment the following line
-        #self._pause_item_path = self.get_parameter_value('pause_item')
+        #
+        # self._pause_item_path = self.get_parameter_value('pause_item')
 
         # Initialization code goes here
 
         # On initialization error use:
-        #   self._init_complete = False
-        #   return
+        #
+        # self._init_complete = False
+        # return
 
         self.init_webinterface(WebInterface)
         # if plugin should not start without web interface
+        #
         # if not self.init_webinterface():
         #     self._init_complete = False
-
-        return
 
     def run(self):
         """
@@ -96,17 +99,20 @@ class SamplePlugin(SmartPlugin):
         # connect to network / web / serial device
         # (enable the following lines if you want to open a connection
         #  don't forget to implement a connect (and disconnect) method.. :) )
-        #self.connect()
+        # 
+        # self.connect()
 
         # setup scheduler for device poll loop
         # (enable the following line, if you need to poll the device.
         #  Rember to un-comment the self._cycle statement in __init__ as well)
-        #self.scheduler_add(self.get_fullname() + '_poll', self.poll_device, cycle=self._cycle)
+        #
+        # self.scheduler_add(self.get_fullname() + '_poll', self.poll_device, cycle=self._cycle)
 
         # Start the asyncio eventloop in it's own thread
         # and set self.alive to True when the eventloop is running
         # (enable the following line, if you need to use asyncio in the plugin)
-        #self.start_asyncio(self.plugin_coro())
+        #
+        # self.start_asyncio(self.plugin_coro())
 
         self.alive = True     # if using asyncio, do not set self.alive here. Set it in the session coroutine
 
@@ -137,11 +143,13 @@ class SamplePlugin(SmartPlugin):
 
         # stop the asyncio eventloop and it's thread
         # If you use asyncio, enable the following line
-        #self.stop_asyncio()
+        #
+        # self.stop_asyncio()
 
         # If you called connect() on run(), disconnect here
         # (remember to write a disconnect() method!)
-        #self.disconnect()
+        #
+        # self.disconnect()
 
         # also, clean up anything you set up in run(), so the plugin can be
         # cleanly stopped and started again
@@ -168,11 +176,10 @@ class SamplePlugin(SmartPlugin):
 
         if self.has_iattr(item.conf, 'foo_itemtag'):
             self.logger.debug(f"parse item: {item}")
-
-        # todo
-        # if interesting item for sending values:
-        #   self._itemlist.append(item)
-        #   return self.update_item
+            # Register the item so update_item() is called when the item changes.
+            # updating=True means the item is also tracked in get_trigger_items().
+            self.add_item(item, updating=True)
+            return self.update_item
 
     def parse_logic(self, logic):
         """
@@ -212,7 +219,15 @@ class SamplePlugin(SmartPlugin):
         if self.alive and caller != self.get_fullname():
             # code to execute if the plugin is not stopped
             # and only, if the item has not been changed by this plugin:
-            self.logger.info(f"update_item: '{item.property.path}' has been changed outside this plugin by caller '{self.callerinfo(caller, source)}'")
+            self.logger.info(
+                f"update_item: '{item.property.path}' has been changed outside this plugin "
+                f"by caller '{self.callerinfo(caller, source)}'"
+            )
+
+            # OPTIONAL (asyncio): bridge the synchronous update_item call into
+            # the plugin's async event loop.  run_asyncio_coro() blocks until
+            # the coroutine returns, so update_item stays synchronous to shNG.
+            # result = self.run_asyncio_coro(self._async_send('some_command', item()))
 
             pass
 
@@ -240,20 +255,73 @@ class SamplePlugin(SmartPlugin):
         #     item(device_value, self.get_fullname(), source=device_source_id)
         pass
 
+    # ==========================================================================
+    # OPTIONAL: asyncio support
+    # ==========================================================================
+    # Use this block if your plugin relies on an asyncio-based device library.
+    # SmartPlugin runs the plugin coroutine in a dedicated per-plugin event loop
+    # inside its own thread, separate from the main shNG event loop.
+    #
+    # Enable by uncommenting the corresponding lines in run() and stop():
+    #   run()  → self.start_asyncio(self.plugin_coro())
+    #   stop() → self.stop_asyncio()
+    # When using asyncio, do NOT set self.alive in run()/stop() — plugin_coro
+    # manages self.alive so that the timing matches the event loop's lifecycle.
+    # ==========================================================================
+
     async def plugin_coro(self):
         """
-        Coroutine for the plugin session (only needed, if using asyncio)
+        Async entry point for the plugin (only needed when using asyncio).
 
-        This coroutine is run as the PluginTask and should
-        only terminate, when the plugin is stopped
+        SmartPlugin.start_asyncio() launches this coroutine inside a dedicated
+        event loop thread.  The coroutine is responsible for managing self.alive
+        so the rest of shNG knows when the plugin is actually running.
+
+        Lifecycle
+        ---------
+        1. One-time async setup (e.g. open a client connection).
+        2. Set self.alive = True and notify the pause item.
+        3. Await wait_for_asyncio_termination() — this blocks until stop()
+           calls stop_asyncio(), which puts 'STOP' on the internal run-queue.
+        4. Async teardown, then self.alive = False.
         """
-        self.logger.notice("plugin_coro started")
+        self.logger.debug("plugin_coro: started")
+
+        # --- one-time async setup (open connection, subscribe to events, …) ---
+        # await self._async_connect()
 
         self.alive = True
+        if self._pause_item:
+            self._pause_item(False, self.get_fullname())
 
-        # ...
+        # Keep running until stop_asyncio() signals termination.
+        await self.wait_for_asyncio_termination()
+
+        # --- async teardown ---
+        # await self._async_disconnect()
 
         self.alive = False
+        if self._pause_item:
+            self._pause_item(True, self.get_fullname())
 
-        self.logger.notice("plugin_coro finished")
-        return
+        self.logger.debug("plugin_coro: finished")
+
+    async def _async_send(self, command: str, value) -> bool:
+        """
+        Example async helper: send a command/value to the device.
+
+        Call this from synchronous code (e.g. update_item) via the bridge::
+
+            result = self.run_asyncio_coro(self._async_send('power', True))
+
+        run_asyncio_coro() submits the coroutine to the plugin event loop and
+        blocks the calling thread until the coroutine returns.
+
+        :param command: device command name
+        :param value:   value to send
+        :return:        True on success, False on error
+        """
+        self.logger.debug(f"_async_send: {command!r} = {value!r}")
+        # Replace with your actual async device call, e.g.:
+        #   await self._client.write(command, value)
+        return True

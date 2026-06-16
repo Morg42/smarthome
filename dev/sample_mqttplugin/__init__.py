@@ -41,9 +41,10 @@ class SampleMqttPlugin(MqttPlugin):
     the update functions for the items
     """
 
-    PLUGIN_VERSION = '1.0.0'    # (must match the version specified in plugin.yaml), use '1.0.0' for your initial plugin Release
+    PLUGIN_VERSION = '1.0.0'    # must match the version in plugin.yaml; use '1.0.0' for initial release
+    ALLOW_MULTIINSTANCE = False  # set to True if the plugin can run as multiple instances simultaneously
 
-    def __init__(self, sh):
+    def __init__(self, sh=None, **kwargs):
         """
         Initalizes the plugin.
 
@@ -129,24 +130,18 @@ class SampleMqttPlugin(MqttPlugin):
         if self.has_iattr(item.conf, 'foo_itemid'):
             self.logger.debug(f"parse item: {item.property.path}")
 
-            # subscribe to topic for relay state
-            # mqtt_id = self.get_iattr_value(item.conf, 'foo_itemid').upper()
-            # payload_type = item.property.type
-            # topic = 'shellies/shellyplug-' + mqtt_id + '/relay/0'
-            # bool_values = ['off','on']
-            # self.add_subscription(topic, payload_type, bool_values, item=item)
+            # Compose the MQTT topic from the device ID attribute.
+            mqtt_id = self.get_iattr_value(item.conf, 'foo_itemid').upper()
+            payload_type = item.property.type
+            topic = 'shellies/shellyplug-' + mqtt_id + '/relay/0'
+            bool_values = ['off', 'on']
+            # Subscribe so the item value is updated when the device publishes.
+            self.add_subscription(topic, payload_type, bool_values, item=item)
 
-            # alternative:
-            #   self.add_subscription(topic, payload_type, bool_values, callback=self.on_mqtt_message)
-            # and implement callback:
-            #   def on_mqtt_message(self, topic, payload, qos=None, retain=None):
-
-            # todo
-            # if interesting item for sending values:
-            #   return self.update_item
-
-            # if the item is changed in SmartHomeNG and shall update the mqtt device, enable:
-            # return self.update_item
+            # Register the item so update_item() is called when the item changes
+            # in SmartHomeNG (e.g. to send an MQTT command to the device).
+            self.add_item(item, updating=True)
+            return self.update_item
 
 
     def parse_logic(self, logic):
@@ -185,7 +180,8 @@ class SampleMqttPlugin(MqttPlugin):
             # and only, if the item has not been changed by this this plugin:
             self.logger.info(f"Update item: {item.property.path}, item has been changed outside this plugin")
 
-            if self.has_iattr(item.conf, 'foo_itemtag'):
+            if self.has_iattr(item.conf, 'foo_itemid'):
                 self.logger.debug(
-                    f"update_item was called with item {item.property.path} from caller {caller}, source {source} and dest {dest}")
+                    f"update_item: item {item.property.path} "
+                    f"from caller {caller}, source {source}, dest {dest}")
             pass

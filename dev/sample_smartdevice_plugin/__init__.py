@@ -41,23 +41,32 @@ if __name__ == '__main__':
     sys.path.insert(0, BASE)
 
 else:
-    builtins.SDP_standalone = False
+    # Set the shared standalone flag to False when loaded as part of shNG.
+    # SDP uses builtins so all modules in the same process share one flag
+    # without any import dependency. This is the established SDP convention —
+    # do not change without understanding the full SDP standalone mechanism.
+    if not hasattr(builtins, 'SDP_standalone'):
+        builtins.SDP_standalone = False
 # <--
 
-from lib.model.sdp.globals import PLUGIN_ATTR_CONNECTION, CONN_NULL         # import all "constants" you need in your own code
+from lib.model.sdp.globals import PLUGIN_ATTR_CONNECTION, CONN_NULL  # import constants you need
 from lib.model.smartdeviceplugin import SmartDevicePlugin, Standalone       # needed, obviously
 
 if not SDP_standalone:
-    from .webif import WebInterface                                         # can be removed if no webif is provided
+    try:
+        from .webif import WebInterface                                     # can be removed if no webif is provided
+    except ImportError:
+        WebInterface = None
 
 
 # depending on the complexity of the communication between the device and shng,
 # this can be all plugin code needed to run (compare Viessmann plugin)
 
 
-class example(SmartDevicePlugin):
+class SdpExample(SmartDevicePlugin):
     """ Example class for SmartDevicePlugin. """
     PLUGIN_VERSION = '0.1.0'                                                # adjust, must match version in plugin.yaml
+    ALLOW_MULTIINSTANCE = True   # set to False if only one instance should run at a time
 
     def _set_device_defaults(self):
 
@@ -81,11 +90,11 @@ class example(SmartDevicePlugin):
 
     def on_connect(self, by=None):
         """ callback if connection is made. """
-        self.logger.info('example plugin connected')
+        self.logger.info('SdpExample plugin connected')
 
     def on_disconnect(self, by=None):
         """ callback if connection is broken. """
-        self.logger.info('example plugin disconnected')
+        self.logger.info('SdpExample plugin disconnected')
 
     # if you want to use the suspend/resume feature, you can overwrite these
     # methods and customize to your liking. If not, you can safely delete them
@@ -103,4 +112,4 @@ class example(SmartDevicePlugin):
 # needed to start operation in standalone mode
 # as we don't have a run_standalone() method, only struct generation can be used
 if __name__ == '__main__':
-    s = Standalone(example, sys.argv[0])
+    s = Standalone(SdpExample, sys.argv[0])
