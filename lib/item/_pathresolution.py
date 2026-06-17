@@ -61,7 +61,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-def get_absolutepath(item, relativepath, attribute=""):
+def get_absolutepath(item, relativepath, attribute=''):
     """
     Build an absolute item path relative to the current item.
 
@@ -72,35 +72,35 @@ def get_absolutepath(item, relativepath, attribute=""):
     """
     if not isinstance(relativepath, str):
         return relativepath
-    if (len(relativepath) == 0) or (relativepath[0] != "."):
+    if (len(relativepath) == 0) or (relativepath[0] != '.'):
         return relativepath
 
     relpath = relativepath.rstrip()
     rootpath = item._path
 
-    while relpath and relpath[0] == ".":
+    while relpath and relpath[0] == '.':
         relpath = relpath[1:]
-        if relpath and relpath[0] == ".":
-            if rootpath.rfind(".") == -1:
-                if rootpath == "":
-                    relpath = ""
+        if relpath and relpath[0] == '.':
+            if rootpath.rfind('.') == -1:
+                if rootpath == '':
+                    relpath = ''
                     logger.error(
-                        "{}.get_absolutepath(): Relative path trying to access above"
+                        '{}.get_absolutepath(): Relative path trying to access above'
                         " root level on attribute '{}'".format(item._path, attribute)
                     )
                 else:
-                    rootpath = ""
+                    rootpath = ''
             else:
-                rootpath = rootpath[: rootpath.rfind(".")]
+                rootpath = rootpath[: rootpath.rfind('.')]
 
-    trailing_str = ""
-    if relpath.startswith("self") and len(relpath) > 4:
-        if relpath[4] in "() +-*/<>!=&%":
+    trailing_str = ''
+    if relpath.startswith('self') and len(relpath) > 4:
+        if relpath[4] in '() +-*/<>!=&%':
             trailing_str = relpath[4:]
-            relpath = ""
+            relpath = ''
 
     if relpath:
-        rootpath = (rootpath + "." + relpath) if rootpath else relpath
+        rootpath = (rootpath + '.' + relpath) if rootpath else relpath
     rootpath += trailing_str
 
     logger.info(
@@ -108,9 +108,9 @@ def get_absolutepath(item, relativepath, attribute=""):
             item._path, relativepath, rootpath, attribute
         )
     )
-    if rootpath[-5:] == ".self":
-        rootpath = rootpath.replace(".self", "")
-    rootpath = rootpath.replace(".self.", ".")
+    if rootpath[-5:] == '.self':
+        rootpath = rootpath.replace('.self', '')
+    rootpath = rootpath.replace('.self.', '.')
     return rootpath
 
 
@@ -119,7 +119,7 @@ def get_absolutepath(item, relativepath, attribute=""):
 # ---------------------------------------------------------------------------
 
 
-def get_stringwithabsolutepathes(item, evalstr, begintag, endtag, attribute=""):
+def get_stringwithabsolutepathes(item, evalstr, begintag, endtag, attribute=''):
     """
     Convert a string containing relative item paths to absolute item paths.
 
@@ -134,21 +134,21 @@ def get_stringwithabsolutepathes(item, evalstr, begintag, endtag, attribute=""):
     """
 
     def _checkfortags(evalstr, begintag, endtag):
-        pref = ""
+        pref = ''
         rest = evalstr
-        while rest.find(begintag + ".") != -1:
-            pref += rest[: rest.find(begintag + ".") + len(begintag)]
-            rest = rest[rest.find(begintag + ".") + len(begintag) :]
-            if endtag == "" or rest.find(endtag) == -1:
+        while rest.find(begintag + '.') != -1:
+            pref += rest[: rest.find(begintag + '.') + len(begintag)]
+            rest = rest[rest.find(begintag + '.') + len(begintag) :]
+            if endtag == '' or rest.find(endtag) == -1:
                 rel = rest
-                rest = ""
+                rest = ''
             else:
                 rel = rest[: rest.find(endtag)]
             rest = rest[rest.find(endtag) :]
             pref += get_absolutepath(item, rel, attribute)
             # Re-combine string for next loop
             rest = pref + rest
-            pref = ""
+            pref = ''
         pref += rest
         logger.debug(
             "{}.get_stringwithabsolutepathes('{}') with begintag = '{}', endtag = '{}': result = '{}'".format(
@@ -162,14 +162,14 @@ def get_stringwithabsolutepathes(item, evalstr, begintag, endtag, attribute=""):
 
     if isinstance(begintag, list):
         diff_len = len(begintag) - len(endtag)
-        begintag = begintag + [""] * abs(diff_len) if diff_len < 0 else begintag
-        endtag = endtag + [""] * diff_len if diff_len > 0 else endtag
+        begintag = begintag + [''] * abs(diff_len) if diff_len < 0 else begintag
+        endtag = endtag + [''] * diff_len if diff_len > 0 else endtag
         for i in range(len(begintag)):
-            if evalstr.find(begintag[i] + ".") != -1:
+            if evalstr.find(begintag[i] + '.') != -1:
                 evalstr = _checkfortags(evalstr, begintag[i], endtag[i])
         return evalstr
     else:
-        if evalstr.find(begintag + ".") == -1:
+        if evalstr.find(begintag + '.') == -1:
             return evalstr
         return _checkfortags(evalstr, begintag, endtag)
 
@@ -179,7 +179,7 @@ def get_stringwithabsolutepathes(item, evalstr, begintag, endtag, attribute=""):
 # ---------------------------------------------------------------------------
 
 
-def find_attribute(item, attr, default="", level=-1, strict=False):
+def find_attribute(item, attr, default='', level=-1, strict=False):
     """
     Find attribute value from item (level == 0) or a parent item.
 
@@ -218,17 +218,17 @@ def split_destitem_from_value(value):
     :param value: attribute value string
     :return:      (dest_item, value) tuple
     """
-    dest_item = ""
-    if ((value.find("=") != -1) and (value.find("(") == -1)) or (
-        (value.find("=") != -1) and (value.find("=") < value.find("("))
+    dest_item = ''
+    if ((value.find('=') != -1) and (value.find('(') == -1)) or (
+        (value.find('=') != -1) and (value.find('=') < value.find('('))
     ):
-        if value.find("==") != -1:
-            if value.find("=") < value.find("=="):
-                dest_item = value[: value.find("=")].strip()
-                value = value[value.find("=") + 1 :].strip()
+        if value.find('==') != -1:
+            if value.find('=') < value.find('=='):
+                dest_item = value[: value.find('=')].strip()
+                value = value[value.find('=') + 1 :].strip()
         else:
-            dest_item = value[: value.find("=")]
-            value = value[value.find("=") + 1 :].strip()
+            dest_item = value[: value.find('=')]
+            value = value[value.find('=') + 1 :].strip()
     return dest_item, value
 
 
@@ -252,35 +252,35 @@ def expand_relativepathes(item, attr, begintag, endtag):
 
     def _checkforentry(attr_name):
         if isinstance(item.conf[attr_name], str):
-            if begintag != "" and endtag != "":
+            if begintag != '' and endtag != '':
                 item.conf[attr_name] = get_stringwithabsolutepathes(
                     item, item.conf[attr_name], begintag, endtag, attr_name
                 )
-            elif begintag == "" and endtag == "":
+            elif begintag == '' and endtag == '':
                 item.conf[attr_name] = get_absolutepath(item, item.conf[attr_name], attr_name)
         elif isinstance(item.conf[attr_name], list):
-            logger.debug("expand_relativepathes(1): to expand={}".format(item.conf[attr_name]))
+            logger.debug('expand_relativepathes(1): to expand={}'.format(item.conf[attr_name]))
             new_attr = []
             for a in item.conf[attr_name]:
                 if isinstance(a, dict):
-                    a = list("{!s}:{!s}".format(k, v) for (k, v) in a.items())[0]
-                logger.debug("expand_relativepathes: before : to expand={}".format(a))
-                if begintag != "" and endtag != "":
+                    a = list('{!s}:{!s}'.format(k, v) for (k, v) in a.items())[0]
+                logger.debug('expand_relativepathes: before : to expand={}'.format(a))
+                if begintag != '' and endtag != '':
                     a = get_stringwithabsolutepathes(item, a, begintag, endtag, attr_name)
-                elif begintag == "" and endtag == "":
+                elif begintag == '' and endtag == '':
                     a = get_absolutepath(item, a, attr_name)
-                logger.debug("expand_relativepathes: after: to expand={}".format(a))
+                logger.debug('expand_relativepathes: after: to expand={}'.format(a))
                 new_attr.append(a)
             item.conf[attr_name] = new_attr
-            logger.debug("expand_relativepathes(2): expanded={}".format(item.conf[attr_name]))
+            logger.debug('expand_relativepathes(2): expanded={}'.format(item.conf[attr_name]))
         else:
             logger.warning(
-                "expand_relativepathes: attr={} can not expand for type(item.conf[attr_name])={}".format(
+                'expand_relativepathes: attr={} can not expand for type(item.conf[attr_name])={}'.format(
                     attr_name, type(item.conf[attr_name])
                 )
             )
 
-    if isinstance(attr, str) and attr.endswith("*"):
+    if isinstance(attr, str) and attr.endswith('*'):
         for entry in item.conf:
             if attr[:-1] in entry:
                 _checkforentry(entry)
@@ -293,7 +293,7 @@ def expand_relativepathes(item, attr, begintag, endtag):
 # ---------------------------------------------------------------------------
 
 
-def get_attr(item, attr, default=""):
+def get_attr(item, attr, default=''):
     """
     Return the value of *attr* from *item*'s own configuration dict.
 

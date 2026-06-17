@@ -38,7 +38,7 @@ import sys
 import time
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import tests.common as common
 
@@ -66,8 +66,8 @@ def _make_sh():
     return MockSmartHome()
 
 
-def _item(sh, path="test", itype="num", **conf):
-    c = {"type": itype}
+def _item(sh, path='test', itype='num', **conf):
+    c = {'type': itype}
     c.update(conf)
     i = lib.item.item.Item(sh, sh, path, c)
     sh.items.add_item(path, i)
@@ -207,41 +207,41 @@ class TestEnforceUpdates(_Base):
 class TestCallerAttribution(_Base):
     def test_changed_by_contains_caller(self):
         item = _item(self.sh)
-        item(1, caller="Scheduler")
-        self.assertIn("Scheduler", item.changed_by())
+        item(1, caller='Scheduler')
+        self.assertIn('Scheduler', item.changed_by())
 
     def test_changed_by_contains_source(self):
         item = _item(self.sh)
-        item(1, caller="Plugin", source="my_source")
-        self.assertIn("my_source", item.changed_by())
+        item(1, caller='Plugin', source='my_source')
+        self.assertIn('my_source', item.changed_by())
 
     def test_updated_by_tracks_caller(self):
         item = _item(self.sh)
-        item(1, caller="TestCaller")
-        self.assertIn("TestCaller", item.updated_by())
+        item(1, caller='TestCaller')
+        self.assertIn('TestCaller', item.updated_by())
 
     def test_updated_by_advances_on_same_value(self):
         item = _item(self.sh)
-        item(5, caller="First")
-        item(5, caller="Second")
-        self.assertIn("Second", item.updated_by())
+        item(5, caller='First')
+        item(5, caller='Second')
+        self.assertIn('Second', item.updated_by())
 
     def test_triggered_by_tracks_caller(self):
         item = _item(self.sh)
-        item(1, caller="TriggerCaller")
-        self.assertIn("TriggerCaller", item.triggered_by())
+        item(1, caller='TriggerCaller')
+        self.assertIn('TriggerCaller', item.triggered_by())
 
     def test_prev_change_by_holds_previous_caller(self):
         item = _item(self.sh)
-        item(1, caller="First")
-        item(2, caller="Second")
-        self.assertIn("First", item.property.prev_change_by)
+        item(1, caller='First')
+        item(2, caller='Second')
+        self.assertIn('First', item.property.prev_change_by)
 
     def test_prev_update_by_holds_previous_update_caller(self):
         item = _item(self.sh)
-        item(5, caller="First")
-        item(5, caller="Second")  # same-value update
-        self.assertIn("First", item.property.prev_update_by)
+        item(5, caller='First')
+        item(5, caller='Second')  # same-value update
+        self.assertIn('First', item.property.prev_update_by)
 
 
 # ===========================================================================
@@ -357,5 +357,5 @@ class TestValueSequencing(_Base):
         self.assertNotEqual(item.property.last_value, 999)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

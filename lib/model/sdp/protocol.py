@@ -81,7 +81,7 @@ class SDPProtocol(SDPConnection):
         # init super, get logger
         super().__init__(data_received_callback, name, **kwargs)
 
-        self.logger.debug(f"protocol initializing from {self.__class__.__name__} with arguments {kwargs}")
+        self.logger.debug(f'protocol initializing from {self.__class__.__name__} with arguments {kwargs}')
 
         # make sure we have a basic set of parameters
         self._params.update({PLUGIN_ATTR_CONNECTION: SDPConnection})
@@ -98,10 +98,10 @@ class SDPProtocol(SDPConnection):
         self._connection = self._params[PLUGIN_ATTR_CONNECTION](self.on_data_received, name=name, **conn_params)
 
         # tell someone about our actual class
-        self.logger.debug(f"protocol initialized from {self.__class__.__name__}")
+        self.logger.debug(f'protocol initialized from {self.__class__.__name__}')
 
     def _open(self) -> bool:
-        self.logger.debug(f"{self.__class__.__name__} _open called, opening protocol with params {self._params}")
+        self.logger.debug(f'{self.__class__.__name__} _open called, opening protocol with params {self._params}')
         if not self._connection.connected():
             self._connection.open()
 
@@ -109,12 +109,12 @@ class SDPProtocol(SDPConnection):
         return self._is_connected
 
     def _close(self):
-        self.logger.debug(f"{self.__class__.__name__} _close called, closing protocol")
+        self.logger.debug(f'{self.__class__.__name__} _close called, closing protocol')
         self._connection.close()
         self._is_connected = False
 
     def _send(self, data_dict: dict, **kwargs) -> Any:
-        self.logger.debug(f"{self.__class__.__name__} _send called with {data_dict}")
+        self.logger.debug(f'{self.__class__.__name__} _send called with {data_dict}')
         return self._connection.send(data_dict, **kwargs)
 
     def _get_connection(self, use_callbacks: bool = False, name: str | None = None):
@@ -136,9 +136,9 @@ class SDPProtocol(SDPConnection):
         **params,
     ) -> type[SDPProtocol] | None:
 
-        protocol_module = sys.modules.get("lib.model.sdp.protocol", "")
+        protocol_module = sys.modules.get('lib.model.sdp.protocol', '')
         if not protocol_module:
-            raise RuntimeError("unable to get object handle of SDPProtocol module")
+            raise RuntimeError('unable to get object handle of SDPProtocol module')
 
         # class not set
         if not protocol_cls:
@@ -159,7 +159,7 @@ class SDPProtocol(SDPConnection):
                     if PLUGIN_ATTR_PROTOCOL in params and isinstance(params[PLUGIN_ATTR_PROTOCOL], str):
                         if params[PLUGIN_ATTR_PROTOCOL] not in PROTOCOL_TYPES:
                             protocol_classname = params[PLUGIN_ATTR_PROTOCOL]
-                            protocol_type = "manual"
+                            protocol_type = 'manual'
 
                     # wanted connection type not known
                     if not protocol_type:
@@ -175,13 +175,13 @@ class SDPProtocol(SDPConnection):
                         protocol_type = PROTO_NULL
 
                     # get classname from type
-                    protocol_classname = "SDPProtocol" + "".join([tok.capitalize() for tok in protocol_type.split("_")])
+                    protocol_classname = 'SDPProtocol' + ''.join([tok.capitalize() for tok in protocol_type.split('_')])
 
                 # get class from classname
                 protocol_cls = getattr(protocol_module, protocol_classname, None)
 
         if not protocol_cls:
-            raise RuntimeError(f"protocol {params[PLUGIN_ATTR_PROTOCOL]} specified, but not loadable.")
+            raise RuntimeError(f'protocol {params[PLUGIN_ATTR_PROTOCOL]} specified, but not loadable.')
 
         return protocol_cls
 
@@ -249,10 +249,10 @@ class SDPProtocolJsonrpc(SDPProtocol):
         self._get_connection(True, name=name)
 
         # tell someone about our actual class
-        self.logger.debug(f"protocol initialized from {self.__class__.__name__}")
+        self.logger.debug(f'protocol initialized from {self.__class__.__name__}')
 
     def on_connect(self, by=None):
-        self.logger.info(f"onconnect called by {by}, send queue contains {self._send_queue.qsize()} commands")
+        self.logger.info(f'onconnect called by {by}, send queue contains {self._send_queue.qsize()} commands')
         super().on_connect(by)
 
     def on_disconnect(self, by=None):
@@ -279,29 +279,29 @@ class SDPProtocolJsonrpc(SDPProtocol):
         """
 
         def check_chunk(data):
-            self.logger.debug(f"checking chunk {data}")
+            self.logger.debug(f'checking chunk {data}')
             try:
-                json.loads(str(data, "utf-8").strip())
-                self.logger.debug("chunk checked ok")
+                json.loads(str(data, 'utf-8').strip())
+                self.logger.debug('chunk checked ok')
                 return True
             except Exception:
-                self.logger.debug("chunk not valid json")
+                self.logger.debug('chunk not valid json')
                 return False
 
-        self.logger.debug(f"data received before encode: {data}")
+        self.logger.debug(f'data received before encode: {data}')
 
         # if isinstance(response, (bytes, bytearray)):
         #     response = str(response, 'utf-8').strip()
 
-        self.logger.debug(f"adding response to buffer: {data}")
+        self.logger.debug(f'adding response to buffer: {data}')
         self._receive_buffer += data
 
         datalist = []
-        if b"}{" in self._receive_buffer:
+        if b'}{' in self._receive_buffer:
             # split multi-response data into list items
             try:
-                self.logger.debug("attempting to split buffer")
-                tmplist = self._receive_buffer.replace(b"}{", b"}-#-{").split(b"-#-")
+                self.logger.debug('attempting to split buffer')
+                tmplist = self._receive_buffer.replace(b'}{', b'}-#-{').split(b'-#-')
                 datalist = list(OrderedDict((x, True) for x in tmplist).keys())
                 self._receive_buffer = bytes()
             except Exception:
@@ -309,32 +309,32 @@ class SDPProtocolJsonrpc(SDPProtocol):
         # checking for bytes[0] == b'{' fails for some reason, so check for byte value instead... need to check char encoding?
         elif self._receive_buffer[0] == 123 and self._receive_buffer[-1] == 125 and check_chunk(self._receive_buffer):
             datalist = [self._receive_buffer]
-            self._receive_buffer = b""
+            self._receive_buffer = b''
         elif self._receive_buffer:
-            self.logger.debug(f"Buffer with incomplete response: {self._receive_buffer}")
+            self.logger.debug(f'Buffer with incomplete response: {self._receive_buffer}')
 
         if datalist:
-            self.logger.debug(f"received {len(datalist)} data items")
+            self.logger.debug(f'received {len(datalist)} data items')
 
         # process all response items
         for ldata in datalist:
-            self.logger.debug(f"Processing received data item #{datalist.index(ldata)}: {ldata}")
+            self.logger.debug(f'Processing received data item #{datalist.index(ldata)}: {ldata}')
 
             try:
-                jdata = json.loads(str(ldata, "utf-8").strip())
+                jdata = json.loads(str(ldata, 'utf-8').strip())
             except Exception as err:
                 if ldata == datalist[-1]:
-                    self.logger.debug(f"returning incomplete data to buffer: {ldata}")
+                    self.logger.debug(f'returning incomplete data to buffer: {ldata}')
                     self._receive_buffer = ldata
                 else:
-                    self.logger.warning(f"Could not json.load data item {ldata} with error {err}")
+                    self.logger.warning(f'Could not json.load data item {ldata} with error {err}')
                 continue
 
             command = None
 
             # check messageid for replies
-            if "id" in jdata:
-                response_id = jdata["id"]
+            if 'id' in jdata:
+                response_id = jdata['id']
 
                 # reply or error received, remove command
                 if response_id in self._message_archive:
@@ -344,15 +344,15 @@ class SDPProtocolJsonrpc(SDPProtocol):
                         command = self._message_archive[response_id][1]
                         del self._message_archive[response_id]
                     except KeyError:
-                        command = "(deleted)" if "_" not in response_id else response_id[response_id.find("_") + 1 :]
+                        command = '(deleted)' if '_' not in response_id else response_id[response_id.find('_') + 1 :]
                 else:
                     command = None
 
                 # log possible errors
-                if "error" in jdata:
-                    self.logger.error(f"received error {jdata} in response to command {command}")
+                if 'error' in jdata:
+                    self.logger.error(f'received error {jdata} in response to command {command}')
                 elif command:
-                    self.logger.debug(f"command {command} sent successfully")
+                    self.logger.debug(f'command {command} sent successfully')
 
             # process data
             if self._data_received_callback:
@@ -370,7 +370,7 @@ class SDPProtocolJsonrpc(SDPProtocol):
 
                 # self._message_archive[message_id] = [time(), command, params, repeat]
                 self.logger.debug(
-                    f"Checking for unanswered commands, last check was {int(time()) - self._last_stale_check} seconds ago, {len(self._message_archive)} commands saved"
+                    f'Checking for unanswered commands, last check was {int(time()) - self._last_stale_check} seconds ago, {len(self._message_archive)} commands saved'
                 )
                 # !! self.logger.debug('Stale commands: {}'.format(stale_messages))
                 for message_id, (send_time, cmd, params, repeat) in stale_messages.items():
@@ -378,16 +378,16 @@ class SDPProtocolJsonrpc(SDPProtocol):
                         # reply timeout reached, check repeat count
                         if repeat <= self._params[PLUGIN_ATTR_SEND_RETRIES]:
                             # send again, increase counter
-                            self.logger.info(f"Repeating unanswered command {cmd} ({params}), try {repeat + 1}")
+                            self.logger.info(f'Repeating unanswered command {cmd} ({params}), try {repeat + 1}')
                             requeue_cmds.append([cmd, params, message_id, repeat + 1])
                         else:
-                            self.logger.info(f"Unanswered command {cmd} ({params}) repeated {repeat} times, giving up.")
+                            self.logger.info(f'Unanswered command {cmd} ({params}) repeated {repeat} times, giving up.')
                             remove_ids.append(message_id)
 
                 for msgid in remove_ids:
                     # it is possible that while processing stale commands, a reply arrived
                     # and the command was removed. So just to be sure, 'try' and delete...
-                    self.logger.debug(f"Removing stale msgid {msgid} from archive")
+                    self.logger.debug(f'Removing stale msgid {msgid} from archive')
                     try:
                         del self._message_archive[msgid]
                     except KeyError:
@@ -407,16 +407,16 @@ class SDPProtocolJsonrpc(SDPProtocol):
                 self._stale_lock.release()
 
             else:
-                self.logger.debug(f"Skipping stale check {time() - self._last_stale_check} seconds after last check")
+                self.logger.debug(f'Skipping stale check {time() - self._last_stale_check} seconds after last check')
 
     def _send(self, data_dict: dict, **kwargs) -> Any:
         """
         wrapper to prepare json rpc message to send. extracts command, id, repeat and
         params (data) from data_dict and call send_rpc_message(command, params, id, repeat)
         """
-        command = data_dict.get("command", data_dict.get("method", data_dict.get("payload")))
-        message_id = data_dict.get("message_id", None)
-        repeat = data_dict.get("repeat", 0)
+        command = data_dict.get('command', data_dict.get('method', data_dict.get('payload')))
+        message_id = data_dict.get('message_id', None)
+        repeat = data_dict.get('repeat', 0)
 
         self._send_rpc_message(command, data_dict, message_id, repeat)
 
@@ -437,7 +437,7 @@ class SDPProtocolJsonrpc(SDPProtocol):
         """
         if ddict is None:
             ddict = {}
-        self.logger.debug(f"preparing message to send command {command} with data {ddict}, try #{repeat}")
+        self.logger.debug(f'preparing message to send command {command} with data {ddict}, try #{repeat}')
 
         if message_id is None:
             # safely acquire next message_id
@@ -446,60 +446,60 @@ class SDPProtocolJsonrpc(SDPProtocol):
             self._message_id += 1
             new_msgid = self._message_id
             self._msgid_lock.release()
-            message_id = str(new_msgid) + "_" + command
+            message_id = str(new_msgid) + '_' + command
             # !! self.logger.debug('Releasing message id access ({})'.format(self._message_id))
 
         if not ddict:
             ddict = {}
 
-        method = ddict.get("method", command)
+        method = ddict.get('method', command)
 
         # create message packet
-        new_data = {"jsonrpc": "2.0", "id": message_id, "method": method}
+        new_data = {'jsonrpc': '2.0', 'id': message_id, 'method': method}
 
-        if "data" in ddict and ddict["data"]:
+        if 'data' in ddict and ddict['data']:
             # ddict already contains 'data', we either have an old "ready" packet or new data
-            if "jsonrpc" not in ddict["data"]:
+            if 'jsonrpc' not in ddict['data']:
                 # we don't have a jsonrpc header, add new data to new header
-                new_data["params"] = ddict["data"]
+                new_data['params'] = ddict['data']
             else:
                 # jsonrpc header present, keep packet as is
-                new_data = ddict["data"]
+                new_data = ddict['data']
 
         # set packet data
-        ddict["data"] = new_data
+        ddict['data'] = new_data
 
         for key in self._params[JSON_MOVE_KEYS]:
             if key in ddict:
-                if "params" not in ddict["data"]:
-                    ddict["data"]["params"] = {}
-                ddict["data"]["params"][key] = ddict[key]
+                if 'params' not in ddict['data']:
+                    ddict['data']['params'] = {}
+                ddict['data']['params'][key] = ddict[key]
                 del ddict[key]
 
         # convert data if not using HTTP connections
-        if "request_method" not in ddict:
+        if 'request_method' not in ddict:
             try:
                 # if 'payload' in ddict:
                 #     ddict['payload'] += json.dumps(ddict['data'])
                 # else:
-                ddict["payload"] = json.dumps(ddict["data"])
+                ddict['payload'] = json.dumps(ddict['data'])
             except Exception as e:
-                raise ValueError(f"data {ddict['data']} not convertible to JSON, aborting. Error was: {e}")
+                raise ValueError(f'data {ddict["data"]} not convertible to JSON, aborting. Error was: {e}')
 
         # push message in queue
         self._send_queue.put([message_id, command, ddict, repeat])
 
         # try to actually send all queued messages
-        self.logger.debug(f"processing queue - {self._send_queue.qsize()} elements")
+        self.logger.debug(f'processing queue - {self._send_queue.qsize()} elements')
         while not self._send_queue.empty():
             (message_id, command, ddict, repeat) = self._send_queue.get()
 
             self._message_archive[message_id] = [time(), command, ddict, repeat]
 
-            self.logger.debug(f"sending queued msg {message_id} - {command} (#{repeat})")
+            self.logger.debug(f'sending queued msg {message_id} - {command} (#{repeat})')
             response = self._connection.send(ddict)
             if response:
-                self.on_data_received("request", response)
+                self.on_data_received('request', response)
 
 
 class SDPProtocolResend(SDPProtocol):
@@ -522,29 +522,29 @@ class SDPProtocolResend(SDPProtocol):
         self._sending_lock = Lock()
 
         # tell someone about our actual class
-        self.logger.debug(f"protocol initialized from {self.__class__.__name__}")
+        self.logger.debug(f'protocol initialized from {self.__class__.__name__}')
 
     def on_connect(self, by: str | None = None):
         """
         When connecting, remove resend scheduler first. If send_retries is set > 0, add new scheduler with given cycle
         """
         super().on_connect(by)
-        self.logger.info(f"connect called, resending queue is {self._sending}")
-        if self._plugin.scheduler_get("resend"):  # type: ignore (circular import of SmartDevicePlugin)
-            self._plugin.scheduler_remove("resend")  # type: ignore
+        self.logger.info(f'connect called, resending queue is {self._sending}')
+        if self._plugin.scheduler_get('resend'):  # type: ignore (circular import of SmartDevicePlugin)
+            self._plugin.scheduler_remove('resend')  # type: ignore
         self._sending = {}
         if self._send_retries >= 1:
-            self._plugin.scheduler_add("resend", self.resend, cycle=self._send_retries_cycle)  # type: ignore
-            self.logger.dbghigh(f"Adding resend scheduler with cycle {self._send_retries_cycle}.")
+            self._plugin.scheduler_add('resend', self.resend, cycle=self._send_retries_cycle)  # type: ignore
+            self.logger.dbghigh(f'Adding resend scheduler with cycle {self._send_retries_cycle}.')
 
     def on_disconnect(self, by: str | None = None):
         """
         Remove resend scheduler on disconnect
         """
-        if self._plugin.scheduler_get("resend"):  # type: ignore
-            self._plugin.scheduler_remove("resend")  # type: ignore
+        if self._plugin.scheduler_get('resend'):  # type: ignore
+            self._plugin.scheduler_remove('resend')  # type: ignore
         self._sending = {}
-        self.logger.info("on_disconnect called")
+        self.logger.info('on_disconnect called')
         super().on_disconnect(by)
 
     def _send(self, data_dict: dict, **kwargs) -> Any:
@@ -556,8 +556,8 @@ class SDPProtocolResend(SDPProtocol):
         :param kwargs: additional information needed for checking the reply_pattern
         :return: raw response data if applicable, None otherwise.
         """
-        self._store_commands(kwargs.get("resend_info", {}), data_dict)
-        self.logger.debug(f"Sending {data_dict}, kwargs {kwargs}")
+        self._store_commands(kwargs.get('resend_info', {}), data_dict)
+        self.logger.debug(f'Sending {data_dict}, kwargs {kwargs}')
         return self._connection.send(data_dict, **kwargs)
 
     def _store_commands(self, resend_info: dict, data_dict: dict) -> bool:
@@ -575,16 +575,16 @@ class SDPProtocolResend(SDPProtocol):
         if resend_info is None:
             resend_info = {}
         else:
-            resend_info["data_dict"] = data_dict
-        if resend_info.get("send_retries") is None:
-            resend_info["send_retries"] = self._send_retries
-        if resend_info["send_retries"] <= 0:
+            resend_info['data_dict'] = data_dict
+        if resend_info.get('send_retries') is None:
+            resend_info['send_retries'] = self._send_retries
+        if resend_info['send_retries'] <= 0:
             return False
-        if resend_info.get("returnvalue") is not None:
-            self._sending.update({resend_info.get("command"): resend_info})
-            if resend_info.get("command") not in self._sending_retries:
-                self._sending_retries.update({resend_info.get("command"): 1})
-            self.logger.debug(f"Saving {resend_info}, resending queue is {self._sending}")
+        if resend_info.get('returnvalue') is not None:
+            self._sending.update({resend_info.get('command'): resend_info})
+            if resend_info.get('command') not in self._sending_retries:
+                self._sending_retries.update({resend_info.get('command'): 1})
+            self.logger.debug(f'Saving {resend_info}, resending queue is {self._sending}')
             return True
         return False
 
@@ -616,9 +616,9 @@ class SDPProtocolResend(SDPProtocol):
                 except ValueError:
                     return False
             elif value_type is bool:
-                if compare_value.lower() == "true":
+                if compare_value.lower() == 'true':
                     converted_value = True
-                elif compare_value.lower() == "false":
+                elif compare_value.lower() == 'false':
                     converted_value = False
                 else:
                     converted_value = None
@@ -647,40 +647,40 @@ class SDPProtocolResend(SDPProtocol):
                 # getting current retries for current command
                 retry = self._sending_retries.get(command)
                 # compare the expected returnvalue with the received value after aligning the type of both values
-                compare = self._sending[command].get("returnvalue")
+                compare = self._sending[command].get('returnvalue')
                 compare = [compare] if not isinstance(compare, list) else compare
                 for c in compare:
                     self.logger.debug(
-                        f"Comparing expected reply {c} ({type(c)}) with received value {value} ({type(value)})."
+                        f'Comparing expected reply {c} ({type(c)}) with received value {value} ({type(value)}).'
                     )
-                    lookup_log = ""
+                    lookup_log = ''
                     # check if expected value equals received value or both are None (only happens with lists in reply_pattern)
                     if isinstance(c, re.Pattern):
                         cond = re.search(c, str(value))
                     else:
                         cond = convert_and_compare(c, value)
-                        lookup = self._sending[command].get("lookup")
+                        lookup = self._sending[command].get('lookup')
                         if cond is False and lookup:
                             cond = c in lookup and lookup.get(c) == value
-                            lookup_log = f" after checking lookup table {lookup}"
+                            lookup_log = f' after checking lookup table {lookup}'
                             if cond is False:
-                                lookup_ci = self._sending[command].get("lookup_ci")
+                                lookup_ci = self._sending[command].get('lookup_ci')
                                 if isinstance(value, str):
                                     value = value.lower()
                                 cond = value in lookup_ci and c == value
-                                lookup_log = f" after checking ci reverse lookup table {lookup_ci}"
+                                lookup_log = f' after checking ci reverse lookup table {lookup_ci}'
                     if c is None or cond:
                         # remove command from _sending dict
                         self._sending.pop(command)
                         self._sending_retries.pop(command)
                         self.logger.debug(
-                            f"Got correct response for {command}{lookup_log}, "
-                            f"removing from send. Resending queue is {self._sending}"
+                            f'Got correct response for {command}{lookup_log}, '
+                            f'removing from send. Resending queue is {self._sending}'
                         )
                         return True
-                if retry is not None and retry <= self._sending[command].get("send_retries"):
+                if retry is not None and retry <= self._sending[command].get('send_retries'):
                     # return False and log info if response is not the same as the expected response
-                    self.logger.debug(f"Should send again {self._sending[command]}...")
+                    self.logger.debug(f'Should send again {self._sending[command]}...')
                     return False
         return False
 
@@ -691,27 +691,27 @@ class SDPProtocolResend(SDPProtocol):
         If expected response is not received after given retries, give up sending and query value by sending read_command
         """
         if self._sending:
-            self.logger.debug(f"Resending queue is {self._sending}, retries {self._sending_retries}")
+            self.logger.debug(f'Resending queue is {self._sending}, retries {self._sending_retries}')
         with self._sending_lock:
             remove_commands = []
             # Iterate through resend queue
             for command in list(self._sending.keys()):
                 retry = self._sending_retries.get(command, 1)
                 sent = True
-                if retry < self._sending[command].get("send_retries"):
+                if retry < self._sending[command].get('send_retries'):
                     self.logger.debug(
-                        f"Resending {command}, retries {retry}/{self._sending[command].get('send_retries')}."
+                        f'Resending {command}, retries {retry}/{self._sending[command].get("send_retries")}.'
                     )
-                    sent = self._send(self._sending[command].get("data_dict"))
+                    sent = self._send(self._sending[command].get('data_dict'))
                     self._sending_retries[command] = retry + 1
-                elif retry >= self._sending[command].get("send_retries"):
+                elif retry >= self._sending[command].get('send_retries'):
                     sent = False
                 if sent is False:
                     remove_commands.append(command)
-                    self.logger.info(f"Giving up re-sending {command} after {retry} retries.")
-                    if self._sending[command].get("read_cmd") is not None:
-                        self.logger.info("Querying current value")
-                        self._send(self._sending[command].get("read_cmd"))
+                    self.logger.info(f'Giving up re-sending {command} after {retry} retries.')
+                    if self._sending[command].get('read_cmd') is not None:
+                        self.logger.info('Querying current value')
+                        self._send(self._sending[command].get('read_cmd'))
             for command in remove_commands:
                 self._sending.pop(command)
                 self._sending_retries.pop(command)

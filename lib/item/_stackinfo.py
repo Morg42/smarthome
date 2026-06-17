@@ -57,7 +57,7 @@ def get_class_from_frame(item, fr):
     :rtype:      str
     """
     args, _, _, value_dict = inspect.getargvalues(fr)
-    return f"args={args}  - value_dict={value_dict}"
+    return f'args={args}  - value_dict={value_dict}'
 
 
 def get_calling_item_from_frame(item, fr):
@@ -74,7 +74,7 @@ def get_calling_item_from_frame(item, fr):
     :rtype:      str
     """
     args, _, _, value_dict = inspect.getargvalues(fr)
-    return f"{value_dict.get('self', None)}"
+    return f'{value_dict.get("self", None)}'
 
 
 def get_stack_info(item):
@@ -89,14 +89,14 @@ def get_stack_info(item):
     :return:     Short caller description string.
     :rtype:      str
     """
-    msg = ""
+    msg = ''
     for level in range(4, 5):
         try:
             frame_info = inspect.stack()[level]
-            if frame_info.function == "__run_eval":
+            if frame_info.function == '__run_eval':
                 msg += f"Item '{get_calling_item_from_frame(item, frame_info.frame)}'"
             else:
-                msg += f"{frame_info.function}()"
+                msg += f'{frame_info.function}()'
         except Exception as ex:
-            msg += f" - error getting code {ex}"
+            msg += f' - error getting code {ex}'
     return msg

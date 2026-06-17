@@ -24,10 +24,10 @@ import logging
 
 
 class dummy:
-    version = "1.x.y"
-    longname = "Dummy module for SmartHomeNG"
+    version = '1.x.y'
+    longname = 'Dummy module for SmartHomeNG'
 
-    def __init__(self, sh, testparam=""):
+    def __init__(self, sh, testparam=''):
         """
         Initialization Routine for the module
         """
@@ -39,7 +39,7 @@ class dummy:
         self.logger.debug("Module '{}': Parameters = '{}'".format(self.shortname, str(self._parameters)))
 
         try:
-            self._dummy = self._parameters["dummy"]
+            self._dummy = self._parameters['dummy']
         except KeyError:
             self.logger.critical(
                 "Module '{}': Inconsistent module (invalid metadata definition)".format(self.shortname)

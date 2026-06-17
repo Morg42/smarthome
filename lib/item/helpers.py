@@ -91,9 +91,9 @@ def cast_bool(value):
         else:
             raise ValueError
     elif type(value) in [str, str]:
-        if value.lower() in ["0", "false", "no", "off", ""]:
+        if value.lower() in ['0', 'false', 'no', 'off', '']:
             return False
-        elif value.lower() in ["1", "true", "yes", "on"]:
+        elif value.lower() in ['1', 'true', 'yes', 'on']:
             return True
         else:
             raise ValueError
@@ -114,7 +114,7 @@ def cast_num(value):
     """
     if isinstance(value, str):
         value = value.strip()
-    if value == "":
+    if value == '':
         return 0
     if isinstance(value, float):
         return value
@@ -153,7 +153,7 @@ def cast_timestamp(value):
         except Exception:
             pass
 
-    raise ValueError(f"{value} can not be converted to timestamp")
+    raise ValueError(f'{value} can not be converted to timestamp')
 
 
 def cast_datetime(value):
@@ -183,7 +183,7 @@ def cast_datetime(value):
         except Exception:
             pass
 
-    raise ValueError(f"{value} can not be converted to timestamp")
+    raise ValueError(f'{value} can not be converted to timestamp')
 
 
 #####################################################################
@@ -203,43 +203,43 @@ def split_duration_value_string(value, ATTRIB_COMPAT_DEFAULT):
     :param value: raw attribute string containing duration, value
     :return: three strings, representing time, value and compatibility attribute
     """
-    compat = ""
+    compat = ''
 
     if value.find(ATTRIBUTE_SEPARATOR) >= 0:
         time, __, attrvalue = value.partition(ATTRIBUTE_SEPARATOR)
         attrvalue, __, compat = attrvalue.partition(ATTRIBUTE_SEPARATOR)
-    elif value.find("=") >= 0 and value[value.find("=") : value.find("=") + 2] != "==":
-        time, __, attrvalue = value.partition("=")
+    elif value.find('=') >= 0 and value[value.find('=') : value.find('=') + 2] != '==':
+        time, __, attrvalue = value.partition('=')
         if (
-            attrvalue.find("=") >= 0
-            and (attrvalue.rfind("=") != attrvalue.rfind("=="))
-            and (attrvalue.endswith("compat") or attrvalue.endswith("compat_1.2") or attrvalue.endswith("latest"))
+            attrvalue.find('=') >= 0
+            and (attrvalue.rfind('=') != attrvalue.rfind('=='))
+            and (attrvalue.endswith('compat') or attrvalue.endswith('compat_1.2') or attrvalue.endswith('latest'))
         ):
-            attrvalue, __, compat = attrvalue.rpartition("=")
+            attrvalue, __, compat = attrvalue.rpartition('=')
     else:
         time = value
         attrvalue = None
 
         # try to fix time if compat is (still) given:
         time = time.strip()
-        if time.endswith("compat") or time.endswith("compat_1.2") or time.endswith("latest"):
-            time = time.removesuffix("compat").removesuffix("compat_1.2").removesuffix("latest").strip()[:-1]
+        if time.endswith('compat') or time.endswith('compat_1.2') or time.endswith('latest'):
+            time = time.removesuffix('compat').removesuffix('compat_1.2').removesuffix('latest').strip()[:-1]
 
     time = time.strip()
     if attrvalue is not None:
         attrvalue = attrvalue.strip()
     compat = compat.strip().lower()
-    if compat == "":
+    if compat == '':
         compat = ATTRIB_COMPAT_DEFAULT
 
     # remove quotes, if present
-    if value != "" and ((value[0] == "'" and value[-1] == "'") or (value[0] == '"' and value[-1] == '"')):
+    if value != '' and ((value[0] == "'" and value[-1] == "'") or (value[0] == '"' and value[-1] == '"')):
         value = value[1:-1]
 
     return (time, attrvalue, compat)
 
 
-def join_duration_value_string(time, value, compat=""):
+def join_duration_value_string(time, value, compat=''):
     """
     joins a duration value string from its three components
 
@@ -252,12 +252,12 @@ def join_duration_value_string(time, value, compat=""):
     :param value: value (duration) parrt for the duration_value_string
     """
     result = str(time)
-    if value != "" or compat != "":
-        result = result + " " + ATTRIBUTE_SEPARATOR
-        if value != "":
-            result = result + " " + value
-        if compat != "":
-            result = result + " " + ATTRIBUTE_SEPARATOR + " " + compat
+    if value != '' or compat != '':
+        result = result + ' ' + ATTRIBUTE_SEPARATOR
+        if value != '':
+            result = result + ' ' + value
+        if compat != '':
+            result = result + ' ' + ATTRIBUTE_SEPARATOR + ' ' + compat
     return result
 
 
@@ -276,7 +276,7 @@ def json_serialize(obj):
         return obj.isoformat()
     if isinstance(obj, datetime.date):
         return obj.isoformat()
-    raise TypeError("Type not serializable")
+    raise TypeError('Type not serializable')
 
 
 def json_obj_hook(json_dict):
@@ -299,11 +299,11 @@ def cache_read(filename, tz, cformat=CACHE_FORMAT):
     value = None
 
     if cformat == CACHE_PICKLE:
-        with open(filename, "rb") as f:
+        with open(filename, 'rb') as f:
             value = pickle.load(f)
 
     elif cformat == CACHE_JSON:
-        with open(filename, "r", encoding="UTF-8") as f:
+        with open(filename, 'r', encoding='UTF-8') as f:
             value = json.load(f, object_hook=json_obj_hook)
 
     return (dt, value)
@@ -312,14 +312,14 @@ def cache_read(filename, tz, cformat=CACHE_FORMAT):
 def cache_write(filename, value, cformat=CACHE_FORMAT):
     try:
         if cformat == CACHE_PICKLE:
-            with open(filename, "wb") as f:
+            with open(filename, 'wb') as f:
                 pickle.dump(value, f)
 
         elif cformat == CACHE_JSON:
-            with open(filename, "w", encoding="UTF-8") as f:
+            with open(filename, 'w', encoding='UTF-8') as f:
                 json.dump(value, f, default=json_serialize)
     except IOError:
-        logger.warning("Could not write to {}".format(filename))
+        logger.warning('Could not write to {}'.format(filename))
 
 
 #####################################################################
@@ -332,13 +332,13 @@ def fadejob(item):
         item._fading = True
 
     # Determine if instant_set is needed
-    instant_set = item._fadingdetails.get("instant_set", False)
+    instant_set = item._fadingdetails.get('instant_set', False)
     while item._fading:
         current_value = item._value
-        target_dest = item._fadingdetails.get("dest")
-        fade_step = item._fadingdetails.get("step")
-        delta_time = item._fadingdetails.get("delta")
-        caller = item._fadingdetails.get("caller")
+        target_dest = item._fadingdetails.get('dest')
+        fade_step = item._fadingdetails.get('step')
+        delta_time = item._fadingdetails.get('delta')
+        caller = item._fadingdetails.get('caller')
 
         # Determine the direction of the fade (increase or decrease)
         if current_value < target_dest:
@@ -359,8 +359,8 @@ def fadejob(item):
 
         # Set the new value at the beginning
         if instant_set and item._fading:
-            item._fadingdetails["value"] = fade_value
-            item(fade_value, "Fader", caller)
+            item._fadingdetails['value'] = fade_value
+            item(fade_value, 'Fader', caller)
         else:
             instant_set = True  # Enable instant_set for the next loop iteration
 
@@ -375,4 +375,4 @@ def fadejob(item):
     # Stop fading
     if item._fading:
         item._fading = False
-        item(item._fadingdetails.get("dest"), "Fader", item._fadingdetails.get("caller"))
+        item(item._fadingdetails.get('dest'), 'Fader', item._fadingdetails.get('caller'))

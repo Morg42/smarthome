@@ -55,44 +55,44 @@ from lib.utils import Version
 class TestModule(unittest.TestCase):
     def test_version_numbers(self):
 
-        logger.warning("")
-        logger.warning("=== Begin test_version_numbers:")
+        logger.warning('')
+        logger.warning('=== Begin test_version_numbers:')
 
         # test_version_to_list('1.2.1')
         # test_version_to_list('v1.2.1')
         # test_version_to_list('1.2.1a')
 
-        self.assertEqual([1, 2, 1, 0], Version.to_list("1.2.1"))
-        self.assertEqual([1, 2, 1, 0], Version.to_list("v1.2.1"))
-        self.assertEqual([1, 2, 1, 1], Version.to_list("1.2.1a"))
+        self.assertEqual([1, 2, 1, 0], Version.to_list('1.2.1'))
+        self.assertEqual([1, 2, 1, 0], Version.to_list('v1.2.1'))
+        self.assertEqual([1, 2, 1, 1], Version.to_list('1.2.1a'))
 
-        self.assertEqual("v1.2.1", Version.to_string([1, 2, 1, 0]))
-        self.assertEqual("v1.2.1.1", Version.to_string([1, 2, 1, 1]))
+        self.assertEqual('v1.2.1', Version.to_string([1, 2, 1, 0]))
+        self.assertEqual('v1.2.1.1', Version.to_string([1, 2, 1, 1]))
 
         # test_version_to_list('1.2')
         # test_version_to_list('v1.2')
         # test_version_to_list('1.2a')
 
-        self.assertEqual([0, 0, 0, 0], Version.to_list(""))
-        self.assertEqual([1, 2, 0, 0], Version.to_list("1.2"))
-        self.assertEqual([1, 2, 0, 0], Version.to_list("v1.2"))
+        self.assertEqual([0, 0, 0, 0], Version.to_list(''))
+        self.assertEqual([1, 2, 0, 0], Version.to_list('1.2'))
+        self.assertEqual([1, 2, 0, 0], Version.to_list('v1.2'))
 
-        self.assertEqual("v1.2.0", Version.to_string([1, 2, 0, 0]))
-        self.assertEqual("v1.2.1", Version.to_string([1, 2, 1, 0]))
+        self.assertEqual('v1.2.0', Version.to_string([1, 2, 0, 0]))
+        self.assertEqual('v1.2.1', Version.to_string([1, 2, 1, 0]))
 
         # test_version_to_list('1.2.3.4.5')
         # test_version_to_list('v1.2a.3.4.5')
         # test_version_to_list('1.2a.3a.4.5')
 
-        self.assertEqual([1, 2, 3, 4], Version.to_list("1.2.3.4.5"))
-        self.assertEqual([1, 2, 3, 5], Version.to_list("v1.2a.3.4.5"))
-        self.assertEqual([1, 2, 3, 6], Version.to_list("1.2a.3a.4.5"))
+        self.assertEqual([1, 2, 3, 4], Version.to_list('1.2.3.4.5'))
+        self.assertEqual([1, 2, 3, 5], Version.to_list('v1.2a.3.4.5'))
+        self.assertEqual([1, 2, 3, 6], Version.to_list('1.2a.3a.4.5'))
 
         # test_version_to_list('')
         # test_version_to_list('1.9.0.1')
 
-        self.assertEqual([1, 2, 0, 1], Version.to_list("1.2a"))
-        self.assertEqual([1, 9, 0, 1], Version.to_list("1.9.0.1"))
+        self.assertEqual([1, 2, 0, 1], Version.to_list('1.2a'))
+        self.assertEqual([1, 9, 0, 1], Version.to_list('1.9.0.1'))
 
         # test_version_compare('1.2', '1.3', '<')
         # test_version_compare('1.2', '1.3', '>')
@@ -100,11 +100,11 @@ class TestModule(unittest.TestCase):
         # test_version_compare('1.2', '1.3', '<=')
         # test_version_compare('1.2', '1.3', '>=')
 
-        self.assertTrue(Version.compare("1.2", "1.3", "<"))
-        self.assertFalse(Version.compare("1.2", "1.3", ">"))
-        self.assertFalse(Version.compare("1.2", "1.3", "="))
-        self.assertTrue(Version.compare("1.2", "1.3", "<="))
-        self.assertFalse(Version.compare("1.2", "1.3", ">="))
+        self.assertTrue(Version.compare('1.2', '1.3', '<'))
+        self.assertFalse(Version.compare('1.2', '1.3', '>'))
+        self.assertFalse(Version.compare('1.2', '1.3', '='))
+        self.assertTrue(Version.compare('1.2', '1.3', '<='))
+        self.assertFalse(Version.compare('1.2', '1.3', '>='))
 
         # test_version_compare('1.2.3a', [1,2,3,4,5], '<')
         # test_version_compare('1.2.3a', [1,2,3,104,5], '<')
@@ -113,15 +113,15 @@ class TestModule(unittest.TestCase):
         # test_version_compare('1.2', '1.2.3.4.5', '<=')
         # test_version_compare('1.2', '1.2.3.4.5', '>=')
 
-        self.assertTrue(Version.compare("1.2.3a", [1, 2, 3, 4, 5], "<"))
-        self.assertTrue(Version.compare("1.2.3a", [1, 2, 3, 104, 5], "<"))
-        self.assertFalse(Version.compare("1.2", "1.2.3.4.5", ">"))
-        self.assertFalse(Version.compare("1.2", "1.2.3.4.5", "="))
-        self.assertTrue(Version.compare("1.2", "1.2.3.4.5", "<="))
-        self.assertFalse(Version.compare("1.2", "1.2.3.4.5", ">="))
+        self.assertTrue(Version.compare('1.2.3a', [1, 2, 3, 4, 5], '<'))
+        self.assertTrue(Version.compare('1.2.3a', [1, 2, 3, 104, 5], '<'))
+        self.assertFalse(Version.compare('1.2', '1.2.3.4.5', '>'))
+        self.assertFalse(Version.compare('1.2', '1.2.3.4.5', '='))
+        self.assertTrue(Version.compare('1.2', '1.2.3.4.5', '<='))
+        self.assertFalse(Version.compare('1.2', '1.2.3.4.5', '>='))
 
-        logger.warning("=== End test_version_numbers:")
+        logger.warning('=== End test_version_numbers:')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main(verbosity=2)

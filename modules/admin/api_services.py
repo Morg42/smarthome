@@ -51,7 +51,7 @@ class ServicesController(RESTResource):
         self.module = module
         self.base_dir = self._sh.get_basedir()
         self.logger = logging.getLogger(
-            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
         )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
@@ -63,20 +63,20 @@ class ServicesController(RESTResource):
 
         :return:
         """
-        cl = cherrypy.request.headers.get("Content-Length", 0)
+        cl = cherrypy.request.headers.get('Content-Length', 0)
         if cl == 0:
             # cherrypy.reponse.headers["Status"] = "400"
             # return 'Bad request'
             raise cherrypy.HTTPError(status=411)
         rawbody = cherrypy.request.body.read(int(cl))
-        self.logger.debug("ServicesController(): get_body(): rawbody = {}".format(rawbody))
+        self.logger.debug('ServicesController(): get_body(): rawbody = {}'.format(rawbody))
         try:
             if text:
-                params = rawbody.decode("utf-8")
+                params = rawbody.decode('utf-8')
             else:
-                params = json.loads(rawbody.decode("utf-8"))
+                params = json.loads(rawbody.decode('utf-8'))
         except Exception as e:
-            self.logger.warning("ServicesController(): get_body(): Exception {}".format(e))
+            self.logger.warning('ServicesController(): get_body(): Exception {}'.format(e))
             return None
         return params
 
@@ -84,10 +84,10 @@ class ServicesController(RESTResource):
         """
         Remove \\r from text and remove exessive empty lines from end
         """
-        txt = txt.replace("\r", "").rstrip()
-        while txt.endswith("\n"):
+        txt = txt.replace('\r', '').rstrip()
+        while txt.endswith('\n'):
             txt = txt[:-1].rstrip()
-        txt += "\n\n"
+        txt += '\n\n'
         #        self.logger.warning("strip_empty_lines: txt = {}".format(txt))
         return txt
 
@@ -95,7 +95,7 @@ class ServicesController(RESTResource):
     #  eval_syntax_checker
     #
     def eval_syntax_checker(self, eval_code, relative_to):
-        expanded_code = ""
+        expanded_code = ''
 
         # set up environment for calculating eval-expression
         sh = self._sh  # noqa: F841  # eval setup
@@ -105,22 +105,22 @@ class ServicesController(RESTResource):
         import math
         import lib.userfunctions as uf
 
-        eval_code = eval_code.replace("\r", "").replace("\n", " ").replace("  ", " ").strip()
-        if relative_to == "":
+        eval_code = eval_code.replace('\r', '').replace('\n', ' ').replace('  ', ' ').strip()
+        if relative_to == '':
             expanded_code = eval_code
         else:
             rel_to_item = items.return_item(relative_to)
             if rel_to_item is not None:
-                expanded_code = rel_to_item.get_stringwithabsolutepathes(eval_code, "sh.", "(")
+                expanded_code = rel_to_item.get_stringwithabsolutepathes(eval_code, 'sh.', '(')
                 # Aufruf mit '.property' ist überflüssig
                 # expanded_code = rel_to_item.get_stringwithabsolutepathes(expanded_code, 'sh.', '.property')
                 value = rel_to_item()  #  item value for use in eval
             else:
-                expanded_code = "Error: Item {} does not exist!".format(relative_to)
+                expanded_code = 'Error: Item {} does not exist!'.format(relative_to)
         try:
             value = eval(expanded_code)
         except Exception as e:
-            check_result = "Problem evaluating {}:  {}".format(expanded_code, e)
+            check_result = 'Problem evaluating {}:  {}'.format(expanded_code, e)
         else:
             check_result = value
         return expanded_code, check_result
@@ -130,7 +130,7 @@ class ServicesController(RESTResource):
     #
     def conf_yaml_converter(self, conf_code):
         conf_code = self.strip_empty_lines(conf_code)
-        yaml_code = ""
+        yaml_code = ''
         ydata = parse_for_convert(conf_code=conf_code)
         if ydata is not None:
             yaml_code = convert_yaml(ydata)
@@ -140,8 +140,8 @@ class ServicesController(RESTResource):
     #  yaml_syntax_checker
     #
     def yaml_syntax_checker(self, yaml_code):
-        check_result = ""
-        if yaml_code == "":
+        check_result = ''
+        if yaml_code == '':
             return check_result
 
         yaml_code = self.strip_empty_lines(yaml_code)
@@ -153,10 +153,10 @@ class ServicesController(RESTResource):
         ydata, estr = shyaml.yaml_load_fromstring(yaml_code, True)
         self.logger.info("yaml_syntax_checker(): type(ydata) = {},estr='{}'".format(type(ydata), estr))
 
-        if estr != "":
-            check_result = "ERROR: \n\n" + estr
+        if estr != '':
+            check_result = 'ERROR: \n\n' + estr
         elif not isinstance(ydata, collections.OrderedDict):
-            check_result = "ERROR: \n\n" + "No valid YAML code"
+            check_result = 'ERROR: \n\n' + 'No valid YAML code'
         elif ydata is not None:
             # found valid yaml code
 
@@ -165,11 +165,11 @@ class ServicesController(RESTResource):
             self.items = Items.get_instance()
             struct_dict = self.items.structs._struct_definitions
             shconfig.search_for_struct_in_items(ydata, struct_dict, config)
-            self.logger.info("ydata = {}".format(ydata))
-            self.logger.info("config = {}".format(config))
+            self.logger.info('ydata = {}'.format(ydata))
+            self.logger.info('config = {}'.format(config))
 
             # return data structure converted back to yaml format
-            check_result = convert_yaml(config).replace("\n\n", "\n")
+            check_result = convert_yaml(config).replace('\n\n', '\n')
 
         return check_result
 
@@ -184,21 +184,21 @@ class ServicesController(RESTResource):
         """
         params = self.get_body(text=False)
         if params is None:
-            self.logger.warning("ServicesController(): evalcheck(): Bad, request")
+            self.logger.warning('ServicesController(): evalcheck(): Bad, request')
             raise cherrypy.HTTPError(status=411)
-        self.logger.info("ServicesController(): evalcheck(): {}".format(params))
+        self.logger.info('ServicesController(): evalcheck(): {}'.format(params))
 
-        expanded_code, eval_result = self.eval_syntax_checker(params["expression"], params["relative_to"])
+        expanded_code, eval_result = self.eval_syntax_checker(params['expression'], params['relative_to'])
         result_type = str(type(eval_result))
         if result_type.startswith("<class '"):
             result_type = result_type[len("<class '") :]
             result_type = result_type[:-2]
-        result = {"expression": expanded_code, "result": eval_result, "type": result_type}
+        result = {'expression': expanded_code, 'result': eval_result, 'type': result_type}
         # return json.dumps({'expression': 'Expandierter Ausdruck (Antwort vom Server)', 'result': '42 (Antwort vom Server)'})
         try:
             return json.dumps(result)
         except TypeError:
-            return json.dumps({"expression": expanded_code, "result": str(eval_result), "type": result_type})
+            return json.dumps({'expression': expanded_code, 'result': str(eval_result), 'type': result_type})
 
     # ======================================================================
     #  /api/server/yamlcheck
@@ -211,7 +211,7 @@ class ServicesController(RESTResource):
         """
         params = self.get_body(text=True)
         if params is None:
-            self.logger.warning("ServicesController(): yamlcheck(): Bad, request")
+            self.logger.warning('ServicesController(): yamlcheck(): Bad, request')
             raise cherrypy.HTTPError(status=411)
         self.logger.info("ServicesController(): yamlcheck(): '{}'".format(params))
 
@@ -228,7 +228,7 @@ class ServicesController(RESTResource):
         """
         params = self.get_body(text=True)
         if params is None:
-            self.logger.warning("ServicesController(): yamlconvert(): Bad, request")
+            self.logger.warning('ServicesController(): yamlconvert(): Bad, request')
             raise cherrypy.HTTPError(status=411)
         self.logger.info("ServicesController(): yamlconvert(): '{}'".format(params))
 
@@ -240,86 +240,86 @@ class ServicesController(RESTResource):
         """
         unused_cache_files = []
 
-        if self._sh.shng_status["code"] == 20:
+        if self._sh.shng_status['code'] == 20:
             # {'code': 20, 'text': 'Running'}
-            cache_path = os.path.join(self.base_dir, "var", "cache")
+            cache_path = os.path.join(self.base_dir, 'var', 'cache')
             onlyfiles = [f for f in os.listdir(cache_path) if os.path.isfile(os.path.join(cache_path, f))]
 
             for file in onlyfiles:
-                if not file.find(".") == 0:  # filter .gitignore etc.
+                if not file.find('.') == 0:  # filter .gitignore etc.
                     self.items = Items.get_instance()
                     item = self.items.return_item(file)
                     no_cache_file = False
                     if item is None:
-                        self.logger.debug("cachecheck: no item {}".format(file))
+                        self.logger.debug('cachecheck: no item {}'.format(file))
                         no_cache_file = True
                     elif not item._cache:
-                        self.logger.debug("cachecheck: item {}, no _cache".format(file))
+                        self.logger.debug('cachecheck: item {}, no _cache'.format(file))
                         no_cache_file = True
 
                     if no_cache_file:
                         file_data = {}
-                        file_data["last_modified"] = datetime.datetime.fromtimestamp(
+                        file_data['last_modified'] = datetime.datetime.fromtimestamp(
                             int(os.path.getmtime(os.path.join(cache_path, file)))
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        file_data["created"] = datetime.datetime.fromtimestamp(
+                        ).strftime('%Y-%m-%d %H:%M:%S')
+                        file_data['created'] = datetime.datetime.fromtimestamp(
                             int(os.path.getctime(os.path.join(cache_path, file)))
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        file_data["filename"] = file
-                        file_data["filename"] = file
+                        ).strftime('%Y-%m-%d %H:%M:%S')
+                        file_data['filename'] = file
+                        file_data['filename'] = file
                         unused_cache_files.append(file_data)
 
         return json.dumps(unused_cache_files)
 
     # cache_file_delete.html?filename="+filename
-    def cachefile_delete(self, filename=""):
+    def cachefile_delete(self, filename=''):
         """
         deletes a file from cache
         """
         self.logger.info("cachefile_delete: filename '{}'".format(filename))
-        if filename[0] == "[":
+        if filename[0] == '[':
             filenames = json.loads(filename)
         else:
             filenames = [filename]
-        response = {"result": "error", "description": "cache file '" + filename + "' not found"}
+        response = {'result': 'error', 'description': "cache file '" + filename + "' not found"}
         for filename in filenames:
             if len(filename) > 0:
-                file_path = os.path.join(self.base_dir, "var", "cache", filename)
+                file_path = os.path.join(self.base_dir, 'var', 'cache', filename)
                 if os.path.isfile(file_path):
                     self.logger.info("cachefile_delete: cachefile '{}' deleted".format(file_path))
                     os.remove(file_path)
-                    response = {"result": "ok"}
+                    response = {'result': 'ok'}
 
         return json.dumps(response)
 
     # ======================================================================
     #  GET /api/services/
     #
-    def read(self, id=""):
+    def read(self, id=''):
         """
         Handle GET requests for server API
         """
 
-        if id == "cachecheck":
+        if id == 'cachecheck':
             return self.cachecheck()
         return None
 
     read.expose_resource = True
     read.authentication_needed = True
 
-    def update(self, id="", filename=""):
+    def update(self, id='', filename=''):
         """
         Handle PUT requests for server API
         """
         self.logger.info("ServicesController.update('{}')".format(id))
 
-        if id == "evalcheck":
+        if id == 'evalcheck':
             return self.evalcheck()
-        elif id == "yamlcheck":
+        elif id == 'yamlcheck':
             return self.yamlcheck()
-        elif id == "yamlconvert":
+        elif id == 'yamlconvert':
             return self.yamlconvert()
-        elif id == "cachefile_delete":
+        elif id == 'cachefile_delete':
             return self.cachefile_delete(filename)
 
         return None

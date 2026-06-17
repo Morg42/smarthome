@@ -35,18 +35,18 @@ logger = logging.getLogger(__name__)
 
 class TestCrontab(unittest.TestCase):
     def test__begin(self):
-        logger.warning("")
-        logger.warning("=== Begin Crontab Tests:")
+        logger.warning('')
+        logger.warning('=== Begin Crontab Tests:')
 
     def test_zz_end(self):
-        logger.warning("")
-        logger.warning("=== End Crontab Tests.")
+        logger.warning('')
+        logger.warning('=== End Crontab Tests.')
 
     def setUp(self):
         pass
 
     def test_parse(self):
-        c = Crontab("0 0 * *")
+        c = Crontab('0 0 * *')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, [0])
         self.assertEqual(c.day_range, list(range(1, 32)))
@@ -54,7 +54,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, list(range(1, 13)))
 
-        c = Crontab("@yearly")
+        c = Crontab('@yearly')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, [0])
         self.assertEqual(c.day_range, [1])
@@ -62,7 +62,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, [1])
 
-        c = Crontab("@annually")
+        c = Crontab('@annually')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, [0])
         self.assertEqual(c.day_range, [1])
@@ -70,7 +70,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, [1])
 
-        c = Crontab("@monthly")
+        c = Crontab('@monthly')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, [0])
         self.assertEqual(c.day_range, [1])
@@ -78,7 +78,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, list(range(1, 13)))
 
-        c = Crontab("@weekly")
+        c = Crontab('@weekly')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, [0])
         self.assertEqual(c.day_range, list(range(1, 32)))
@@ -86,7 +86,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, list(range(1, 13)))
 
-        c = Crontab("@daily")
+        c = Crontab('@daily')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, [0])
         self.assertEqual(c.day_range, list(range(1, 32)))
@@ -94,7 +94,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, list(range(1, 13)))
 
-        c = Crontab("@midnight")
+        c = Crontab('@midnight')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, [0])
         self.assertEqual(c.day_range, list(range(1, 32)))
@@ -102,7 +102,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, list(range(1, 13)))
 
-        c = Crontab("@hourly")
+        c = Crontab('@hourly')
         self.assertEqual(c.minute_range, [0])
         self.assertEqual(c.hour_range, list(range(0, 24)))
         self.assertEqual(c.day_range, list(range(1, 32)))
@@ -110,7 +110,7 @@ class TestCrontab(unittest.TestCase):
         self.assertEqual(c.second_range, [0])
         self.assertEqual(c.month_range, list(range(1, 13)))
 
-        c = Crontab("8 * * * *")
+        c = Crontab('8 * * * *')
         self.assertEqual(c.minute_range, [8])
         self.assertEqual(c.hour_range, list(range(0, 24)))
         self.assertEqual(c.day_range, list(range(1, 32)))
@@ -131,11 +131,11 @@ class TestCrontab(unittest.TestCase):
         second = 0
         now = datetime.datetime(year, month, day, hour, minute, second)
 
-        c = Crontab("0 0 * * *")
+        c = Crontab('0 0 * * *')
         self.assertEqual(c.get_next(now), datetime.datetime(year, month, day + 1, 0, 0))
 
         now = datetime.datetime(year, month, day, hour, minute, second)
-        c = Crontab("8 * * * *")
+        c = Crontab('8 * * * *')
         self.assertEqual(c.get_next(now), datetime.datetime(year, month, day, 12, 8, 0))
 
         year = 2019
@@ -146,7 +146,7 @@ class TestCrontab(unittest.TestCase):
         second = 50
         now = datetime.datetime(year, month, day, hour, minute, second)
 
-        c = Crontab("*/10 */2 * * * *")
+        c = Crontab('*/10 */2 * * * *')
         n = c.get_next(now)
         # logger.warning(f"{now} --> {n}")
         self.assertEqual(n, datetime.datetime(year, month, day, 16, 0, 0))
@@ -159,23 +159,23 @@ class TestCrontab(unittest.TestCase):
         second = 50
         now = datetime.datetime(year, month, day, hour, minute, second)
 
-        self.assertEqual(Crontab("59 12 24 12 *").get_next(now), datetime.datetime(year, 12, 24, 12, 59))
-        self.assertEqual(Crontab("59 12 24 12 6").get_next(now), datetime.datetime(2023, 12, 24, 12, 59))
+        self.assertEqual(Crontab('59 12 24 12 *').get_next(now), datetime.datetime(year, 12, 24, 12, 59))
+        self.assertEqual(Crontab('59 12 24 12 6').get_next(now), datetime.datetime(2023, 12, 24, 12, 59))
 
-        logger.warning("\ncheck crontab presets")
+        logger.warning('\ncheck crontab presets')
 
-        logger.warning("\ncheck crontab day substitution")
-        self.assertEqual(Crontab("59 12 24 12 sun").get_next(now), datetime.datetime(2023, 12, 24, 12, 59))
-        logger.warning("\n--------------------")
-        self.assertEqual(Crontab("59 12 24 12 mOn").get_next(now), datetime.datetime(2029, 12, 24, 12, 59))
-        logger.warning("\n--------------------")
-        self.assertEqual(Crontab("59 12 24 12 Mo").get_next(now), datetime.datetime(2029, 12, 24, 12, 59))
-        self.assertEqual(Crontab("59 12 24 12 Fri").get_next(now), datetime.datetime(2021, 12, 24, 12, 59))
+        logger.warning('\ncheck crontab day substitution')
+        self.assertEqual(Crontab('59 12 24 12 sun').get_next(now), datetime.datetime(2023, 12, 24, 12, 59))
+        logger.warning('\n--------------------')
+        self.assertEqual(Crontab('59 12 24 12 mOn').get_next(now), datetime.datetime(2029, 12, 24, 12, 59))
+        logger.warning('\n--------------------')
+        self.assertEqual(Crontab('59 12 24 12 Mo').get_next(now), datetime.datetime(2029, 12, 24, 12, 59))
+        self.assertEqual(Crontab('59 12 24 12 Fri').get_next(now), datetime.datetime(2021, 12, 24, 12, 59))
 
-        self.assertEqual(Crontab("59 23 31 12 *").get_next(now), datetime.datetime(year, 12, 31, 23, 59))
+        self.assertEqual(Crontab('59 23 31 12 *').get_next(now), datetime.datetime(year, 12, 31, 23, 59))
 
-        self.assertEqual(Crontab("11 11 29 2 *").get_next(now), datetime.datetime(2020, 2, 29, 11, 11))
-        self.assertEqual(Crontab("11 11 29 2 6").get_next(now), datetime.datetime(2032, 2, 29, 11, 11))
+        self.assertEqual(Crontab('11 11 29 2 *').get_next(now), datetime.datetime(2020, 2, 29, 11, 11))
+        self.assertEqual(Crontab('11 11 29 2 6').get_next(now), datetime.datetime(2032, 2, 29, 11, 11))
 
         year = 2019
         month = 10
@@ -185,22 +185,22 @@ class TestCrontab(unittest.TestCase):
         second = 00
         now = datetime.datetime(year, month, day, hour, minute, second)
 
-        logger.warning("\nmore fancy dates")
-        self.assertEqual(Crontab("59 23 31 10 *").get_next(now), datetime.datetime(year, 10, 31, 23, 59))
+        logger.warning('\nmore fancy dates')
+        self.assertEqual(Crontab('59 23 31 10 *').get_next(now), datetime.datetime(year, 10, 31, 23, 59))
 
         second = 58
         now = datetime.datetime(year, month, day, hour, minute, second)
 
-        logger.warning("\nfurthermore fancy dates")
-        self.assertEqual(Crontab("59 23 31 10 *").get_next(now), datetime.datetime(year, 10, 31, 23, 59))
+        logger.warning('\nfurthermore fancy dates')
+        self.assertEqual(Crontab('59 23 31 10 *').get_next(now), datetime.datetime(year, 10, 31, 23, 59))
 
         minute = 58
         second = 0
         now = datetime.datetime(year, month, day, hour, minute, second)
 
-        logger.warning("\nfurthermore fancy dates")
-        self.assertEqual(Crontab("59 59 23 31 10 *").get_next(now), datetime.datetime(year, 10, 31, 23, 59, 59))
+        logger.warning('\nfurthermore fancy dates')
+        self.assertEqual(Crontab('59 59 23 31 10 *').get_next(now), datetime.datetime(year, 10, 31, 23, 59, 59))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main(verbosity=2)

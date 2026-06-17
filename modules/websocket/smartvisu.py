@@ -51,11 +51,11 @@ from lib.shtime import Shtime
 
 
 class Protocol:
-    version = "1.0.5"
+    version = '1.0.5'
 
-    protocol_id = "sv"
-    protocol_name = "smartvisu"
-    protocol_path = "/"
+    protocol_id = 'sv'
+    protocol_name = 'smartvisu'
+    protocol_path = '/'
     protocol_enabled = False
     # protocol_over_reverseproxy = False
 
@@ -80,15 +80,15 @@ class Protocol:
         self.loop = loop
         # self.client_address = ws_server.client_address
 
-        python_version = str(sys.version_info[0]) + "." + str(sys.version_info[1])
-        if python_version == "3.7":
+        python_version = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+        if python_version == '3.7':
             self.loop.create_task(self.update_visu())
             self.loop.create_task(self.update_all_series())
         else:
-            self.loop.create_task(self.update_visu(), name="update_visu")
-            self.loop.create_task(self.update_all_series(), name="update_all_series")
+            self.loop.create_task(self.update_visu(), name='update_visu')
+            self.loop.create_task(self.update_all_series(), name='update_all_series')
 
-        self.logger.dbghigh("start_global_tasks: create_task(s) for update_visu() and update_all_series()")
+        self.logger.dbghigh('start_global_tasks: create_task(s) for update_visu() and update_all_series()')
         return
 
     async def handle_protocol(self, websocket):
@@ -104,7 +104,7 @@ class Protocol:
 
     # --------------
 
-    sv_acl = "deny"
+    sv_acl = 'deny'
     sv_querydef = False
     sv_ser_upd_cycle = 0
 
@@ -140,14 +140,14 @@ class Protocol:
         if isinstance(obj, (datetime, date)):
             return obj.isoformat()
 
-        raise TypeError("Type %s not serializable" % type(obj))
+        raise TypeError('Type %s not serializable' % type(obj))
 
     # ---------------------------------
 
     def set_smartvisu_support(
         self,
         protocol_enabled=False,
-        default_acl="ro",
+        default_acl='ro',
         query_definitions=False,
         series_updatecycle=0,
         protocol_over_reverseproxy=False,
@@ -167,7 +167,7 @@ class Protocol:
         if self.protocol_enabled:
             self.logger.info(f"Payload protocol '{self.protocol_name}' enabled")
             self.logger.info(
-                f"smartvisu support: default_acl={default_acl}, query_definitions={query_definitions}, series_updatecycle={series_updatecycle}"
+                f'smartvisu support: default_acl={default_acl}, query_definitions={query_definitions}, series_updatecycle={series_updatecycle}'
             )
         # self.sv_config = {'enabled': self.sv_protocol_enabled, 'acl': self.sv_acl, 'query_def': self.sv_querydef, 'upd_cycle': self.sv_ser_upd_cycle}
         # self.logger.warning(f"sv_config {self.sv_config}")
@@ -185,23 +185,23 @@ class Protocol:
         self.logs = self._sh.logs.return_logs()
 
         # Prevent the event listener for event types "log" from being added multiple times:
-        known_log_listeners = self._sh.return_event_listeners(event="log")
+        known_log_listeners = self._sh.return_event_listeners(event='log')
         if self.update_visulog not in known_log_listeners:
-            self._sh.add_event_listener(["log"], self.update_visulog)
+            self._sh.add_event_listener(['log'], self.update_visulog)
         else:
-            self.logger.debug("self.update_visulog function already subscribed as event listener")
+            self.logger.debug('self.update_visulog function already subscribed as event listener')
 
         client_addr = self.client_address(websocket)
         client_ip = websocket.remote_address[0]
         self.sv_clients[client_addr] = {}
-        self.sv_clients[client_addr]["websocket"] = websocket
+        self.sv_clients[client_addr]['websocket'] = websocket
         try:
-            self.sv_clients[client_addr]["hostname"] = socket.gethostbyaddr(client_ip)[0]
+            self.sv_clients[client_addr]['hostname'] = socket.gethostbyaddr(client_ip)[0]
         except Exception:
             pass
-        self.sv_clients[client_addr]["sw"] = ""
-        self.logger.info(f"Client {self.build_log_info(client_addr)} started")
-        self.sv_clients[client_addr]["sw"] = "'some_visu'"
+        self.sv_clients[client_addr]['sw'] = ''
+        self.logger.info(f'Client {self.build_log_info(client_addr)} started')
+        self.sv_clients[client_addr]['sw'] = "'some_visu'"
         # client_addr = websocket.remote_address[0] + ':' + str(websocket.remote_address[1])
         await self.get_shng_class_instances()
 
@@ -211,48 +211,48 @@ class Protocol:
         try:
             async for message in websocket:
                 data = json.loads(message)
-                command = data.get("cmd", "")
-                protocol = "wss" if websocket.secure else "ws "
+                command = data.get('cmd', '')
+                protocol = 'wss' if websocket.secure else 'ws '
                 # self.logger.warning("{} <CMD  : '{}'   -   from {}".format(protocol, data, client_addr))
                 self.logger.dbgmed(f"{self.build_log_info(client_addr)} sent '{data}'")
-                answer = {"error": "unhandled command"}
+                answer = {'error': 'unhandled command'}
 
                 try:
-                    if command == "item":
-                        path = data["id"]
-                        value = data["val"]
+                    if command == 'item':
+                        path = data['id']
+                        value = data['val']
                         item = self.items.return_item(path)
                         if item is not None:
-                            item_acl = item.conf.get("visu_acl", None)
-                            if item_acl is None or item_acl == "":
-                                item_acl = item.conf.get("acl", None)
+                            item_acl = item.conf.get('visu_acl', None)
+                            if item_acl is None or item_acl == '':
+                                item_acl = item.conf.get('acl', None)
                             if item_acl is None:
                                 item_acl = self.sv_acl
-                            if item_acl != "ro":
-                                item(value, self.sv_clients[client_addr]["sw"], client_ip)
+                            if item_acl != 'ro':
+                                item(value, self.sv_clients[client_addr]['sw'], client_ip)
                             else:
                                 self.logger.warning(
-                                    f"Client {self.build_log_info(client_addr)} want to update read only item: {path}"
+                                    f'Client {self.build_log_info(client_addr)} want to update read only item: {path}'
                                 )
                         else:
                             self.logger.warning(
-                                f"Client {self.build_log_info(client_addr)} want to update invalid item: {path}"
+                                f'Client {self.build_log_info(client_addr)} want to update invalid item: {path}'
                             )
                         answer = {}
 
-                    elif command == "monitor":
+                    elif command == 'monitor':
                         answer = {}
-                        if data["items"] != [None]:
+                        if data['items'] != [None]:
                             answer = await self.prepare_monitor(data, client_addr)
                         else:
                             self.sv_monitor_items[client_addr] = []  # stop monitoring of items
 
-                    elif command == "logic":
+                    elif command == 'logic':
                         answer = {}
                         await self.request_logic(data, client_addr)
 
-                    elif command == "series":
-                        path = data["item"]
+                    elif command == 'series':
+                        path = data['item']
                         item = self.items.return_item(path)
                         if item is not None:
                             self.logger.dbghigh(f"command == 'series': {data=} ")
@@ -263,84 +263,84 @@ class Protocol:
                                 )
                         else:
                             self.logger.warning(
-                                f"Client {self.build_log_info(client_addr)} requested a series for an unknown item: {path}"
+                                f'Client {self.build_log_info(client_addr)} requested a series for an unknown item: {path}'
                             )
 
-                    elif command == "series_cancel":
+                    elif command == 'series_cancel':
                         answer = await self.cancel_series(data, client_addr)
 
-                    elif command == "log":
+                    elif command == 'log':
                         answer = {}
-                        name = data["name"]
+                        name = data['name']
                         num = 10
-                        if "max" in data:
-                            num = int(data["max"])
+                        if 'max' in data:
+                            num = int(data['max'])
                         if name in self.logs:
-                            answer = {"cmd": "log", "name": name, "log": self.logs[name].export(num), "init": "y"}
+                            answer = {'cmd': 'log', 'name': name, 'log': self.logs[name].export(num), 'init': 'y'}
                             if client_addr not in self.sv_monitor_logs:
                                 self.sv_monitor_logs[client_addr] = []
                             if name not in self.sv_monitor_logs[client_addr]:
                                 self.sv_monitor_logs[client_addr].append(name)
                         else:
                             self.logger.warning(
-                                f"Client {self.build_log_info(client_addr)} requested invalid log: {name}"
+                                f'Client {self.build_log_info(client_addr)} requested invalid log: {name}'
                             )
 
-                    elif command == "log_cancel":
+                    elif command == 'log_cancel':
                         answer = await self.cancel_log(data, client_addr)
 
-                    elif command == "ping":
-                        answer = {"cmd": "pong"}
+                    elif command == 'ping':
+                        answer = {'cmd': 'pong'}
 
-                    elif command == "proto":  # protocol version
-                        proto = data["ver"]
+                    elif command == 'proto':  # protocol version
+                        proto = data['ver']
                         if int(proto) > int(self.proto):
                             self.logger.warning(
-                                f"WebSocket: protocol mismatch. SmartHomeNG protocol version={self.proto}, visu protocol version={proto}"
+                                f'WebSocket: protocol mismatch. SmartHomeNG protocol version={self.proto}, visu protocol version={proto}'
                             )
                         elif int(proto) < int(self.proto):
                             self.logger.warning(
-                                f"WebSocket: protocol mismatch. Update your client: {self.build_log_info(client_addr)}"
+                                f'WebSocket: protocol mismatch. Update your client: {self.build_log_info(client_addr)}'
                             )
-                        self.sv_clients[client_addr]["proto"] = data.get("ver", "")
+                        self.sv_clients[client_addr]['proto'] = data.get('ver', '')
                         answer = {
-                            "cmd": "proto",
-                            "ver": self.proto,
-                            "server": "module.websocket",
-                            "time": self.shtime.now().strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                            'cmd': 'proto',
+                            'ver': self.proto,
+                            'server': 'module.websocket',
+                            'time': self.shtime.now().strftime('%Y-%m-%dT%H:%M:%S.%f'),
                         }
 
-                    elif command == "identity":  # identify client
-                        self.sv_clients[client_addr]["sw"] = data.get("sw", "")
-                        self.sv_clients[client_addr]["ver"] = data.get("ver", "")
-                        if data.get("hostname", "") != "":
-                            self.sv_clients[client_addr]["hostname"] = data.get("hostname", "")
-                        self.sv_clients[client_addr]["browser"] = data.get("browser", "")
-                        self.sv_clients[client_addr]["bver"] = data.get("bver", "")
+                    elif command == 'identity':  # identify client
+                        self.sv_clients[client_addr]['sw'] = data.get('sw', '')
+                        self.sv_clients[client_addr]['ver'] = data.get('ver', '')
+                        if data.get('hostname', '') != '':
+                            self.sv_clients[client_addr]['hostname'] = data.get('hostname', '')
+                        self.sv_clients[client_addr]['browser'] = data.get('browser', '')
+                        self.sv_clients[client_addr]['bver'] = data.get('bver', '')
 
-                        self.sv_clients[client_addr]["os_name"] = data.get("os_name", "")
-                        self.sv_clients[client_addr]["os_vers"] = data.get("os_vers", "")
-                        self.sv_clients[client_addr]["os_vname"] = data.get("os_vname", "")
-                        self.sv_clients[client_addr]["pl_type"] = data.get("pl_type", "")
-                        self.sv_clients[client_addr]["pl_vendor"] = data.get("pl_vendor", "")
+                        self.sv_clients[client_addr]['os_name'] = data.get('os_name', '')
+                        self.sv_clients[client_addr]['os_vers'] = data.get('os_vers', '')
+                        self.sv_clients[client_addr]['os_vname'] = data.get('os_vname', '')
+                        self.sv_clients[client_addr]['pl_type'] = data.get('pl_type', '')
+                        self.sv_clients[client_addr]['pl_vendor'] = data.get('pl_vendor', '')
                         self.logger.info(
-                            f"Client {self.build_client_info(client_addr)} identified as {self.build_sw_info(client_addr)}"
+                            f'Client {self.build_client_info(client_addr)} identified as {self.build_sw_info(client_addr)}'
                         )
                         answer = {}
 
-                    elif command == "list_items":
+                    elif command == 'list_items':
                         answer = {}
                         if self.sv_querydef:
-                            path = data.get("path", "")
+                            path = data.get('path', '')
                             answer = await self.request_list_items(path, client_addr)
                         self.logger.warning(
                             f"{protocol} <CMD  not yet tested: '{data}'   -   from {self.build_log_info(client_addr)}"
                         )
 
-                    elif command == "list_logics":
+                    elif command == 'list_logics':
                         answer = {}
                         if self.sv_querydef:
-                            enabled = data.get("enabled", 0)
+                            enabled = data.get('enabled', 0)
                             answer = await self.request_list_logics((enabled == 1), client_addr)
                         self.logger.warning(
                             f"{protocol} <CMD  not yet tested: '{data}'   -   from {self.build_log_info(client_addr)}"
@@ -350,7 +350,7 @@ class Protocol:
                         self.logger.error("unsupported event: '{}'", data)
                     reply = json.dumps(answer, default=self.json_serial)
                 except Exception as e:
-                    self.logger.exception(f"visu_protocol Exception {e}")
+                    self.logger.exception(f'visu_protocol Exception {e}')
 
                 if answer != {}:
                     # if an answer should be send, it is done here
@@ -366,13 +366,13 @@ class Protocol:
                         )
 
         except Exception as e:
-            logmsg = f"smartVISU_protocol_v4 error: Client {self.build_log_info(client_addr)} - {e}"
-            if str(e).startswith(("no close frame received or sent", "received 1005", "code = 1005")):
+            logmsg = f'smartVISU_protocol_v4 error: Client {self.build_log_info(client_addr)} - {e}'
+            if str(e).startswith(('no close frame received or sent', 'received 1005', 'code = 1005')):
                 self.logger.info(logmsg)
-            elif str(e).startswith(("code = 1006")) or str(e).endswith(
-                "keepalive ping timeout; no close frame received"
+            elif str(e).startswith(('code = 1006')) or str(e).endswith(
+                'keepalive ping timeout; no close frame received'
             ):
-                if (str(e).find("1011 (unexpected error)") >= 0) or (str(e).find("no reason")):
+                if (str(e).find('1011 (unexpected error)') >= 0) or (str(e).find('no reason')):
                     self.logger.info(logmsg)
                 else:
                     self.logger.warning(logmsg)
@@ -381,7 +381,7 @@ class Protocol:
 
         self.sv_cancel_all_abos(client_addr)
 
-        self.logger.info(f"Client {self.build_log_info(client_addr)} stopped")
+        self.logger.info(f'Client {self.build_log_info(client_addr)} stopped')
         return  # smartVISU_protocol_v4
 
     def sv_cancel_all_abos(self, client_addr):
@@ -391,31 +391,31 @@ class Protocol:
         :param client_addr:
         :return:
         """
-        self.logger.debug(f"sv_cancel_all_abos - Client-Addr {client_addr} : ")
-        self.logger.debug(f"- sv_Series-Dict : {self.sv_update_series}")
-        self.logger.debug(f"- sv_clients-Dict : {self.sv_clients}")
-        self.logger.debug(f"- sv_monitor_logs-Dict : {self.sv_monitor_logs}")
-        self.logger.debug(f"- sv_monitor_items-Dict : {self.sv_monitor_items}")
+        self.logger.debug(f'sv_cancel_all_abos - Client-Addr {client_addr} : ')
+        self.logger.debug(f'- sv_Series-Dict : {self.sv_update_series}')
+        self.logger.debug(f'- sv_clients-Dict : {self.sv_clients}')
+        self.logger.debug(f'- sv_monitor_logs-Dict : {self.sv_monitor_logs}')
+        self.logger.debug(f'- sv_monitor_items-Dict : {self.sv_monitor_items}')
 
         # Remove client from series updates
         if client_addr in self.sv_update_series:
             del self.sv_update_series[client_addr]
-            self.logger.info(f"sv_cancel_all_abos: Series updates for {client_addr} were stoped")
+            self.logger.info(f'sv_cancel_all_abos: Series updates for {client_addr} were stoped')
 
         # Remove client from log updates
         if client_addr in self.sv_monitor_logs:
             del self.sv_monitor_logs[client_addr]
-            self.logger.info(f"sv_cancel_all_abos: Log updates for {client_addr} were stoped")
+            self.logger.info(f'sv_cancel_all_abos: Log updates for {client_addr} were stoped')
 
         # Remove client from item monitoring dict
         if client_addr in self.sv_monitor_items:
             del self.sv_monitor_items[client_addr]
-            self.logger.info(f"sv_cancel_all_abos: Item monitoring for {client_addr} was removed")
+            self.logger.info(f'sv_cancel_all_abos: Item monitoring for {client_addr} was removed')
 
         # Remove client dict of active clients
         if client_addr in self.sv_clients:
             del self.sv_clients[client_addr]
-            self.logger.info(f"sv_cancel_all_abos: Client {client_addr} was removed")
+            self.logger.info(f'sv_cancel_all_abos: Client {client_addr} was removed')
 
         return
 
@@ -431,8 +431,8 @@ class Protocol:
         answer = {}
         items = []
         newmonitor_items = []
-        for path in list(data["items"]):
-            path_parts = [] if path is None else path.split(".property.")
+        for path in list(data['items']):
+            path_parts = [] if path is None else path.split('.property.')
 
             # first identify item
             item = self.items.return_item(path_parts[0])
@@ -443,12 +443,12 @@ class Protocol:
                 continue
 
             # get item visu acl
-            item_acl = item.conf.get("acl", None)
+            item_acl = item.conf.get('acl', None)
             if item_acl is None:
                 item_acl = self.sv_acl
 
             # if acl is deny, don't add item or property
-            if item_acl == "deny":
+            if item_acl == 'deny':
                 # log deny to indicate feature, not bug?
                 continue
 
@@ -456,14 +456,14 @@ class Protocol:
 
             if len(path_parts) == 1:
                 self.logger.debug(
-                    f"Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]}"
+                    f'Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]}'
                 )
                 items.append([path, item()])
                 if self.update_visuitem not in item.get_method_triggers():
                     item.add_method_trigger(self.update_visuitem)
             elif len(path_parts) == 2:
                 self.logger.debug(
-                    f"Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]} with property {path_parts[1]}"
+                    f'Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]} with property {path_parts[1]}'
                 )
                 try:
                     prop = self.items.return_item(path_parts[0]).property
@@ -473,21 +473,21 @@ class Protocol:
                         item.add_method_trigger(self.update_visuitem)
                 except KeyError:
                     self.logger.warning(
-                        f"Property KeyError: Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]} with property {path_parts[1]}"
+                        f'Property KeyError: Client {self.build_log_info(client_addr)} requested to monitor item {path_parts[0]} with property {path_parts[1]}'
                     )
                 except AttributeError:
                     self.logger.warning(
-                        f"Property AttributeError: Client {self.build_log_info(client_addr)} requested to monitor property {path_parts[1]} of item {path_parts[0]}"
+                        f'Property AttributeError: Client {self.build_log_info(client_addr)} requested to monitor property {path_parts[1]} of item {path_parts[0]}'
                     )
 
             else:
-                self.logger.warning("Client {self.build_log_info(client_addr)} requested invalid item: {path}")
+                self.logger.warning('Client {self.build_log_info(client_addr)} requested invalid item: {path}')
         self.logger.debug(
-            f"json_parse: send to {self.build_log_info(client_addr)}: { ({'cmd': 'item', 'items': items}) }"
+            f'json_parse: send to {self.build_log_info(client_addr)}: { ({"cmd": "item", "items": items}) }'
         )
-        answer = {"cmd": "item", "items": items}
+        answer = {'cmd': 'item', 'items': items}
         self.sv_monitor_items[client_addr] = newmonitor_items
-        self.logger.info(f"Client {self.build_log_info(client_addr)} new monitored items are {newmonitor_items}")
+        self.logger.info(f'Client {self.build_log_info(client_addr)} new monitored items are {newmonitor_items}')
         return answer
 
     def build_client_info(self, client_addr):
@@ -497,15 +497,15 @@ class Protocol:
         :return: info string
         """
         if isinstance(client_addr, tuple):
-            client_addr = client_addr[0] + ":" + str(client_addr[1])
+            client_addr = client_addr[0] + ':' + str(client_addr[1])
 
         if self.sv_clients.get(client_addr):
-            if self.sv_clients[client_addr].get("hostname", "") == "":
-                return f"{client_addr}"
+            if self.sv_clients[client_addr].get('hostname', '') == '':
+                return f'{client_addr}'
             else:
-                return f"{self.sv_clients[client_addr].get('hostname', '')} ({client_addr})"
+                return f'{self.sv_clients[client_addr].get("hostname", "")} ({client_addr})'
         else:
-            return f"{client_addr}"
+            return f'{client_addr}'
 
     def build_sw_info(self, client_addr):
         """
@@ -514,15 +514,15 @@ class Protocol:
         :return: info string
         """
         if self.sv_clients.get(client_addr):
-            sw = f"{self.sv_clients[client_addr].get('sw', '')} {self.sv_clients[client_addr].get('ver', '')}".strip()
-            browser = f"{self.sv_clients[client_addr].get('browser', '')} {self.sv_clients[client_addr].get('bver', '')}".strip()
+            sw = f'{self.sv_clients[client_addr].get("sw", "")} {self.sv_clients[client_addr].get("ver", "")}'.strip()
+            browser = f'{self.sv_clients[client_addr].get("browser", "")} {self.sv_clients[client_addr].get("bver", "")}'.strip()
 
-            if browser == "":
+            if browser == '':
                 return sw
             else:
-                return f"{sw}, {browser}"
+                return f'{sw}, {browser}'
         else:
-            return ""
+            return ''
 
     def build_log_info(self, client_addr):
         """
@@ -532,13 +532,13 @@ class Protocol:
         :return: info string
         """
         if isinstance(client_addr, tuple):
-            client_addr = client_addr[0] + ":" + str(client_addr[1])
+            client_addr = client_addr[0] + ':' + str(client_addr[1])
 
         sw = self.build_sw_info(client_addr)
-        if sw != "":
-            sw = ", " + sw
+        if sw != '':
+            sw = ', ' + sw
 
-        return f"{self.build_client_info(client_addr)}{sw}"
+        return f'{self.build_client_info(client_addr)}{sw}'
 
     async def prepare_series(self, data, client_addr):
         """
@@ -550,44 +550,44 @@ class Protocol:
         :return: answer to the visu
         """
         answer = {}
-        path = data["item"]
-        series = data["series"]
-        start = data["start"]
-        if "end" in data:
-            end = data["end"]
+        path = data['item']
+        series = data['series']
+        start = data['start']
+        if 'end' in data:
+            end = data['end']
         else:
-            end = "now"
-        if "count" in data:
-            count = data["count"]
+            end = 'now'
+        if 'count' in data:
+            count = data['count']
         else:
             count = 100
 
         item = self.items.return_item(path)
         if item is not None:
-            if hasattr(item, "series"):
+            if hasattr(item, 'series'):
                 try:
                     # reply = item.series(series, start, end, count)
                     reply = await self.loop.run_in_executor(None, item.series, series, start, end, count)
                 except Exception as e:
-                    self.logger.error(f"Problem fetching series for {path}: {e} - Wrong sqlite/database plugin?")
+                    self.logger.error(f'Problem fetching series for {path}: {e} - Wrong sqlite/database plugin?')
                 else:
-                    if "update" in reply:
+                    if 'update' in reply:
                         await self.loop.run_in_executor(None, self.set_periodic_series_updates, reply, client_addr)
                         #     with self._series_lock:
                         #           self.sv_update_series[reply['sid']] = {'update': reply['update'], 'params': reply['params']}
-                        del reply["update"]
-                        del reply["params"]
-                    if reply["series"] is not None:
+                        del reply['update']
+                        del reply['params']
+                    if reply['series'] is not None:
                         answer = reply
                     else:
-                        self.logger.info(f"WebSocket: no entries for series {path} {series}")
+                        self.logger.info(f'WebSocket: no entries for series {path} {series}')
             else:
-                if path.startswith("env."):
+                if path.startswith('env.'):
                     self.logger.warning(
-                        f"Client {self.build_log_info(client_addr)} requested invalid series: {path}. Probably, the database plugin is not configured"
+                        f'Client {self.build_log_info(client_addr)} requested invalid series: {path}. Probably, the database plugin is not configured'
                     )
                 else:
-                    self.logger.warning(f"Client {self.build_log_info(client_addr)} requested invalid series: {path}.")
+                    self.logger.warning(f'Client {self.build_log_info(client_addr)} requested invalid series: {path}.')
         return answer
 
     def set_periodic_series_updates(self, reply, client_addr):
@@ -597,7 +597,7 @@ class Protocol:
         with self._series_lock:
             if self.sv_update_series.get(client_addr, None) is None:
                 self.sv_update_series[client_addr] = {}
-            self.sv_update_series[client_addr][reply["sid"]] = {"update": reply["update"], "params": reply["params"]}
+            self.sv_update_series[client_addr][reply['sid']] = {'update': reply['update'], 'params': reply['params']}
             self.logger.info(f"set_periodic_series_updates: {reply['sid']=}")
         return
 
@@ -608,39 +608,39 @@ class Protocol:
         This task ist started once, before the first client connection is started
         """
         # wait until SmartHomeNG is completly initialized
-        while self._sh.shng_status["code"] != 20:
+        while self._sh.shng_status['code'] != 20:
             await asyncio.sleep(1)
-        self.logger.info("Task update_all_series() started")
+        self.logger.info('Task update_all_series() started')
 
         keep_running = True
         while keep_running:
             remove = []
             series_list = list(self.sv_update_series.keys())
-            self.logger.info(f"update_all_series: {series_list=}")
+            self.logger.info(f'update_all_series: {series_list=}')
             for client_addr in series_list:
-                self.logger.dbgmed(f"update_all_series: Updating client {self.build_log_info(client_addr)}")
+                self.logger.dbgmed(f'update_all_series: Updating client {self.build_log_info(client_addr)}')
                 if (client_addr in self.sv_clients) and client_addr not in remove:
                     replys = await self.loop.run_in_executor(None, self.update_series, client_addr)
-                    self.logger.dbgmed(f" - Updating {client_addr},  {replys=}...")
-                    websocket = self.sv_clients[client_addr]["websocket"]
+                    self.logger.dbgmed(f' - Updating {client_addr},  {replys=}...')
+                    websocket = self.sv_clients[client_addr]['websocket']
                     for reply in replys:
                         if (client_addr in self.sv_clients) and client_addr not in remove:
-                            self.logger.dbgmed(f"   - reply {reply}  -->  Replys for client {client_addr}: {replys}")
+                            self.logger.dbgmed(f'   - reply {reply}  -->  Replys for client {client_addr}: {replys}')
                             try:
                                 await websocket.send(json.dumps(reply, default=self.json_serial))
-                                self.logger.debug(f">SerUp {reply}: {self.build_log_info(client_addr)}")
+                                self.logger.debug(f'>SerUp {reply}: {self.build_log_info(client_addr)}')
                             # except (asyncio.IncompleteReadError, asyncio.connection_closed) as e:
                             except Exception as e:
                                 self.logger.info(f"update_all_series: Exception in 'await websocket.send(reply)': {e}")
                                 remove.append(client_addr)
                         else:
                             self.logger.info(
-                                f"update_all_series: Client {self.build_log_info(client_addr)} is not active any more #1"
+                                f'update_all_series: Client {self.build_log_info(client_addr)} is not active any more #1'
                             )
                             pass
                 else:
                     self.logger.info(
-                        f"update_all_series: Client {self.build_log_info(client_addr)} is not active any more #2"
+                        f'update_all_series: Client {self.build_log_info(client_addr)} is not active any more #2'
                     )
                     remove.append(client_addr)
 
@@ -658,10 +658,10 @@ class Protocol:
                 # wait for 10 seconds before running update loop again (loop gets update cycle from database plugin)
                 await self.sleep(10)
 
-            if self._sh.shng_status["code"] != 20:
+            if self._sh.shng_status['code'] != 20:
                 # if SmartHomeNG leaves running mode
                 keep_running = False
-                self.logger.info("update_all_series: Terminating loop, because SmartHomeNG left running mode")
+                self.logger.info('update_all_series: Terminating loop, because SmartHomeNG left running mode')
 
     async def sleep(self, seconds):
         """
@@ -669,7 +669,7 @@ class Protocol:
         :param seconds:
         """
         for i in range(seconds):
-            if self._sh.shng_status["code"] == 20:
+            if self._sh.shng_status['code'] == 20:
                 await asyncio.sleep(1)
 
     def update_series(self, client_addr):
@@ -683,27 +683,27 @@ class Protocol:
             series_replys = []
 
             series_entry = self.sv_update_series.get(client_addr, None)
-            self.logger.dbgmed(f"update_series: {client_addr=} - {series_entry=}")
+            self.logger.dbgmed(f'update_series: {client_addr=} - {series_entry=}')
             if series_entry is not None:
-                self.logger.dbgmed(f" - {client_addr=} - items={self.sv_update_series[client_addr].items()}")
+                self.logger.dbgmed(f' - {client_addr=} - items={self.sv_update_series[client_addr].items()}')
                 for sid, series in self.sv_update_series[client_addr].items():
-                    if (series["update"] < now) or self.sv_ser_upd_cycle > 0:
+                    if (series['update'] < now) or self.sv_ser_upd_cycle > 0:
                         # self.logger.warning("update_series: {} - Processing sid={}, series={}".format(client_addr, sid, series))
-                        item = self.items.return_item(series["params"]["item"])
+                        item = self.items.return_item(series['params']['item'])
                         try:
-                            reply = item.series(**series["params"])
+                            reply = item.series(**series['params'])
                         except Exception as e:
-                            self.logger.exception(f"Problem updating series for {series['params']}: {e}")
+                            self.logger.exception(f'Problem updating series for {series["params"]}: {e}')
                             remove.append(sid)
                             continue
                         try:
-                            self.sv_update_series[client_addr][reply["sid"]] = {
-                                "update": reply["update"],
-                                "params": reply["params"],
+                            self.sv_update_series[client_addr][reply['sid']] = {
+                                'update': reply['update'],
+                                'params': reply['params'],
                             }
-                            del reply["update"]
-                            del reply["params"]
-                            if reply["series"] is not None:
+                            del reply['update']
+                            del reply['params']
+                            if reply['series'] is not None:
                                 series_replys.append(reply)
                         except KeyError:
                             pass  # do nothing, the client connection has been terminated
@@ -726,31 +726,31 @@ class Protocol:
         :return: answer to the visu
         """
         answer = {}
-        path = data["item"]
-        series = data["series"]
+        path = data['item']
+        series = data['series']
 
-        if "start" in data:
-            start = data["start"]
+        if 'start' in data:
+            start = data['start']
         else:
-            start = "72h"
-        if "end" in data:
-            end = data["end"]
+            start = '72h'
+        if 'end' in data:
+            end = data['end']
         else:
-            end = "now"
-        if "count" in data:
-            count = data["count"]
+            end = 'now'
+        if 'count' in data:
+            count = data['count']
         else:
             count = 100
 
-        self.logger.info(f"Series cancelation: path={path}, series={series}, start={start}, end={end}, count={count}")
+        self.logger.info(f'Series cancelation: path={path}, series={series}, start={start}, end={end}, count={count}')
         item = self.items.return_item(path)
         try:
             # reply = item.series(series, start, end, count)
             reply = await self.loop.run_in_executor(None, item.series, series, start, end, count)
-            self.logger.dbghigh(f"cancel_series: reply={reply}")
-            self.logger.dbghigh(f"cancel_series: self.sv_update_series={self.sv_update_series}")
+            self.logger.dbghigh(f'cancel_series: reply={reply}')
+            self.logger.dbghigh(f'cancel_series: self.sv_update_series={self.sv_update_series}')
         except Exception as e:
-            self.logger.error(f"cancel_series: Problem fetching series for {path}: {e} - Wrong sqlite plugin?")
+            self.logger.error(f'cancel_series: Problem fetching series for {path}: {e} - Wrong sqlite plugin?')
         else:
             answer = await self.loop.run_in_executor(
                 None, self.cancel_periodic_series_updates, reply, path, client_addr
@@ -767,14 +767,14 @@ class Protocol:
         :return: answer to the visu
         """
         answer = {}
-        path = data["name"]
-        if "max" in data:
-            max = data["max"]
+        path = data['name']
+        if 'max' in data:
+            max = data['max']
         else:
             max = 100
 
-        self.logger.info(f"Logs cancelation: path={path}, max={max}")
-        to_remove = ""
+        self.logger.info(f'Logs cancelation: path={path}, max={max}')
+        to_remove = ''
         logdict = self.sv_monitor_logs.get(client_addr, {})
         to_remove = None
         for entry in logdict:
@@ -782,25 +782,25 @@ class Protocol:
                 to_remove = entry
 
         if to_remove is None:
-            answer = {"cmd": "log_cancel", "error": f"Log updates for {path} were not subscribed"}
+            answer = {'cmd': 'log_cancel', 'error': f'Log updates for {path} were not subscribed'}
         else:
             try:
                 # Delete the log-Abos here
                 self.sv_monitor_logs[client_addr].remove(to_remove)
-                reply = f"path={path}, max={max}"
-                self.logger.info(f"cancel_log: reply=cancel log for :{reply}")
+                reply = f'path={path}, max={max}'
+                self.logger.info(f'cancel_log: reply=cancel log for :{reply}')
             except Exception as e:
-                self.logger.error(f"cancel_log: Problem to cancel log for {path}: {e}")
-                answer = {"cmd": "log_cancel", "error": f"Problem to cancel log for {path}: {e}"}
+                self.logger.error(f'cancel_log: Problem to cancel log for {path}: {e}')
+                answer = {'cmd': 'log_cancel', 'error': f'Problem to cancel log for {path}: {e}'}
             else:
                 if len(self.sv_monitor_logs[client_addr]) == 0:
                     try:
                         del self.sv_monitor_logs[client_addr]
                     except Exception as e:
                         self.logger.error(
-                            f"cancel_log: Quere for {client_addr} is empty problem to remove client from dict : {e}"
+                            f'cancel_log: Quere for {client_addr} is empty problem to remove client from dict : {e}'
                         )
-                answer = {"cmd": "log_cancel", "result": f"Log updates for {path} canceled"}
+                answer = {'cmd': 'log_cancel', 'result': f'Log updates for {path} canceled'}
         return answer
 
     def cancel_periodic_series_updates(self, reply, path, client_addr):
@@ -809,14 +809,14 @@ class Protocol:
         """
         with self._series_lock:
             try:
-                del self.sv_update_series[client_addr][reply["sid"]]
+                del self.sv_update_series[client_addr][reply['sid']]
                 if self.sv_update_series[client_addr] == {}:
                     del self.sv_update_series[client_addr]
-                self.logger.info(f"Series cancelation: Series updates for path {path} canceled")
-                answer = {"cmd": "series_cancel", "result": "Series updates for path {} canceled".format(path)}
+                self.logger.info(f'Series cancelation: Series updates for path {path} canceled')
+                answer = {'cmd': 'series_cancel', 'result': 'Series updates for path {} canceled'.format(path)}
             except Exception:
-                self.logger.warning(f"Series cancelation: No series for path {path} found in list")
-                answer = {"cmd": "series_cancel", "error": "No series for path {} found in list".format(path)}
+                self.logger.warning(f'Series cancelation: No series for path {path} found in list')
+                answer = {'cmd': 'series_cancel', 'error': 'No series for path {} found in list'.format(path)}
         return answer
 
     async def update_visu(self):
@@ -824,25 +824,25 @@ class Protocol:
         Async task to update all active visus, if items have changed or an url command has been issued
         """
         # wait until SmartHomeNG is completly initialized
-        while self._sh.shng_status["code"] != 20:
+        while self._sh.shng_status['code'] != 20:
             await asyncio.sleep(1)
-        self.logger.info("Task update_visu() started")
+        self.logger.info('Task update_visu() started')
 
         if not self.janus_queue:
             self.janus_queue = janus.Queue()
-            self.logger.dbghigh("janus queue initialized")
+            self.logger.dbghigh('janus queue initialized')
 
         while True:
             if self.janus_queue:
                 queue_entry = await self.janus_queue.async_q.get()
-                if queue_entry[0] == "item":
+                if queue_entry[0] == 'item':
                     item_data = queue_entry[1]
                     # item_data: set (item_name, item_value, caller, source)
                     try:
                         await self.update_item(item_data[0], item_data[1], item_data[3])
                     except Exception as e:
                         self.logger.error(f"update_visu: Error in 'await self.update_item(...)': {e}")
-                elif queue_entry[0] == "log":
+                elif queue_entry[0] == 'log':
                     log_entry = queue_entry[1]
                     # log_entry: dict {'name', 'log'}
                     #            log is a list and contains dicts: {'time', 'thread', 'level', 'message'}
@@ -851,11 +851,11 @@ class Protocol:
                         await self.update_log(log_entry)
                     except Exception as e:
                         self.logger.error(f"update_visu: Error in 'await self.update_log(...)': {e}")
-                elif queue_entry[0] == "command":
+                elif queue_entry[0] == 'command':
                     # send command to visu (e.g. url command)
                     command = queue_entry[1]
                     client_addr = queue_entry[2]
-                    websocket = self.sv_clients[client_addr]["websocket"]
+                    websocket = self.sv_clients[client_addr]['websocket']
                     try:
                         await websocket.send(command)
                         self.logger.info(f"Sending command: '{command}'   -   to {client_addr}")
@@ -873,24 +873,24 @@ class Protocol:
         items_list = list(self.sv_monitor_items.keys())
         for client_addr in items_list:
             items = []
-            websocket = self.sv_clients[client_addr]["websocket"]
+            websocket = self.sv_clients[client_addr]['websocket']
             for candidate in self.sv_monitor_items[client_addr]:
                 try:
                     # self.logger.debug("Send update to Client {0} for candidate {1} and item_name {2}?".format(client_addr, candidate, item_name))
-                    path_parts = candidate.split(".property.")
+                    path_parts = candidate.split('.property.')
                     if path_parts[0] != item_name:
                         continue
 
                     if len(path_parts) == 1 and client_addr != source:
                         self.logger.debug(
-                            f"Send update to Client {self.build_log_info(client_addr)} for item {path_parts[0]}"
+                            f'Send update to Client {self.build_log_info(client_addr)} for item {path_parts[0]}'
                         )
                         items.append([path_parts[0], item_value])
                         continue
 
                     if len(path_parts) == 2:
                         self.logger.debug(
-                            f"Send update to Client {self.build_log_info(client_addr)} for item {path_parts[0]} with property {path_parts[1]}"
+                            f'Send update to Client {self.build_log_info(client_addr)} for item {path_parts[0]} with property {path_parts[1]}'
                         )
                         prop = self.items.return_item(path_parts[0]).property
                         prop_attr = getattr(prop, path_parts[1])
@@ -898,17 +898,17 @@ class Protocol:
                         continue
 
                     if client_addr == source:
-                        self.logger.warning(f"update_item: client_addr == source - {self.build_log_info(client_addr)}")
+                        self.logger.warning(f'update_item: client_addr == source - {self.build_log_info(client_addr)}')
                         continue
 
                     self.logger.warning(
-                        f"Could not send update to Client {self.build_log_info(client_addr)}: something is wrong with item path {item_name}, value={item_value}, source={source}"
+                        f'Could not send update to Client {self.build_log_info(client_addr)}: something is wrong with item path {item_name}, value={item_value}, source={source}'
                     )
                 except Exception:
                     pass
 
             if len(items):  # only send an update if item/value pairs found to be send
-                data = {"cmd": "item", "items": items}
+                data = {'cmd': 'item', 'items': items}
                 msg = json.dumps(data, default=self.json_serial)
                 try:
                     self.logger.dbgmed(
@@ -916,7 +916,7 @@ class Protocol:
                     )
                     await websocket.send(msg)
                 except Exception as e:
-                    if str(e).startswith(("code = 1001", "code = 1005", "code = 1006")):
+                    if str(e).startswith(('code = 1001', 'code = 1005', 'code = 1006')):
                         self.logger.info(
                             f"update_item: Error sending {data} - to {self.build_log_info(self.client_address(websocket))}  -  Error in 'await websocket.send(data)': {e}"
                         )
@@ -935,21 +935,21 @@ class Protocol:
         logs_list = list(self.sv_monitor_logs.keys())
         for client_addr in logs_list:
             if (client_addr in self.sv_clients) and client_addr not in remove:
-                websocket = self.sv_clients[client_addr]["websocket"]
+                websocket = self.sv_clients[client_addr]['websocket']
 
-                if log_entry["name"] in self.sv_monitor_logs[client_addr]:
-                    log_entry["cmd"] = "log"
+                if log_entry['name'] in self.sv_monitor_logs[client_addr]:
+                    log_entry['cmd'] = 'log'
                     msg = json.dumps(log_entry, default=self.json_serial)
                     try:
                         # self.logger.notice(">LogUp {}: {}".format(self.client_address(websocket), msg))
                         await websocket.send(msg)
                     except Exception as e:
-                        if not str(e).startswith(("code = 1005", "code = 1006")):
+                        if not str(e).startswith(('code = 1005', 'code = 1006')):
                             self.logger.exception(f"update_log - Error in 'await websocket.send(data)': {e}")
                         else:
                             self.logger.info(f"update_log - Error in 'await websocket.send(data)': {e}")
             else:
-                self.logger.info(f"update_log: Client {self.build_log_info(client_addr)} is not active any more")
+                self.logger.info(f'update_log: Client {self.build_log_info(client_addr)} is not active any more')
                 remove.append(client_addr)
 
         # Remove series for clients that are not connected any more
@@ -962,84 +962,84 @@ class Protocol:
         """
         Request logic (trigger, enable, disable)
         """
-        if "name" not in data:
+        if 'name' not in data:
             return
-        name = data["name"]
+        name = data['name']
         mylogic = self.logics.return_logic(name)
         if mylogic is not None:
             linfo = self.logics.get_logic_info(name)
-            if linfo["visu_access"]:
-                if "val" in data:
-                    value = data["val"]
+            if linfo['visu_access']:
+                if 'val' in data:
+                    value = data['val']
                     self.logger.info(f"Client {self.build_log_info(client_addr)} triggerd logic {name} with '{value}'")
                     mylogic.trigger(by="'some_visu'", value=value, source=client_addr)
-                if "enabled" in data:
-                    if data["enabled"]:
-                        self.logger.info(f"Client {self.build_log_info(client_addr)} enabled logic {name}")
+                if 'enabled' in data:
+                    if data['enabled']:
+                        self.logger.info(f'Client {self.build_log_info(client_addr)} enabled logic {name}')
                         self.logics.enable_logic(name)
                         # non-persistant enable
                         # self.visu_logics[name].enable()
                     else:
-                        self.logger.info(f"Client {self.build_log_info(client_addr)} disabled logic {name}")
+                        self.logger.info(f'Client {self.build_log_info(client_addr)} disabled logic {name}')
                         self.logics.disable_logic(name)
                         # non-persistant disable
                         # self.visu_logics[name].disable()
             else:
                 self.logger.warning(
-                    f"Client {self.build_log_info(client_addr)} requested logic without visu-access: {name}"
+                    f'Client {self.build_log_info(client_addr)} requested logic without visu-access: {name}'
                 )
         else:
-            self.logger.warning(f"Client {self.build_log_info(client_addr)} requested invalid logic: {name}")
+            self.logger.warning(f'Client {self.build_log_info(client_addr)} requested invalid logic: {name}')
         return
 
     async def request_list_items(self, path, client_addr):
         """
         Build the requested list of logics
         """
-        self.logger.info(f"Client {self.build_log_info(client_addr)} requested a list of defined items.")
+        self.logger.info(f'Client {self.build_log_info(client_addr)} requested a list of defined items.')
         myitems = []
         for i in self._sh.return_items():
             include = False
             #            if i.get('visu_acl', '').lower() != 'no':
-            if (path == "") and ("." not in i._path):
+            if (path == '') and ('.' not in i._path):
                 include = True
             else:
-                if i._path.startswith(path + "."):
-                    p = i._path[len(path + ".") :]
-                    if "." not in p:
+                if i._path.startswith(path + '.'):
+                    p = i._path[len(path + '.') :]
+                    if '.' not in p:
                         include = True
             if include:
                 myitem = collections.OrderedDict()
-                myitem["path"] = i._path
-                myitem["name"] = i._name
-                myitem["type"] = i.type()
+                myitem['path'] = i._path
+                myitem['name'] = i._name
+                myitem['type'] = i.type()
                 myitems.append(myitem)
 
-        response = collections.OrderedDict([("cmd", "list_items"), ("items", myitems)])
-        self.logger.info(f"Requested a list of defined items: {response}")
+        response = collections.OrderedDict([('cmd', 'list_items'), ('items', myitems)])
+        self.logger.info(f'Requested a list of defined items: {response}')
         return response
 
     async def request_list_logics(self, enabled, client_addr):
         """
         Build the requested list of logics
         """
-        self.logger.info(f"Client {self.build_log_info(client_addr)} requested a list of defined logics.")
+        self.logger.info(f'Client {self.build_log_info(client_addr)} requested a list of defined logics.')
         logiclist = []
         for logic_name in self.logics.return_loaded_logics():
             linfo = self.logics.get_logic_info(logic_name)
-            if linfo["visu_access"]:
-                if linfo["userlogic"]:
+            if linfo['visu_access']:
+                if linfo['userlogic']:
                     logic_def = collections.OrderedDict()
-                    logic_def["name"] = logic_name
-                    logic_def["desc"] = linfo["description"]
-                    logic_def["enabled"] = 1
-                    if not linfo["enabled"]:
-                        logic_def["enabled"] = 0
-                    if (not enabled) or (logic_def["enabled"] == 1):
+                    logic_def['name'] = logic_name
+                    logic_def['desc'] = linfo['description']
+                    logic_def['enabled'] = 1
+                    if not linfo['enabled']:
+                        logic_def['enabled'] = 0
+                    if (not enabled) or (logic_def['enabled'] == 1):
                         logiclist.append(logic_def)
 
-        response = collections.OrderedDict([("cmd", "list_logics"), ("logics", logiclist)])
-        self.logger.info(f"Requested a list of defined logics: {response}")
+        response = collections.OrderedDict([('cmd', 'list_logics'), ('logics', logiclist)])
+        self.logger.info(f'Requested a list of defined logics: {response}')
         return response
 
     # ===============================================================================
@@ -1060,7 +1060,7 @@ class Protocol:
         item_data = (item.property.path, item(), caller, source)
         if self.janus_queue:
             # if queue has been created from the async side
-            self.janus_queue.sync_q.put(["item", item_data])
+            self.janus_queue.sync_q.put(['item', item_data])
             # self.logger.warning("update_visuitem: item={}, value={}, caller={}, source={}".format(item_data[0], item_data[1], item_data[2], item_data[3]))
 
         return
@@ -1075,30 +1075,30 @@ class Protocol:
         :param data: data of log entry
         :return:
         """
-        if event != "log":
-            self.logger.warning(f"update_visulog: Unknown event {event} received.")
+        if event != 'log':
+            self.logger.warning(f'update_visulog: Unknown event {event} received.')
             return
 
         log_data = data.copy()  # don't filter the orignal data dict
 
-        if not log_data["log"][0]["message"].startswith(">LogUp"):
-            log_data["cmd"] = "log"
+        if not log_data['log'][0]['message'].startswith('>LogUp'):
+            log_data['cmd'] = 'log'
             if self.janus_queue:
                 # if queue has been created from the async side
-                self.janus_queue.sync_q.put(["log", log_data])
+                self.janus_queue.sync_q.put(['log', log_data])
 
         return
 
-    def set_visu_url(self, url, clientip=""):
+    def set_visu_url(self, url, clientip=''):
         """
         Tell the websocket client (visu) to load a specific url
         """
         for client_addr in self.sv_clients:
-            ip, _, port = client_addr.partition(":")
+            ip, _, port = client_addr.partition(':')
 
-            if (clientip == "") or (clientip == ip):
-                command = json.dumps({"cmd": "url", "url": url})
-                self.janus_queue.sync_q.put(["command", command, client_addr])
+            if (clientip == '') or (clientip == ip):
+                command = json.dumps({'cmd': 'url', 'url': url})
+                self.janus_queue.sync_q.put(['command', command, client_addr])
 
         return True
 
@@ -1110,25 +1110,25 @@ class Protocol:
         client_list = []
 
         for client_addr in self.sv_clients:
-            ip, _, port = client_addr.partition(":")
+            ip, _, port = client_addr.partition(':')
 
             infos = {}
-            infos["ip"] = ip
-            infos["port"] = port
-            websocket = self.sv_clients[client_addr]["websocket"]
-            infos["protocol"] = "wss" if websocket.secure else "ws"
-            infos["proto"] = self.sv_clients[client_addr].get("proto", "")
-            infos["sw"] = self.sv_clients[client_addr].get("sw", "")
-            infos["swversion"] = self.sv_clients[client_addr].get("ver", "")
-            infos["hostname"] = self.sv_clients[client_addr].get("hostname", "")
-            infos["browser"] = self.sv_clients[client_addr].get("browser", "")
-            infos["browserversion"] = self.sv_clients[client_addr].get("bver", "")
+            infos['ip'] = ip
+            infos['port'] = port
+            websocket = self.sv_clients[client_addr]['websocket']
+            infos['protocol'] = 'wss' if websocket.secure else 'ws'
+            infos['proto'] = self.sv_clients[client_addr].get('proto', '')
+            infos['sw'] = self.sv_clients[client_addr].get('sw', '')
+            infos['swversion'] = self.sv_clients[client_addr].get('ver', '')
+            infos['hostname'] = self.sv_clients[client_addr].get('hostname', '')
+            infos['browser'] = self.sv_clients[client_addr].get('browser', '')
+            infos['browserversion'] = self.sv_clients[client_addr].get('bver', '')
 
-            infos["os_name"] = self.sv_clients[client_addr].get("os_name", "")
-            infos["os_vers"] = self.sv_clients[client_addr].get("os_vers", "")
-            infos["os_vname"] = self.sv_clients[client_addr].get("os_vname", "")
-            infos["pl_type"] = self.sv_clients[client_addr].get("pl_type", "")
-            infos["pl_vendor"] = self.sv_clients[client_addr].get("pl_vendor", "")
+            infos['os_name'] = self.sv_clients[client_addr].get('os_name', '')
+            infos['os_vers'] = self.sv_clients[client_addr].get('os_vers', '')
+            infos['os_vname'] = self.sv_clients[client_addr].get('os_vname', '')
+            infos['pl_type'] = self.sv_clients[client_addr].get('pl_type', '')
+            infos['pl_vendor'] = self.sv_clients[client_addr].get('pl_vendor', '')
             client_list.append(infos)
 
         return client_list

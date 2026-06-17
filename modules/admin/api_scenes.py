@@ -36,7 +36,7 @@ class ScenesController(RESTResource):
         self.module = module
         self.base_dir = self._sh.get_basedir()
         self.logger = logging.getLogger(
-            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
         )
 
         self.items = Items.get_instance()
@@ -103,7 +103,7 @@ class ScenesController(RESTResource):
 
         from lib.scene import Scenes
 
-        get_param_func = getattr(Scenes, "get_instance", None)
+        get_param_func = getattr(Scenes, 'get_instance', None)
         if callable(get_param_func):
             self.scenes = Scenes.get_instance()
             scene_list = []
@@ -113,28 +113,28 @@ class ScenesController(RESTResource):
             disp_scene_list = []
             for scene in scene_list:
                 scene_dict = {}
-                scene_dict["path"] = scene
+                scene_dict['path'] = scene
                 #                scene_dict['name'] = str(self._sh.return_item(scene))
-                scene_dict["name"] = str(self.items.return_item(scene))
+                scene_dict['name'] = str(self.items.return_item(scene))
 
                 action_list = self.scenes.get_scene_actions(scene)
-                scene_dict["value_list"] = action_list
+                scene_dict['value_list'] = action_list
                 #                scene_dict[scene] = action_list
 
                 disp_action_list = []
                 for value in action_list:
                     action_dict = {}
-                    action_dict["action"] = value
-                    action_dict["action_name"] = self.scenes.get_scene_action_name(scene, value)
+                    action_dict['action'] = value
+                    action_dict['action_name'] = self.scenes.get_scene_action_name(scene, value)
                     action_list = self.scenes.return_scene_value_actions(scene, value)
                     for action in action_list:
                         if not isinstance(action[0], str):
                             action[0] = action[0].id()
-                    action_dict["action_list"] = action_list
+                    action_dict['action_list'] = action_list
 
                     disp_action_list.append(action_dict)
-                scene_dict["values"] = disp_action_list
-                self.logger.debug("scenes_html: disp_action_list for scene {} = {}".format(scene, disp_action_list))
+                scene_dict['values'] = disp_action_list
+                self.logger.debug('scenes_html: disp_action_list for scene {} = {}'.format(scene, disp_action_list))
 
                 disp_scene_list.append(scene_dict)
         return json.dumps(disp_scene_list)
@@ -167,7 +167,7 @@ class ScenesReloadController(RESTResource):
 
         self.scenes = Scenes.get_instance()
 
-        if id == "all":
+        if id == 'all':
             result = self.scenes.reload_scenes()
             return json.dumps(result)
         else:

@@ -25,7 +25,7 @@ import sys
 import os
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import tests.common as common
 
@@ -64,45 +64,45 @@ def _make_shtime():
     _m._shtime_instance = None
 
     class _Sh:
-        _default_language = "de"
+        _default_language = 'de'
 
-        def get_config_file(self, basename, extension=".yaml"):
-            base = os.path.join(os.path.dirname(__file__), "..", "etc")
+        def get_config_file(self, basename, extension='.yaml'):
+            base = os.path.join(os.path.dirname(__file__), '..', 'etc')
             return os.path.join(base, basename + extension)
 
     st = Shtime(_Sh())
-    st.set_tz("UTC")
+    st.set_tz('UTC')
     return st
 
 
-@unittest.skipUnless(HAS_EPHEM, "pyephem not installed")
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestOrbInit(unittest.TestCase):
     def setUp(self):
         self.shtime = _make_shtime()
 
     def test_sun_object_created(self):
-        orb = Orb("sun", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
-        self.assertEqual(orb.orb, "sun")
+        orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.assertEqual(orb.orb, 'sun')
 
     def test_moon_object_created(self):
-        orb = Orb("moon", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
-        self.assertEqual(orb.orb, "moon")
+        orb = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.assertEqual(orb.orb, 'moon')
 
     def test_observer_and_orb_returns_tuple(self):
-        orb = Orb("sun", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
         result = orb.get_observer_and_orb()
         self.assertEqual(len(result), 2)
 
     def test_moon_has_phase_attribute(self):
-        orb = Orb("moon", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
-        self.assertTrue(hasattr(orb, "phase"))
+        orb = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.assertTrue(hasattr(orb, 'phase'))
 
     def test_moon_has_light_attribute(self):
-        orb = Orb("moon", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
-        self.assertTrue(hasattr(orb, "light"))
+        orb = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.assertTrue(hasattr(orb, 'light'))
 
 
-@unittest.skipUnless(HAS_EPHEM, "pyephem not installed")
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestSunRiseSet(unittest.TestCase):
     """Sunrise and sunset times against published USNO values (±10 min)."""
 
@@ -110,7 +110,7 @@ class TestSunRiseSet(unittest.TestCase):
 
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb("sun", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
 
     def test_summer_solstice_sunrise_approx(self):
         # pyephem computes Berlin sunrise on 2024-06-21 ≈ 02:43 UTC.
@@ -119,14 +119,14 @@ class TestSunRiseSet(unittest.TestCase):
         expected = datetime.datetime(2024, 6, 21, 2, 43, 0, tzinfo=datetime.timezone.utc)
         result = self.sun.rise(dt=_SUMMER_SOLSTICE)
         diff = abs(result.replace(tzinfo=datetime.timezone.utc) - expected)
-        self.assertLessEqual(diff, datetime.timedelta(minutes=15), f"Sunrise {result} not within 15 min of {expected}")
+        self.assertLessEqual(diff, datetime.timedelta(minutes=15), f'Sunrise {result} not within 15 min of {expected}')
 
     def test_summer_solstice_sunset_approx(self):
         # pyephem computes Berlin sunset on 2024-06-21 ≈ 19:33 UTC (21:33 CEST).
         expected = datetime.datetime(2024, 6, 21, 19, 33, 0, tzinfo=datetime.timezone.utc)
         result = self.sun.set(dt=_SUMMER_SOLSTICE)
         diff = abs(result.replace(tzinfo=datetime.timezone.utc) - expected)
-        self.assertLessEqual(diff, datetime.timedelta(minutes=15), f"Sunset {result} not within 15 min of {expected}")
+        self.assertLessEqual(diff, datetime.timedelta(minutes=15), f'Sunset {result} not within 15 min of {expected}')
 
     def test_winter_solstice_sunrise_later_than_summer(self):
         summer_rise = self.sun.rise(dt=_SUMMER_SOLSTICE)
@@ -163,11 +163,11 @@ class TestSunRiseSet(unittest.TestCase):
         self.assertAlmostEqual(diff.total_seconds() / 60, 30, delta=1)
 
 
-@unittest.skipUnless(HAS_EPHEM, "pyephem not installed")
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestSolarNoon(unittest.TestCase):
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb("sun", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
 
     def test_noon_approx_time(self):
         # pyephem computes Berlin solar noon on 2024-06-21 ≈ 11:08 UTC.
@@ -191,11 +191,11 @@ class TestSolarNoon(unittest.TestCase):
         self.assertIsNotNone(result.tzinfo)
 
 
-@unittest.skipUnless(HAS_EPHEM, "pyephem not installed")
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestSolarPosition(unittest.TestCase):
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb("sun", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
 
     def test_pos_returns_two_values(self):
         result = self.sun.pos(dt=_SUMMER_SOLSTICE)
@@ -232,11 +232,11 @@ class TestSolarPosition(unittest.TestCase):
         self.assertLessEqual(el_deg, 90)
 
 
-@unittest.skipUnless(HAS_EPHEM, "pyephem not installed")
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestMoon(unittest.TestCase):
     def setUp(self):
         self.shtime = _make_shtime()
-        self.moon = Orb("moon", BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.moon = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
 
     def test_moon_rise_returns_datetime(self):
         result = self.moon.rise(dt=_SUMMER_SOLSTICE)
@@ -265,11 +265,11 @@ class TestMoon(unittest.TestCase):
         self.assertLessEqual(result, 100)
 
 
-@unittest.skipUnless(HAS_EPHEM, "pyephem not installed")
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestCoordinateConversions(unittest.TestCase):
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb("sun", BERLIN_LON, BERLIN_LAT)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT)
 
     def test_unaware_to_utc(self):
         naive = datetime.datetime(2024, 6, 21, 12, 0, 0)
@@ -289,5 +289,5 @@ class TestCoordinateConversions(unittest.TestCase):
         self.assertIsInstance(result, datetime.datetime)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

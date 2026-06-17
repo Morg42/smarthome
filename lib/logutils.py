@@ -42,7 +42,7 @@ class Filter(logging.Filter):
     whereas False will include the record into further processing and eventual output
     """
 
-    def __init__(self, name="", module="", msg="", timestamp="", invert=False):
+    def __init__(self, name='', module='', msg='', timestamp='', invert=False):
         self.logger = logging.getLogger(__name__)
         self.name = name if isinstance(name, list) else [] if len(name) == 0 else [name]
         self.module = module if isinstance(module, list) else [] if len(module) == 0 else [module]
@@ -56,22 +56,22 @@ class Filter(logging.Filter):
             try:
                 compiled_name.append(re.compile(n))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(n, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(n, err))
         for m in self.module:
             try:
                 compiled_module.append(re.compile(m))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(m, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(m, err))
         for msg in self.msg:
             try:
                 compiled_msg.append(re.compile(msg))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(msg, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(msg, err))
         for stamp in self.timestamp:
             try:
                 compiled_timestamp.append(re.compile(stamp))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(stamp, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(stamp, err))
         self.name = compiled_name
         self.module = compiled_module
         self.msg = compiled_msg
@@ -86,14 +86,14 @@ class Filter(logging.Filter):
         hits = hits + 1 if len(self.msg) == 0 else hits
         hits = hits + 1 if len(self.timestamp) == 0 else hits
         if len(self.timestamp) > 0:
-            compare = datetime.datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
+            compare = datetime.datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S')
             for t in self.timestamp:
                 if t.match(compare):
                     hits += 1
         if isinstance(record.msg, dict):
-            record.msg = ["{}: {}".format(i, record.msg[i]) for i in record.msg]
+            record.msg = ['{}: {}'.format(i, record.msg[i]) for i in record.msg]
         if isinstance(record.msg, list):
-            record.msg = ", ".join(record.msg)
+            record.msg = ', '.join(record.msg)
         record.msg = str(record.msg)
         for n in self.name:
             if n.match(record.name):

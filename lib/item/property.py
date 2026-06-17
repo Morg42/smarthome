@@ -85,7 +85,7 @@ class Property:
         return
 
     def get_config_attribute(self, attr):
-        return self._item.conf.get(attr, "")
+        return self._item.conf.get(attr, '')
 
     @property
     def defined_in(self):
@@ -126,7 +126,7 @@ class Property:
             self._item._enforce_updates = value
             return
         else:
-            self._type_error("non-boolean")
+            self._type_error('non-boolean')
             return
 
     @property
@@ -151,7 +151,7 @@ class Property:
             self._item._enforce_change = value
             return
         else:
-            self._type_error("non-boolean")
+            self._type_error('non-boolean')
             return
 
     @property
@@ -169,19 +169,19 @@ class Property:
         """
         if self._item._eval:
             return self._item._eval
-        return ""
+        return ''
 
     @eval.setter
     def eval(self, value):
 
         if isinstance(value, str):
-            if value == "":
+            if value == '':
                 self._item._eval = None
             else:
                 self._item._eval = value
             return
         else:
-            self._type_error("non-non-string")
+            self._type_error('non-non-string')
             return
 
     @property
@@ -199,7 +199,7 @@ class Property:
         """
         if self._item._eval:
             return self._item._eval
-        return ""
+        return ''
 
     @eval_unexpanded.setter
     def eval_unexpanded(self, value):
@@ -210,7 +210,7 @@ class Property:
             self._item._lock.release()
             return
         else:
-            self._type_error("non-non-string")
+            self._type_error('non-non-string')
             return
 
     @property
@@ -403,8 +403,8 @@ class Property:
 
         if not isinstance(value, str):
             self._cast_warning(value)
-            value = "{}".format(value)
-        if value == "":
+            value = '{}'.format(value)
+        if value == '':
             self._item._name = self._item._path
         else:
             self._item._name = value
@@ -497,14 +497,14 @@ class Property:
         if isinstance(value, list):
             if value == [] or self._checkstrtype(value):
                 self._item._lock.acquire()
-                self._item._process_on_xx_list("on_change", value)
+                self._item._process_on_xx_list('on_change', value)
                 self._item._lock.release()
             else:
-                self._type_error("list containing non-string")
+                self._type_error('list containing non-string')
                 return
             return
         else:
-            self._type_error("non-list")
+            self._type_error('non-list')
             return
 
     @property
@@ -543,14 +543,14 @@ class Property:
         if isinstance(value, list):
             if value == [] or self._checkstrtype(value):
                 self._item._lock.acquire()
-                self._item._process_on_xx_list("on_update", value)
+                self._item._process_on_xx_list('on_update', value)
                 self._item._lock.release()
             else:
-                self._type_error("list containing non-string")
+                self._type_error('list containing non-string')
                 return
             return
         else:
-            self._type_error("non-list")
+            self._type_error('non-list')
             return
 
     @property
@@ -772,11 +772,11 @@ class Property:
                     self._item._trigger = value
                     self._item._trigger_unexpanded = value
                 else:
-                    self._type_error("list containing non-string")
+                    self._type_error('list containing non-string')
                     return
             return
         else:
-            self._type_error("non-list")
+            self._type_error('non-list')
             return
 
     @property
@@ -803,14 +803,14 @@ class Property:
         if isinstance(value, list):
             if value == [] or self._checkstrtype(value):
                 self._item._lock.acquire()
-                self._item._process_trigger_list("trigger", value)
+                self._item._process_trigger_list('trigger', value)
                 self._item._lock.release()
             else:
-                self._type_error("list containing non-string")
+                self._type_error('list containing non-string')
                 return
             return
         else:
-            self._type_error("non-list")
+            self._type_error('non-list')
             return
 
     @property
@@ -831,7 +831,7 @@ class Property:
     @value.setter
     def value(self, value):
 
-        self._item(value, caller="Property", source="Assign")
+        self._item(value, caller='Property', source='Assign')
         return
 
     @property

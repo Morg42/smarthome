@@ -24,14 +24,14 @@ class BackupAndRestore:
         self.files = []
         self.workdir = os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2])
         self.workdir_len = len(self.workdir.split(os.path.sep)) - 1
-        self.backupdirs = ["etc", "items", "scenes"]
-        self.exclude_files = (".default", ".gitignore")
+        self.backupdirs = ['etc', 'items', 'scenes']
+        self.exclude_files = ('.default', '.gitignore')
         self.verbose = False
         self.overwrite = False
 
     def backup(self, outfile, include=None, exclude=None):
         if os.path.isfile(outfile) and not self.overwrite:
-            raise ValueError("Outputfile exists " + outfile)
+            raise ValueError('Outputfile exists ' + outfile)
         if exclude is not None:
             self.backupdirs = set(self.backupdirs) - set(exclude)
         if include is not None:
@@ -42,7 +42,7 @@ class BackupAndRestore:
             self.get_files(os.path.join(self.workdir, path))
         if self.verbose:
             print(self.files)
-        tar = tarfile.open(outfile, "w:gz")
+        tar = tarfile.open(outfile, 'w:gz')
         for name in self.files:
             tar.add(name, filter=self.change_fileinfo)
         tar.close()
@@ -58,7 +58,7 @@ class BackupAndRestore:
 
     def change_fileinfo(self, tarinfo):
         tarinfo.uid = tarinfo.gid = 0
-        tarinfo.uname = tarinfo.gname = "root"
+        tarinfo.uname = tarinfo.gname = 'root'
         newname = os.path.sep.join(tarinfo.name.split(os.path.sep)[self.workdir_len :])
         if self.verbose:
             print(newname)
@@ -81,33 +81,33 @@ class BackupAndRestore:
             return badpath(info.linkname, base=tip)
 
         def safemembers(members):
-            base = resolved(".")
+            base = resolved('.')
 
             for finfo in members:
                 if badpath(finfo.name, base):
-                    print(f"{finfo.name} is blocked (illegal path)", file=sys.stderr)
+                    print(f'{finfo.name} is blocked (illegal path)', file=sys.stderr)
                 elif finfo.issym() and badlink(finfo, base):
-                    print(f"{finfo.name} is blocked: hard link to {finfo.linkname}", file=sys.stderr)
+                    print(f'{finfo.name} is blocked: hard link to {finfo.linkname}', file=sys.stderr)
                 elif finfo.islnk() and badlink(finfo, base):
-                    print(f"{finfo.name} is blocked: symlink to {finfo.linkname}", file=sys.stderr)
+                    print(f'{finfo.name} is blocked: symlink to {finfo.linkname}', file=sys.stderr)
                 else:
                     yield finfo
 
         readmode = None
         extractor = None
         afilelow = afile.lower()
-        if afilelow.endswith("tar.gz") or afilelow.endswith("tgz"):
+        if afilelow.endswith('tar.gz') or afilelow.endswith('tgz'):
             extractor = tarfile.open
-            readmode = "r:gz"
-        elif afilelow.endswith("tar"):
+            readmode = 'r:gz'
+        elif afilelow.endswith('tar'):
             extractor = tarfile.open
-            readmode = "r:"
-        elif afilelow.endswith("zip"):
+            readmode = 'r:'
+        elif afilelow.endswith('zip'):
             extractor = zipfile.ZipFile
-            readmode = "r"
-        elif afilelow.endswith("bz2") or afilelow.endswith("tbz"):
+            readmode = 'r'
+        elif afilelow.endswith('bz2') or afilelow.endswith('tbz'):
             extractor = tarfile.open
-            readmode = "r:bz2"
+            readmode = 'r:bz2'
         if extractor is not None:
             tar = extractor(afile, readmode)
             try:
@@ -115,32 +115,32 @@ class BackupAndRestore:
             finally:
                 tar.close()
         else:
-            raise ValueError("Unsupported file type: " + afile)
+            raise ValueError('Unsupported file type: ' + afile)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     bar = BackupAndRestore()
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-b", "--backup", action="store_true", help="create a config backup")
-    group.add_argument("-r", "--restore", action="store", help="restore a backup", metavar="dir")
+    group.add_argument('-b', '--backup', action='store_true', help='create a config backup')
+    group.add_argument('-r', '--restore', action='store', help='restore a backup', metavar='dir')
     parser.add_argument(
-        "--backupfile",
-        action="store",
-        help="name for outputfile (default: backup.tar.gz)",
-        metavar="file",
-        default="backup.tar.gz",
+        '--backupfile',
+        action='store',
+        help='name for outputfile (default: backup.tar.gz)',
+        metavar='file',
+        default='backup.tar.gz',
     )
-    parser.add_argument("--include", nargs="+", action="store", help="include directory to backup", metavar="dir")
+    parser.add_argument('--include', nargs='+', action='store', help='include directory to backup', metavar='dir')
     parser.add_argument(
-        "--exclude",
-        nargs="+",
-        action="store",
-        help="exclude directory from backup (only for etc,items,scenes)",
-        metavar="dir",
+        '--exclude',
+        nargs='+',
+        action='store',
+        help='exclude directory from backup (only for etc,items,scenes)',
+        metavar='dir',
     )
-    parser.add_argument("-v", "--verbose", action="store_true", help="generate more output", default=False)
-    parser.add_argument("--overwrite", action="store_true", help="allways overwrite existing files", default=False)
+    parser.add_argument('-v', '--verbose', action='store_true', help='generate more output', default=False)
+    parser.add_argument('--overwrite', action='store_true', help='allways overwrite existing files', default=False)
     args = parser.parse_args()
     try:
         if args.verbose:
@@ -153,8 +153,8 @@ if __name__ == "__main__":
         if args.restore is not None:
             bar.restore(afile=args.backupfile, outdir=args.restore)
     except ValueError as e:
-        print("")
+        print('')
         print(e)
-        print("")
+        print('')
         parser.print_help()
         exit(1)

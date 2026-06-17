@@ -38,7 +38,7 @@ import subprocess
 
 logger = logging.getLogger(__name__)
 
-TIMEFRAME_REGEX = re.compile(r"^(\d+)([ihdwmy]?)$", re.VERBOSE | re.IGNORECASE)
+TIMEFRAME_REGEX = re.compile(r'^(\d+)([ihdwmy]?)$', re.VERBOSE | re.IGNORECASE)
 
 
 class Utils(object):
@@ -59,14 +59,14 @@ class Utils(object):
         if len(mac) == 12:
             for c in mac:
                 # each digit is hex
-                if c not in "0123456789abcdefABCDEF":
+                if c not in '0123456789abcdefABCDEF':
                     return False
             return True
 
         # notation with separators -> 12 digits + 5 separators
         if len(mac) != 17:
             return False
-        octets = re.split("[: -]", mac)
+        octets = re.split('[: -]', mac)
         # 6 groups...
         if len(octets) != 6:
             return False
@@ -75,8 +75,8 @@ class Utils(object):
             if len(o) != 2:
                 return False
         # and each digit is hex
-        for c in "".join(octets):
-            if c not in "0123456789abcdefABCDEF":
+        for c in ''.join(octets):
+            if c not in '0123456789abcdefABCDEF':
                 return False
         return True
 
@@ -149,7 +149,7 @@ class Utils(object):
         try:
             return bool(
                 re.match(
-                    "^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])\\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+                    '^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])\\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$',
                     string,
                 )
             )
@@ -170,12 +170,12 @@ class Utils(object):
         """
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("10.255.255.255", 1))
+            s.connect(('10.255.255.255', 1))
             IP = s.getsockname()[0]
         except OSError:
-            IP = "127.0.0.1"
+            IP = '127.0.0.1'
         finally:
-            if "s" in locals():
+            if 's' in locals():
                 s.close()
         return IP
 
@@ -190,12 +190,12 @@ class Utils(object):
         """
         try:
             s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
-            s.connect(("fda2:ffff:ffff:ffff:ffff:ffff:ffff:ffff", 1))
+            s.connect(('fda2:ffff:ffff:ffff:ffff:ffff:ffff:ffff', 1))
             IP = s.getsockname()[0]
         except OSError:
-            IP = "::1"
+            IP = '::1'
         finally:
-            if "s" in locals():
+            if 's' in locals():
                 s.close()
         return IP
 
@@ -214,7 +214,7 @@ class Utils(object):
         for interface in interfaces():
             if af in ifaddresses(interface).keys():
                 for link in ifaddresses(interface)[af]:
-                    ip_list.append(link["addr"])
+                    ip_list.append(link['addr'])
         return ip_list
 
     @staticmethod
@@ -258,10 +258,10 @@ class Utils(object):
         if not isinstance(groupaddress, str):
             return False
 
-        if groupaddress == "":
+        if groupaddress == '':
             return True
 
-        g = groupaddress.split("/")
+        g = groupaddress.split('/')
         if len(g) != 3:
             return False
         if not (Utils.is_int(g[0]) and Utils.is_int(g[1]) and Utils.is_int(g[2])):
@@ -314,13 +314,13 @@ class Utils(object):
         week = 7 * day
         month = 30 * day
         year = 365 * day
-        frames = {"i": minute, "h": hour, "d": day, "w": week, "m": month, "y": year}
+        frames = {'i': minute, 'h': hour, 'd': day, 'w': week, 'm': month, 'y': year}
 
-        if value == "now":
-            value = "0"
+        if value == 'now':
+            value = '0'
 
         if not Utils.is_timeframe(value):
-            raise Exception("Invalid value for boolean conversion: " + value)
+            raise Exception('Invalid value for boolean conversion: ' + value)
 
         amount, unit = TIMEFRAME_REGEX.match(value).groups()
         if unit in frames:
@@ -365,7 +365,7 @@ class Utils(object):
             return False
 
     @staticmethod
-    def to_bool(value: str, default: bool = "exception") -> bool:  # works for Python 3.9 and under
+    def to_bool(value: str, default: bool = 'exception') -> bool:  # works for Python 3.9 and under
         #    def to_bool(value: str|int|float, default: bool='exception') -> bool:   # works for Python 3.10 and above
 
         """
@@ -384,12 +384,12 @@ class Utils(object):
         """
         # -> should it be possible to cast strings: 0 -> False and non-0 -> True (analog to integer values)?
         if isinstance(value, str):
-            if value.lower() in ("yes", "y", "true", "t", "1", "on"):
+            if value.lower() in ('yes', 'y', 'true', 't', '1', 'on'):
                 return True
-            if value.lower() in ("no", "n", "false", "f", "0", "off", ""):
+            if value.lower() in ('no', 'n', 'false', 'f', '0', 'off', ''):
                 return False
-            if default == "exception":
-                raise Exception("Invalid value for boolean conversion: " + value)
+            if default == 'exception':
+                raise Exception('Invalid value for boolean conversion: ' + value)
             else:
                 return default
         return bool(value)
@@ -406,7 +406,7 @@ class Utils(object):
 
         hashfunc = hashlib.sha512()
         hashfunc.update(plaintext.encode())
-        return "".join(format(b, "02x") for b in hashfunc.digest())
+        return ''.join(format(b, '02x') for b in hashfunc.digest())
 
     @staticmethod
     def is_hash(value: str) -> bool:
@@ -441,7 +441,7 @@ class Utils(object):
         :return: True: password matches, False: password does not match
         """
 
-        if pwd_to_check is None or pwd_to_check == "":
+        if pwd_to_check is None or pwd_to_check == '':
             # No password given -> return "not matching"
             return False
 
@@ -493,16 +493,16 @@ class Utils(object):
             return string
         if len(string) == 0:
             return string
-        if string[0] != "[":
+        if string[0] != '[':
             return [string]
-        hl = Utils.strip_square_brackets(string).split(",")
+        hl = Utils.strip_square_brackets(string).split(',')
         rl = []
         for e in hl:
             er = e.strip()
             if Utils.strip_quotes(er) != er:
                 er = Utils.strip_quotes(er)
             else:
-                if er.find(".") != -1:
+                if er.find('.') != -1:
                     er = float(er)
                 else:
                     er = int(er)
@@ -524,8 +524,8 @@ class Utils(object):
         if type(string) is str:
             string = string.strip()
             if len(string) >= 2:
-                if string[0] == "[":  # check if string starts with [
-                    if string[-1] == "]":  # and end with ]
+                if string[0] == '[':  # check if string starts with [
+                    if string[-1] == ']':  # and end with ]
                         string = string[1:-1]  # remove them
         return string
 
@@ -547,11 +547,11 @@ class Utils(object):
             if len(string) >= 2:
                 string2 = Utils.strip_square_brackets(string)
                 if string2 != string:
-                    str_list = string2.split(",")
-                    string3 = ""
+                    str_list = string2.split(',')
+                    string3 = ''
                     for s in str_list:
-                        if string3 != "":
-                            string3 += ", "
+                        if string3 != '':
+                            string3 += ', '
                         string3 += Utils.strip_quotes(s)
                     string = string3
         return string
@@ -587,7 +587,7 @@ class Utils(object):
         if wait:
             # Wait for date to terminate. Get return returncode
             p.wait()
-        return (str(result, encoding="utf-8", errors="strict"), str(err, encoding="utf-8", errors="strict"))
+        return (str(result, encoding='utf-8', errors='strict'), str(err, encoding='utf-8', errors='strict'))
 
 
 # --------------------------------------------------------------------------------------------
@@ -599,7 +599,7 @@ class Version:
 
         while len(versl) < 4:
             if isinstance(versl[0], str):
-                versl.append("0")
+                versl.append('0')
             else:
                 versl.append(0)
         while len(versl) > 4:
@@ -617,19 +617,19 @@ class Version:
         :rtype: list
         """
         if len(vers) == 0:
-            vers = "0"
-        if vers[0].lower() == "v":
+            vers = '0'
+        if vers[0].lower() == 'v':
             vers = vers[1:]
 
         # create list with [major,minor,revision,build]
-        vsplit = vers.split(".")
+        vsplit = vers.split('.')
         vsplit = cls.check_list(vsplit)
 
         # get rid of non numeric parts
         vlist = []
         build = 0
-        if vsplit == "":
-            return ""
+        if vsplit == '':
+            return ''
         for v in vsplit:
             if v[-1].isalpha():
                 build += ord(v[-1].lower()) - 96
@@ -647,20 +647,20 @@ class Version:
     def to_string(cls, versl):
 
         if versl == [0, 0, 0, 0]:
-            return ""
+            return ''
         import copy
 
         versl2 = copy.deepcopy(versl)
         cls.check_list(versl2)
-        if versl2 == "":
-            return ""
+        if versl2 == '':
+            return ''
 
         if versl2[3] == 0:
             del versl2[3]
         versls = [str(int) for int in versl2]
-        vers = ".".join(versls)
+        vers = '.'.join(versls)
 
-        return "v" + vers
+        return 'v' + vers
 
     @classmethod
     def format(cls, vers):
@@ -688,11 +688,11 @@ class Version:
             v2 = cls.to_list(v2)
 
         result = False
-        if v1 == v2 and operator in [">=", "==", "<="]:
+        if v1 == v2 and operator in ['>=', '==', '<=']:
             result = True
-        if v1 < v2 and operator in ["<", "<="]:
+        if v1 < v2 and operator in ['<', '<=']:
             result = True
-        if v1 > v2 and operator in [">", ">="]:
+        if v1 > v2 and operator in ['>', '>=']:
             result = True
         # logger.warning(f"_compare_versions: v1={v1}, v2={v2}, operator='{operator}', result={result}")
         return result
@@ -704,15 +704,15 @@ class Version:
 def get_python_version():
     PYTHON_VERSION = (
         str(sys.version_info[0])
-        + "."
+        + '.'
         + str(sys.version_info[1])
-        + "."
+        + '.'
         + str(sys.version_info[2])
-        + " "
+        + ' '
         + str(sys.version_info[3])
     )
-    if sys.version_info[3] != "final":
-        PYTHON_VERSION += " " + str(sys.version_info[4])
+    if sys.version_info[3] != 'final':
+        PYTHON_VERSION += ' ' + str(sys.version_info[4])
     return PYTHON_VERSION
 
 
@@ -729,7 +729,7 @@ def execute_subprocess(commandline, wait=True):
     if wait:
         ## Wait for date to terminate. Get return returncode ##
         p.wait()
-    return str(result, encoding="utf-8", errors="strict")
+    return str(result, encoding='utf-8', errors='strict')
 
 
 def running_virtual():
@@ -739,4 +739,4 @@ def running_virtual():
 
     # The check for sys.real_prefix covers virtualenv,
     # the equality of non-empty sys.base_prefix with sys.prefix covers venv.
-    return getattr(sys, "base_prefix", sys.prefix) != sys.prefix or hasattr(sys, "real_prefix")
+    return getattr(sys, 'base_prefix', sys.prefix) != sys.prefix or hasattr(sys, 'real_prefix')

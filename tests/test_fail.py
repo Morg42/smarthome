@@ -36,13 +36,13 @@ logger = logging.getLogger(__name__)
 class TestModule(unittest.TestCase):
     def test_fail(self):
 
-        logger.warning("")
-        logger.warning("=== Begin Fail Test:")
+        logger.warning('')
+        logger.warning('=== Begin Fail Test:')
 
         self.assertIsNotNone(1)
 
-        logger.warning("=== End Fail Test")
+        logger.warning('=== End Fail Test')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main(verbosity=2)

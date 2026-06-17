@@ -41,19 +41,19 @@ class CherryPyFilter(logging.Filter):
     whereas False will include the record into further processing and eventual output
     """
 
-    def __init__(self, name=""):
+    def __init__(self, name=''):
         pass
 
     def filter(self, record):
 
-        if record.name != "cherrypy.error":
+        if record.name != 'cherrypy.error':
             return True
 
-        if record.msg[0] == "[":
-            record.msg = "CherryPy " + record.msg[22:].strip()
+        if record.msg[0] == '[':
+            record.msg = 'CherryPy ' + record.msg[22:].strip()
 
-        if record.msg.startswith("CherryPy ENGINE Error in HTTPServer.tick") and record.msg.endswith(
-            "OSError: [Errno 0] Error"
+        if record.msg.startswith('CherryPy ENGINE Error in HTTPServer.tick') and record.msg.endswith(
+            'OSError: [Errno 0] Error'
         ):
             return False
 
@@ -61,9 +61,9 @@ class CherryPyFilter(logging.Filter):
 
 
 class Http(Module):
-    version = "1.7.2"
-    _shortname = ""
-    _longname = "CherryPy http module for SmartHomeNG"
+    version = '1.7.2'
+    _shortname = ''
+    _longname = 'CherryPy http module for SmartHomeNG'
 
     _applications = OrderedDict()
     _services = OrderedDict()
@@ -79,14 +79,14 @@ class Http(Module):
     _hostmap_services = {}
     _hostmap_visu = {}
 
-    _gstatic_dir = ""
-    gtemplates_dir = ""
-    gstatic_dir = ""
+    _gstatic_dir = ''
+    gtemplates_dir = ''
+    gstatic_dir = ''
 
     _server1 = None  # cherrypy server object for web interfaces of plugins
     _server2 = None  # cherrypy server object for services of plugins
 
-    webif_mount_prefix = "/plugin"  # changes <ip>:<port>/<plugin_name> to <ip>:<port>/plugin/<plugin_name>
+    webif_mount_prefix = '/plugin'  # changes <ip>:<port>/<plugin_name> to <ip>:<port>/plugin/<plugin_name>
 
     # def __init__(self, sh, port=None, servicesport=None, ip='', threads=8, starturl='',
     #                    showpluginlist='True', showservicelist='False', showtraceback='False',
@@ -101,43 +101,43 @@ class Http(Module):
 
         self.logger = logging.getLogger(__name__)
         self._sh = sh
-        self.logger.debug("Initializing...")
+        self.logger.debug('Initializing...')
         self.logger.debug("Parameters = '{}'".format(str(dict(self._parameters))))
 
         # ================================================================================
         # Checking and converting parameters
         #
         try:
-            self._user = self._parameters["user"]
-            self._password = self._parameters["password"]
-            self._hashed_password = self._parameters["hashed_password"]
-            self._realm = "shng_http_webif"
-            self._ip = self._parameters["ip"]
-            self._port = self._parameters["port"]
-            self._tls_port = self._parameters["tls_port"]
+            self._user = self._parameters['user']
+            self._password = self._parameters['password']
+            self._hashed_password = self._parameters['hashed_password']
+            self._realm = 'shng_http_webif'
+            self._ip = self._parameters['ip']
+            self._port = self._parameters['port']
+            self._tls_port = self._parameters['tls_port']
 
-            self._use_tls = self._parameters["use_tls"]
-            self._cert_name = self._parameters["tls_cert"]
-            self._privkey_name = self._parameters["tls_key"]
+            self._use_tls = self._parameters['use_tls']
+            self._cert_name = self._parameters['tls_cert']
+            self._privkey_name = self._parameters['tls_key']
 
-            self._service_user = self._parameters["service_user"]
-            self._service_password = self._parameters["service_password"]
-            self._service_hashed_password = self._parameters["service_hashed_password"]
-            self._service_realm = "shng_http_service"
-            self._servicesport = self._parameters["servicesport"]
+            self._service_user = self._parameters['service_user']
+            self._service_password = self._parameters['service_password']
+            self._service_hashed_password = self._parameters['service_hashed_password']
+            self._service_realm = 'shng_http_service'
+            self._servicesport = self._parameters['servicesport']
 
             # self._visuport = self._parameters['visuport']
 
-            self.threads = self._parameters["threads"]
-            self._showpluginlist = self._parameters["showpluginlist"]
-            self._showservicelist = self._parameters["showservicelist"]
-            self._showtraceback = self._parameters["showtraceback"]
+            self.threads = self._parameters['threads']
+            self._showpluginlist = self._parameters['showpluginlist']
+            self._showservicelist = self._parameters['showservicelist']
+            self._showtraceback = self._parameters['showtraceback']
 
-            self._starturl = self._parameters["starturl"]
-            self._connectionretries = self._parameters["connectionretries"]
-            self._webif_pagelength = self._parameters["webif_pagelength"]
+            self._starturl = self._parameters['starturl']
+            self._connectionretries = self._parameters['connectionretries']
+            self._webif_pagelength = self._parameters['webif_pagelength']
         except Exception:
-            self.logger.critical("Inconsistent module (invalid metadata definition)")
+            self.logger.critical('Inconsistent module (invalid metadata definition)')
             self._init_complete = False
             return
 
@@ -150,7 +150,7 @@ class Http(Module):
         #     self._ip = self._get_local_ip_address()
 
         if self.is_port_in_use(int(self._port)):
-            self.logger.critical("Error starting http module: port {} is already in use".format(self._port))
+            self.logger.critical('Error starting http module: port {} is already in use'.format(self._port))
             self._init_complete = False
             return
 
@@ -167,7 +167,7 @@ class Http(Module):
                 self._use_tls = False
         if self._use_tls:
             if self.is_port_in_use(int(self._tls_port)):
-                self.logger.critical("Error starting http module: TLS-port {} is already in use".format(self._tls_port))
+                self.logger.critical('Error starting http module: TLS-port {} is already in use'.format(self._tls_port))
                 self._init_complete = False
                 return
 
@@ -189,9 +189,9 @@ class Http(Module):
 
         self._basic_auth = self._is_set(self._hashed_password)
         self._user_dict[self._user] = {
-            "password_hash": self._hashed_password,
-            "name": "Administrator",
-            "groups": ["admin"],
+            'password_hash': self._hashed_password,
+            'name': 'Administrator',
+            'groups': ['admin'],
         }
 
         # Check service-user information and fill _serviceuser_dict
@@ -212,8 +212,8 @@ class Http(Module):
 
         self._service_basic_auth = self._is_set(self._service_hashed_password)
         self._serviceuser_dict[self._service_user] = {
-            "password_hash": self._service_hashed_password,
-            "groups": ["user"],
+            'password_hash': self._service_hashed_password,
+            'groups': ['user'],
         }
 
         if self._servicesport == 0:
@@ -225,7 +225,7 @@ class Http(Module):
 
         if self.is_port_in_use(int(self._servicesport)):
             self.logger.critical(
-                "Error starting http module: servicesport {} is already in use".format(self._servicesport)
+                'Error starting http module: servicesport {} is already in use'.format(self._servicesport)
             )
             self._init_complete = False
             return
@@ -233,9 +233,9 @@ class Http(Module):
         # ------------------------------------------------------------------------
         # Setting up webinterface environment
         #
-        self.webif_dir = os.path.dirname(os.path.abspath(__file__)) + "/webif"
-        self.gtemplates_dir = self.webif_dir + "/gtemplates"
-        self.gstatic_dir = self.webif_dir + "/gstatic"
+        self.webif_dir = os.path.dirname(os.path.abspath(__file__)) + '/webif'
+        self.gtemplates_dir = self.webif_dir + '/gtemplates'
+        self.gstatic_dir = self.webif_dir + '/gstatic'
 
         self.logger.info(
             "Module 'http': ip address = {}, hostname = '{}'".format(
@@ -247,40 +247,40 @@ class Http(Module):
 
         if self._use_tls:
             global_conf = {
-                "global": {
-                    "engine.autoreload.on": False,
-                    "error_page.404": self._error_page,
-                    "error_page.400": self._error_page,
-                    "error_page.500": self._error_page,
-                    "server.socket_host": self._ip,
-                    "server.socket_port": int(self._tls_port),
-                    "server.ssl_module": "builtin",
+                'global': {
+                    'engine.autoreload.on': False,
+                    'error_page.404': self._error_page,
+                    'error_page.400': self._error_page,
+                    'error_page.500': self._error_page,
+                    'server.socket_host': self._ip,
+                    'server.socket_port': int(self._tls_port),
+                    'server.ssl_module': 'builtin',
                     #                    'server.ssl_module': 'pyOpenSSL',
-                    "server.ssl_certificate": self._cert_file,
-                    "server.ssl_private_key": self._privkey_file,
+                    'server.ssl_certificate': self._cert_file,
+                    'server.ssl_private_key': self._privkey_file,
                     #                    'tools.force_tls.on': True,
-                },
+                }
             }
         else:
             global_conf = {
-                "global": {
-                    "engine.autoreload.on": False,
-                    "error_page.404": self._error_page,
-                    "error_page.400": self._error_page,
-                    "error_page.500": self._error_page,
-                    "server.socket_host": self._ip,
-                    "server.socket_port": int(self._port),
-                },
+                'global': {
+                    'engine.autoreload.on': False,
+                    'error_page.404': self._error_page,
+                    'error_page.400': self._error_page,
+                    'error_page.500': self._error_page,
+                    'server.socket_host': self._ip,
+                    'server.socket_port': int(self._port),
+                }
             }
 
         # Update the global CherryPy configuration
         cherrypy.config.update(global_conf)
         cherrypy.config.update(
             {
-                "log.screen": False,
-                "log.access_file": "",
-                "log.error_file": "",
-                "webif_pagelength": self._webif_pagelength,
+                'log.screen': False,
+                'log.access_file': '',
+                'log.error_file': '',
+                'webif_pagelength': self._webif_pagelength,
             }
         )
         if self._use_tls:
@@ -302,7 +302,7 @@ class Http(Module):
         # self.tplenv = Environment(loader=FileSystemLoader([os.path.join( self.webif_dir, 'templates' ), globaltemplates] ))
         self.tplenv = self.init_template_environment()
 
-        self._gstatic_dir = self.webif_dir + "/gstatic"
+        self._gstatic_dir = self.webif_dir + '/gstatic'
 
         # self.module_conf = {
         #     '/': {
@@ -323,28 +323,20 @@ class Http(Module):
         # }
 
         self.msg_conf = {
-            "/": {
-                "tools.staticdir.root": self.webif_dir,
+            '/': {'tools.staticdir.root': self.webif_dir},
+            '/favicon.ico': {
+                'tools.staticfile.on': True,
+                'tools.staticfile.filename': self.webif_dir + '/gstatic/img/favicon.ico',
             },
-            "/favicon.ico": {
-                "tools.staticfile.on": True,
-                "tools.staticfile.filename": self.webif_dir + "/gstatic/img/favicon.ico",
-            },
-            "/gstatic": {
-                "tools.staticdir.on": True,
-                "tools.staticdir.dir": "gstatic",
-            },
-            "/static": {
-                "tools.staticdir.on": True,
-                "tools.staticdir.dir": "static",
-            },
+            '/gstatic': {'tools.staticdir.on': True, 'tools.staticdir.dir': 'gstatic'},
+            '/static': {'tools.staticdir.on': True, 'tools.staticdir.dir': 'static'},
         }
 
         # mount the application on the '/' base path (Creating an app-instance on the way)
         self.root = ModuleApp(self, self._starturl)
 
         #        self.logger.info("module_conf = {}".format(self.module_conf))
-        cherrypy.tree.mount(self.root, "/", config=self.msg_conf)
+        cherrypy.tree.mount(self.root, '/', config=self.msg_conf)
 
         # Start the CherryPy HTTP server engine
         #        if self._use_tls:
@@ -354,32 +346,23 @@ class Http(Module):
         # Register the plugins-list app and the services-list app
         self.logger.info("mount '/plugins' - webif_dir = '{}'".format(self.webif_dir))
         config = {
-            "/": {
-                "tools.auth_basic.on": self._basic_auth,
-                "tools.auth_basic.realm": self._realm,
-                "tools.auth_basic.checkpassword": self.validate_password,
-                "tools.staticdir.root": self.webif_dir,
+            '/': {
+                'tools.auth_basic.on': self._basic_auth,
+                'tools.auth_basic.realm': self._realm,
+                'tools.auth_basic.checkpassword': self.validate_password,
+                'tools.staticdir.root': self.webif_dir,
             },
-            "/static": {
-                "tools.staticdir.on": True,
-                "tools.staticdir.dir": "static",
-            },
-            "/gstatic": {
-                "tools.staticdir.on": True,
-                "tools.staticdir.dir": "gstatic",
-            },
+            '/static': {'tools.staticdir.on': True, 'tools.staticdir.dir': 'static'},
+            '/gstatic': {'tools.staticdir.on': True, 'tools.staticdir.dir': 'gstatic'},
         }
         config_services = {
-            "/": {
-                "tools.auth_basic.on": self._service_basic_auth,
-                "tools.auth_basic.realm": self._service_realm,
-                "tools.auth_basic.checkpassword": self.validate_service_password,
-                "tools.staticdir.root": self.webif_dir,
+            '/': {
+                'tools.auth_basic.on': self._service_basic_auth,
+                'tools.auth_basic.realm': self._service_realm,
+                'tools.auth_basic.checkpassword': self.validate_service_password,
+                'tools.staticdir.root': self.webif_dir,
             },
-            "/static": {
-                "tools.staticdir.on": True,
-                "tools.staticdir.dir": "static",
-            },
+            '/static': {'tools.staticdir.on': True, 'tools.staticdir.dir': 'static'},
         }
         self.logger.info("Module http: config dict: '{}'".format(config))
         self.logger.info(
@@ -391,13 +374,13 @@ class Http(Module):
         if self._showpluginlist:
             # Register the plugin-list as a cherrypy app
             self.root.plugins = _PluginsApp(self)
-            self.register_webif(self.root.plugins, "plugins", config)
+            self.register_webif(self.root.plugins, 'plugins', config)
         #                               pluginclass='', instance='', description='', webifname='')
 
         if self._showservicelist:
             # Register the service-list as a cherrypy app
             self.root.services = _ServicesApp(self)
-            self.register_service(self.root.services, "services", config_services)
+            self.register_service(self.root.services, 'services', config_services)
         #                                  pluginclass='', instance='', description='', servicename='')
 
         return
@@ -409,13 +392,13 @@ class Http(Module):
         :return: Jinja2 template engine environment
         :rtype: object
         """
-        mytemplates = os.path.join(self.webif_dir, "templates")
+        mytemplates = os.path.join(self.webif_dir, 'templates')
         globaltemplates = self.gtemplates_dir
         tplenv = Environment(loader=FileSystemLoader([mytemplates, globaltemplates]))
 
-        tplenv.globals["isfile"] = self.is_staticfile
-        tplenv.globals["_"] = self.translate  # use translate method of webinterface class
-        tplenv.globals["len"] = len
+        tplenv.globals['isfile'] = self.is_staticfile
+        tplenv.globals['_'] = self.translate  # use translate method of webinterface class
+        tplenv.globals['len'] = len
         return tplenv
 
     def is_staticfile(self, path):
@@ -431,8 +414,8 @@ class Http(Module):
         :return: True if the file exists
         :rtype: bool
         """
-        if path.startswith("/gstatic/"):
-            complete_path = os.path.join(self.gstatic_dir, path[len("/gstatic/") :])
+        if path.startswith('/gstatic/'):
+            complete_path = os.path.join(self.gstatic_dir, path[len('/gstatic/') :])
         else:
             complete_path = os.path.join(self.webif_dir, path)
         from os.path import isfile as isfile
@@ -452,7 +435,7 @@ class Http(Module):
         :param password: (hashed-)password string from parameters
         :rtype: bool
         """
-        return password is not None and password != ""
+        return password is not None and password != ''
 
     def get_user_dict(self):
         """
@@ -465,9 +448,9 @@ class Http(Module):
         """
         # ensure that actual value of password_hash is used
         self._user_dict[self._user] = {
-            "password_hash": self._hashed_password,
-            "name": "Administrator",
-            "groups": ["admin"],
+            'password_hash': self._hashed_password,
+            'name': 'Administrator',
+            'groups': ['admin'],
         }
         return self._user_dict
 
@@ -487,14 +470,14 @@ class Http(Module):
         user = self._user_dict.get(username, None)
         if user is None:
             return False
-        user_pwd_hash = user.get("password_hash", "")
+        user_pwd_hash = user.get('password_hash', '')
         pwd_hash = Utils.create_hash(password)
 
         return pwd_hash == user_pwd_hash
 
     def validate_service_password(self, realm, username, password):
         """ """
-        if username != self._service_user or password is None or password == "":
+        if username != self._service_user or password is None or password == '':
             return False
 
         if self._service_hashed_password is not None:
@@ -521,14 +504,14 @@ class Http(Module):
         :rtype: str
 
         """
-        tmpl = self.tplenv.get_template("error_page.html")
+        tmpl = self.tplenv.get_template('error_page.html')
         errno = status.split()[0]
-        if (not self._showtraceback) or (errno == "404"):
-            traceback = ""
+        if (not self._showtraceback) or (errno == '404'):
+            traceback = ''
         else:
-            traceback = traceback.replace("\n", "<br>&nbsp;&nbsp;")
-            traceback = traceback.replace(" ", "&nbsp;&nbsp;")
-            traceback = "&nbsp;&nbsp;" + traceback
+            traceback = traceback.replace('\n', '<br>&nbsp;&nbsp;')
+            traceback = traceback.replace(' ', '&nbsp;&nbsp;')
+            traceback = '&nbsp;&nbsp;' + traceback
         return tmpl.render(errno=errno, errmsg=message, traceback=traceback, cpversion=version)
 
     def _get_local_ip_address(self):
@@ -545,26 +528,26 @@ class Http(Module):
         count = 0
         while (not connected) and (count < self._connectionretries):
             try:
-                s.connect(("10.10.10.10", 80))
+                s.connect(('10.10.10.10', 80))
                 connected = True
             except OSError:
                 count += 1
-                self.logger.debug(f"Network access issue. Retry {count}/{self._connectionretries}")
+                self.logger.debug(f'Network access issue. Retry {count}/{self._connectionretries}')
                 time.sleep(5)
         if connected:
             return s.getsockname()[0]
         else:
             try:
-                s.connect(("127.0.0.1", 80))
-                self.logger.info("Network access not possible, using local ip 127.0.0.1")
-                return "127.0.0.1"
+                s.connect(('127.0.0.1', 80))
+                self.logger.info('Network access not possible, using local ip 127.0.0.1')
+                return '127.0.0.1'
             except Exception:
                 try:
-                    s.connect(("127.0.1.1", 80))
-                    self.logger.info("Network access not possible, using local ip 127.0.1.1")
-                    return "127.0.1.1"
+                    s.connect(('127.0.1.1', 80))
+                    self.logger.info('Network access not possible, using local ip 127.0.1.1')
+                    return '127.0.1.1'
                 except Exception as e:
-                    self.logger.info("Problem determining local ip address: {}".format(e))
+                    self.logger.info('Problem determining local ip address: {}'.format(e))
                     return None
 
     def get_local_ip_address(self):
@@ -589,14 +572,14 @@ class Http(Module):
             return socket.gethostbyaddr(self.get_local_ip_address())[0]  # can fail with default /etc/hosts
         except socket.herror:
             try:
-                return socket.gethostbyaddr("127.0.1.1")[
+                return socket.gethostbyaddr('127.0.1.1')[
                     0
                 ]  # in debian based systems hostname is assigned to "127.0.1.1" by default
             except socket.herror:
                 try:
-                    return socket.gethostbyaddr("127.0.0.1")[0]  # 'localhost' in most cases
+                    return socket.gethostbyaddr('127.0.0.1')[0]  # 'localhost' in most cases
                 except socket.herror:
-                    return "localhost"  # should not happen
+                    return 'localhost'  # should not happen
 
     def get_local_port(self):
         """
@@ -638,35 +621,35 @@ class Http(Module):
         """
         Build hostmaps for working with two different ports for web interfaces and services
         """
-        self.dom1 = self.get_local_ip_address() + ":" + str(self._port)
-        self.dom2 = self.get_local_hostname() + ":" + str(self._port)
-        self.dom3 = self.get_local_hostname().split(".")[0] + ".local" + ":" + str(self._port)
+        self.dom1 = self.get_local_ip_address() + ':' + str(self._port)
+        self.dom2 = self.get_local_hostname() + ':' + str(self._port)
+        self.dom3 = self.get_local_hostname().split('.')[0] + '.local' + ':' + str(self._port)
 
-        self.dom4 = self.get_local_ip_address() + ":" + str(self._servicesport)
-        self.dom5 = self.get_local_hostname() + ":" + str(self._servicesport)
-        self.dom6 = self.get_local_hostname().split(".")[0] + ".local" + ":" + str(self._servicesport)
+        self.dom4 = self.get_local_ip_address() + ':' + str(self._servicesport)
+        self.dom5 = self.get_local_hostname() + ':' + str(self._servicesport)
+        self.dom6 = self.get_local_hostname().split('.')[0] + '.local' + ':' + str(self._servicesport)
 
         self._hostmap = {}
-        self._hostmap[self.dom1] = "/plugins"
-        self._hostmap[self.dom2] = "/plugins"
-        self._hostmap[self.dom3] = "/plugins"
+        self._hostmap[self.dom1] = '/plugins'
+        self._hostmap[self.dom2] = '/plugins'
+        self._hostmap[self.dom3] = '/plugins'
 
         #        self.logger.info("_hostmap = {}".format(self._hostmap))
 
         self._hostmap_webifs = {}
-        self._hostmap_webifs[self.dom1] = ""  # früher: '/msg'
-        self._hostmap_webifs[self.dom2] = ""
-        self._hostmap_webifs[self.dom3] = ""
+        self._hostmap_webifs[self.dom1] = ''  # früher: '/msg'
+        self._hostmap_webifs[self.dom2] = ''
+        self._hostmap_webifs[self.dom3] = ''
 
         self._hostmap_services = {}
         if self._port != self._servicesport:
-            self._hostmap_services[self.dom4] = ""
-            self._hostmap_services[self.dom5] = ""
-            self._hostmap_services[self.dom6] = ""
+            self._hostmap_services[self.dom4] = ''
+            self._hostmap_services[self.dom5] = ''
+            self._hostmap_services[self.dom6] = ''
 
-        self.logger.info(f"_hostmap = {self._hostmap}")
-        self.logger.info(f"_hostmap_webifs = {self._hostmap_webifs}")
-        self.logger.info(f"_hostmap_services = {self._hostmap_services}")
+        self.logger.info(f'_hostmap = {self._hostmap}')
+        self.logger.info(f'_hostmap_webifs = {self._hostmap_webifs}')
+        self.logger.info(f'_hostmap_services = {self._hostmap_services}')
 
     def get_webifs_for_plugin(self, pluginname):
         """
@@ -692,7 +675,7 @@ class Http(Module):
         """
         result_list = []
         for webif in self._applications.keys():
-            if self._applications[webif]["Pluginname"] == pluginname:
+            if self._applications[webif]['Pluginname'] == pluginname:
                 result_list.append(self._applications[webif])
         return result_list
 
@@ -720,7 +703,7 @@ class Http(Module):
         """
         result_list = []
         for service in self._services.keys():
-            if self._services[service]["Pluginname"] == pluginname:
+            if self._services[service]['Pluginname'] == pluginname:
                 result_list.append(self._services[service])
         return result_list
 
@@ -729,10 +712,10 @@ class Http(Module):
         app,
         pluginname,
         conf,
-        pluginclass="",
-        instance="",
-        description="",
-        webifname="",
+        pluginclass='',
+        instance='',
+        description='',
+        webifname='',
         use_global_basic_auth=True,
         useprefix=True,
     ):
@@ -775,33 +758,33 @@ class Http(Module):
         """
         pluginname = pluginname.lower()
         instance = instance.lower()
-        if webifname == "":
+        if webifname == '':
             webifname = pluginname
-        if instance != "":
-            webifname = webifname + "_" + instance
+        if instance != '':
+            webifname = webifname + '_' + instance
 
-        mount = "/" + webifname
+        mount = '/' + webifname
         if useprefix:
             mount = self.webif_mount_prefix + mount
-        if description == "":
-            description = "Webinterface {} of plugin {}".format(webifname, pluginname)
+        if description == '':
+            description = 'Webinterface {} of plugin {}'.format(webifname, pluginname)
 
         if use_global_basic_auth:
-            conf["/"]["tools.auth_basic.on"] = self._basic_auth
-            conf["/"]["tools.auth_basic.realm"] = self._realm
-            conf["/"]["tools.auth_basic.checkpassword"] = self.validate_password
+            conf['/']['tools.auth_basic.on'] = self._basic_auth
+            conf['/']['tools.auth_basic.realm'] = self._realm
+            conf['/']['tools.auth_basic.checkpassword'] = self.validate_password
 
-        conf["/gstatic"] = {}
-        conf["/gstatic"]["tools.staticdir.on"] = True
-        conf["/gstatic"]["tools.staticdir.dir"] = self._gstatic_dir
+        conf['/gstatic'] = {}
+        conf['/gstatic']['tools.staticdir.on'] = True
+        conf['/gstatic']['tools.staticdir.dir'] = self._gstatic_dir
 
         plugin_fullname = pluginname
-        if instance != "":
-            plugin_fullname += "_" + instance
+        if instance != '':
+            plugin_fullname += '_' + instance
         self.logger.info(
             f"Registering webinterface '{webifname}' of plugin '{plugin_fullname}'  -  conf dict: '{conf}'"
         )
-        if pluginclass != "":
+        if pluginclass != '':
             webif_key = webifname
             # statt:
             #            if instance == '':
@@ -809,17 +792,17 @@ class Http(Module):
             #            else:
             #                webif_key = instance + '@' + webifname
             self._applications[webif_key] = {
-                "Mount": mount,
-                "Pluginclass": pluginclass,
-                "Webifname": webifname,
-                "Pluginname": pluginname,
-                "Instance": instance,
-                "Conf": conf,
-                "Description": description,
+                'Mount': mount,
+                'Pluginclass': pluginclass,
+                'Webifname': webifname,
+                'Pluginname': pluginname,
+                'Instance': instance,
+                'Conf': conf,
+                'Description': description,
             }
             # self.logger.info("self._applications['{}'] = {}".format(webif_key, self._applications[webif_key]))
         if len(self._hostmap_webifs) > 0:
-            conf["/"]["request.dispatch"] = cherrypy.dispatch.VirtualHost(**self._hostmap_webifs)
+            conf['/']['request.dispatch'] = cherrypy.dispatch.VirtualHost(**self._hostmap_webifs)
 
         cherrypy.tree.mount(app, mount, config=conf)
         return
@@ -829,10 +812,10 @@ class Http(Module):
         app,
         pluginname,
         conf,
-        pluginclass="",
-        instance="",
-        description="",
-        servicename="",
+        pluginclass='',
+        instance='',
+        description='',
+        servicename='',
         use_global_basic_auth=True,
     ):
         """
@@ -871,25 +854,25 @@ class Http(Module):
         """
         pluginname = pluginname.lower()
         instance = instance.lower()
-        if servicename == "":
+        if servicename == '':
             servicename = pluginname
-        if instance != "":
-            servicename = servicename + "_" + instance
+        if instance != '':
+            servicename = servicename + '_' + instance
 
-        mount = "/" + servicename
-        if description == "":
-            description = "Service {} of plugin {}".format(servicename, pluginname)
+        mount = '/' + servicename
+        if description == '':
+            description = 'Service {} of plugin {}'.format(servicename, pluginname)
 
         if use_global_basic_auth:
-            conf["/"]["tools.auth_basic.on"] = self._service_basic_auth
-            conf["/"]["tools.auth_basic.realm"] = self._service_realm
-            conf["/"]["tools.auth_basic.checkpassword"] = self.validate_service_password
+            conf['/']['tools.auth_basic.on'] = self._service_basic_auth
+            conf['/']['tools.auth_basic.realm'] = self._service_realm
+            conf['/']['tools.auth_basic.checkpassword'] = self.validate_service_password
 
         plugin_fullname = pluginname
-        if instance != "":
-            plugin_fullname += "_" + instance
+        if instance != '':
+            plugin_fullname += '_' + instance
         self.logger.info(f"Registering service '{servicename}' of plugin '{plugin_fullname}'  -  conf dict: '{conf}'")
-        if pluginclass != "":
+        if pluginclass != '':
             service_key = servicename
             # statt:
             #            if instance == '':
@@ -897,18 +880,18 @@ class Http(Module):
             #            else:
             #                service_key = instance + '@' + servicename
             self._services[servicename] = {
-                "Mount": mount,
-                "Pluginclass": pluginclass,
-                "Servicename": servicename,
-                "Pluginname": pluginname,
-                "Instance": instance,
-                "Conf": conf,
-                "Description": description,
+                'Mount': mount,
+                'Pluginclass': pluginclass,
+                'Servicename': servicename,
+                'Pluginname': pluginname,
+                'Instance': instance,
+                'Conf': conf,
+                'Description': description,
             }
             self.logger.info("self._services['{}'] = {}".format(service_key, self._services[service_key]))
 
         if len(self._hostmap_services) > 0:
-            conf["/"]["request.dispatch"] = cherrypy.dispatch.VirtualHost(**self._hostmap_services)
+            conf['/']['request.dispatch'] = cherrypy.dispatch.VirtualHost(**self._hostmap_services)
 
         cherrypy.tree.mount(app, mount, config=conf)
         return
@@ -942,21 +925,21 @@ class Http(Module):
             )
 
         if visu_port is None or visu_port < 1024:
-            self.logger.error("Visu port is missing o given port is < 1024")
+            self.logger.error('Visu port is missing o given port is < 1024')
             return
 
-        self._visu_user = "visuuser"
-        self._visu_password = ""
-        self._visu_hashed_password = ""
+        self._visu_user = 'visuuser'
+        self._visu_password = ''
+        self._visu_hashed_password = ''
 
         self._visu_basic_auth = self._is_set(self._visu_hashed_password)
-        self._visu_realm = "shng_http_visu"
+        self._visu_realm = 'shng_http_visu'
         self._visuport = visu_port
 
         if use_global_basic_auth:
-            conf["/"]["tools.auth_basic.on"] = self._visu_basic_auth
-            conf["/"]["tools.auth_basic.realm"] = self._visu_realm
-            conf["/"]["tools.auth_basic.checkpassword"] = self.validate_service_password
+            conf['/']['tools.auth_basic.on'] = self._visu_basic_auth
+            conf['/']['tools.auth_basic.realm'] = self._visu_realm
+            conf['/']['tools.auth_basic.checkpassword'] = self.validate_service_password
 
         plugin_fullname = pluginname
         self.logger.info(f"Registering visu of plugin '{plugin_fullname}'  -  conf dict: '{conf}'")
@@ -970,20 +953,20 @@ class Http(Module):
         # cherrypy.engine.start()
 
         # build hostmap for visu
-        dom1 = self.get_local_ip_address() + ":" + str(self._visuport)
-        dom2 = self.get_local_hostname() + ":" + str(self._visuport)
-        dom3 = self.get_local_hostname().split(".")[0] + ".local" + ":" + str(self._visuport)
-        self._hostmap_visu[dom1] = "/msgV"
-        self._hostmap_visu[dom2] = "/msgV"
-        self._hostmap_visu[dom3] = "/msgV"
-        self.logger.info(f"_hostmap_visu = {self._hostmap_visu}")
+        dom1 = self.get_local_ip_address() + ':' + str(self._visuport)
+        dom2 = self.get_local_hostname() + ':' + str(self._visuport)
+        dom3 = self.get_local_hostname().split('.')[0] + '.local' + ':' + str(self._visuport)
+        self._hostmap_visu[dom1] = '/msgV'
+        self._hostmap_visu[dom2] = '/msgV'
+        self._hostmap_visu[dom3] = '/msgV'
+        self.logger.info(f'_hostmap_visu = {self._hostmap_visu}')
 
         if len(self._hostmap_visu) > 0:
-            conf["/"]["request.dispatch"] = cherrypy.dispatch.VirtualHost(**self._hostmap_visu)
+            conf['/']['request.dispatch'] = cherrypy.dispatch.VirtualHost(**self._hostmap_visu)
 
         cherrypy.engine.stop()
         # cherrypy.tree.mount(app, mount, config = conf)
-        cherrypy.tree.mount(_PluginsApp(self), "/", config=conf)
+        cherrypy.tree.mount(_PluginsApp(self), '/', config=conf)
         cherrypy.engine.start()
         return
 
@@ -994,7 +977,7 @@ class Http(Module):
 
         Otherwise don't enter code here
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "start()"}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'start()'}))
         pass
 
     def stop(self):
@@ -1004,14 +987,14 @@ class Http(Module):
 
         Otherwise don't enter code here
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "stop()"}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'stop()'}))
 
-        self.logger.info("{}: Shutting down".format(self._shortname))  # should be debug
+        self.logger.info('{}: Shutting down'.format(self._shortname))  # should be debug
         cherrypy.engine.exit()
         for thread in threading.enumerate():
-            if thread.name == "_TimeoutMonitor":
+            if thread.name == '_TimeoutMonitor':
                 thread.join(2)
-        self.logger.debug("{}: CherryPy engine exited".format(self._shortname))
+        self.logger.debug('{}: CherryPy engine exited'.format(self._shortname))
 
     def log_server_info(self, server_nr):
         """
@@ -1026,19 +1009,19 @@ class Http(Module):
         elif server_nr == 3:
             server = self._server3
         else:
-            self.logger.notice(f"log_server_info: Invalid server number {server_nr} specified")
+            self.logger.notice(f'log_server_info: Invalid server number {server_nr} specified')
             return
 
         if server is None:
-            self.logger.notice(f"log_server_info: Server object for server number {server_nr} does not exist")
+            self.logger.notice(f'log_server_info: Server object for server number {server_nr} does not exist')
             return
 
-        self.logger.notice(f"log_server_info: Information for server number {server_nr}")
-        self.logger.notice(f" - socket {server.socket_host}:{server.socket_port}")
-        self.logger.notice(f" - httpserver {server.httpserver}  description {server.description}")
-        self.logger.notice(f" - running {server.running}  description {server.wsgi_version}")
-        self.logger.notice(f" - socketfile {server.socket_file}  base {server.base}")
-        self.logger.notice(f" - bound_addr {server.bound_addr}  base {server.statistics}")
+        self.logger.notice(f'log_server_info: Information for server number {server_nr}')
+        self.logger.notice(f' - socket {server.socket_host}:{server.socket_port}')
+        self.logger.notice(f' - httpserver {server.httpserver}  description {server.description}')
+        self.logger.notice(f' - running {server.running}  description {server.wsgi_version}')
+        self.logger.notice(f' - socketfile {server.socket_file}  base {server.base}')
+        self.logger.notice(f' - bound_addr {server.bound_addr}  base {server.statistics}')
         return
 
 
@@ -1070,14 +1053,14 @@ class ModuleApp:
                 result = self.starturl
             else:
                 if self.mod._showpluginlist:
-                    result = "plugins"
+                    result = 'plugins'
                 else:
-                    return ""
+                    return ''
         else:
             if self.mod._showservicelist:
-                result = "services"
+                result = 'services'
             else:
-                return ""
+                return ''
         result = '<html><meta http-equiv="refresh" content="0; URL=/' + result + '"></html>'
         return result
 
@@ -1099,7 +1082,7 @@ class _PluginsApp:
         This method is exposed to CherryPy. It implements the page 'plugins/index.html'
         """
 
-        tmpl = self.module.tplenv.get_template("plugins.html")
+        tmpl = self.module.tplenv.get_template('plugins.html')
         result = tmpl.render(webinterfaces=self.module._applications, prefix=self.module.webif_mount_prefix)
         return result
 
@@ -1121,6 +1104,6 @@ class _ServicesApp:
         This method is exposed to CherryPy. It implements the page 'services/index.html'
         """
 
-        tmpl = self.mod.tplenv.get_template("services.html")
+        tmpl = self.mod.tplenv.get_template('services.html')
         result = tmpl.render(services=self.mod._services)
         return result

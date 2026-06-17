@@ -74,7 +74,7 @@ class Database:
     """
 
     # Supported formatting styles
-    _styles = ("qmark", "format", "numeric", "named", "pyformat")
+    _styles = ('qmark', 'format', 'numeric', 'named', 'pyformat')
 
     # Supported formatting translations:
     # - input_token: The token in source query to replace with output token
@@ -85,60 +85,60 @@ class Database:
     # - {0}: Number of parameter (counting from 1 for first parameter)
     # - {1}: First match of input_token regex (use 2 for second, 3 for third, etc)
     _translations = {
-        "qmark": {
-            "qmark": {},
-            "format": {"input_token": "?", "output_token": "%s"},
-            "numeric": {"input_token": "?", "output_token": ":{0}"},
-            "named": {"input_token": "?", "output_token": ":arg{0}", "output_name": "arg{0}"},
-            "pyformat": {"input_token": "?", "output_token": "%(arg{0})s", "output_name": "arg{0}"},
+        'qmark': {
+            'qmark': {},
+            'format': {'input_token': '?', 'output_token': '%s'},
+            'numeric': {'input_token': '?', 'output_token': ':{0}'},
+            'named': {'input_token': '?', 'output_token': ':arg{0}', 'output_name': 'arg{0}'},
+            'pyformat': {'input_token': '?', 'output_token': '%(arg{0})s', 'output_name': 'arg{0}'},
         },
-        "format": {
-            "qmark": {"input_token": re.compile(r"%\w+"), "output_token": "?"},
-            "format": {},
-            "numeric": {"input_token": re.compile(r"%\w+"), "output_token": ":{0}"},
-            "named": {"input_token": re.compile(r"%\w+"), "output_token": ":arg{0}", "output_name": "arg{0}"},
-            "pyformat": {"input_token": re.compile(r"%\w+"), "output_token": "%(arg{0})s", "output_name": "arg{0}"},
+        'format': {
+            'qmark': {'input_token': re.compile(r'%\w+'), 'output_token': '?'},
+            'format': {},
+            'numeric': {'input_token': re.compile(r'%\w+'), 'output_token': ':{0}'},
+            'named': {'input_token': re.compile(r'%\w+'), 'output_token': ':arg{0}', 'output_name': 'arg{0}'},
+            'pyformat': {'input_token': re.compile(r'%\w+'), 'output_token': '%(arg{0})s', 'output_name': 'arg{0}'},
         },
-        "numeric": {
-            "qmark": {"input_token": re.compile(r":(\d+)"), "output_token": "?", "input_name": "{1}"},
-            "format": {"input_token": re.compile(r":(\d+)"), "output_token": "%s", "input_name": "{1}"},
-            "numeric": {},
-            "named": {
-                "input_token": re.compile(r":(\d+)"),
-                "output_token": ":arg{1}",
-                "input_name": "{1}",
-                "output_name": "arg{1}",
+        'numeric': {
+            'qmark': {'input_token': re.compile(r':(\d+)'), 'output_token': '?', 'input_name': '{1}'},
+            'format': {'input_token': re.compile(r':(\d+)'), 'output_token': '%s', 'input_name': '{1}'},
+            'numeric': {},
+            'named': {
+                'input_token': re.compile(r':(\d+)'),
+                'output_token': ':arg{1}',
+                'input_name': '{1}',
+                'output_name': 'arg{1}',
             },
-            "pyformat": {"input_token": re.compile(r":(\d+)"), "output_token": "%(arg{1})s", "output_name": "arg{1}"},
+            'pyformat': {'input_token': re.compile(r':(\d+)'), 'output_token': '%(arg{1})s', 'output_name': 'arg{1}'},
         },
-        "named": {
-            "qmark": {"input_token": re.compile(r":(\w+)"), "output_token": "?", "input_name": "{1}"},
-            "format": {"input_token": re.compile(r":(\w+)"), "output_token": "%s", "input_name": "{1}"},
-            "numeric": {"input_token": re.compile(r":(\w+)"), "output_token": ":{0}", "input_name": "{1}"},
-            "named": {},
-            "pyformat": {
-                "input_token": re.compile(r":(\w+)"),
-                "output_token": "%({1})s",
-                "input_name": "{1}",
-                "output_name": "{1}",
+        'named': {
+            'qmark': {'input_token': re.compile(r':(\w+)'), 'output_token': '?', 'input_name': '{1}'},
+            'format': {'input_token': re.compile(r':(\w+)'), 'output_token': '%s', 'input_name': '{1}'},
+            'numeric': {'input_token': re.compile(r':(\w+)'), 'output_token': ':{0}', 'input_name': '{1}'},
+            'named': {},
+            'pyformat': {
+                'input_token': re.compile(r':(\w+)'),
+                'output_token': '%({1})s',
+                'input_name': '{1}',
+                'output_name': '{1}',
             },
         },
-        "pyformat": {
-            "qmark": {"input_token": re.compile(r"%\((\w+)\)\w+"), "output_token": "?", "input_name": "{1}"},
-            "format": {"input_token": re.compile(r"%\((\w+)\)\w+"), "output_token": "%s", "input_name": "{1}"},
-            "numeric": {"input_token": re.compile(r"%\((\w+)\)\w+"), "output_token": ":{0}", "input_name": "{1}"},
-            "named": {
-                "input_token": re.compile(r"%\((\w+)\)\w+"),
-                "output_token": ":{1}",
-                "input_name": "{1}",
-                "output_name": "{1}",
+        'pyformat': {
+            'qmark': {'input_token': re.compile(r'%\((\w+)\)\w+'), 'output_token': '?', 'input_name': '{1}'},
+            'format': {'input_token': re.compile(r'%\((\w+)\)\w+'), 'output_token': '%s', 'input_name': '{1}'},
+            'numeric': {'input_token': re.compile(r'%\((\w+)\)\w+'), 'output_token': ':{0}', 'input_name': '{1}'},
+            'named': {
+                'input_token': re.compile(r'%\((\w+)\)\w+'),
+                'output_token': ':{1}',
+                'input_name': '{1}',
+                'output_name': '{1}',
             },
-            "pyformat": {},
+            'pyformat': {},
         },
     }
-    _translation_param_types = {"qmark": list, "format": list, "numeric": list, "named": dict, "pyformat": dict}
+    _translation_param_types = {'qmark': list, 'format': list, 'numeric': list, 'named': dict, 'pyformat': dict}
 
-    def __init__(self, name, dbapi, connect, formatting="named"):
+    def __init__(self, name, dbapi, connect, formatting='named'):
         """Create a new database instance
 
         The 'name' parameter identifies the name for the database access .
@@ -182,7 +182,7 @@ class Database:
 
         if self._format_input not in self._styles:
             self.logger.error(
-                "Database [{}]: SQL format style {} not supported (only {})".format(
+                'Database [{}]: SQL format style {} not supported (only {})'.format(
                     self._name, self._format_input, self._styles
                 )
             )
@@ -192,14 +192,14 @@ class Database:
 
         # Deprecated, remove with 1.7 or 1.8
         if type(connect) is str:
-            connect = [p.strip() for p in connect.split("|")]
+            connect = [p.strip() for p in connect.split('|')]
 
         # Deprecated, remove with 1.7 or 1.8
         # -> but keep list of ordered dict as "default" returned by yaml parser!
         if type(connect) is list:
             if isinstance(connect[0], str):
                 for arg in connect:
-                    key, sep, value = arg.partition(":")
+                    key, sep, value = arg.partition(':')
                     for t in int, float, str:
                         try:
                             v = t(value)
@@ -216,7 +216,7 @@ class Database:
         self._format_output = self._dbapi.paramstyle
         if self._format_output not in self._styles:
             self.logger.error(
-                "Database [{}]: DB-API driver format style {} not supported (only {})".format(
+                'Database [{}]: DB-API driver format style {} not supported (only {})'.format(
                     self._name, self._format_output, self._styles
                 )
             )
@@ -280,36 +280,36 @@ class Database:
         and values are a two-item list for a rollout and rollback statement.
 
         E.g.::
-           db.setup({1:['CREATE TABLE xyz (...)', 'DROP TABLE xyz'], 2:[...]})
+           db.setup({1: ['CREATE TABLE xyz (...)', 'DROP TABLE xyz'], 2: [...]})
 
         For an extended example take a look into the 'database' plugin.
         """
         self.lock()
         cur = self.cursor()
-        version_table = re.sub("[^a-z0-9_]", "", self._name.lower()) + "_version"
+        version_table = re.sub('[^a-z0-9_]', '', self._name.lower()) + '_version'
         try:
-            (version,) = self.fetchone("SELECT MAX(version) FROM " + version_table + ";", cur=cur)
+            (version,) = self.fetchone('SELECT MAX(version) FROM ' + version_table + ';', cur=cur)
             if version is None:
                 version = 0
         except Exception:
-            self.logger.info("Missing table " + version_table + " error can be ignored, will be created now!")
+            self.logger.info('Missing table ' + version_table + ' error can be ignored, will be created now!')
             self.execute(
-                "CREATE TABLE " + version_table + "(version NUMERIC, updated BIGINT, rollout TEXT, rollback TEXT)",
+                'CREATE TABLE ' + version_table + '(version NUMERIC, updated BIGINT, rollout TEXT, rollback TEXT)',
                 cur=cur,
             )
             version = 0
-        self.logger.info("Database [{}]: Version {} found".format(self._name, version))
+        self.logger.info('Database [{}]: Version {} found'.format(self._name, version))
         for v in sorted(queries.keys()):
             if float(v) > version:
-                self.logger.info("Database [{}]: Upgrading to version {}".format(self._name, v))
+                self.logger.info('Database [{}]: Upgrading to version {}'.format(self._name, v))
                 self.execute(queries[v][0], cur=cur)
 
                 dt = self.shtime.utcnow()  # type: ignore (shtime is set dynamically)
                 ts = int(time.mktime(dt.timetuple()) * 1000 + dt.microsecond / 1000)
                 self.execute(
-                    "INSERT INTO " + version_table + "(version, updated, rollout, rollback) VALUES(?, ?, ?, ?);",
+                    'INSERT INTO ' + version_table + '(version, updated, rollout, rollback) VALUES(?, ?, ?, ?);',
                     (v, ts, queries[v][0], queries[v][1]),
-                    formatting="qmark",
+                    formatting='qmark',
                     cur=cur,
                 )
 
@@ -359,7 +359,7 @@ class Database:
         try:
             stmt, args = self._prepare(stmt, params, formatting)
         except Exception as e:
-            self.logger.error("Can not prepare query: {} (args {}): {}".format(stmt, params, e))
+            self.logger.error('Can not prepare query: {} (args {}): {}'.format(stmt, params, e))
             raise
 
         c = None
@@ -376,9 +376,9 @@ class Database:
                 result = cur.execute(stmt, args)
             return result
         except Exception as e:
-            if str(e).find("no such table: database_version") == -1:
+            if str(e).find('no such table: database_version') == -1:
                 # log error only, if query not executed on a new and empty database
-                self.logger.error(f"Can not execute query: {stmt} (args {args}): {e}")
+                self.logger.error(f'Can not execute query: {stmt} (args {args}): {e}')
                 raise
         finally:
             if c is not None:
@@ -408,12 +408,12 @@ class Database:
                 locked = self.lock(2)
 
                 if locked:
-                    self.fetchone("SELECT 1")
+                    self.fetchone('SELECT 1')
                     retry = -1
                     self.release()
 
             except Exception as e:
-                self.logger.warning("Database [{}]: Connection error {}".format(self._name, e))
+                self.logger.warning('Database [{}]: Connection error {}'.format(self._name, e))
                 if locked:
                     self.release()
                 self.close()
@@ -434,8 +434,8 @@ class Database:
         if cur is None:
             c = self.cursor()
             if c is None:
-                self.logger.warning(f"fetchone: No cursor defined for stmt {stmt} with params {params}")
-                result = ""
+                self.logger.warning(f'fetchone: No cursor defined for stmt {stmt} with params {params}')
+                result = ''
             else:
                 self.execute(stmt, params, formatting=formatting, cur=c)
                 result = c.fetchone()
@@ -486,7 +486,7 @@ class Database:
         elif self._translation_param_type is dict:
             return (stmt_result, param_result)
 
-    def _translate(self, stmt, params, input_token=None, output_token=None, input_name="{0}", output_name="{0}"):
+    def _translate(self, stmt, params, input_token=None, output_token=None, input_name='{0}', output_name='{0}'):
         """Internal helper method to convert the statement from input format to output format"""
 
         if input_token is None or output_token is None:

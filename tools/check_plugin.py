@@ -33,7 +33,7 @@ import plugin_metadata_checker as mc
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(os.path.basename(__file__))))
 
-VERSION = "0.6.3"
+VERSION = '0.6.3'
 
 sum_errors = 0
 sum_warnings = 0
@@ -79,42 +79,42 @@ def check_documentation_title(plg, lines):
             break
     else:
         mc.disp_error(
-            "The main title of the documentation is wrong",
+            'The main title of the documentation is wrong',
             f"The title of the main section of the documentation should only contain the name of the plugin in lowercase letters (in this case '{plg}').",
-            "!!! No further checks of the documentation have been made !!!",
+            '!!! No further checks of the documentation have been made !!!',
         )
         return
     if line.strip() != plg:
         mc.disp_warning(
-            "The main title of the documentation is wrong",
+            'The main title of the documentation is wrong',
             f"The title of the main section of the documentation should only contain the name of the plugin in lowercase letters (in this case '{plg}').",
         )
 
     if len(lines[lineno + 1]) == 0:
         mc.disp_error(
-            "The main title of the documentation was not found",
+            'The main title of the documentation was not found',
             "The lines above and below the name should contain an number of '=' characters",
-            "!!! No further checks of the documentation have been made !!!",
+            '!!! No further checks of the documentation have been made !!!',
         )
         return
     else:
-        if lines[lineno + 1] != "=" * len(lines[lineno]):
+        if lines[lineno + 1] != '=' * len(lines[lineno]):
             mc.disp_warning(
                 f"The line below the document title ({plg}) contains the wrong number of '='",
                 "The line should have the same length as the document title. The lines above and below the title should only consist of a number of '=' characters.",
             )
 
     if lineno > 1:
-        if lines[lineno - 1] != "=" * len(lines[lineno]):
+        if lines[lineno - 1] != '=' * len(lines[lineno]):
             mc.disp_warning(
                 f"The line above the document title ({plg}) contains the wrong number of '='",
                 "The line should have the same length as the document title. The lines above and below the title should only consist of a number of '=' characters.",
             )
     else:
         mc.disp_error(
-            "The main title of the documentation is wrong",
+            'The main title of the documentation is wrong',
             "The line above the name should contain a number of '=' characters",
-            "The line should have the same length as the title.",
+            'The line should have the same length as the title.',
         )
 
     global title_line
@@ -128,18 +128,18 @@ def find_documentation_sections(lines):
     section_titles = {}
     for lineno, line in enumerate(lines):
         try:
-            if line != "" and lineno != title_line and lines[lineno + 1] == "=" * len(lines[lineno]):
+            if line != '' and lineno != title_line and lines[lineno + 1] == '=' * len(lines[lineno]):
                 section_titles[line] = lineno
         except Exception:
             pass
 
     if section_titles == {}:
         mc.disp_error(
-            "No sections (beside the document title) have been found.",
+            'No sections (beside the document title) have been found.',
             "The line below the section title should have the same length as the section title. The line below the title should only consist of a number of '=' characters.",
         )
 
-    section_titles["###END OF FILE###"] = len(lines)
+    section_titles['###END OF FILE###'] = len(lines)
     return
 
 
@@ -147,18 +147,18 @@ def check_documentation_logo(lines):
     # - Prüfen ob der Logo-Block eingebunden ist (.. image:: webif/static/img/plugin_logo.png)
     found = None
     for lineno, line in enumerate(lines):
-        if line.strip() == ".. image:: webif/static/img/plugin_logo.jpg":
+        if line.strip() == '.. image:: webif/static/img/plugin_logo.jpg':
             found = lineno
             break
-        if line.strip() == ".. image:: webif/static/img/plugin_logo.png":
+        if line.strip() == '.. image:: webif/static/img/plugin_logo.png':
             found = lineno
             break
-        if line.strip() == ".. image:: webif/static/img/plugin_logo.svg":
+        if line.strip() == '.. image:: webif/static/img/plugin_logo.svg':
             found = lineno
             break
     else:
         mc.disp_warning(
-            "There has been no plugin logo included in the documentation",
+            'There has been no plugin logo included in the documentation',
             "The logo should be included after the title with the following line: '.. image:: webif/static/img/plugin_logo.<extension>'. For an example how to include a plugin logo, take a look at the sample_plugin in the ../dev folder.",
             "The logo itself should be stored in the subdirectory 'webif/static/img' of the plugin, should be named 'plugin_logo' and have the extension of '.jpg', '.png' or '.svg'",
         )
@@ -167,24 +167,24 @@ def check_documentation_logo(lines):
     if found is not None:
         if found < title_line or found > next(iter(section_titles.values())):
             mc.disp_error(
-                "The plugin logo should be includes below the document title and above the first section title",
-                "The plugin logo should be the first information following the document title and be included before the beginning of the global description text.",
+                'The plugin logo should be includes below the document title and above the first section title',
+                'The plugin logo should be the first information following the document title and be included before the beginning of the global description text.',
             )
         else:
             for lineno in range(title_line + 2, found):
-                if lines[lineno] != "" and not lines[lineno].startswith(".."):
+                if lines[lineno] != '' and not lines[lineno].startswith('..'):
                     break
             if lineno != found - 1:
                 mc.disp_error(
-                    "The plugin logo should be includes below the document title and above the first section title",
-                    "The plugin logo should be the first information following the document title and be included before the beginning of the global description text.",
+                    'The plugin logo should be includes below the document title and above the first section title',
+                    'The plugin logo should be the first information following the document title and be included before the beginning of the global description text.',
                 )
 
     # - Prüfen ob ein Logo (im webif directory) abgelegt ist
     if (
-        (not os.path.isfile("webif/static/img/plugin_logo.jpg"))
-        and (not os.path.isfile("webif/static/img/plugin_logo.png"))
-        and (not os.path.isfile("webif/static/img/plugin_logo.svg"))
+        (not os.path.isfile('webif/static/img/plugin_logo.jpg'))
+        and (not os.path.isfile('webif/static/img/plugin_logo.png'))
+        and (not os.path.isfile('webif/static/img/plugin_logo.svg'))
     ):
         mc.disp_warning("No plugin logo has been found in the directory 'webif/static/img'")
 
@@ -200,7 +200,7 @@ def check_documentation(plg, quiet=False):
     mc.warnings = 0
     mc.hints = 0
 
-    doc_filename = "user_doc.rst"
+    doc_filename = 'user_doc.rst'
     if not quiet:
         print()
         print(f"*** Checking documentation of plugin '{plg}' ({doc_filename}):")
@@ -208,7 +208,7 @@ def check_documentation(plg, quiet=False):
 
     if not os.path.isfile(doc_filename):
         mc.disp_warning(
-            f"No documentation file '{doc_filename}'", "You should create a documentation file for the plugin"
+            f"No documentation file '{doc_filename}'", 'You should create a documentation file for the plugin'
         )
     else:
         # read documentation file
@@ -229,31 +229,31 @@ def check_documentation(plg, quiet=False):
             for lineno, line in enumerate(lines):
                 if lineno >= title_line:
                     break
-                if line.find(".. index:: Plugins; " + plg) == 0:
+                if line.find('.. index:: Plugins; ' + plg) == 0:
                     index1_line = lineno
                 if (
-                    line == ".. index:: " + plg
-                    or line.find(".. index:: " + plg + " ") == 0
-                    or line.find(".. index:: " + plg + ";") == 0
+                    line == '.. index:: ' + plg
+                    or line.find('.. index:: ' + plg + ' ') == 0
+                    or line.find('.. index:: ' + plg + ';') == 0
                 ):
                     index2_line = lineno
             if index1_line is None or index2_line is None:
                 mc.disp_warning(
-                    "No global index entries found for the documentation",
-                    "You should at least include two lines with index statements before the title of the documentation.",
+                    'No global index entries found for the documentation',
+                    'You should at least include two lines with index statements before the title of the documentation.',
                     f"The index statements should be '.. index:: Plugins; {plg}' and '.. index:: {plg}'",
                 )
 
             # - Prüfen ob ein Abschnitt für das Webinterface existiert
             if webif_found:
-                if "Web Interface" not in section_titles.keys():
+                if 'Web Interface' not in section_titles.keys():
                     mc.disp_warning(
                         "No section 'Web Interface' with the documentation for the web interface of the plugin found.",
-                        "You should document, what the web interface of the plugin does and include pictures as an example.",
+                        'You should document, what the web interface of the plugin does and include pictures as an example.',
                     )
 
     if not quiet:
-        mc.print_errorcount("Documentation", mc.errors, mc.warnings, mc.hints)
+        mc.print_errorcount('Documentation', mc.errors, mc.warnings, mc.hints)
 
     global sum_errors, sum_warnings, sum_hints
     sum_errors += mc.errors
@@ -279,42 +279,42 @@ def check_code_webinterface(lines, webif_lines):
     # - is a webinterface defined?
     webif_seperated = False
     for line in lines:
-        if line.find("from .webif import WebInterface") > -1:
+        if line.find('from .webif import WebInterface') > -1:
             webif_seperated = True
             break
     for line in lines:
-        if line.find("def init_webinterface(self") > -1:
+        if line.find('def init_webinterface(self') > -1:
             break
     else:
         if not webif_seperated:
-            mc.disp_hint("No webinterface is implemented", "You should consider to to implement a webinterface.")
+            mc.disp_hint('No webinterface is implemented', 'You should consider to to implement a webinterface.')
             return
 
     # - is the webinterface being initialized?
     for line in lines:
-        if line.find("self.init_webinterface") > -1:
-            if line.find("#") == -1:
+        if line.find('self.init_webinterface') > -1:
+            if line.find('#') == -1:
                 break
-            if not line.find("#") < line.find("self.init_webinterface"):
+            if not line.find('#') < line.find('self.init_webinterface'):
                 break
     else:
-        mc.disp_warning("Webinterface is not beeing initialized")
+        mc.disp_warning('Webinterface is not beeing initialized')
     global webif_found
     webif_found = True
 
     # - is the code of the webinterface seperated into the webif subfolder?
     if not webif_seperated:
         mc.disp_hint(
-            "The code of the webinterface is not seperated into a different file",
+            'The code of the webinterface is not seperated into a different file',
             "You should consider to seperate the code the webinterface into the subfolder 'webif'. Take a look at the sample plugin in the ../dev folder.",
         )
     else:
         # - was "Sample plugin" from the templaate file changed?
         for line in webif_lines:
-            if line.lower().find("sample plugin") > -1 and line.startswith("#"):
+            if line.lower().find('sample plugin') > -1 and line.startswith('#'):
                 mc.disp_hint(
-                    "The description of the sample plugin in the comments of the web interface code was not replaced",
-                    "Replace the description in webif/__init__.py with a meaningful text",
+                    'The description of the sample plugin in the comments of the web interface code was not replaced',
+                    'Replace the description in webif/__init__.py with a meaningful text',
                 )
                 break
 
@@ -324,14 +324,14 @@ def check_code(plg, quiet=False):
     mc.warnings = 0
     mc.hints = 0
 
-    code_filename = "__init__.py"
+    code_filename = '__init__.py'
     if not quiet:
         print()
         print(f"*** Checking python code of plugin '{plg}' (__init__.py, webif{os.sep}__init__.py):")
         print()
 
     if not os.path.isfile(code_filename):
-        mc.disp_error(f"No code ('{code_filename}') found for the plugin '{plg}'", "Aborting code check")
+        mc.disp_error(f"No code ('{code_filename}') found for the plugin '{plg}'", 'Aborting code check')
     else:
         # read code file of the plugin
         with open(code_filename) as f:
@@ -355,48 +355,48 @@ def check_code(plg, quiet=False):
         in_init_method = False
         init_found = False
         for lineno, line in enumerate(webif_lines):
-            if line.lstrip().startswith("def"):
-                if line.lstrip().startswith("def __init__(self"):
+            if line.lstrip().startswith('def'):
+                if line.lstrip().startswith('def __init__(self'):
                     in_init_method = True
                     init_found = True
                 else:
                     in_init_method = False
 
             if in_init_method:
-                if line.find("super().__init__()") > -1:
-                    if line.find("#") == -1:
+                if line.find('super().__init__()') > -1:
+                    if line.find('#') == -1:
                         break
-                    if not line.find("#") < line.find("super().__init__()"):
+                    if not line.find('#') < line.find('super().__init__()'):
                         break
         else:
             if init_found:
-                mc.disp_error("super().__init__() is not called from __init__()")
+                mc.disp_error('super().__init__() is not called from __init__()')
             else:
-                mc.disp_error("__init__() method not found")
+                mc.disp_error('__init__() method not found')
 
         # - is a stop() method defined?
         for lineno, line in enumerate(webif_lines):
-            if line.find("def stop(") > -1:
-                if line.find("#") == -1:
+            if line.find('def stop(') > -1:
+                if line.find('#') == -1:
                     break
-                if not line.find("#") < line.find("def stop("):
+                if not line.find('#') < line.find('def stop('):
                     break
         else:
-            mc.disp_error("no stop() method found")
+            mc.disp_error('no stop() method found')
 
         # - was "Sample plugin" from the templaate file changed?
         for line in lines:
-            if line.lower().find("sample plugin") > -1 and line.startswith("#"):
+            if line.lower().find('sample plugin') > -1 and line.startswith('#'):
                 mc.disp_hint(
-                    "The description of the sample plugin in the comments was not replaced",
-                    "Replace the description in __init__.py with a meaningful text",
+                    'The description of the sample plugin in the comments was not replaced',
+                    'Replace the description in __init__.py with a meaningful text',
                 )
                 break
 
         check_code_webinterface(lines, webif_lines)
 
         if not quiet:
-            mc.print_errorcount("Code", mc.errors, mc.warnings, mc.hints)
+            mc.print_errorcount('Code', mc.errors, mc.warnings, mc.hints)
             print()
 
     global sum_errors, sum_warnings, sum_hints
@@ -426,16 +426,16 @@ def check_one_plugin(plg, chk_meta, chk_code, chk_docu):
         check_documentation(plg)
 
     print()
-    mc.print_errorcount("TOTAL", sum_errors, sum_warnings, sum_hints)
+    mc.print_errorcount('TOTAL', sum_errors, sum_warnings, sum_hints)
     print()
 
 
 def check_all_plugins(chk_meta, chk_code, chk_docu, quiet=True):
-    pluginsdir = os.path.join(BASE, "plugins")
+    pluginsdir = os.path.join(BASE, 'plugins')
 
     plugins = mc.get_local_pluginlist(pluginsdir)
-    print(f"{'Plugin':<16.16}      {'Errors':>10}  {'Warnings':>10}  {'Hints':>10}")
-    print(f"{'-' * 16:<16.16}      {'-' * 8:>10}  {'-' * 8:>10}  {'-' * 8:>10}")
+    print(f'{"Plugin":<16.16}      {"Errors":>10}  {"Warnings":>10}  {"Hints":>10}')
+    print(f'{"-" * 16:<16.16}      {"-" * 8:>10}  {"-" * 8:>10}  {"-" * 8:>10}')
 
     for plg in plugins:
         mc.quiet = quiet
@@ -452,7 +452,7 @@ def check_all_plugins(chk_meta, chk_code, chk_docu, quiet=True):
                 check_documentation(plg, quiet=quiet)
 
             global sum_errors, sum_warnings, sum_hints
-            print(f"{plg:<16.16}    {sum_errors:10}  {sum_warnings:10}  {sum_hints:10}")
+            print(f'{plg:<16.16}    {sum_errors:10}  {sum_warnings:10}  {sum_hints:10}')
         except NotADirectoryError:
             pass
 
@@ -460,8 +460,8 @@ def check_all_plugins(chk_meta, chk_code, chk_docu, quiet=True):
         sum_warnings = 0
         sum_hints = 0
 
-    print(f"{'-' * 16:<16.16}      {'-' * 8:<10}  {'-' * 8:<10}  {'-' * 8:<10}")
-    print(f"{'':<16.16}    {total_errors:10}  {total_warnings:10}  {total_hints:10}")
+    print(f'{"-" * 16:<16.16}      {"-" * 8:<10}  {"-" * 8:<10}  {"-" * 8:<10}')
+    print(f'{"":<16.16}    {total_errors:10}  {total_warnings:10}  {total_hints:10}')
     print()
 
 
@@ -469,30 +469,30 @@ def check_all_plugins(chk_meta, chk_code, chk_docu, quiet=True):
 #   Main Routine of the tool
 #
 
-if __name__ == "__main__":
-    print("")
-    print(os.path.basename(__file__) + " v" + VERSION + " - Check plugin for formal errors or improvement potential")
-    print("")
+if __name__ == '__main__':
+    print('')
+    print(os.path.basename(__file__) + ' v' + VERSION + ' - Check plugin for formal errors or improvement potential')
+    print('')
 
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("pluginname", nargs="?", default="", help="name of the plugin to check")  # positional argument#
-    parser.add_argument("-all", dest="check_all", help="check all plugins", action="store_true")
+    parser.add_argument('pluginname', nargs='?', default='', help='name of the plugin to check')  # positional argument#
+    parser.add_argument('-all', dest='check_all', help='check all plugins', action='store_true')
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        "-m", dest="check_metadata_only", help="check only the metadata of a plugin", action="store_true"
+        '-m', dest='check_metadata_only', help='check only the metadata of a plugin', action='store_true'
     )
     group.add_argument(
-        "-d", dest="check_documentation_only", help="check only the documentation of a plugin", action="store_true"
+        '-d', dest='check_documentation_only', help='check only the documentation of a plugin', action='store_true'
     )
-    group.add_argument("-c", dest="check_code_only", help="check only the code of a plugin", action="store_true")
+    group.add_argument('-c', dest='check_code_only', help='check only the code of a plugin', action='store_true')
     group.add_argument(
-        "-cd", dest="check_code_doc_only", help="check only the code and documentation of a plugin", action="store_true"
+        '-cd', dest='check_code_doc_only', help='check only the code and documentation of a plugin', action='store_true'
     )
     args = parser.parse_args()
 
     plg = args.pluginname
 
-    plugindir = os.path.join(BASE, "plugins", plg)
+    plugindir = os.path.join(BASE, 'plugins', plg)
 
     chk_meta = True
     chk_code = True
@@ -512,7 +512,7 @@ if __name__ == "__main__":
 
     if args.check_all:
         check_all_plugins(chk_meta, chk_code, chk_docu)
-    elif plg == "":
+    elif plg == '':
         parser.print_help()
         print()
     else:

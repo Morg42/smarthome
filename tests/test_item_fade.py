@@ -41,7 +41,7 @@ import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import tests.common as common
 
@@ -66,8 +66,8 @@ def _reset():
     Items.plugin_prefixes_tuple = None
 
 
-def _item(sh, path="test.item", itype="num", value=0):
-    conf = {"type": itype}
+def _item(sh, path='test.item', itype='num', value=0):
+    conf = {'type': itype}
     it = lib.item.item.Item(sh, sh.items, path, conf)
     it(value)
     return it
@@ -80,37 +80,37 @@ class TestFadeParameterValidation(unittest.TestCase):
 
     def test_stop_fade_non_list_warns_and_clears(self):
         item = _item(self.sh, value=10)
-        with self.assertLogs("lib.item", level="WARNING") as cm:
-            fade(item, 0, stop_fade="Logic")
-        self.assertTrue(any("stop_fade" in m for m in cm.output))
-        self.assertIsNone(item._fadingdetails["stop_fade"])
+        with self.assertLogs('lib.item', level='WARNING') as cm:
+            fade(item, 0, stop_fade='Logic')
+        self.assertTrue(any('stop_fade' in m for m in cm.output))
+        self.assertIsNone(item._fadingdetails['stop_fade'])
 
     def test_stop_fade_list_accepted(self):
         item = _item(self.sh, value=10)
-        fade(item, 0, stop_fade=["Logic", "Admin"])
-        self.assertEqual(item._fadingdetails["stop_fade"], ["Logic", "Admin"])
+        fade(item, 0, stop_fade=['Logic', 'Admin'])
+        self.assertEqual(item._fadingdetails['stop_fade'], ['Logic', 'Admin'])
 
     def test_stop_fade_none_accepted(self):
         item = _item(self.sh, value=10)
         fade(item, 0, stop_fade=None)
-        self.assertIsNone(item._fadingdetails["stop_fade"])
+        self.assertIsNone(item._fadingdetails['stop_fade'])
 
     def test_continue_fade_non_list_warns_and_clears(self):
         item = _item(self.sh, value=10)
-        with self.assertLogs("lib.item", level="WARNING") as cm:
-            fade(item, 0, continue_fade="Fader")
-        self.assertTrue(any("continue_fade" in m for m in cm.output))
-        self.assertIsNone(item._fadingdetails["continue_fade"])
+        with self.assertLogs('lib.item', level='WARNING') as cm:
+            fade(item, 0, continue_fade='Fader')
+        self.assertTrue(any('continue_fade' in m for m in cm.output))
+        self.assertIsNone(item._fadingdetails['continue_fade'])
 
     def test_continue_fade_list_accepted(self):
         item = _item(self.sh, value=10)
-        fade(item, 0, continue_fade=["Fader"])
-        self.assertEqual(item._fadingdetails["continue_fade"], ["Fader"])
+        fade(item, 0, continue_fade=['Fader'])
+        self.assertEqual(item._fadingdetails['continue_fade'], ['Fader'])
 
     def test_continue_fade_none_accepted(self):
         item = _item(self.sh, value=10)
         fade(item, 0, continue_fade=None)
-        self.assertIsNone(item._fadingdetails["continue_fade"])
+        self.assertIsNone(item._fadingdetails['continue_fade'])
 
 
 class TestFadeDestConversion(unittest.TestCase):
@@ -121,23 +121,23 @@ class TestFadeDestConversion(unittest.TestCase):
     def test_integer_dest_stored_as_float(self):
         item = _item(self.sh, value=0)
         fade(item, 100)
-        self.assertIsInstance(item._fadingdetails["dest"], float)
-        self.assertEqual(item._fadingdetails["dest"], 100.0)
+        self.assertIsInstance(item._fadingdetails['dest'], float)
+        self.assertEqual(item._fadingdetails['dest'], 100.0)
 
     def test_float_dest_stored(self):
         item = _item(self.sh, value=0)
         fade(item, 3.14)
-        self.assertAlmostEqual(item._fadingdetails["dest"], 3.14)
+        self.assertAlmostEqual(item._fadingdetails['dest'], 3.14)
 
     def test_string_dest_converted(self):
         item = _item(self.sh, value=0)
-        fade(item, "50")
-        self.assertEqual(item._fadingdetails["dest"], 50.0)
+        fade(item, '50')
+        self.assertEqual(item._fadingdetails['dest'], 50.0)
 
     def test_negative_dest(self):
         item = _item(self.sh, value=0)
         fade(item, -5)
-        self.assertEqual(item._fadingdetails["dest"], -5.0)
+        self.assertEqual(item._fadingdetails['dest'], -5.0)
 
 
 class TestFadingDetails(unittest.TestCase):
@@ -148,22 +148,22 @@ class TestFadingDetails(unittest.TestCase):
     def test_fadingdetails_populated_when_not_fading(self):
         item = _item(self.sh, value=10)
         item._fading = False
-        fade(item, 0, step=2, delta=0.5, caller="test")
+        fade(item, 0, step=2, delta=0.5, caller='test')
         d = item._fadingdetails
-        self.assertEqual(d["value"], 10)
-        self.assertEqual(d["dest"], 0.0)
-        self.assertEqual(d["step"], 2)
-        self.assertEqual(d["delta"], 0.5)
-        self.assertEqual(d["caller"], "test")
+        self.assertEqual(d['value'], 10)
+        self.assertEqual(d['dest'], 0.0)
+        self.assertEqual(d['step'], 2)
+        self.assertEqual(d['delta'], 0.5)
+        self.assertEqual(d['caller'], 'test')
 
     def test_fadingdetails_not_overwritten_when_fading_no_update(self):
         item = _item(self.sh, value=10)
         item._fading = False
         fade(item, 0, step=1, delta=1)
-        original_dest = item._fadingdetails["dest"]
+        original_dest = item._fadingdetails['dest']
         item._fading = True
         fade(item, 99, step=5, delta=5, update=False)
-        self.assertEqual(item._fadingdetails["dest"], original_dest)
+        self.assertEqual(item._fadingdetails['dest'], original_dest)
 
     def test_fadingdetails_overwritten_when_fading_and_update(self):
         item = _item(self.sh, value=10)
@@ -171,31 +171,31 @@ class TestFadingDetails(unittest.TestCase):
         fade(item, 0)
         item._fading = True
         fade(item, 99, step=5, delta=5, update=True)
-        self.assertEqual(item._fadingdetails["dest"], 99.0)
-        self.assertEqual(item._fadingdetails["step"], 5)
+        self.assertEqual(item._fadingdetails['dest'], 99.0)
+        self.assertEqual(item._fadingdetails['step'], 5)
 
     def test_fadingdetails_has_all_expected_keys(self):
         item = _item(self.sh, value=10)
         item._fading = False
         fade(item, 0)
-        expected_keys = {"value", "dest", "step", "delta", "caller", "stop_fade", "continue_fade", "instant_set"}
+        expected_keys = {'value', 'dest', 'step', 'delta', 'caller', 'stop_fade', 'continue_fade', 'instant_set'}
         self.assertEqual(set(item._fadingdetails.keys()), expected_keys)
 
     def test_instant_set_default_true(self):
         item = _item(self.sh, value=0)
         fade(item, 10)
-        self.assertTrue(item._fadingdetails["instant_set"])
+        self.assertTrue(item._fadingdetails['instant_set'])
 
     def test_instant_set_false(self):
         item = _item(self.sh, value=0)
         fade(item, 10, instant_set=False)
-        self.assertFalse(item._fadingdetails["instant_set"])
+        self.assertFalse(item._fadingdetails['instant_set'])
 
     def test_value_snapshot_is_current_value(self):
         item = _item(self.sh, value=42)
         item._fading = False
         fade(item, 0)
-        self.assertEqual(item._fadingdetails["value"], 42)
+        self.assertEqual(item._fadingdetails['value'], 42)
 
 
 class TestFadeTrigger(unittest.TestCase):
@@ -204,7 +204,7 @@ class TestFadeTrigger(unittest.TestCase):
         self.sh = MockSmartHome()
 
     def test_trigger_called(self):
-        item = _item(self.sh, path="myitem", value=5)
+        item = _item(self.sh, path='myitem', value=5)
         item._fading = False
         trigger_calls = []
         item._sh.trigger = lambda path, fn, value=None: trigger_calls.append((path, fn))
@@ -212,12 +212,12 @@ class TestFadeTrigger(unittest.TestCase):
         self.assertEqual(len(trigger_calls), 1)
 
     def test_trigger_receives_item_path(self):
-        item = _item(self.sh, path="zone.dimmer", value=5)
+        item = _item(self.sh, path='zone.dimmer', value=5)
         item._fading = False
         trigger_calls = []
         item._sh.trigger = lambda path, fn, value=None: trigger_calls.append((path, fn))
         fade(item, 0)
-        self.assertEqual(trigger_calls[0][0], "zone.dimmer")
+        self.assertEqual(trigger_calls[0][0], 'zone.dimmer')
 
     def test_trigger_receives_fadejob(self):
         item = _item(self.sh, value=5)
@@ -244,28 +244,28 @@ class TestFadeDefaults(unittest.TestCase):
     def test_default_step_is_one(self):
         item = _item(self.sh, value=0)
         fade(item, 10)
-        self.assertEqual(item._fadingdetails["step"], 1)
+        self.assertEqual(item._fadingdetails['step'], 1)
 
     def test_default_delta_is_one(self):
         item = _item(self.sh, value=0)
         fade(item, 10)
-        self.assertEqual(item._fadingdetails["delta"], 1)
+        self.assertEqual(item._fadingdetails['delta'], 1)
 
     def test_default_caller_is_none(self):
         item = _item(self.sh, value=0)
         fade(item, 10)
-        self.assertIsNone(item._fadingdetails["caller"])
+        self.assertIsNone(item._fadingdetails['caller'])
 
     def test_default_stop_fade_is_none(self):
         item = _item(self.sh, value=0)
         fade(item, 10)
-        self.assertIsNone(item._fadingdetails["stop_fade"])
+        self.assertIsNone(item._fadingdetails['stop_fade'])
 
     def test_default_continue_fade_is_none(self):
         item = _item(self.sh, value=0)
         fade(item, 10)
-        self.assertIsNone(item._fadingdetails["continue_fade"])
+        self.assertIsNone(item._fadingdetails['continue_fade'])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main(verbosity=2)

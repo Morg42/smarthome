@@ -57,14 +57,14 @@ def get_backupdate():
     year = str(datetime.today().year)
     month = str(datetime.today().month).zfill(2)
     day = str(datetime.today().day).zfill(2)
-    return year + "-" + month + "-" + day
+    return year + '-' + month + '-' + day
 
 
 def get_backuptime():
     hour = str(datetime.now().hour).zfill(2)
     minute = str(datetime.now().minute).zfill(2)
     second = str(datetime.now().second).zfill(2)
-    return hour + "-" + minute + "-" + second
+    return hour + '-' + minute + '-' + second
 
 
 def make_backup_directories(base_dir):
@@ -75,21 +75,21 @@ def make_backup_directories(base_dir):
     :return:
     """
     global backup_dir
-    backup_dir = os.path.join(base_dir, DIR_VAR, "backup")
-    restore_dir = os.path.join(base_dir, DIR_VAR, "restore")
+    backup_dir = os.path.join(base_dir, DIR_VAR, 'backup')
+    restore_dir = os.path.join(base_dir, DIR_VAR, 'restore')
 
     if not os.path.isdir(backup_dir):
         try:
             os.makedirs(backup_dir)
         except OSError as e:
-            logger.error("Cannot create directory - No backup was created - Error {}".format(e))
+            logger.error('Cannot create directory - No backup was created - Error {}'.format(e))
             return False
 
     if not os.path.isdir(restore_dir):
         try:
             os.makedirs(restore_dir)
         except OSError as e:
-            logger.error("Cannot create directory - No restore was created - Error {}".format(e))
+            logger.error('Cannot create directory - No restore was created - Error {}'.format(e))
             return False
 
     return True
@@ -110,19 +110,19 @@ def create_backup(conf_base_dir, base_dir, filename_with_timestamp=False, before
     """
 
     make_backup_directories(base_dir)
-    backup_dir = os.path.join(base_dir, DIR_VAR, "backup")
+    backup_dir = os.path.join(base_dir, DIR_VAR, 'backup')
 
-    backup_filename = "shng_config_backup"
+    backup_filename = 'shng_config_backup'
     if before_restore:
-        backup_filename += "_before_restore"
+        backup_filename += '_before_restore'
     if filename_with_timestamp:
-        backup_filename += "_" + get_backupdate() + "_" + get_backuptime()
-    backup_filename += ".zip"
+        backup_filename += '_' + get_backupdate() + '_' + get_backuptime()
+    backup_filename += '.zip'
 
     # let backup.py create file/directory names the "old way", because this can
     # be invoked by command line without a working SmartHome instance and so
     # needs to create the paths for itself. Hope this always works... :)
-    etc_dir = os.path.join(conf_base_dir, "etc")
+    etc_dir = os.path.join(conf_base_dir, 'etc')
 
     if config_etc:
         conf_dir = etc_dir
@@ -136,11 +136,11 @@ def create_backup(conf_base_dir, base_dir, filename_with_timestamp=False, before
     uf_dir = os.path.join(conf_dir, DIR_UF)
     var_dir = os.path.join(conf_dir, DIR_VAR)
     priv_tools_dir = os.path.join(conf_dir, DIR_PRIV_TOOLS)
-    plugins_dir = os.path.join(base_dir, "plugins")
-    esphome_conf_dir = os.path.join(conf_dir, "var", "esphome", "config")
+    plugins_dir = os.path.join(base_dir, 'plugins')
+    esphome_conf_dir = os.path.join(conf_dir, 'var', 'esphome', 'config')
 
     # create new zip file
-    backupzip = zipfile.ZipFile(backup_dir + os.path.sep + backup_filename, mode="w", compression=zipfile.ZIP_DEFLATED)
+    backupzip = zipfile.ZipFile(backup_dir + os.path.sep + backup_filename, mode='w', compression=zipfile.ZIP_DEFLATED)
 
     # backup files from /etc
     backup_etc_directory(etc_dir, backupzip)
@@ -149,8 +149,8 @@ def create_backup(conf_base_dir, base_dir, filename_with_timestamp=False, before
     backup_directory(backupzip, items_dir)
 
     # backup files from /logic
-    backup_directory(backupzip, logic_dir, ".py")
-    backup_directory(backupzip, logic_dir, ".txt")
+    backup_directory(backupzip, logic_dir, '.py')
+    backup_directory(backupzip, logic_dir, '.txt')
 
     # backup files from /scenes
     backup_directory(backupzip, scenes_dir, YAML_FILE)
@@ -159,41 +159,41 @@ def create_backup(conf_base_dir, base_dir, filename_with_timestamp=False, before
     backup_directory(backupzip, structs_dir, YAML_FILE)
 
     # backup files from /functions
-    backup_directory(backupzip, uf_dir, ".*")
+    backup_directory(backupzip, uf_dir, '.*')
 
     # backup private tools from /priv_tools
-    backup_directory(backupzip, priv_tools_dir, ".*")
+    backup_directory(backupzip, priv_tools_dir, '.*')
 
     # backup private plugins
     source_dir = plugins_dir
-    dest_dir = "plugins"
+    dest_dir = 'plugins'
     for filename in sorted(os.listdir(source_dir)):
-        if filename.startswith("priv_"):
-            logger.dbghigh(f"Backup private plugin: {filename}")
+        if filename.startswith('priv_'):
+            logger.dbghigh(f'Backup private plugin: {filename}')
             backup_directory2(
-                backupzip, os.path.join(source_dir, filename), ".*", dest_dir=os.path.join(dest_dir, filename)
+                backupzip, os.path.join(source_dir, filename), '.*', dest_dir=os.path.join(dest_dir, filename)
             )
 
     # backup files from /var/esphome/config
-    backup_directory(backupzip, esphome_conf_dir, ".yaml", "esphome_config")
-    esphome_common_dir = os.path.join(esphome_conf_dir, "common")
-    backup_directory(backupzip, esphome_common_dir, ".yaml", "esphome_config/common")
+    backup_directory(backupzip, esphome_conf_dir, '.yaml', 'esphome_config')
+    esphome_common_dir = os.path.join(esphome_conf_dir, 'common')
+    backup_directory(backupzip, esphome_common_dir, '.yaml', 'esphome_config/common')
 
     # backup files for infos-directory
     source_dir = var_dir
-    arc_dir = "infos"
-    backup_file(backupzip, source_dir, arc_dir, "systeminfo" + YAML_FILE)
+    arc_dir = 'infos'
+    backup_file(backupzip, source_dir, arc_dir, 'systeminfo' + YAML_FILE)
 
     # create and backup list of installed pip packages to info-directory
     shpypi = Shpypi.get_instance()
     if shpypi is None:
         shpypi = Shpypi()
-    dest_file = os.path.join(source_dir, "pip_list.txt")
+    dest_file = os.path.join(source_dir, 'pip_list.txt')
     shpypi.create_pip_list(dest_file)
-    backup_file(backupzip, source_dir, arc_dir, "pip_list.txt")
+    backup_file(backupzip, source_dir, arc_dir, 'pip_list.txt')
 
     zipped_files = backupzip.namelist()
-    logger.info("Zipped files: {}".format(zipped_files))
+    logger.info('Zipped files: {}'.format(zipped_files))
     backupzip.close()
 
     # Test code: List directory names of private plugins
@@ -219,8 +219,8 @@ def create_backup(conf_base_dir, base_dir, filename_with_timestamp=False, before
     now = shtime.now()
     logger.info("get_backup_timestamp: now = '{}'".format(now))
 
-    fd = open(os.path.join(backup_dir, "last_backup"), "w+", encoding="UTF-8")
-    fd.write("%s" % now)
+    fd = open(os.path.join(backup_dir, 'last_backup'), 'w+', encoding='UTF-8')
+    fd.write('%s' % now)
     fd.close()
 
     return os.path.join(backup_dir, backup_filename)
@@ -236,26 +236,26 @@ def backup_etc_directory(etc_dir, backupzip):
     :param backupzip:     ZIP file to back up to
     """
     source_dir = etc_dir
-    arc_dir = "etc"
+    arc_dir = 'etc'
     backup_file(backupzip, source_dir, arc_dir, BASE_HOLIDAY + YAML_FILE)
     backup_file(backupzip, source_dir, arc_dir, BASE_LOG + YAML_FILE)
     backup_file(backupzip, source_dir, arc_dir, BASE_LOGIC + YAML_FILE)
     backup_file(backupzip, source_dir, arc_dir, BASE_MODULE + YAML_FILE)
     backup_file(backupzip, source_dir, arc_dir, BASE_PLUGIN + YAML_FILE)
     backup_file(backupzip, source_dir, arc_dir, BASE_SH + YAML_FILE)
-    backup_file(backupzip, source_dir, arc_dir, "admin" + YAML_FILE)
+    backup_file(backupzip, source_dir, arc_dir, 'admin' + YAML_FILE)
 
     backup_file(backupzip, source_dir, arc_dir, BASE_STRUCT + YAML_FILE)
-    struct_files = glob.glob(os.path.join(etc_dir, BASE_STRUCT + "_*" + YAML_FILE))
+    struct_files = glob.glob(os.path.join(etc_dir, BASE_STRUCT + '_*' + YAML_FILE))
     for pn in struct_files:
         fn = os.path.split(pn)[1]
         backup_file(backupzip, source_dir, arc_dir, fn)
 
     # backup certificate files from /etc
-    backup_directory(backupzip, etc_dir, ".cer")
-    backup_directory(backupzip, etc_dir, ".pem")
+    backup_directory(backupzip, etc_dir, '.cer')
+    backup_directory(backupzip, etc_dir, '.pem')
 
-    backup_directory(backupzip, etc_dir, ".key")
+    backup_directory(backupzip, etc_dir, '.key')
 
     return
 
@@ -269,14 +269,14 @@ def get_lastbackuptime():
     """
 
     try:
-        if os.path.isfile(os.path.join(backup_dir, "last_backup")):
-            fd = open(os.path.join(backup_dir, "last_backup"), "r", encoding="UTF-8")
+        if os.path.isfile(os.path.join(backup_dir, 'last_backup')):
+            fd = open(os.path.join(backup_dir, 'last_backup'), 'r', encoding='UTF-8')
             line = fd.readline()
             fd.close()
             return line
     except Exception:
-        logger.warning("last_backup could not be read!")
-    return ""
+        logger.warning('last_backup could not be read!')
+    return ''
 
 
 def backup_file(backupzip, source_dir, arc_dir, filename):
@@ -288,7 +288,7 @@ def backup_file(backupzip, source_dir, arc_dir, filename):
     :param arc_dir: Name of destination directory in the zip-archive
     :param filename: Name of the file to backup
     """
-    if not filename.startswith("."):
+    if not filename.startswith('.'):
         if os.path.isfile(os.path.join(source_dir, filename)):
             # logger.debug("Zipping file: {}".format(filename))
             backupzip.write(os.path.join(source_dir, filename), arcname=os.path.join(arc_dir, filename))
@@ -311,7 +311,7 @@ def backup_directory(backupzip, source_dir, extension=YAML_FILE, dest_dir=None):
         else:
             arc_dir = dest_dir + os.path.sep
         for filename in os.listdir(source_dir):
-            if filename.endswith(extension) or extension == ".*":
+            if filename.endswith(extension) or extension == '.*':
                 backup_file(backupzip, source_dir, arc_dir, filename)
 
 
@@ -331,13 +331,13 @@ def backup_directory2(backupzip, source_dir, extension=YAML_FILE, dest_dir=None)
         else:
             arc_dir = dest_dir + os.path.sep
         for filename in os.listdir(source_dir):
-            if os.path.isdir(os.path.join(source_dir, filename)) and filename != "__pycache__":
+            if os.path.isdir(os.path.join(source_dir, filename)) and filename != '__pycache__':
                 # logger.notice(f"- directory: {source_dir}/{filename}")
                 backup_directory2(
-                    backupzip, os.path.join(source_dir, filename), ".*", dest_dir=os.path.join(arc_dir, filename)
+                    backupzip, os.path.join(source_dir, filename), '.*', dest_dir=os.path.join(arc_dir, filename)
                 )
             elif os.path.isfile(os.path.join(source_dir, filename)) and (
-                filename.endswith(extension) or extension == ".*"
+                filename.endswith(extension) or extension == '.*'
             ):
                 # logger.notice(f"- file: {filename}")
                 backup_file(backupzip, source_dir, arc_dir, filename)
@@ -361,12 +361,12 @@ def restore_backup(conf_base_dir, base_dir, config_etc=False):
 
     :return:
     """
-    logger.info("Beginning restore of configuration")
+    logger.info('Beginning restore of configuration')
 
     make_backup_directories(base_dir)
-    restore_dir = os.path.join(base_dir, "var", "restore")
+    restore_dir = os.path.join(base_dir, 'var', 'restore')
 
-    etc_dir = os.path.join(conf_base_dir, "etc")
+    etc_dir = os.path.join(conf_base_dir, 'etc')
 
     if config_etc:
         conf_dir = etc_dir
@@ -379,35 +379,35 @@ def restore_backup(conf_base_dir, base_dir, config_etc=False):
     structs_dir = os.path.join(conf_dir, DIR_STRUCTS)
     uf_dir = os.path.join(conf_dir, DIR_UF)
     priv_tools_dir = os.path.join(base_dir, DIR_PRIV_TOOLS)
-    esphome_conf_dir = os.path.join(base_dir, "var", "esphome", "config")
+    esphome_conf_dir = os.path.join(base_dir, 'var', 'esphome', 'config')
 
-    archive_file = ""
+    archive_file = ''
     for filename in os.listdir(restore_dir):
-        if filename.endswith(".zip"):
-            if not filename.startswith("."):
-                if archive_file == "":
+        if filename.endswith('.zip'):
+            if not filename.startswith('.'):
+                if archive_file == '':
                     archive_file = filename
                 else:
-                    archive_file = "MULTIPLE"
+                    archive_file = 'MULTIPLE'
                     break
 
-    if archive_file == "":
-        logger.error("No zip file found in restore directory - No configuration data was restored")
+    if archive_file == '':
+        logger.error('No zip file found in restore directory - No configuration data was restored')
         return
-    elif archive_file == "MULTIPLE":
-        logger.error("Multiple zip files found - No configuration data was restored")
+    elif archive_file == 'MULTIPLE':
+        logger.error('Multiple zip files found - No configuration data was restored')
         return
     restorezip_filename = os.path.join(restore_dir, archive_file)
 
     # TODO: as logger has no "notice" method, for the time being log as "info""
-    logger.info(f"Restoring configuration from file {restorezip_filename}")
+    logger.info(f'Restoring configuration from file {restorezip_filename}')
 
-    logger.info("Creating a backup of the current configuration before restoring configuration from zip-file")
+    logger.info('Creating a backup of the current configuration before restoring configuration from zip-file')
     create_backup(conf_base_dir, base_dir, True, True)
     overwrite = True
 
     # open existing zip file
-    restorezip = zipfile.ZipFile(restorezip_filename, mode="r")
+    restorezip = zipfile.ZipFile(restorezip_filename, mode='r')
     # restorezip = zipfile.ZipFile(restorezip_filename, mode='r', compression=zipfile.ZIP_STORED)
 
     # restore files to /etc
@@ -437,35 +437,35 @@ def restore_backup(conf_base_dir, base_dir, config_etc=False):
         list(
             set(
                 [
-                    token.split("/")[0] + "/" + token.split("/")[1]
+                    token.split('/')[0] + '/' + token.split('/')[1]
                     for token in nl
-                    if token.startswith("plugins/") and len(token.split("/")) == 3
+                    if token.startswith('plugins/') and len(token.split('/')) == 3
                 ]
             )
         )
     )
-    logger.dbghigh(f"Restoring private plugins from zip-file: {pl}")
-    fl = [token for token in nl if token.startswith("plugins/")]
-    logger.dbgmed(f"restoring files: {fl}")
+    logger.dbghigh(f'Restoring private plugins from zip-file: {pl}')
+    fl = [token for token in nl if token.startswith('plugins/')]
+    logger.dbgmed(f'restoring files: {fl}')
     restorezip.extractall(path=base_dir, members=fl)
 
     # restore files to /var/esphome/config
-    restore_directory(restorezip, "esphome_config", esphome_conf_dir, overwrite)
-    esphome_common_dir = os.path.join(esphome_conf_dir, "common")
-    restore_directory(restorezip, "esphome_config/common", esphome_common_dir, overwrite)
+    restore_directory(restorezip, 'esphome_config', esphome_conf_dir, overwrite)
+    esphome_common_dir = os.path.join(esphome_conf_dir, 'common')
+    restore_directory(restorezip, 'esphome_config/common', esphome_common_dir, overwrite)
 
     # mark zip-file as restored
-    logger.info("- marking zip-file as restored")
-    os.rename(restorezip_filename, restorezip_filename + ".done")
+    logger.info('- marking zip-file as restored')
+    os.rename(restorezip_filename, restorezip_filename + '.done')
 
     # delete last backup timestamp
-    filename = os.path.join(backup_dir, "last_backup")
+    filename = os.path.join(backup_dir, 'last_backup')
     try:
         os.remove(filename)
     except OSError:
         pass
 
-    logger.info("Finished restore of configuration")
+    logger.info('Finished restore of configuration')
     return restorezip_filename
 
 
@@ -482,15 +482,15 @@ def restore_file(restorezip, arc_dir, filename, dest_dir, overwrite=False):
     """
     dest_filename = os.path.join(dest_dir, filename)
     if os.path.isfile(dest_filename) and not overwrite:
-        logger.error("File {} not restored - it already exists at destination {}".format(filename, dest_dir))
+        logger.error('File {} not restored - it already exists at destination {}'.format(filename, dest_dir))
         return False
 
-    logger.info(f"Restoring file {filename} to {dest_dir} overwrite={overwrite} from arc_dir {arc_dir}")
+    logger.info(f'Restoring file {filename} to {dest_dir} overwrite={overwrite} from arc_dir {arc_dir}')
 
     # copy file (taken from zipfile's extract)
     try:
         zip_info = restorezip.getinfo(os.path.join(arc_dir, filename))
-        if not zip_info.filename[-1] == "/":
+        if not zip_info.filename[-1] == '/':
             zip_info.filename = os.path.basename(zip_info.filename)
     except Exception:
         # logger.warning(f"Cannot get info for {arc_dir} file {filename} from zip")
@@ -514,7 +514,7 @@ def restore_directory(restorezip, arc_dir, dest_dir, overwrite=False):
     :param dest_dir: Destinaion directory where the file should be restored to
     :param overwrite: Overwrite file in destination, if it already exists
     """
-    logger.info(f"- Restoring directory {dest_dir}")
+    logger.info(f'- Restoring directory {dest_dir}')
     for fn in restorezip.namelist():
         if fn.startswith(arc_dir + os.path.sep):
             restore_file(restorezip, arc_dir, os.path.basename(fn), dest_dir, overwrite)
@@ -529,12 +529,12 @@ def restore_directory2(restorezip, arc_dir, dest_dir, overwrite=False):
     :param dest_dir: Destinaion directory where the file should be restored to
     :param overwrite: Overwrite file in destination, if it already exists
     """
-    logger.info(f"- Restoring directory {dest_dir}")
+    logger.info(f'- Restoring directory {dest_dir}')
     for fn in restorezip.namelist():
         prefix = arc_dir + os.path.sep
         if fn.startswith(prefix):
             fn2 = fn[len(prefix) :]
-            logger.dbghigh(f"{arc_dir}: {os.path.basename(fn2)} - {fn}")
+            logger.dbghigh(f'{arc_dir}: {os.path.basename(fn2)} - {fn}')
             restore_file(restorezip, arc_dir, os.path.basename(fn), dest_dir, overwrite)
 
 

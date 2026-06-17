@@ -39,6 +39,7 @@ They can be used the following way: To call eg. **get_toplevel_items()**, use th
 .. code-block:: python
 
     from lib.item import Items
+
     sh_items = Items.get_instance()
 
     # to access a method (eg. get_toplevel_items()):
@@ -85,7 +86,7 @@ class Items:
 
     structs = None
 
-    _item_methods = [name for name in dir(Item) if name[0] != "_"]
+    _item_methods = [name for name in dir(Item) if name[0] != '_']
 
     def __init__(self, smarthome):
         self._sh = smarthome
@@ -106,7 +107,7 @@ class Items:
         _items_instance = self
         self.structs = Structs(self._sh)
 
-        self._sh._ignore_item_collision = getattr(self._sh, "_ignore_item_collision", "False") == "True"
+        self._sh._ignore_item_collision = getattr(self._sh, '_ignore_item_collision', 'False') == 'True'
 
     # -----------------------------------------------------------------------------------------
     #   Following (static) method of the class Items implement the API for Items in SmartHomeNG
@@ -122,6 +123,7 @@ class Items:
         .. code-block:: python
 
             from lib.item import Items
+
             items = Items.get_instance()
 
             # to access a method (eg. return_items()):
@@ -137,7 +139,7 @@ class Items:
     #   Following methods handle structs
     # -----------------------------------------------------------------------------------------
 
-    def add_struct_definition(self, plugin_name, struct_name, struct, from_dir="plugins", optional=False):
+    def add_struct_definition(self, plugin_name, struct_name, struct, from_dir='plugins', optional=False):
         self.structs.add_struct_definition(plugin_name, struct_name, struct, from_dir, optional)
 
     def return_struct_definitions(self, all=True):
@@ -176,13 +178,13 @@ class Items:
         # and from ../etc/struct.yaml
         #
         # Read in item structs from ../etc/struct.yaml
-        self._sh.shng_status["details"] = "Structs"
+        self._sh.shng_status['details'] = 'Structs'
         self.structs.load_struct_definitions()
 
         # --------------------------------------------------------------------
         # Read in item definitions
         #
-        self._sh.shng_status["details"] = "Items"
+        self._sh.shng_status['details'] = 'Items'
         item_conf = None
         item_conf = lib.config.parse_itemsdir(env_dir, item_conf)
         item_conf = lib.config.parse_itemsdir(
@@ -196,7 +198,7 @@ class Items:
                     # (smarthome, parent, path, config):
                     child = Item(self._sh, self, child_path, value, items_instance=_items_instance)
                 except Exception as e:
-                    self.logger.error("load_itemdefinitions: Item {}: problem creating: {}".format(child_path, e))
+                    self.logger.error('load_itemdefinitions: Item {}: problem creating: {}'.format(child_path, e))
                 else:
                     vars(self)[attr] = child
                     vars(self._sh)[attr] = child
@@ -212,17 +214,17 @@ class Items:
         # --------------------------------------------------------------------
         # prepare loaded items for run phase of SmartHomeNG
         #
-        self._sh.shng_status = {"code": 14, "text": "Starting: Preparing loaded items", "details": "prerun"}
+        self._sh.shng_status = {'code': 14, 'text': 'Starting: Preparing loaded items', 'details': 'prerun'}
 
         # Build eval expressions from special functions and triggers before first run
         for item in self.return_items():
             item._init_prerun()
 
-        self._sh.shng_status = {"code": 14, "text": "Starting: Preparing loaded items", "details": "start scheduler"}
+        self._sh.shng_status = {'code': 14, 'text': 'Starting: Preparing loaded items', 'details': 'start scheduler'}
         # Start schedulers of the items which have a crontab or a cycle attribute
         for item in self.return_items():
             item._init_start_scheduler()
-        self._sh.shng_status = {"code": 14, "text": "Starting: Preparing loaded items", "details": "eval-run"}
+        self._sh.shng_status = {'code': 14, 'text': 'Starting: Preparing loaded items', 'details': 'eval-run'}
         # Run initial eval to set an initial value for the item
         # import time
         # gstart = time.time()
@@ -241,7 +243,7 @@ class Items:
         # gend = time.time()
         # self.logger.warning(f"_init_run: Totals: duration {gend-gstart}, eval execution time = {gduration} for {gcount} items")
 
-        self._sh.shng_status = {"code": 14, "text": "Starting: Preparing loaded items"}
+        self._sh.shng_status = {'code': 14, 'text': 'Starting: Preparing loaded items'}
 
     #        self.item_count = len(self.__items)
     #        self._sh.item_count = self.item_count()
@@ -287,14 +289,14 @@ class Items:
             del self.__item_dict[item.property.path]
             self.__items.remove(item.property.path)
         except Exception as e:
-            self.logger.warning(f"Error occured while trying to remove item {item.property.path}: {e}")
+            self.logger.warning(f'Error occured while trying to remove item {item.property.path}: {e}')
 
         # remove item bindings in plugins
         if item.remove():
             # delete item
             del item
         else:
-            self.logger.warning(f"Item {item.property.path} could not be removed due to incompatible plugins.")
+            self.logger.warning(f'Item {item.property.path} could not be removed due to incompatible plugins.')
 
     def get_toplevel_items(self):
         """
@@ -354,13 +356,13 @@ class Items:
         :rtype: list
         """
 
-        regex, __, attr = regex.partition(":")
+        regex, __, attr = regex.partition(':')
         # regex = regex.replace('.', '\.').replace('*', '.*') + '$'
-        regex = regex.replace(".", r"\.").replace("*", ".*") + "$"
+        regex = regex.replace('.', r'\.').replace('*', '.*') + '$'
         regex = re.compile(regex)
-        attr, __, val = attr.partition("[")
-        val = val.rstrip("]")
-        if attr != "" and val != "":
+        attr, __, val = attr.partition('[')
+        val = val.rstrip(']')
+        if attr != '' and val != '':
             return [
                 self.__item_dict[item]
                 for item in self.__items
@@ -374,7 +376,7 @@ class Items:
                     or (val == self.__item_dict[item].conf[attr])
                 )
             ]
-        elif attr != "":
+        elif attr != '':
             return [
                 self.__item_dict[item]
                 for item in self.__items
@@ -413,11 +415,11 @@ class Items:
 
         """
         result = False
-        if attr.endswith("@"):
+        if attr.endswith('@'):
             result = any(s for s in attr_list if s.startswith(attr))
             if not result:
                 result = attr[:-1] in attr_list
-        elif attr.startswith("@"):
+        elif attr.startswith('@'):
             result = any(s for s in attr_list if s.endswith(attr))
         else:
             result = attr in attr_list
@@ -494,16 +496,16 @@ class Items:
         attribute_name = attribute_name.lower()
         if self.plugin_attributes.get(attribute_name, None) is None:
             self.plugin_attributes[attribute_name] = {}
-            self.plugin_attributes[attribute_name]["plugin"] = plugin_name
-            self.plugin_attributes[attribute_name]["meta"] = dict(attribute)
-            self.logger.info("add_plugin_attribute: {} ({}) -> {}".format(attribute_name, plugin_name, dict(attribute)))
+            self.plugin_attributes[attribute_name]['plugin'] = plugin_name
+            self.plugin_attributes[attribute_name]['meta'] = dict(attribute)
+            self.logger.info('add_plugin_attribute: {} ({}) -> {}'.format(attribute_name, plugin_name, dict(attribute)))
         else:
-            if plugin_name != self.plugin_attributes[attribute_name]["plugin"]:
-                if self.plugin_attributes[attribute_name]["meta"]["type"] != attribute["type"]:
+            if plugin_name != self.plugin_attributes[attribute_name]['plugin']:
+                if self.plugin_attributes[attribute_name]['meta']['type'] != attribute['type']:
                     self.logger.error(
                         f"Plugins '{self.plugin_attributes[attribute_name]['plugin']}' and '{plugin_name}' define the same item-attribute '{attribute_name}' with different type definitions {self.plugin_attributes[attribute_name]['meta']['type']}/{attribute['type']}"
                     )
-                elif not self.plugin_attributes[attribute_name]["meta"].get("duplicate_use", False):
+                elif not self.plugin_attributes[attribute_name]['meta'].get('duplicate_use', False):
                     self.logger.warning(
                         f"Plugins '{self.plugin_attributes[attribute_name]['plugin']}' and '{plugin_name}' define the same item-attribute '{attribute_name}'"
                     )
@@ -524,16 +526,16 @@ class Items:
         prefix_name = prefix_name.lower()
         if self.plugin_attribute_prefixes.get(prefix_name, None) is None:
             self.plugin_attribute_prefixes[prefix_name] = {}
-            self.plugin_attribute_prefixes[prefix_name]["plugin"] = plugin_name
-            self.plugin_attribute_prefixes[prefix_name]["meta"] = dict(prefix)
+            self.plugin_attribute_prefixes[prefix_name]['plugin'] = plugin_name
+            self.plugin_attribute_prefixes[prefix_name]['meta'] = dict(prefix)
             self.logger.info(
-                "add_plugin_attribute_prefix: {} ({}) -> {}".format(prefix_name, plugin_name, dict(prefix))
+                'add_plugin_attribute_prefix: {} ({}) -> {}'.format(prefix_name, plugin_name, dict(prefix))
             )
         else:
-            if plugin_name != self.plugin_attribute_prefixes[prefix_name]["plugin"]:
+            if plugin_name != self.plugin_attribute_prefixes[prefix_name]['plugin']:
                 self.logger.error(
                     "Plugins '{}' and '{}' define the same item-attribute-prefix '{}'".format(
-                        self.plugin_attribute_prefixes[prefix_name]["plugin"], plugin_name, prefix_name
+                        self.plugin_attribute_prefixes[prefix_name]['plugin'], plugin_name, prefix_name
                     )
                 )
 
@@ -567,4 +569,4 @@ class Items:
         if meta is None:
             return None
         else:
-            return meta["type"]
+            return meta['type']

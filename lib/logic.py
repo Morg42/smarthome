@@ -35,6 +35,7 @@ They can be used the following way: To call eg. **enable_logic(name)**, use the 
 .. code-block:: python
 
     from lib.logic import Logics
+
     logics = Logics.get_instance()
 
     # to access a method (eg. enable_logic()):
@@ -82,12 +83,12 @@ class Logics:
     scheduler = None
 
     _config_type = None
-    _logicname_prefix = "logics."  # prefix for scheduler names
+    _logicname_prefix = 'logics.'  # prefix for scheduler names
 
     _groups = {}
 
     def __init__(self, smarthome, userlogicconf, envlogicconf):
-        logger.info("Start Logics")
+        logger.info('Start Logics')
         self.shtime = Shtime.get_instance()
         self.items = Items.get_instance()
         self.plugins = Plugins.get_instance()
@@ -128,7 +129,7 @@ class Logics:
         _config.update(self._userlogics)
 
         for name in _config:
-            if name != "_groups":
+            if name != '_groups':
                 self._load_logic(name, _config)
 
         self._groups = self._load_groups()
@@ -155,15 +156,15 @@ class Logics:
         changed = False
 
         # Strip legacy _groups section — group definitions belong in logic_groups.yaml only
-        if "_groups" in logic_conf:
-            del logic_conf["_groups"]
+        if '_groups' in logic_conf:
+            del logic_conf['_groups']
             changed = True
             logger.info("Logics._cleanup_stale_group_refs: removed legacy '_groups' section from logic.yaml")
 
         for logicname, sect in logic_conf.items():
             if not isinstance(sect, dict):
                 continue
-            raw = sect.get("logic_groupname", None)
+            raw = sect.get('logic_groupname', None)
             if raw is None:
                 continue
 
@@ -180,11 +181,11 @@ class Logics:
             logger.info(f"Logics._cleanup_stale_group_refs: removing stale group(s) {stale} from logic '{logicname}'")
 
             if not cleaned:
-                sect.pop("logic_groupname", None)
+                sect.pop('logic_groupname', None)
             elif len(cleaned) == 1:
-                sect["logic_groupname"] = cleaned[0]
+                sect['logic_groupname'] = cleaned[0]
             else:
-                sect["logic_groupname"] = cleaned
+                sect['logic_groupname'] = cleaned
 
             # Sync the in-memory Logic object if it is loaded
             running = self.return_logic(logicname)
@@ -195,7 +196,7 @@ class Logics:
 
         if changed:
             shyaml.yaml_save_roundtrip(self._logic_conf, logic_conf, create_backup=False)
-            logger.info("Logics._cleanup_stale_group_refs: logic.yaml updated")
+            logger.info('Logics._cleanup_stale_group_refs: logic.yaml updated')
 
     def _load_groups(self):
         """
@@ -217,40 +218,40 @@ class Logics:
             # now so it can never re-seed a future migration and clobber groups.
             admconf_filename = self._sh.get_config_file(BASE_ADMIN)
             if os.path.isfile(admconf_filename):
-                bak_filename = admconf_filename + ".bak"
+                bak_filename = admconf_filename + '.bak'
                 try:
                     os.replace(admconf_filename, bak_filename)
-                    logger.info("Logics._load_groups: retired stale etc/admin.yaml → etc/admin.yaml.bak")
+                    logger.info('Logics._load_groups: retired stale etc/admin.yaml → etc/admin.yaml.bak')
                 except OSError as e:
-                    logger.warning(f"Logics._load_groups: could not rename stale admin.yaml: {e}")
+                    logger.warning(f'Logics._load_groups: could not rename stale admin.yaml: {e}')
             if groups_conf is None:
                 return {}
             return dict(groups_conf)
 
         # --- first-run migration from admin.yaml ---
-        logger.info("Logics._load_groups: logic_groups.yaml not found – migrating from admin.yaml")
+        logger.info('Logics._load_groups: logic_groups.yaml not found – migrating from admin.yaml')
         admconf_filename = self._sh.get_config_file(BASE_ADMIN)
         groups = {}
         try:
             _admin_conf = shyaml.yaml_load_roundtrip(admconf_filename)
-            if _admin_conf and _admin_conf.get("logics") and _admin_conf["logics"].get("groups"):
-                groups = dict(_admin_conf["logics"]["groups"])
+            if _admin_conf and _admin_conf.get('logics') and _admin_conf['logics'].get('groups'):
+                groups = dict(_admin_conf['logics']['groups'])
         except Exception as e:
-            logger.warning(f"Logics._load_groups: could not read admin.yaml during migration: {e}")
+            logger.warning(f'Logics._load_groups: could not read admin.yaml during migration: {e}')
 
         shyaml.yaml_save_roundtrip(groups_filename, groups, create_backup=False)
-        logger.info(f"Logics._load_groups: migrated {len(groups)} group(s) to logic_groups.yaml")
+        logger.info(f'Logics._load_groups: migrated {len(groups)} group(s) to logic_groups.yaml')
 
         # Retire admin.yaml so this migration path can never re-run.
         # os.replace() is atomic and overwrites an existing destination.
         if os.path.isfile(admconf_filename):
-            bak_filename = admconf_filename + ".bak"
+            bak_filename = admconf_filename + '.bak'
             try:
                 os.replace(admconf_filename, bak_filename)
-                logger.info("Logics._load_groups: renamed etc/admin.yaml → etc/admin.yaml.bak")
+                logger.info('Logics._load_groups: renamed etc/admin.yaml → etc/admin.yaml.bak')
             except OSError as e:
                 logger.warning(
-                    f"Logics._load_groups: could not rename admin.yaml: {e} – migration may repeat on next start"
+                    f'Logics._load_groups: could not rename admin.yaml: {e} – migration may repeat on next start'
                 )
 
         return groups
@@ -266,14 +267,14 @@ class Logics:
         :param filename: name of the logics configurtion file
         :param directory: directory where the logics are stored
         """
-        logger.debug("Reading Logics from {}.*".format(filename))
-        config = lib.config.parse_basename(filename, configtype="logics")
+        logger.debug('Reading Logics from {}.*'.format(filename))
+        config = lib.config.parse_basename(filename, configtype='logics')
         if config != {}:
             self._config_type = YAML_FILE
 
             for name in config:
-                if "filename" in config[name]:
-                    config[name]["pathname"] = directory + config[name]["filename"]
+                if 'filename' in config[name]:
+                    config[name]['pathname'] = directory + config[name]['filename']
 
         return config
 
@@ -284,9 +285,9 @@ class Logics:
         #        logger.debug("_load_logic: Logics.is_logic_loaded(name) = {}.".format( str(Logics.is_logic_loaded(name)) ))
         if self.is_logic_loaded(name):
             return False
-        logger.debug("Logic: {}".format(name))
+        logger.debug('Logic: {}'.format(name))
         logic = Logic(self._sh, name, config[name], self)
-        if hasattr(logic, "_bytecode"):
+        if hasattr(logic, '_bytecode'):
             self._logics[name] = logic
             self.scheduler.add(self._logicname_prefix + name, logic, logic._prio, logic._crontab, logic._cycle)
         else:
@@ -299,7 +300,7 @@ class Logics:
                 if update:
                     logic.add_method_trigger(update)
         # item hook
-        if hasattr(logic, "watch_item"):
+        if hasattr(logic, 'watch_item'):
             if isinstance(logic.watch_item, str):
                 logic.watch_item = [logic.watch_item]
             for entry in logic.watch_item:
@@ -356,6 +357,7 @@ class Logics:
         .. code-block:: python
 
             from lib.logic import Logics
+
             logics = Logics.get_instance()
 
             # to access a method (eg. enable_logic()):
@@ -378,20 +380,20 @@ class Logics:
 
         The parameters are identical to the scheduler.add method from lib.scheduler
         """
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._logicname_prefix + self.get_fullname() + name
-        logger.debug("scheduler_add: name = {}".format(name))
+        logger.debug('scheduler_add: name = {}'.format(name))
         self.scheduler.add(name, obj, prio, cron, cycle, value, offset, next, from_smartplugin=True)
 
     def scheduler_change(self, name, **kwargs):
         """
         This methods changes a scheduler entry of a logic-scheduler
         """
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._logicname_prefix + self.get_fullname() + name
-        logger.debug("scheduler_change: name = {}".format(name))
+        logger.debug('scheduler_change: name = {}'.format(name))
         self.scheduler.change(name, kwargs)
 
     def scheduler_remove(self, name):
@@ -402,10 +404,10 @@ class Logics:
 
         The parameters are identical to the scheduler.remove method from lib.scheduler
         """
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._logicname_prefix + self.get_fullname() + name
-        logger.debug("scheduler_remove: name = {}".format(name))
+        logger.debug('scheduler_remove: name = {}'.format(name))
         self.scheduler.remove(name, from_smartplugin=False)
 
     def get_logics_dir(self):
@@ -494,29 +496,29 @@ class Logics:
         if logic is None:
             return info
 
-        info["name"] = logic._name
-        info["enabled"] = logic._enabled
+        info['name'] = logic._name
+        info['enabled'] = logic._enabled
 
         if self.scheduler.return_next(self._logicname_prefix + logic.name):
-            info["next_exec"] = self.scheduler.return_next(self._logicname_prefix + logic.name).strftime(
-                "%Y-%m-%d %H:%M:%S%z"
+            info['next_exec'] = self.scheduler.return_next(self._logicname_prefix + logic.name).strftime(
+                '%Y-%m-%d %H:%M:%S%z'
             )
 
-        info["cycle"] = logic._cycle
-        info["crontab"] = logic._crontab
+        info['cycle'] = logic._cycle
+        info['crontab'] = logic._crontab
         try:
-            info["watch_item"] = logic.watch_item
+            info['watch_item'] = logic.watch_item
         except AttributeError:
-            info["watch_item"] = ""
-        info["userlogic"] = self.is_userlogic(logic.name)
-        info["logictype"] = self.return_logictype(logic.name)
-        info["filename"] = logic._filename
-        info["pathname"] = logic._pathname
+            info['watch_item'] = ''
+        info['userlogic'] = self.is_userlogic(logic.name)
+        info['logictype'] = self.return_logictype(logic.name)
+        info['filename'] = logic._filename
+        info['pathname'] = logic._pathname
         try:
-            info["description"] = logic.description
+            info['description'] = logic.description
         except AttributeError:
-            info["description"] = ""
-        info["visu_access"] = self.visu_access(logic.name)
+            info['description'] = ''
+        info['visu_access'] = self.visu_access(logic.name)
         #        info['watch_item_list'] = []
         return info
 
@@ -525,7 +527,7 @@ class Logics:
         Return if visu may access the logic
         """
         try:
-            if self.return_logic(name).visu_acl.lower() in ("true", "yes", "rw"):
+            if self.return_logic(name).visu_acl.lower() in ('true', 'yes', 'rw'):
                 return True
         except Exception:
             pass
@@ -537,7 +539,7 @@ class Logics:
         """
         mylogic = self.return_logic(name)
         if mylogic is None:
-            logger.warning("logics.is_logic_enabled: No logic found with name {}".format(name))
+            logger.warning('logics.is_logic_enabled: No logic found with name {}'.format(name))
             return False
         return mylogic.is_enabled()
 
@@ -547,11 +549,11 @@ class Logics:
         """
         mylogic = self.return_logic(name)
         if mylogic is None:
-            logger.warning("logics.enable_logic: No logic found with name {}".format(name))
+            logger.warning('logics.enable_logic: No logic found with name {}'.format(name))
             return False
         mylogic.enable()
         #        self.set_config_section_key(name, 'enabled', True)
-        self.set_config_section_key(name, "enabled", None)
+        self.set_config_section_key(name, 'enabled', None)
         return mylogic._enabled
 
     def disable_logic(self, name):
@@ -560,10 +562,10 @@ class Logics:
         """
         mylogic = self.return_logic(name)
         if mylogic is None:
-            logger.warning("logics.disable_logic: No logic found with name {}".format(name))
+            logger.warning('logics.disable_logic: No logic found with name {}'.format(name))
             return False
         mylogic.disable()
-        self.set_config_section_key(name, "enabled", False)
+        self.set_config_section_key(name, 'enabled', False)
         return mylogic._enabled
 
     def toggle_logic(self, name):
@@ -572,23 +574,23 @@ class Logics:
         """
         mylogic = self.return_logic(name)
         if mylogic is None:
-            logger.warning("logics.toggle_logic: No logic found with name {}".format(name))
+            logger.warning('logics.toggle_logic: No logic found with name {}'.format(name))
             return False
         if mylogic._enabled:
             mylogic.disable()
         else:
-            logger.info("toggle_logic: name = {}".format(name))
+            logger.info('toggle_logic: name = {}'.format(name))
             mylogic.enable()
         return mylogic._enabled
 
-    def trigger_logic(self, name, by="unknown", source=None, value=None):
+    def trigger_logic(self, name, by='unknown', source=None, value=None):
         """
         Trigger a logic
         """
         logger.debug("trigger_logic: Trigger logic = '{}'".format(name))
         if name in self.return_loaded_logics():
-            if by == "unknown":
-                by = "Backend"
+            if by == 'unknown':
+                by = 'Backend'
             self.scheduler.trigger(self._logicname_prefix + name, by=by, source=source, value=value)
         else:
             logger.warning("trigger_logic: Logic '{}' not found/loaded".format(name))
@@ -618,19 +620,19 @@ class Logics:
         :return: Success
         :rtype: bool
         """
-        logger.info("load_logics: Start")
+        logger.info('load_logics: Start')
         if self.is_logic_loaded(name):
             self.unload_logic(name)
 
         _config = self._read_logics(self._get_logic_conf_basename(), self.get_logics_dir())
         if name not in _config:
             logger.warning("load_logic: FAILED: Logic '{}', _config = {}".format(name, str(_config)))
-            logger.info("load_logics: Failed")
+            logger.info('load_logics: Failed')
             return False
 
         logger.info("load_logic: Logic '{}', _config = {}".format(name, str(_config)))
 
-        logger.info("load_logics: End")
+        logger.info('load_logics: End')
         return self._load_logic(name, _config)
 
     def unload_logic(self, name):
@@ -642,7 +644,7 @@ class Logics:
         :param name: Name of the section that defines the logic in the configuration file
         :type name: str
         """
-        logger.info("Unload Logic: {}".format(name))
+        logger.info('Unload Logic: {}'.format(name))
         mylogic = self.return_logic(name)
         if mylogic is None:
             return False
@@ -655,7 +657,7 @@ class Logics:
         self.scheduler.remove(self._logicname_prefix + name)
 
         # watch_items entfernen
-        if hasattr(mylogic, "watch_item"):
+        if hasattr(mylogic, 'watch_item'):
             if isinstance(mylogic.watch_item, str):
                 mylogic.watch_item = [mylogic.watch_item]
             for entry in mylogic.watch_item:
@@ -693,31 +695,31 @@ class Logics:
         :rtype: str or None
         """
 
-        logic_type = "None"
-        filename = ""
+        logic_type = 'None'
+        filename = ''
         if name in self._userlogics:
             try:
-                filename = self._userlogics[name].get("filename", "")
+                filename = self._userlogics[name].get('filename', '')
             except (KeyError, TypeError):
                 logger.warning("return_logictype: self._userlogics[name] = '{}'".format(str(self._userlogics[name])))
                 logger.warning("return_logictype: self._userlogics = '{}'".format(str(self._userlogics)))
         elif name in self._systemlogics:
-            filename = self._systemlogics[name].get("filename", "")
-            logic_type = "Python"
+            filename = self._systemlogics[name].get('filename', '')
+            logic_type = 'Python'
         else:
-            logger.info("return_logictype: name {} is not loaded".format(name))
+            logger.info('return_logictype: name {} is not loaded'.format(name))
             # load /etc/logic.yaml if logic is not in the loaded logics
             config = shyaml.yaml_load_roundtrip(self._logic_conf)
             if config is not None:
                 if name in config:
-                    filename = config[name].get("filename", "")
+                    filename = config[name].get('filename', '')
 
-        if filename != "":
-            blocklyname = os.path.splitext(os.path.basename(filename))[0] + ".blockly"
+        if filename != '':
+            blocklyname = os.path.splitext(os.path.basename(filename))[0] + '.blockly'
             if os.path.isfile(os.path.join(self.get_logics_dir(), filename)):
-                logic_type = "Python"
+                logic_type = 'Python'
                 if os.path.isfile(os.path.join(self.get_logics_dir(), blocklyname)):
-                    logic_type = "Blockly"
+                    logic_type = 'Blockly'
 
         logger.debug("return_logictype: name '{}', filename '{}', logic_type '{}'".format(name, filename, logic_type))
         return logic_type
@@ -745,14 +747,14 @@ class Logics:
 
         if config is not None:
             for section in config:
-                if section != "_groups":
-                    filename = config[section]["filename"]
-                    blocklyname = os.path.splitext(os.path.basename(filename))[0] + ".xml"
-                    logic_type = "None"
+                if section != '_groups':
+                    filename = config[section]['filename']
+                    blocklyname = os.path.splitext(os.path.basename(filename))[0] + '.xml'
+                    logic_type = 'None'
                     if os.path.isfile(os.path.join(self.get_logics_dir(), filename)):
-                        logic_type = "Python"
+                        logic_type = 'Python'
                         if os.path.isfile(os.path.join(self.get_logics_dir(), blocklyname)):
-                            logic_type = "Blockly"
+                            logic_type = 'Blockly'
                     logger.debug(f"return_defined_logics: section '{section}', logic_type '{logic_type}'")
 
                     if withtype:
@@ -807,7 +809,7 @@ class Logics:
         :rtype: list of lists
         """
         if self.return_config_type() != YAML_FILE:
-            logger.error("read_config_section: Editing of configuration only possible with new (yaml) config format")
+            logger.error('read_config_section: Editing of configuration only possible with new (yaml) config format')
             return False
 
         # load /etc/logic.yaml
@@ -826,23 +828,23 @@ class Logics:
                             try:
                                 c = section_dict[key].ca.items[i][0].value
                             except (AttributeError, IndexError):
-                                logger.info("c: {}, Key: {}".format(c, key))
-                                c = ""
-                            if len(c) > 0 and c[0] == "#":
+                                logger.info('c: {}, Key: {}'.format(c, key))
+                                c = ''
+                            if len(c) > 0 and c[0] == '#':
                                 c = c[1:]
                         else:
-                            c = ""
+                            c = ''
 
                         comment.append(c.strip())
                 else:
                     value = section_dict[key]
-                    c = ""
+                    c = ''
                     if key in section_dict.ca.items:
                         try:
                             c = section_dict.ca.items[key][2].value  # if not list: loaded['a'].ca.items['b'][2].value
                         except (AttributeError, IndexError):
-                            logger.info("c2: {}, Key: {}".format(c, key))
-                        if len(c) > 0 and c[0] == "#":
+                            logger.info('c2: {}, Key: {}'.format(c, key))
+                        if len(c) > 0 and c[0] == '#':
                             c = c[1:]
                     comment = c.strip()
 
@@ -862,7 +864,7 @@ class Logics:
         # load /etc/logic.yaml
         conf = shyaml.yaml_load_roundtrip(self._logic_conf)
 
-        logger.info("set_config_section_key: section={}, key={}, value={}".format(section, key, str(value)))
+        logger.info('set_config_section_key: section={}, key={}, value={}'.format(section, key, str(value)))
         if value is None:
             if conf[section].get(key, None) is not None:
                 del conf[section][key]
@@ -873,10 +875,10 @@ class Logics:
         shyaml.yaml_save_roundtrip(self._logic_conf, conf, True)
 
         # activate visu_acl without reloading the logic
-        if key == "visu_acl":
+        if key == 'visu_acl':
             mylogic = self.return_logic(section)
             if mylogic is not None:
-                logger.info(" - key={}, value={}".format(key, value))
+                logger.info(' - key={}, value={}'.format(key, value))
                 #                if value is None:
                 #                    value = 'false'
                 mylogic.visu_acl = str(value)
@@ -897,12 +899,12 @@ class Logics:
         :type section: str
         :type config_list: list of lists
         """
-        if section == "":
-            logger.error("update_config_section: No section name specified. Not updatind logics configuration.")
+        if section == '':
+            logger.error('update_config_section: No section name specified. Not updatind logics configuration.')
             return False
 
         if self.return_config_type() != YAML_FILE:
-            logger.error("update_config_section: Editing of configuration only possible with new (yaml) config format")
+            logger.error('update_config_section: Editing of configuration only possible with new (yaml) config format')
             return False
 
         # load /etc/logic.yaml
@@ -913,43 +915,43 @@ class Logics:
         # empty section
         if conf.get(section, None) is None:
             conf[section] = shyaml.get_emptynode()
-        if conf[section].get("filename", None) is not None:
-            del conf[section]["filename"]
-        if conf[section].get("cycle", None) is not None:
-            del conf[section]["cycle"]
-        if conf[section].get("crontab", None) is not None:
-            del conf[section]["crontab"]
-        if conf[section].get("watch_item", None) is not None:
-            del conf[section]["watch_item"]
+        if conf[section].get('filename', None) is not None:
+            del conf[section]['filename']
+        if conf[section].get('cycle', None) is not None:
+            del conf[section]['cycle']
+        if conf[section].get('crontab', None) is not None:
+            del conf[section]['crontab']
+        if conf[section].get('watch_item', None) is not None:
+            del conf[section]['watch_item']
 
         # add entries to section
-        logger.info("update_config_section: section {}".format(section))
+        logger.info('update_config_section: section {}'.format(section))
         for c in config_list:
             # process config entries
             key = c[0].strip()
             value = c[1]
             comment = c[2]
-            logger.info(" - key={}, value={}, comment={}".format(key, str(value), str(comment)))
+            logger.info(' - key={}, value={}, comment={}'.format(key, str(value), str(comment)))
             if isinstance(value, str):
                 value = value.strip()
                 comment = comment.strip()
-                if value != "" and value[0] == "[" and value[-1] == "]":
+                if value != '' and value[0] == '[' and value[-1] == ']':
                     # convert a list of triggers to list, if given as a string
                     value = ast.literal_eval(value)
-                    if comment != "":
+                    if comment != '':
                         comment = ast.literal_eval(comment)
                 else:
                     # process single trigger
-                    if active or (key == "filename"):
+                    if active or (key == 'filename'):
                         conf[section][key] = value
-                        if comment != "":
+                        if comment != '':
                             conf[section].yaml_add_eol_comment(comment, key, column=50)
             elif isinstance(value, int) or isinstance(value, bool) or isinstance(value, float):
                 comment = comment.strip()
                 # process single trigger
                 if active:
                     conf[section][key] = value
-                    if comment != "":
+                    if comment != '':
                         conf[section].yaml_add_eol_comment(comment, key, column=50)
             elif isinstance(value, list):
                 pass  # list values are written below in the `if active: if isinstance(value, list)` block
@@ -961,8 +963,8 @@ class Logics:
                     # process a list of triggers
                     conf[section][key] = shyaml.get_commentedseq(value)
                     for i in range(len(value)):
-                        if comment != "":
-                            if comment[i] != "":
+                        if comment != '':
+                            if comment[i] != '':
                                 conf[section][key].yaml_add_eol_comment(comment[i], i, column=50)
 
         if conf[section] == shyaml.get_emptynode():
@@ -977,7 +979,7 @@ class Logics:
         if conf:
             for name in conf:
                 section = conf.get(name, None)
-                fn = section.get("filename", None)
+                fn = section.get('filename', None)
                 if fn is not None and fn.lower() == filename.lower():
                     count += 1
         return count
@@ -1021,7 +1023,7 @@ class Logics:
             return False
 
         # delete code file in ../logics
-        filename = section.get("filename", None)
+        filename = section.get('filename', None)
         if filename is None:
             logger.warning(
                 f"delete_logic: Filename of logic is not defined in section '{name}' of logic configuration."
@@ -1029,7 +1031,7 @@ class Logics:
         else:
             count = self._count_filename_uses(conf, filename)
             blocklyname = os.path.join(
-                self.get_logics_dir(), os.path.splitext(os.path.basename(filename))[0] + ".blockly"
+                self.get_logics_dir(), os.path.splitext(os.path.basename(filename))[0] + '.blockly'
             )
             filename = os.path.join(self._logic_dir, filename)
 
@@ -1067,17 +1069,17 @@ class Logic:
     Class for the representation of a loaded logic
     """
 
-    _logicname_prefix = "logics."
+    _logicname_prefix = 'logics.'
 
     def __init__(self, smarthome, name, attributes, logics):
         self.sh = smarthome  # initialize to use 'logic.sh' in logics
         self.logger = logger  # initialize to use 'logic.logger' in logics
         self._logic_groupnames = []
         self._name = name
-        self._logic_description = ""
+        self._logic_description = ''
         self.shtime = logics.shtime
         self._logics = logics  # access to the logics api
-        self._enabled = True if "enabled" not in attributes else Utils.to_bool(attributes["enabled"])
+        self._enabled = True if 'enabled' not in attributes else Utils.to_bool(attributes['enabled'])
         # self.enabled = self._enabled
         self._crontab = None
         self._cycle = None
@@ -1089,33 +1091,33 @@ class Logic:
         self._conf = attributes
         self.scheduler = Logics.get_instance().scheduler
         self.__methods_to_trigger = []
-        if attributes != "None":
+        if attributes != 'None':
             # Fills crontab, cycle and other parameters
             for attribute in attributes:
-                if attribute == "logic_groupname":
+                if attribute == 'logic_groupname':
                     if isinstance(attributes[attribute], list):
-                        vars(self)["_logic_groupnames"] = attributes[attribute]
+                        vars(self)['_logic_groupnames'] = attributes[attribute]
                     else:
-                        vars(self)["_logic_groupnames"] = [attributes[attribute]]
-                if attribute == "logic_description":
-                    vars(self)["_logic_description"] = attributes[attribute]
-                if attribute == "pathname":
-                    vars(self)["_pathname"] = attributes[attribute]
-                elif attribute == "filename":
-                    vars(self)["_filename"] = attributes[attribute]
-                elif attribute == "watch_item":
-                    vars(self)["_watch_item"] = attributes[attribute]
-                elif attribute == "cycle":
-                    vars(self)["_cycle"] = attributes[attribute]
-                elif attribute == "crontab":
-                    vars(self)["_crontab"] = attributes[attribute]
-                elif attribute != "enabled":
+                        vars(self)['_logic_groupnames'] = [attributes[attribute]]
+                if attribute == 'logic_description':
+                    vars(self)['_logic_description'] = attributes[attribute]
+                if attribute == 'pathname':
+                    vars(self)['_pathname'] = attributes[attribute]
+                elif attribute == 'filename':
+                    vars(self)['_filename'] = attributes[attribute]
+                elif attribute == 'watch_item':
+                    vars(self)['_watch_item'] = attributes[attribute]
+                elif attribute == 'cycle':
+                    vars(self)['_cycle'] = attributes[attribute]
+                elif attribute == 'crontab':
+                    vars(self)['_crontab'] = attributes[attribute]
+                elif attribute != 'enabled':
                     vars(self)[attribute] = attributes[attribute]
             self._prio = int(self._prio)
             self._generate_bytecode()
         else:
             self.logger.error(
-                "Logic {} is not configured correctly (configuration has no attibutes)".format(self._name)
+                'Logic {} is not configured correctly (configuration has no attibutes)'.format(self._name)
             )
 
     def id(self):
@@ -1127,7 +1129,7 @@ class Logic:
     def __str__(self):
         return self._name
 
-    def __call__(self, caller="Logic", source=None, value=None, dest=None, dt=None):
+    def __call__(self, caller='Logic', source=None, value=None, dest=None, dt=None):
         if self._enabled:
             self.scheduler.trigger(
                 self._logicname_prefix + self._name,
@@ -1231,12 +1233,12 @@ class Logic:
         :return: name of the item
         :rtype: str
         """
-        return "Logic " + self._name  # string is to be used in item assignements sh.xxx(<value>, logic.lname)
+        return 'Logic ' + self._name  # string is to be used in item assignements sh.xxx(<value>, logic.lname)
 
     @lname.setter
     def lname(self, value):
 
-        self.log_readonly_warning("lname", value)
+        self.log_readonly_warning('lname', value)
         return
 
     @property
@@ -1252,7 +1254,7 @@ class Logic:
     @filename.setter
     def filename(self, value):
 
-        self.log_readonly_warning("filename", value)
+        self.log_readonly_warning('filename', value)
         return
 
     @property
@@ -1268,7 +1270,7 @@ class Logic:
     @pathname.setter
     def pathname(self, value):
 
-        self.log_readonly_warning("pathname", value)
+        self.log_readonly_warning('pathname', value)
         return
 
     @property
@@ -1284,7 +1286,7 @@ class Logic:
     @conf.setter
     def conf(self, value):
 
-        self.log_readonly_warning("conf", value)
+        self.log_readonly_warning('conf', value)
         return
 
     @property
@@ -1300,7 +1302,7 @@ class Logic:
     @cycle.setter
     def cycle(self, value):
 
-        self.log_readonly_warning("cycle", value)
+        self.log_readonly_warning('cycle', value)
         return
 
     @property
@@ -1316,7 +1318,7 @@ class Logic:
     @crontab.setter
     def crontab(self, value):
 
-        self.log_readonly_warning("crontab", value)
+        self.log_readonly_warning('crontab', value)
         return
 
     @property
@@ -1406,7 +1408,7 @@ class Logic:
         #        self._last_run = self._sh.now()
         self._last_run = self.shtime.now()
 
-    def trigger(self, by="Logic", source=None, value=None, dest=None, dt=None):
+    def trigger(self, by='Logic', source=None, value=None, dest=None, dt=None):
         if self._enabled:
             self.scheduler.trigger(
                 self._logicname_prefix + self._name,
@@ -1422,22 +1424,22 @@ class Logic:
             self.logger.info("trigger: Logic '{}' not triggered because it is disabled".format(self._name))
 
     def _generate_bytecode(self):
-        if hasattr(self, "_pathname"):
+        if hasattr(self, '_pathname'):
             if not os.access(self._pathname, os.R_OK):
                 self.logger.warning(
-                    "{}: Could not access logic file ({}) => ignoring.".format(self._name, self._pathname)
+                    '{}: Could not access logic file ({}) => ignoring.'.format(self._name, self._pathname)
                 )
                 return
             try:
-                f = open(self._pathname, encoding="UTF-8")
+                f = open(self._pathname, encoding='UTF-8')
                 code = f.read()
                 f.close()
-                code = code.lstrip("\ufeff")  # remove BOM
-                self._bytecode = compile(code, self._pathname, "exec")
+                code = code.lstrip('\ufeff')  # remove BOM
+                self._bytecode = compile(code, self._pathname, 'exec')
             except Exception as e:
-                self.logger.exception("Exception: {}".format(e))
+                self.logger.exception('Exception: {}'.format(e))
         else:
-            self.logger.warning("{}: No pathname specified => ignoring.".format(self._name))
+            self.logger.warning('{}: No pathname specified => ignoring.'.format(self._name))
 
     def add_method_trigger(self, method):
         self.__methods_to_trigger.append(method)

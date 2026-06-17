@@ -26,7 +26,7 @@ import sys
 import socket
 import platform
 
-if os.name != "nt":
+if os.name != 'nt':
     import pwd
 import psutil
 import datetime
@@ -50,8 +50,8 @@ class SystemData:
     def __init__(self, sh):
         self._sh = sh
         self.logger = logging.getLogger(__name__)
-        self.logger = logging.getLogger("modules.admin.systemdata")
-        self.logger.debug("Systemdata.__init__()")
+        self.logger = logging.getLogger('modules.admin.systemdata')
+        self.logger.debug('Systemdata.__init__()')
         self.pypi_sorted_package_list = []
 
         self.shpypi = Shpypi.get_instance()
@@ -78,17 +78,17 @@ class SystemData:
         # self.read_linuxinfo()
         # vers = Utils.strip_quotes(self.os_release.get('PRETTY_NAME', ''))
         vers = self._sh.systeminfo.get_osname()
-        if vers == "":
+        if vers == '':
             vers = platform.version()
         arch = platform.machine()
         # node = platform.node()
         node = socket.getfqdn()
-        if os.name != "nt":
+        if os.name != 'nt':
             user = pwd.getpwuid(os.geteuid()).pw_name  # os.getlogin()
         else:
             user = os.getlogin()
 
-        if os.name != "nt":
+        if os.name != 'nt':
             space = os.statvfs(self._sh.base_dir)
             freespace = space.f_frsize * space.f_bavail / 1024 / 1024
         else:
@@ -96,59 +96,59 @@ class SystemData:
             freespace = space.free / 1024 / 1024
 
         rt = Shtime.get_instance().runtime_as_dict()
-        sh_runtime_seconds = rt["total_seconds"]
+        sh_runtime_seconds = rt['total_seconds']
 
-        pyversion = "{0}.{1}.{2} {3}".format(
+        pyversion = '{0}.{1}.{2} {3}'.format(
             sys.version_info[0], sys.version_info[1], sys.version_info[2], sys.version_info[3]
         )
 
         response = {}
-        response["now"] = now
-        response["ostype"] = self._sh.systeminfo.get_ostype()
-        response["osflavor"] = self._sh.systeminfo.get_osflavor()
-        response["system"] = system
-        response["sh_vers"] = shngversion.get_shng_version()
-        response["sh_desc"] = shngversion.get_shng_description()
-        response["plg_vers"] = shngversion.get_plugins_version()
-        response["plg_desc"] = shngversion.get_plugins_description()
-        response["sh_dir"] = self._sh.base_dir
+        response['now'] = now
+        response['ostype'] = self._sh.systeminfo.get_ostype()
+        response['osflavor'] = self._sh.systeminfo.get_osflavor()
+        response['system'] = system
+        response['sh_vers'] = shngversion.get_shng_version()
+        response['sh_desc'] = shngversion.get_shng_description()
+        response['plg_vers'] = shngversion.get_plugins_version()
+        response['plg_desc'] = shngversion.get_plugins_description()
+        response['sh_dir'] = self._sh.base_dir
 
-        response["vers"] = vers
-        response["node"] = node
-        response["arch"] = arch
-        response["user"] = user
-        response["freespace"] = freespace
-        response["hardware"] = self._sh.systeminfo.get_rasppi_info()
-        if response["hardware"] == "":
-            response["hardware"] = self._sh.systeminfo.get_cpubrand()
-        response["rasppi"] = self._sh.systeminfo.running_on_rasppi()
+        response['vers'] = vers
+        response['node'] = node
+        response['arch'] = arch
+        response['user'] = user
+        response['freespace'] = freespace
+        response['hardware'] = self._sh.systeminfo.get_rasppi_info()
+        if response['hardware'] == '':
+            response['hardware'] = self._sh.systeminfo.get_cpubrand()
+        response['rasppi'] = self._sh.systeminfo.running_on_rasppi()
         # response['hwspeed'] = ''
 
         if self._sh.systeminfo.cpu_speed_class is not None:
-            response["hwspeed"] = self._sh.systeminfo.cpu_speed_class
+            response['hwspeed'] = self._sh.systeminfo.cpu_speed_class
 
-        response["uptime"] = time.mktime(datetime.datetime.now().timetuple()) - psutil.boot_time()
-        response["sh_uptime"] = sh_runtime_seconds
-        response["pyversion"] = pyversion
-        response["pypath"] = self._sh.python_bin
-        response["pyvirtual"] = lib.utils.running_virtual()
+        response['uptime'] = time.mktime(datetime.datetime.now().timetuple()) - psutil.boot_time()
+        response['sh_uptime'] = sh_runtime_seconds
+        response['pyversion'] = pyversion
+        response['pypath'] = self._sh.python_bin
+        response['pyvirtual'] = lib.utils.running_virtual()
 
         # ip = Utils.get_local_ipv4_address()
         ip = Utils.get_all_local_ipv4_addresses()
-        if "127.0.0.1" in ip:
-            ip.remove("127.0.0.1")
+        if '127.0.0.1' in ip:
+            ip.remove('127.0.0.1')
             # ip.append('127.0.0.1')
         if len(ip) == 1:
-            response["ip"] = ip[0]
+            response['ip'] = ip[0]
         else:
-            response["ip"] = str(ip)
+            response['ip'] = str(ip)
         ipv6 = Utils.get_local_ipv6_address()
         # ipv6 = Utils.get_all_local_ipv6_addresses()
-        response["ipv6"] = str(ipv6)
-        if os.name != "nt":
-            response["pid"] = str(lib.daemon.read_pidfile(self._sh._pidfile))
+        response['ipv6'] = str(ipv6)
+        if os.name != 'nt':
+            response['pid'] = str(lib.daemon.read_pidfile(self._sh._pidfile))
         else:
-            response["pid"] = str(os.getpid())
+            response['pid'] = str(os.getpid())
 
         # self.logger.warning("admin: systeminfo_json: response = {}".format(response))
         return json.dumps(response)
@@ -187,94 +187,94 @@ class SystemData:
         :return: information about packahge requirements including PyPI information
         :rtype: json structure
         """
-        self.logger.debug("pypi_json")
+        self.logger.debug('pypi_json')
 
         if self.pypi_sorted_package_list != []:
             # return list, if it already has been prepared
-            self.logger.info("Returning a previously prepared PpyPI package list")
+            self.logger.info('Returning a previously prepared PpyPI package list')
             return json.dumps(self.pypi_sorted_package_list)
 
         package_list = self.shpypi.get_packagelist()
 
         # sorted_package_list = sorted([(i['name'], i['version_installed'], i['version_available']) for i in package_list])
-        self.pypi_sorted_package_list = sorted(package_list, key=lambda k: k["sort"], reverse=False)
-        self.logger.info("pypi_json: sorted_package_list = {}".format(self.pypi_sorted_package_list))
+        self.pypi_sorted_package_list = sorted(package_list, key=lambda k: k['sort'], reverse=False)
+        self.logger.info('pypi_json: sorted_package_list = {}'.format(self.pypi_sorted_package_list))
         self.logger.info(
-            "pypi_json: json.dumps(sorted_package_list) = {}".format(json.dumps(self.pypi_sorted_package_list))
+            'pypi_json: json.dumps(sorted_package_list) = {}'.format(json.dumps(self.pypi_sorted_package_list))
         )
 
         return json.dumps(self.pypi_sorted_package_list)
 
-    def get_requirements_info(self, req_group="base"):
+    def get_requirements_info(self, req_group='base'):
         """ """
         req_dict = {}
-        if req_group == "base":
+        if req_group == 'base':
             #            req_dict_base = parse_requirements("%s/requirements/base.txt" % self._sh.base_dir)
-            req_dict_base = parse_requirements(os.path.join(self._sh.base_dir, "requirements", "base.txt"))
-        elif req_group == "test":
-            req_dict_base = parse_requirements(os.path.join(self._sh.base_dir, "tests", "requirements.txt"))
+            req_dict_base = parse_requirements(os.path.join(self._sh.base_dir, 'requirements', 'base.txt'))
+        elif req_group == 'test':
+            req_dict_base = parse_requirements(os.path.join(self._sh.base_dir, 'tests', 'requirements.txt'))
             self.logger.info(
-                "get_requirements_info: filepath = {}".format(
-                    os.path.join(self._sh.base_dir, "tests", "requirements.txt")
+                'get_requirements_info: filepath = {}'.format(
+                    os.path.join(self._sh.base_dir, 'tests', 'requirements.txt')
                 )
             )
-        elif req_group == "doc":
-            req_dict_base = parse_requirements(os.path.join(self._sh.base_dir, "doc", "requirements.txt"))
+        elif req_group == 'doc':
+            req_dict_base = parse_requirements(os.path.join(self._sh.base_dir, 'doc', 'requirements.txt'))
             self.logger.info(
-                "get_requirements_info: filepath = {}".format(
-                    os.path.join(self._sh.base_dir, "doc", "requirements.txt")
+                'get_requirements_info: filepath = {}'.format(
+                    os.path.join(self._sh.base_dir, 'doc', 'requirements.txt')
                 )
             )
         else:
             self.logger.error("get_requirements_info: Unknown requirements group '{}' requested".format(req_group))
 
-        if req_group == "base":
+        if req_group == 'base':
             # parse loaded plugins and look for requirements
             _conf = lib.config.parse(self._sh._plugin_conf)
             plugin_names = []
             for plugin in _conf:
-                plugin_name = _conf[plugin].get("class_path", "").strip()
-                if plugin_name == "":
-                    plugin_name = "plugins." + _conf[plugin].get("plugin_name", "").strip()
+                plugin_name = _conf[plugin].get('class_path', '').strip()
+                if plugin_name == '':
+                    plugin_name = 'plugins.' + _conf[plugin].get('plugin_name', '').strip()
                 if plugin_name not in plugin_names:  # only unique plugin names, e.g. if multiinstance is used
                     plugin_names.append(plugin_name)
             self.logger.info(
-                "get_requirements_info: len(_conf) = {}, len(plugin_names) = {}, plugin_names = {}".format(
+                'get_requirements_info: len(_conf) = {}, len(plugin_names) = {}, plugin_names = {}'.format(
                     len(_conf), len(plugin_names), plugin_names
                 )
             )
 
             req_dict = req_dict_base.copy()
             for plugin_name in plugin_names:
-                file_path = "%s/%s/requirements.txt" % (self._sh.base_dir, plugin_name.replace("plugins.", "plugins/"))
+                file_path = '%s/%s/requirements.txt' % (self._sh.base_dir, plugin_name.replace('plugins.', 'plugins/'))
                 if os.path.isfile(file_path):
                     plugin_dict = parse_requirements(file_path)
                     for key in plugin_dict:
                         if key not in req_dict:
-                            req_dict[key] = plugin_dict[key] + " (" + plugin_name.replace("plugins.", "") + ")"
+                            req_dict[key] = plugin_dict[key] + ' (' + plugin_name.replace('plugins.', '') + ')'
                         else:
                             req_dict[key] = (
                                 req_dict[key]
-                                + "<br/>"
+                                + '<br/>'
                                 + plugin_dict[key]
-                                + " ("
-                                + plugin_name.replace("plugins.", "")
-                                + ")"
+                                + ' ('
+                                + plugin_name.replace('plugins.', '')
+                                + ')'
                             )
 
-        if req_group in ["doc", "test"]:
+        if req_group in ['doc', 'test']:
             req_dict = req_dict_base.copy()
 
-        self.logger.info("get_requirements_info: req_dict for group {} = {}".format(req_group, req_dict))
+        self.logger.info('get_requirements_info: req_dict for group {} = {}'.format(req_group, req_dict))
         return req_dict
 
     def compare_versions(self, vers1, vers2, operator):
         """
         Compare two version numbers and return if the condition is met
         """
-        v1s = vers1.split(".")
+        v1s = vers1.split('.')
         while len(v1s) < 4:
-            v1s.append("0")
+            v1s.append('0')
         v1 = []
         for v in v1s:
             vi = 0
@@ -284,9 +284,9 @@ class SystemData:
                 pass
             v1.append(vi)
 
-        v2s = vers2.split(".")
+        v2s = vers2.split('.')
         while len(v2s) < 4:
-            v2s.append("0")
+            v2s.append('0')
         v2 = []
         for v in v2s:
             vi = 0
@@ -297,11 +297,11 @@ class SystemData:
             v2.append(vi)
 
         result = False
-        if v1 == v2 and operator in [">=", "==", "<="]:
+        if v1 == v2 and operator in ['>=', '==', '<=']:
             result = True
-        if v1 < v2 and operator in ["<", "<="]:
+        if v1 < v2 and operator in ['<', '<=']:
             result = True
-        if v1 > v2 and operator in [">", ">="]:
+        if v1 > v2 and operator in ['>', '>=']:
             result = True
 
         self.logger.debug(
@@ -336,69 +336,69 @@ class SystemData:
         :return: operator, version
         :rtype: str, str
         """
-        if reqstring.startswith("=="):
-            operator = "=="
+        if reqstring.startswith('=='):
+            operator = '=='
             version = self.strip_operator(reqstring, operator)
-        elif reqstring.startswith("<="):
-            operator = "<="
+        elif reqstring.startswith('<='):
+            operator = '<='
             version = self.strip_operator(reqstring, operator)
-        elif reqstring.startswith(">="):
-            operator = ">="
+        elif reqstring.startswith('>='):
+            operator = '>='
             version = self.strip_operator(reqstring, operator)
-        elif reqstring.startswith("<"):
-            operator = "<"
+        elif reqstring.startswith('<'):
+            operator = '<'
             version = self.strip_operator(reqstring, operator)
-        elif reqstring.startswith(">"):
-            operator = ">="
+        elif reqstring.startswith('>'):
+            operator = '>='
             version = self.strip_operator(reqstring, operator)
         else:
-            operator = ""
+            operator = ''
             version = reqstring
 
         return operator.strip(), version.strip()
 
-    def req_is_pyversion_req_relevant(self, pyreq, package=""):
+    def req_is_pyversion_req_relevant(self, pyreq, package=''):
         """
         Test if requirement has a Python version restriction and if so, test if the restriction
         is relevant.
         """
-        pyversion = "{0}.{1}".format(sys.version_info[0], sys.version_info[1])
+        pyversion = '{0}.{1}'.format(sys.version_info[0], sys.version_info[1])
 
-        pyreq = pyreq.strip().replace("python_version", "")
-        pyv_operator = ""
-        if pyreq != "":
-            self.logger.debug("req_is_pyversion_req_relevant: - - package {}, py_version {}".format(package, pyreq))
-            if pyreq.startswith("=="):
-                pyv_operator = "=="
+        pyreq = pyreq.strip().replace('python_version', '')
+        pyv_operator = ''
+        if pyreq != '':
+            self.logger.debug('req_is_pyversion_req_relevant: - - package {}, py_version {}'.format(package, pyreq))
+            if pyreq.startswith('=='):
+                pyv_operator = '=='
                 pyreq = self.strip_operator(pyreq, pyv_operator)
                 result = self.compare_versions(pyversion, pyreq, pyv_operator)
-            elif pyreq.startswith("<="):
-                pyv_operator = "<="
+            elif pyreq.startswith('<='):
+                pyv_operator = '<='
                 pyreq = self.strip_operator(pyreq, pyv_operator)
                 result = self.compare_versions(pyversion, pyreq, pyv_operator)
-            elif pyreq.startswith(">="):
-                pyv_operator = ">="
+            elif pyreq.startswith('>='):
+                pyv_operator = '>='
                 pyreq = self.strip_operator(pyreq, pyv_operator)
                 result = self.compare_versions(pyversion, pyreq, pyv_operator)
-            elif pyreq.startswith("<"):
-                pyv_operator = "<"
+            elif pyreq.startswith('<'):
+                pyv_operator = '<'
                 pyreq = self.strip_operator(pyreq, pyv_operator)
                 result = self.compare_versions(pyversion, pyreq, pyv_operator)
-            elif pyreq.startswith(">"):
-                pyv_operator = ">"
+            elif pyreq.startswith('>'):
+                pyv_operator = '>'
                 result = pyreq = self.strip_operator(pyreq, pyv_operator)
                 self.compare_versions(pyversion, pyreq, pyv_operator)
             else:
-                pyv_operator = ""
+                pyv_operator = ''
                 self.logger.error(
-                    "req_is_pyversion_req_relevant: no operator in front of Python version found - package {}, pyreq = {}".format(
+                    'req_is_pyversion_req_relevant: no operator in front of Python version found - package {}, pyreq = {}'.format(
                         package, pyreq
                     )
                 )
                 result = False
 
         self.logger.debug(
-            "req_is_pyversion_req_relevant: - - - package {}, py_version_operator {}, py_version {}".format(
+            'req_is_pyversion_req_relevant: - - - package {}, py_version_operator {}, py_version {}'.format(
                 package, pyv_operator, pyreq
             )
         )
@@ -413,7 +413,7 @@ class SystemData:
     # py_vers_requirements: <py_vers_requirement> | <py_vers_requirement>
     # requirement_string: <py_vers_requirements> (<source>)
 
-    def req_split_source(self, req, package=""):
+    def req_split_source(self, req, package=''):
         """
         Splits the requirement source from the requirement string
         """
@@ -421,25 +421,25 @@ class SystemData:
         req = req.lower().strip()
 
         # seperate requirement from source
-        source = "core"
+        source = 'core'
         req1 = req
-        if "(" in req:
-            wrk = req.split("(")
-            source = wrk[1][0 : wrk[1].find(")")].strip()
+        if '(' in req:
+            wrk = req.split('(')
+            source = wrk[1][0 : wrk[1].find(')')].strip()
             req1 = wrk[0].strip()
         self.logger.debug("req_split_source: - source {}, req1 = '{}'".format(source, req1))
 
         # seperate requirements for different Python versions
-        req2 = req1.split("|")
+        req2 = req1.split('|')
         reql = []
         for r in req2:
             reql.append(r.strip())
-        self.logger.debug("req_split_source: - source {}, reql = {}".format(source, reql))
+        self.logger.debug('req_split_source: - source {}, reql = {}'.format(source, reql))
 
         req_result = []
         for req in reql:
             # isolate and handle Python version
-            wrk = req.split(";")
+            wrk = req.split(';')
             sreq = wrk[0].strip()
             if len(wrk) > 1:
                 valid = self.req_is_pyversion_req_relevant(wrk[1], package)
@@ -450,27 +450,27 @@ class SystemData:
 
             if valid:
                 # check and handle version requirements
-                wrkl = sreq.split(",")
+                wrkl = sreq.split(',')
                 if len(wrkl) > 2:
                     self.logger.error(
-                        "req_split_source: More that two requirements for package {} req = {}".format(package, reql)
+                        'req_split_source: More that two requirements for package {} req = {}'.format(package, reql)
                     )
-                rmin = ""
-                rmax = ""
+                rmin = ''
+                rmax = ''
                 for r in wrkl:
-                    if r.find("<") != -1 or r.find("<=") != -1:
+                    if r.find('<') != -1 or r.find('<=') != -1:
                         rmax = r
-                    if r.find(">") != -1 or r.find(">=") != -1:
+                    if r.find('>') != -1 or r.find('>=') != -1:
                         rmin = r
-                    if r.find("==") != -1:
+                    if r.find('==') != -1:
                         rmin = r
                         rmax = r
                 req_result.append([source, rmin, rmax])
 
-        self.logger.debug("req_split_source: - package {} req_result = {}".format(package, req_result))
+        self.logger.debug('req_split_source: - package {} req_result = {}'.format(package, req_result))
         if len(req_result) > 1:
             self.logger.warning(
-                "req_split_source: Cannot reconcile multiple version requirements for package {} for running Python version".format(
+                'req_split_source: Cannot reconcile multiple version requirements for package {} for running Python version'.format(
                     package
                 )
             )
@@ -479,10 +479,10 @@ class SystemData:
         return req_result
 
     def check_requirement(self, package, req_str):
-        req_min = ""
-        req_max = ""
+        req_min = ''
+        req_max = ''
         # split requirements
-        req_templist = req_str.split("<br/>")  # split up requirements from different plugins and the core
+        req_templist = req_str.split('<br/>')  # split up requirements from different plugins and the core
 
         req_result = []
         for req in req_templist:
@@ -509,22 +509,22 @@ class SystemData:
         if len(req_result) == 1:
             result = req_result[0]
             self.logger.debug(
-                "check_requirement: package {}, req_result = >{}<, result = >{}<".format(package, req_result, result)
+                'check_requirement: package {}, req_result = >{}<, result = >{}<'.format(package, req_result, result)
             )
             # handle min
             op, req_min = self.split_operator(result[1])
-            if req_min == "*":
-                req_min = ""
-                req_txt = ""
+            if req_min == '*':
+                req_min = ''
+                req_txt = ''
             else:
-                if op == ">":
-                    req_min += ".0"
+                if op == '>':
+                    req_min += '.0'
 
             # handle max
             op, req_max = self.split_operator(result[2])
-            if req_max == "*":
-                req_max = ""
-                req_txt = ""
+            if req_max == '*':
+                req_max = ''
+                req_txt = ''
         #            else:
         #            if op == '<':
         #                req_max = ?
@@ -532,8 +532,8 @@ class SystemData:
         self.logger.debug(
             "check_requirement: package {} ({}), req_result = '{}'".format(package, len(req_result), req_result)
         )
-        if req_min != "" or req_max != "":
-            req_txt = ""
+        if req_min != '' or req_max != '':
+            req_txt = ''
 
         return req_min, req_max, req_txt
 
@@ -546,7 +546,7 @@ class SystemData:
         if self.pypi_timeout <= 0:
             pypi_available = False
             #            pypi_unavailable_message = translate('PyPI Prüfung deaktiviert')
-            pypi_unavailable_message = "PyPI Prüfung deaktiviert"
+            pypi_unavailable_message = 'PyPI Prüfung deaktiviert'
         else:
             pypi_available = True
             try:
@@ -555,40 +555,40 @@ class SystemData:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(self.pypi_timeout)
                 #                sock.connect(('pypi.python.org', 443))
-                sock.connect(("pypi.org", 443))
+                sock.connect(('pypi.org', 443))
                 sock.close()
             except OSError:
                 pypi_available = False
                 #                pypi_unavailable_message = translate('PyPI nicht erreichbar')
-                pypi_unavailable_message = "PyPI nicht erreichbar"
+                pypi_unavailable_message = 'PyPI nicht erreichbar'
 
         import pip
         import xmlrpc
 
         installed_packages = pip.get_installed_distributions()
         #        pypi = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
-        pypi = xmlrpc.client.ServerProxy("https://pypi.org/pypi")
+        pypi = xmlrpc.client.ServerProxy('https://pypi.org/pypi')
         packages = []
         for dist in installed_packages:
             package = {}
-            package["key"] = dist.key
-            package["version_installed"] = dist.version
+            package['key'] = dist.key
+            package['version_installed'] = dist.version
             if pypi_available:
                 try:
                     available = pypi.package_releases(dist.project_name)
-                    self.logger.warning("size of data: {} - data: {}".format(len(available), available))
+                    self.logger.warning('size of data: {} - data: {}'.format(len(available), available))
                     try:
-                        package["version_available"] = available[0]
+                        package['version_available'] = available[0]
                     except IndexError:
-                        package["version_available"] = "-"
+                        package['version_available'] = '-'
                 except Exception:
                     #                    package['version_available'] = [translate('Keine Antwort von PyPI')]
-                    package["version_available"] = ["Keine Antwort von PyPI"]
+                    package['version_available'] = ['Keine Antwort von PyPI']
             else:
-                package["version_available"] = pypi_unavailable_message
+                package['version_available'] = pypi_unavailable_message
             packages.append(package)
 
-        sorted_packages = sorted([(i["key"], i["version_installed"], i["version_available"]) for i in packages])
+        sorted_packages = sorted([(i['key'], i['version_installed'], i['version_available']) for i in packages])
         return sorted_packages
 
 
@@ -600,43 +600,43 @@ def parse_requirements(file_path):
         return req_dict
 
     for rline in fobj:
-        line = ""
+        line = ''
         if len(rline) > 0:
-            if rline.find("#") == -1:
+            if rline.find('#') == -1:
                 line = rline.lower().strip()
             else:
-                line = line[0 : line.find("#")].lower().strip()
+                line = line[0 : line.find('#')].lower().strip()
 
         if len(line) > 0:
-            if ">" in line:
-                if line[0 : line.find(">")].lower().strip() in req_dict:
-                    req_dict[line[0 : line.find(">")].lower().strip()] += (
-                        " | " + line[line.find(">") : len(line)].lower().strip()
+            if '>' in line:
+                if line[0 : line.find('>')].lower().strip() in req_dict:
+                    req_dict[line[0 : line.find('>')].lower().strip()] += (
+                        ' | ' + line[line.find('>') : len(line)].lower().strip()
                     )
                 else:
-                    req_dict[line[0 : line.find(">")].lower().strip()] = (
-                        line[line.find(">") : len(line)].lower().strip()
+                    req_dict[line[0 : line.find('>')].lower().strip()] = (
+                        line[line.find('>') : len(line)].lower().strip()
                     )
-            elif "<" in line:
-                if line[0 : line.find("<")].lower().strip() in req_dict:
-                    req_dict[line[0 : line.find("<")].lower().strip()] += (
-                        " | " + line[line.find("<") : len(line)].lower().strip()
-                    )
-                else:
-                    req_dict[line[0 : line.find("<")].lower().strip()] = (
-                        line[line.find("<") : len(line)].lower().strip()
-                    )
-            elif "=" in line:
-                if line[0 : line.find("=")].lower().strip() in req_dict:
-                    req_dict[line[0 : line.find("=")].lower().strip()] += (
-                        " | " + line[line.find("=") : len(line)].lower().strip()
+            elif '<' in line:
+                if line[0 : line.find('<')].lower().strip() in req_dict:
+                    req_dict[line[0 : line.find('<')].lower().strip()] += (
+                        ' | ' + line[line.find('<') : len(line)].lower().strip()
                     )
                 else:
-                    req_dict[line[0 : line.find("=")].lower().strip()] = (
-                        line[line.find("=") : len(line)].lower().strip()
+                    req_dict[line[0 : line.find('<')].lower().strip()] = (
+                        line[line.find('<') : len(line)].lower().strip()
+                    )
+            elif '=' in line:
+                if line[0 : line.find('=')].lower().strip() in req_dict:
+                    req_dict[line[0 : line.find('=')].lower().strip()] += (
+                        ' | ' + line[line.find('=') : len(line)].lower().strip()
+                    )
+                else:
+                    req_dict[line[0 : line.find('=')].lower().strip()] = (
+                        line[line.find('=') : len(line)].lower().strip()
                     )
             else:
-                req_dict[line.lower().strip()] = "==*"
+                req_dict[line.lower().strip()] = '==*'
 
     fobj.close()
     return req_dict

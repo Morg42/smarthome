@@ -20,7 +20,7 @@ import datetime
 class _MockProperty:
     def __init__(self, path: str) -> None:
         self.path = path
-        self.type = "foo"  # item data type; plugins may read item.property.type
+        self.type = 'foo'  # item data type; plugins may read item.property.type
 
 
 class MockItem:
@@ -33,7 +33,7 @@ class MockItem:
         plugin.parse_item(item)
     """
 
-    def __init__(self, path: str = "test.item", conf: dict | None = None) -> None:
+    def __init__(self, path: str = 'test.item', conf: dict | None = None) -> None:
         self.property = _MockProperty(path)
         # Some plugin base classes (e.g. SmartDevicePlugin) access item.path directly
         # rather than item.property.path.  Keep both in sync.
@@ -59,7 +59,7 @@ class MockItem:
     # type (SmartPlugin.update_item uses item.type() in some plugins)
     # ------------------------------------------------------------------
     def type(self) -> str:
-        return "foo"
+        return 'foo'
 
     # ------------------------------------------------------------------
     # method-trigger registration (called by SmartPlugin internals)
@@ -87,4 +87,4 @@ class MockItem:
     # convenience
     # ------------------------------------------------------------------
     def __repr__(self) -> str:
-        return f"MockItem({self.property.path!r})"
+        return f'MockItem({self.property.path!r})'

@@ -27,7 +27,7 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import tests.common as common
 
@@ -52,7 +52,7 @@ from lib.item.helpers import (
 )
 from lib.constants import CACHE_JSON, CACHE_PICKLE, ATTRIBUTE_SEPARATOR
 
-COMPAT_DEFAULT = "latest"
+COMPAT_DEFAULT = 'latest'
 
 
 # ===========================================================================
@@ -62,16 +62,16 @@ COMPAT_DEFAULT = "latest"
 
 class TestCastStr(unittest.TestCase):
     def test_int_to_str(self):
-        self.assertEqual(cast_str(42), "42")
+        self.assertEqual(cast_str(42), '42')
 
     def test_float_to_str(self):
-        self.assertEqual(cast_str(3.14), "3.14")
+        self.assertEqual(cast_str(3.14), '3.14')
 
     def test_str_passthrough(self):
-        self.assertEqual(cast_str("hello"), "hello")
+        self.assertEqual(cast_str('hello'), 'hello')
 
     def test_empty_string(self):
-        self.assertEqual(cast_str(""), "")
+        self.assertEqual(cast_str(''), '')
 
     def test_list_raises_value_error(self):
         with self.assertRaises(ValueError):
@@ -79,7 +79,7 @@ class TestCastStr(unittest.TestCase):
 
     def test_dict_raises_value_error(self):
         with self.assertRaises(ValueError):
-            cast_str({"a": 1})
+            cast_str({'a': 1})
 
     def test_none_raises_value_error(self):
         with self.assertRaises(ValueError):
@@ -87,7 +87,7 @@ class TestCastStr(unittest.TestCase):
 
     def test_bool_to_str(self):
         # bool is a subclass of int, so True → '1', False → '0'
-        self.assertIn(cast_str(True), ("True", "1"))
+        self.assertIn(cast_str(True), ('True', '1'))
 
 
 # ===========================================================================
@@ -103,14 +103,14 @@ class TestCastList(unittest.TestCase):
         self.assertEqual(cast_list([]), [])
 
     def test_string_literal_list(self):
-        self.assertEqual(cast_list("[1, 2, 3]"), [1, 2, 3])
+        self.assertEqual(cast_list('[1, 2, 3]'), [1, 2, 3])
 
     def test_string_literal_nested(self):
-        self.assertEqual(cast_list("['a', 'b']"), ["a", "b"])
+        self.assertEqual(cast_list("['a', 'b']"), ['a', 'b'])
 
     def test_plain_string_raises_value_error(self):
         with self.assertRaises(ValueError):
-            cast_list("hello")
+            cast_list('hello')
 
     def test_int_raises_value_error(self):
         with self.assertRaises(ValueError):
@@ -118,7 +118,7 @@ class TestCastList(unittest.TestCase):
 
     def test_dict_raises_value_error(self):
         with self.assertRaises(ValueError):
-            cast_list({"a": 1})
+            cast_list({'a': 1})
 
 
 # ===========================================================================
@@ -128,17 +128,17 @@ class TestCastList(unittest.TestCase):
 
 class TestCastDict(unittest.TestCase):
     def test_dict_passthrough(self):
-        self.assertEqual(cast_dict({"a": 1}), {"a": 1})
+        self.assertEqual(cast_dict({'a': 1}), {'a': 1})
 
     def test_empty_dict(self):
         self.assertEqual(cast_dict({}), {})
 
     def test_string_literal_dict(self):
-        self.assertEqual(cast_dict("{'x': 10, 'y': 20}"), {"x": 10, "y": 20})
+        self.assertEqual(cast_dict("{'x': 10, 'y': 20}"), {'x': 10, 'y': 20})
 
     def test_plain_string_raises_value_error(self):
         with self.assertRaises(ValueError):
-            cast_dict("hello")
+            cast_dict('hello')
 
     def test_list_raises_value_error(self):
         with self.assertRaises(ValueError):
@@ -165,7 +165,7 @@ class TestCastFoo(unittest.TestCase):
         self.assertEqual(cast_foo([1, 2]), [1, 2])
 
     def test_string_passthrough(self):
-        self.assertEqual(cast_foo("abc"), "abc")
+        self.assertEqual(cast_foo('abc'), 'abc')
 
 
 # ===========================================================================
@@ -197,16 +197,16 @@ class TestCastBool(unittest.TestCase):
             cast_bool(2)
 
     def test_str_true_variants(self):
-        for v in ["1", "true", "True", "TRUE", "yes", "on"]:
-            self.assertIs(cast_bool(v), True, msg=f"Failed for {v!r}")
+        for v in ['1', 'true', 'True', 'TRUE', 'yes', 'on']:
+            self.assertIs(cast_bool(v), True, msg=f'Failed for {v!r}')
 
     def test_str_false_variants(self):
-        for v in ["0", "false", "False", "FALSE", "no", "off", ""]:
-            self.assertIs(cast_bool(v), False, msg=f"Failed for {v!r}")
+        for v in ['0', 'false', 'False', 'FALSE', 'no', 'off', '']:
+            self.assertIs(cast_bool(v), False, msg=f'Failed for {v!r}')
 
     def test_str_invalid_raises_value_error(self):
         with self.assertRaises(ValueError):
-            cast_bool("maybe")
+            cast_bool('maybe')
 
     def test_list_raises_type_error(self):
         with self.assertRaises(TypeError):
@@ -227,7 +227,7 @@ class TestCastScene(unittest.TestCase):
         self.assertEqual(cast_scene(3), 3)
 
     def test_str_to_int(self):
-        self.assertEqual(cast_scene("5"), 5)
+        self.assertEqual(cast_scene('5'), 5)
 
     def test_float_to_int(self):
         self.assertEqual(cast_scene(2.9), 2)
@@ -240,18 +240,18 @@ class TestCastScene(unittest.TestCase):
 
 class TestCastNum(unittest.TestCase):
     def test_empty_string_returns_zero(self):
-        self.assertEqual(cast_num(""), 0)
+        self.assertEqual(cast_num(''), 0)
 
     def test_whitespace_string_returns_zero(self):
-        self.assertEqual(cast_num("  "), 0)
+        self.assertEqual(cast_num('  '), 0)
 
     def test_int_string(self):
-        self.assertEqual(cast_num("42"), 42)
-        self.assertIsInstance(cast_num("42"), int)
+        self.assertEqual(cast_num('42'), 42)
+        self.assertIsInstance(cast_num('42'), int)
 
     def test_float_string(self):
-        self.assertAlmostEqual(cast_num("3.14"), 3.14)
-        self.assertIsInstance(cast_num("3.14"), float)
+        self.assertAlmostEqual(cast_num('3.14'), 3.14)
+        self.assertIsInstance(cast_num('3.14'), float)
 
     def test_float_passthrough(self):
         self.assertEqual(cast_num(3.14), 3.14)
@@ -263,7 +263,7 @@ class TestCastNum(unittest.TestCase):
 
     def test_invalid_string_raises_value_error(self):
         with self.assertRaises(ValueError):
-            cast_num("abc")
+            cast_num('abc')
 
     def test_none_raises_value_error(self):
         with self.assertRaises((ValueError, TypeError, AttributeError)):
@@ -307,7 +307,7 @@ class TestCastTimestampWithShtime(unittest.TestCase):
         self.assertIsInstance(ts, float)
 
     def test_iso_string_to_timestamp(self):
-        result = cast_timestamp("2024-06-01T12:00:00")
+        result = cast_timestamp('2024-06-01T12:00:00')
         self.assertIsInstance(result, float)
         self.assertGreater(result, 0)
 
@@ -326,7 +326,7 @@ class TestCastDatetime(unittest.TestCase):
         self.assertIsNone(cast_datetime(None))
 
     def test_iso_string(self):
-        result = cast_datetime("2024-06-01T12:00:00")
+        result = cast_datetime('2024-06-01T12:00:00')
         self.assertIsInstance(result, datetime.datetime)
         self.assertEqual(result.year, 2024)
         self.assertEqual(result.month, 6)
@@ -334,7 +334,7 @@ class TestCastDatetime(unittest.TestCase):
 
     def test_invalid_raises_value_error(self):
         with self.assertRaises(ValueError):
-            cast_datetime("not-a-date")
+            cast_datetime('not-a-date')
 
     def test_invalid_type_raises_value_error(self):
         with self.assertRaises((ValueError, TypeError, AttributeError)):
@@ -348,36 +348,36 @@ class TestCastDatetime(unittest.TestCase):
 
 class TestSplitDurationValueString(unittest.TestCase):
     def test_separator_syntax(self):
-        value = f"5m {ATTRIBUTE_SEPARATOR} 42"
+        value = f'5m {ATTRIBUTE_SEPARATOR} 42'
         time, val, compat = split_duration_value_string(value, COMPAT_DEFAULT)
-        self.assertEqual(time, "5m")
-        self.assertEqual(val, "42")
+        self.assertEqual(time, '5m')
+        self.assertEqual(val, '42')
         self.assertEqual(compat, COMPAT_DEFAULT)
 
     def test_equals_syntax(self):
-        time, val, compat = split_duration_value_string("5m = 42", COMPAT_DEFAULT)
-        self.assertEqual(time.strip(), "5m")
-        self.assertEqual(val, "42")
+        time, val, compat = split_duration_value_string('5m = 42', COMPAT_DEFAULT)
+        self.assertEqual(time.strip(), '5m')
+        self.assertEqual(val, '42')
 
     def test_time_only(self):
-        time, val, compat = split_duration_value_string("10s", COMPAT_DEFAULT)
-        self.assertEqual(time, "10s")
+        time, val, compat = split_duration_value_string('10s', COMPAT_DEFAULT)
+        self.assertEqual(time, '10s')
         self.assertIsNone(val)
 
     def test_compat_from_default_when_absent(self):
-        time, val, compat = split_duration_value_string("10s", "latest")
-        self.assertEqual(compat, "latest")
+        time, val, compat = split_duration_value_string('10s', 'latest')
+        self.assertEqual(compat, 'latest')
 
     def test_separator_with_compat(self):
-        value = f"5m {ATTRIBUTE_SEPARATOR} 42 {ATTRIBUTE_SEPARATOR} compat_1.2"
+        value = f'5m {ATTRIBUTE_SEPARATOR} 42 {ATTRIBUTE_SEPARATOR} compat_1.2'
         time, val, compat = split_duration_value_string(value, COMPAT_DEFAULT)
-        self.assertEqual(time, "5m")
-        self.assertEqual(val, "42")
-        self.assertEqual(compat, "compat_1.2")
+        self.assertEqual(time, '5m')
+        self.assertEqual(val, '42')
+        self.assertEqual(compat, 'compat_1.2')
 
     def test_whitespace_stripped(self):
-        time, val, compat = split_duration_value_string("  5m  ", COMPAT_DEFAULT)
-        self.assertEqual(time, "5m")
+        time, val, compat = split_duration_value_string('  5m  ', COMPAT_DEFAULT)
+        self.assertEqual(time, '5m')
 
 
 # ===========================================================================
@@ -387,27 +387,27 @@ class TestSplitDurationValueString(unittest.TestCase):
 
 class TestJoinDurationValueString(unittest.TestCase):
     def test_time_only(self):
-        result = join_duration_value_string("5m", "")
-        self.assertEqual(result, "5m")
+        result = join_duration_value_string('5m', '')
+        self.assertEqual(result, '5m')
 
     def test_time_and_value(self):
-        result = join_duration_value_string("5m", "42")
-        self.assertIn("5m", result)
-        self.assertIn("42", result)
+        result = join_duration_value_string('5m', '42')
+        self.assertIn('5m', result)
+        self.assertIn('42', result)
         self.assertIn(ATTRIBUTE_SEPARATOR, result)
 
     def test_time_value_compat(self):
-        result = join_duration_value_string("5m", "42", "compat_1.2")
-        self.assertIn("5m", result)
-        self.assertIn("42", result)
-        self.assertIn("compat_1.2", result)
+        result = join_duration_value_string('5m', '42', 'compat_1.2')
+        self.assertIn('5m', result)
+        self.assertIn('42', result)
+        self.assertIn('compat_1.2', result)
 
     def test_roundtrip(self):
-        original = f"5m {ATTRIBUTE_SEPARATOR} 42"
+        original = f'5m {ATTRIBUTE_SEPARATOR} 42'
         time, val, compat = split_duration_value_string(original, COMPAT_DEFAULT)
         rejoined = join_duration_value_string(time, val)
-        self.assertIn("5m", rejoined)
-        self.assertIn("42", rejoined)
+        self.assertIn('5m', rejoined)
+        self.assertIn('42', rejoined)
 
 
 # ===========================================================================
@@ -419,21 +419,21 @@ class TestJsonSerialize(unittest.TestCase):
     def test_datetime_to_isoformat(self):
         dt = datetime.datetime(2024, 6, 1, 12, 0, 0)
         result = json_serialize(dt)
-        self.assertEqual(result, "2024-06-01T12:00:00")
+        self.assertEqual(result, '2024-06-01T12:00:00')
 
     def test_date_to_isoformat(self):
         d = datetime.date(2024, 6, 1)
         result = json_serialize(d)
-        self.assertEqual(result, "2024-06-01")
+        self.assertEqual(result, '2024-06-01')
 
     def test_unsupported_raises_type_error(self):
         with self.assertRaises(TypeError):
             json_serialize(object())
 
     def test_used_in_json_dumps(self):
-        data = {"ts": datetime.datetime(2024, 1, 1, 0, 0, 0)}
+        data = {'ts': datetime.datetime(2024, 1, 1, 0, 0, 0)}
         result = json.dumps(data, default=json_serialize)
-        self.assertIn("2024-01-01", result)
+        self.assertIn('2024-01-01', result)
 
 
 # ===========================================================================
@@ -443,20 +443,20 @@ class TestJsonSerialize(unittest.TestCase):
 
 class TestJsonObjHook(unittest.TestCase):
     def test_iso_string_converted_to_datetime(self):
-        d = {"ts": "2024-06-01T12:00:00"}
+        d = {'ts': '2024-06-01T12:00:00'}
         result = json_obj_hook(d)
-        self.assertIsInstance(result["ts"], datetime.datetime)
+        self.assertIsInstance(result['ts'], datetime.datetime)
 
     def test_non_date_string_unchanged(self):
-        d = {"name": "hello"}
+        d = {'name': 'hello'}
         result = json_obj_hook(d)
-        self.assertEqual(result["name"], "hello")
+        self.assertEqual(result['name'], 'hello')
 
     def test_multiple_keys(self):
-        d = {"t1": "2024-01-01T00:00:00", "label": "test"}
+        d = {'t1': '2024-01-01T00:00:00', 'label': 'test'}
         result = json_obj_hook(d)
-        self.assertIsInstance(result["t1"], datetime.datetime)
-        self.assertEqual(result["label"], "test")
+        self.assertIsInstance(result['t1'], datetime.datetime)
+        self.assertEqual(result['label'], 'test')
 
 
 # ===========================================================================
@@ -490,9 +490,9 @@ class TestCacheReadWrite(unittest.TestCase):
         self.assertAlmostEqual(value, 3.14)
 
     def test_pickle_roundtrip_string(self):
-        cache_write(self._path, "hello", CACHE_PICKLE)
+        cache_write(self._path, 'hello', CACHE_PICKLE)
         _, value = cache_read(self._path, self._get_tz(), CACHE_PICKLE)
-        self.assertEqual(value, "hello")
+        self.assertEqual(value, 'hello')
 
     def test_pickle_roundtrip_list(self):
         cache_write(self._path, [1, 2, 3], CACHE_PICKLE)
@@ -505,9 +505,9 @@ class TestCacheReadWrite(unittest.TestCase):
         self.assertEqual(value, 99)
 
     def test_json_roundtrip_string(self):
-        cache_write(self._path, "world", CACHE_JSON)
+        cache_write(self._path, 'world', CACHE_JSON)
         _, value = cache_read(self._path, self._get_tz(), CACHE_JSON)
-        self.assertEqual(value, "world")
+        self.assertEqual(value, 'world')
 
     def test_json_roundtrip_bool(self):
         cache_write(self._path, True, CACHE_JSON)
@@ -522,11 +522,11 @@ class TestCacheReadWrite(unittest.TestCase):
     def test_json_roundtrip_datetime(self):
         # datetime values survive a json round-trip via json_serialize / json_obj_hook
         dt_value = datetime.datetime(2024, 6, 1, 12, 0, 0)
-        cache_write(self._path, {"ts": dt_value}, CACHE_JSON)
+        cache_write(self._path, {'ts': dt_value}, CACHE_JSON)
         _, value = cache_read(self._path, self._get_tz(), CACHE_JSON)
-        self.assertIn("ts", value)
-        self.assertIsInstance(value["ts"], datetime.datetime)
+        self.assertIn('ts', value)
+        self.assertIsInstance(value['ts'], datetime.datetime)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

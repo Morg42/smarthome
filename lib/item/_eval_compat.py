@@ -64,7 +64,7 @@ the second line of the fallback warning today).
 
 import logging
 
-logger = logging.getLogger("lib.item")
+logger = logging.getLogger('lib.item')
 
 # ---------------------------------------------------------------------------
 # Sentinel
@@ -81,9 +81,9 @@ _EVAL_FAILED = object()
 # ---------------------------------------------------------------------------
 
 _COMPAT_NOTE = (
-    "This compatibility retry will be removed in a future release. "
-    "Please update your configuration to use only the documented eval "
-    "variables: sh, shtime, items, math, uf, env, value, datetime, time."
+    'This compatibility retry will be removed in a future release. '
+    'Please update your configuration to use only the documented eval '
+    'variables: sh, shtime, items, math, uf, env, value, datetime, time.'
 )
 
 # ---------------------------------------------------------------------------
@@ -121,18 +121,18 @@ def _make_legacy_namespace(base_ns: dict) -> dict:
     extended.update(
         {
             # explicitly noted in item.py as intended for eval expressions
-            "time": time,
-            "datetime": datetime,
+            'time': time,
+            'datetime': datetime,
             # other item.py globals — undocumented but previously reachable
-            "os": os,
-            "re": re,
-            "sys": sys,
-            "json": json,
-            "copy": copy,
-            "threading": threading,
-            "ast": ast,
-            "inspect": inspect,
-            "tz": tz,
+            'os': os,
+            're': re,
+            'sys': sys,
+            'json': json,
+            'copy': copy,
+            'threading': threading,
+            'ast': ast,
+            'inspect': inspect,
+            'tz': tz,
         }
     )
     return extended
@@ -174,26 +174,26 @@ def _eval_with_legacy_fallback(expr: str, primary_ns: dict, item, context: str, 
     except Exception as legacy_exc:
         logger.warning(
             f"Item '{item._path}': {context}: "
-            f"eval failed with both the explicit namespace "
-            f"({original_exc.__class__.__name__}: {original_exc}) "
-            f"and the legacy namespace "
-            f"({legacy_exc.__class__.__name__}: {legacy_exc})."
+            f'eval failed with both the explicit namespace '
+            f'({original_exc.__class__.__name__}: {original_exc}) '
+            f'and the legacy namespace '
+            f'({legacy_exc.__class__.__name__}: {legacy_exc}).'
         )
         return _EVAL_FAILED
 
     # Legacy eval succeeded — log the deprecation notice and return.
     if isinstance(original_exc, NameError):
-        missing = (str(original_exc).split("'")[1:2] or ["?"])[0]
+        missing = (str(original_exc).split("'")[1:2] or ['?'])[0]
         logger.warning(
             f"Item '{item._path}': {context}: "
             f"name '{missing}' is not in the standard eval environment "
-            f"but was found via the legacy namespace. {_COMPAT_NOTE}"
+            f'but was found via the legacy namespace. {_COMPAT_NOTE}'
         )
     else:
         logger.warning(
             f"Item '{item._path}': {context}: "
-            f"primary eval raised {original_exc.__class__.__name__} "
-            f"({original_exc}) but the legacy namespace succeeded. "
-            f"{_COMPAT_NOTE}"
+            f'primary eval raised {original_exc.__class__.__name__} '
+            f'({original_exc}) but the legacy namespace succeeded. '
+            f'{_COMPAT_NOTE}'
         )
     return result

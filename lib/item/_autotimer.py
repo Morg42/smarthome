@@ -91,7 +91,7 @@ def get_items_from_string(item, string):
     if items_instance is None:
         return []
 
-    regex = re.compile(r"sh\.([a-zA-Z0-9_.]+)(?:\(\)|\.property\.[a-zA-Z_]+)")
+    regex = re.compile(r'sh\.([a-zA-Z0-9_.]+)(?:\(\)|\.property\.[a-zA-Z_]+)')
     result = regex.findall(string)
 
     found = {items_instance.return_item(entry) for entry in result if entry}
@@ -113,12 +113,12 @@ def get_attr_time(item, attr: str):
     :param attr: 'cycle' or 'autotimer'
     :return:     resolved duration in seconds (int) or None
     """
-    if attr not in ("cycle", "autotimer"):
+    if attr not in ('cycle', 'autotimer'):
         return
 
-    var = getattr(item, f"_{attr}_time")
+    var = getattr(item, f'_{attr}_time')
     if var is None:
-        logger.debug(f"get_attr_time({attr}): item {item._path} has no member _{attr}_time.")
+        logger.debug(f'get_attr_time({attr}): item {item._path} has no member _{attr}_time.')
         return
 
     if isinstance(var, int):
@@ -127,18 +127,18 @@ def get_attr_time(item, attr: str):
     try:
         res = item._cast_duration(var, test=True)
         if type(res) is int:
-            if attr == "cycle" and res == 0:
-                logger.warning(f"{item._path}: cycle time returned 0 from {item._cycle_time}, ignoring")
+            if attr == 'cycle' and res == 0:
+                logger.warning(f'{item._path}: cycle time returned 0 from {item._cycle_time}, ignoring')
                 return
             return res
 
-        res = item._run_attribute_eval(var, result_type="str", result_error=None)
+        res = item._run_attribute_eval(var, result_type='str', result_error=None)
         if res is None:
             return
 
         res = item._cast_duration(res)
-        if attr == "cycle" and res == 0:
-            logger.warning(f"{item._path}: cycle time returned 0 from {item._cycle_time}, ignoring")
+        if attr == 'cycle' and res == 0:
+            logger.warning(f'{item._path}: cycle time returned 0 from {item._cycle_time}, ignoring')
             return
 
         if res is not None and res is not False:
@@ -161,10 +161,10 @@ def get_attr_value(item, attr: str, value=None):
     :param value: override value (used for 'cron', stored in scheduler)
     :return:      resolved value or None
     """
-    if attr not in ("cycle", "autotimer", "cron"):
+    if attr not in ('cycle', 'autotimer', 'cron'):
         return
 
-    var = value if value is not None else getattr(item, f"_{attr}_value")
+    var = value if value is not None else getattr(item, f'_{attr}_value')
     if var is None:
         return
 
@@ -172,7 +172,7 @@ def get_attr_value(item, attr: str, value=None):
         return var
 
     try:
-        res = item._run_attribute_eval(var, result_type="str", result_error=None)
+        res = item._run_attribute_eval(var, result_type='str', result_error=None)
         return res
     except Exception as e:
         logger.warning(f'error on evaluation {attr} value "{var}" for item {item._path}: {e}')
@@ -194,19 +194,14 @@ def init_start_scheduler(item):
     if item._crontab is None and item._cycle_time is None:
         return
 
-    cycle_time = get_attr_time(item, "cycle")
+    cycle_time = get_attr_time(item, 'cycle')
     cycle_value = None
     if cycle_time is not None:
-        cycle_value = get_attr_value(item, "cycle")
+        cycle_value = get_attr_value(item, 'cycle')
 
     items = get_items_from_string(item, item._cycle_time)
     item._sh.scheduler.add(
-        item._itemname_prefix + item._path,
-        item,
-        cron=item._crontab,
-        cycle=cycle_time,
-        value=cycle_value,
-        items=items,
+        item._itemname_prefix + item._path, item, cron=item._crontab, cycle=cycle_time, value=cycle_value, items=items
     )
 
 
@@ -231,22 +226,19 @@ def item_timer(item, time, value, auto=False, caller=None, source=None, compat=A
     value = item._castvalue_to_itemtype(value, compat)
     if caller is None:
         if auto:
-            caller = "Autotimer"
+            caller = 'Autotimer'
             item._autotimer_time = time
             item._autotimer_value = value
         else:
-            caller = "Timer"
+            caller = 'Timer'
 
     next_time = item.shtime.now() + datetime.timedelta(seconds=time)
-    sched_value = {"value": value, "caller": caller}
+    sched_value = {'value': value, 'caller': caller}
     if source is not None:
-        sched_value["source"] = source
+        sched_value['source'] = source
 
     item._sh.scheduler.add(
-        item._itemname_prefix + item.id() + "-Timer",
-        item.__call__,
-        value=sched_value,
-        next=next_time,
+        item._itemname_prefix + item.id() + '-Timer', item.__call__, value=sched_value, next=next_time
     )
 
 
@@ -261,7 +253,7 @@ def item_remove_timer(item):
 
     :param item: the Item instance
     """
-    item._sh.scheduler.remove(item._itemname_prefix + item.id() + "-Timer")
+    item._sh.scheduler.remove(item._itemname_prefix + item.id() + '-Timer')
 
 
 # ---------------------------------------------------------------------------

@@ -58,7 +58,7 @@ class Shtime:
     _timezone = None
     _utctz = None
     _starttime = None
-    _tz = ""
+    _tz = ''
     holidays = None
     public_holidays = None
 
@@ -81,13 +81,13 @@ class Shtime:
         _shtime_instance = self
 
         self._starttime = datetime.datetime.now()
-        self.log_msg = ""  # is overwritten in _initialize_holidays() if no error occurs
+        self.log_msg = ''  # is overwritten in _initialize_holidays() if no error occurs
 
         # set default timezone to UTC
         #        global TZ
-        self._tz = "UTC"
-        os.environ["TZ"] = self._tz
-        self.set_tzinfo(tz.gettz("UTC"))
+        self._tz = 'UTC'
+        os.environ['TZ'] = self._tz
+        self.set_tzinfo(tz.gettz('UTC'))
 
     # -----------------------------------------------------------------------------------------------------
     #   Following (static) method of the class Shtime implement the API for date and time handling in shNG
@@ -127,7 +127,7 @@ class Shtime:
         """
         txt = str(txt)
 
-        return lib_translate(txt, vars, plugin_translations="lib/shtime")
+        return lib_translate(txt, vars, plugin_translations='lib/shtime')
 
     def set_tz(self, tzone):
         """
@@ -137,11 +137,11 @@ class Shtime:
         :type: tzone: str
         """
         tzinfo = tz.gettz(tzone)  # type: tzfile
-        self.logger.info(f"set_tz: tz={tz} -> tzinfo={tzinfo}")
+        self.logger.info(f'set_tz: tz={tz} -> tzinfo={tzinfo}')
         if tzinfo is not None:
             #            TZ = tzinfo
             self._tz = tzone
-            os.environ["TZ"] = self._tz
+            os.environ['TZ'] = self._tz
             #             self._tzinfo = TZ
             self.set_tzinfo(tzinfo)
             # self._timezone = pytz.timezone(tzone)
@@ -149,9 +149,9 @@ class Shtime:
         else:
             self.logger.warning(self.translate("Problem parsing timezone '{tz}' - Using UTC").format(tz=tzone))
             # self._timezone = pytz.timezone("UTC")
-            self._timezone = tz.gettz("UTC")
-        self.logger.info(f"self.set_tz: -> self._timezone={self._timezone}")
-        self.logger.info(f"self.set_tz: -> self._tzinfo={self._tzinfo}")
+            self._timezone = tz.gettz('UTC')
+        self.logger.info(f'self.set_tz: -> self._timezone={self._timezone}')
+        self.logger.info(f'self.set_tz: -> self._tzinfo={self._tzinfo}')
         return
 
     def set_tzinfo(self, tzinfo):
@@ -235,7 +235,7 @@ class Shtime:
         """
 
         jan = datetime.datetime.fromtimestamp(datetime.datetime.timestamp(datetime.datetime(2020, 1, 1)), tz.tzlocal())
-        return jan.strftime("%Z")
+        return jan.strftime('%Z')
 
     def tznameDST(self):
         """
@@ -246,7 +246,7 @@ class Shtime:
         """
 
         jul = datetime.datetime.fromtimestamp(datetime.datetime.timestamp(datetime.datetime(2020, 7, 1)), tz.tzlocal())
-        return jul.strftime("%Z")
+        return jul.strftime('%Z')
 
     def utcnow(self):
         """
@@ -258,7 +258,7 @@ class Shtime:
 
         # tz aware utc time
         if self._utctz is None:
-            self._utctz = tz.gettz("UTC")
+            self._utctz = tz.gettz('UTC')
         return datetime.datetime.now(self._utctz)
 
     def utcfromtimestamp(self, ts):
@@ -271,7 +271,7 @@ class Shtime:
         :rtype: datetime.datetime
         """
         if self._utctz is None:
-            self._utctz = tz.gettz("UTC")
+            self._utctz = tz.gettz('UTC')
         return datetime.datetime.fromtimestamp(ts, self._utctz)
 
     def utcinfo(self):
@@ -304,55 +304,55 @@ class Shtime:
 
         # return SmarthomeNG runtime
         rt = str(self.runtime())
-        daytest = rt.split(" ")
+        daytest = rt.split(' ')
         if len(daytest) == 3:
             days = int(daytest[0])
-            hours, minutes, seconds = [float(val) for val in str(daytest[2]).split(":")]
+            hours, minutes, seconds = [float(val) for val in str(daytest[2]).split(':')]
         else:
             days = 0
-            hours, minutes, seconds = [float(val) for val in str(daytest[0]).split(":")]
+            hours, minutes, seconds = [float(val) for val in str(daytest[0]).split(':')]
         total_seconds = days * 24 * 3600 + hours * 3600 + minutes * 60 + seconds
 
-        return {"days": days, "hours": hours, "minutes": minutes, "seconds": seconds, "total_seconds": total_seconds}
+        return {'days': days, 'hours': hours, 'minutes': minutes, 'seconds': seconds, 'total_seconds': total_seconds}
 
     # -----------------------------------------------------------------------------------------------------
     #   Following methods implement some time handling
     # -----------------------------------------------------------------------------------------------------
 
     def _build_timediff_resulttype(self, delta, resulttype):
-        if resulttype == "s":
+        if resulttype == 's':
             return delta.days * 24 * 3600 + delta.seconds
-        if resulttype == "m":
+        if resulttype == 'm':
             return delta.days * 24 * 60 + delta.seconds / 60
-        if resulttype == "h":
+        if resulttype == 'h':
             return delta.days * 24 + delta.seconds / 3600
-        if resulttype == "d":
+        if resulttype == 'd':
             return delta.days + delta.seconds / (3600 * 24)
-        if resulttype == "im":
+        if resulttype == 'im':
             return delta.days * 24 * 60 + delta.seconds // 60
-        if resulttype == "ih":
+        if resulttype == 'ih':
             return delta.days * 24 + delta.seconds // 3600
-        if resulttype == "id":
+        if resulttype == 'id':
             return delta.days
-        if resulttype == "dhms":
+        if resulttype == 'dhms':
             return (
                 delta.days,
                 delta.seconds // 3600,
                 (delta.seconds // 60 - (delta.seconds // 3600) * 60),
                 (delta.seconds % 60),
             )
-        if resulttype == "dhms2":
+        if resulttype == 'dhms2':
             return delta.days, delta.seconds // 3600, (delta.seconds // 60), (delta.seconds % 60)
-        if resulttype == "ds":
+        if resulttype == 'ds':
             return delta.days, delta.seconds
         self.logger.error(
-            "_build_timediff_resulttype: Called with invalid resulttype parameter: {resulttype}".format(
+            '_build_timediff_resulttype: Called with invalid resulttype parameter: {resulttype}'.format(
                 resulttype=resulttype
             )
         )
         return -1
 
-    def time_since(self, dt, resulttype="s"):
+    def time_since(self, dt, resulttype='s'):
         """
         Calculates the time that has elapsed since the given datetime parameter
 
@@ -369,19 +369,19 @@ class Shtime:
             delta = self.now() - dt
             if delta.days < 0:
                 self.logger.error(
-                    "time_since: "
-                    + self.translate("Called with point in time that is later than now: {dt}").format(dt=dt)
+                    'time_since: '
+                    + self.translate('Called with point in time that is later than now: {dt}').format(dt=dt)
                 )
                 return (0, 0)
             return self._build_timediff_resulttype(delta, resulttype)
         else:
             self.logger.error(
-                "time_since: "
+                'time_since: '
                 + self.translate("Called with parameter that is not of type 'datetime': {dt}").format(dt=dt)
             )
             return -1
 
-    def time_until(self, dt, resulttype="s"):
+    def time_until(self, dt, resulttype='s'):
         """
         Calculates the time that will elapse from now to the given datetime parameter
 
@@ -398,19 +398,19 @@ class Shtime:
             delta = dt - self.now()
             if delta.days < 0:
                 self.logger.error(
-                    "time_until: "
-                    + self.translate("Called with point in time that is earlier than now: {dt}").format(dt=dt)
+                    'time_until: '
+                    + self.translate('Called with point in time that is earlier than now: {dt}').format(dt=dt)
                 )
                 return (0, 0)
             return self._build_timediff_resulttype(delta, resulttype)
         else:
             self.logger.error(
-                "time_until: "
+                'time_until: '
                 + self.translate("Called with parameter that is not of type 'datetime': {dt}").format(dt=dt)
             )
             return -1
 
-    def time_diff(self, dt1, dt2, resulttype="s"):
+    def time_diff(self, dt1, dt2, resulttype='s'):
         """
         Calculates the time between the two given datetime parameters
 
@@ -433,7 +433,7 @@ class Shtime:
             return self._build_timediff_resulttype(delta, resulttype)
         else:
             self.logger.error(
-                "time_diff: "
+                'time_diff: '
                 + self.translate("Called with parameter that is not of type 'datetime': {dt1}, {dt2}").format(
                     dt1=dt2, dt2=dt2
                 )
@@ -457,32 +457,32 @@ class Shtime:
         days = std // 24
         std = std - days * 24
 
-        result = ""
+        result = ''
         if days == 1:
-            result += str(days) + " " + self.translate("Tag")
+            result += str(days) + ' ' + self.translate('Tag')
         elif days > 0:
-            result += str(days) + " " + self.translate("Tage")
+            result += str(days) + ' ' + self.translate('Tage')
 
         if result and std > 0:
-            result += ", "
+            result += ', '
         if std == 1:
-            result += str(std) + " " + self.translate("Stunde")
+            result += str(std) + ' ' + self.translate('Stunde')
         elif std > 0:
-            result += str(std) + " " + self.translate("Stunden")
+            result += str(std) + ' ' + self.translate('Stunden')
 
         if result and min > 0:
-            result += ", "
+            result += ', '
         if min == 1:
-            result += str(min) + " " + self.translate("Minute")
+            result += str(min) + ' ' + self.translate('Minute')
         elif min > 0:
-            result += str(min) + " " + self.translate("Minuten")
+            result += str(min) + ' ' + self.translate('Minuten')
 
         if result and sec > 0:
-            result += ", "
+            result += ', '
         if sec == 1:
-            result += str(sec) + " " + self.translate("Sekunde")
+            result += str(sec) + ' ' + self.translate('Sekunde')
         elif sec > 0:
-            result += str(sec) + " " + self.translate("Sekunden")
+            result += str(sec) + ' ' + self.translate('Sekunden')
         return result
 
     def to_seconds(self, time_str, test=False):
@@ -509,30 +509,30 @@ class Shtime:
                 time = time_str.strip()
                 time_in_sec = 0
 
-                wrk = time.split("h")
+                wrk = time.split('h')
                 if len(wrk) > 1:
                     time_in_sec += int(wrk[0]) * 60 * 60
                     time = wrk[1].strip()
 
-                wrk = time.split("m")
+                wrk = time.split('m')
                 if len(wrk) > 1:
                     time_in_sec += int(wrk[0]) * 60
                     time = wrk[1].strip()
 
-                wrk = time.split("s")
+                wrk = time.split('s')
                 if len(wrk) > 1:
                     time_in_sec += int(wrk[0])
                     # time = wrk[1].strip()
-                elif wrk[0] != "":
+                elif wrk[0] != '':
                     time_in_sec += int(wrk[0])
             except Exception as e:
                 if test:
                     self.logger.info(
-                        f"shtime.to_seconds: time string could not be converted (time={time_str}) - problem: {e}"
+                        f'shtime.to_seconds: time string could not be converted (time={time_str}) - problem: {e}'
                     )
                 else:
                     self.logger.warning(
-                        f"shtime.to_seconds: time string could not be converted (time={time_str}) - problem: {e}"
+                        f'shtime.to_seconds: time string could not be converted (time={time_str}) - problem: {e}'
                     )
                 time_in_sec = -1
 
@@ -542,7 +542,7 @@ class Shtime:
             time_in_sec = int(time_str)
         else:
             if not test:
-                self.logger.warning(f"shtime.to_seconds: (time={time_str}) problem: unable to convert to int")
+                self.logger.warning(f'shtime.to_seconds: (time={time_str}) problem: unable to convert to int')
             time_in_sec = -1
         return time_in_sec
 
@@ -569,9 +569,9 @@ class Shtime:
         elif isinstance(key, str):
             dayfirst = True
             yearfirst = False
-            if key.count("/") > 1:
+            if key.count('/') > 1:
                 dayfirst = False
-            if key.count("-") > 1:
+            if key.count('-') > 1:
                 yearfirst = True
                 dayfirst = False
             try:
@@ -625,7 +625,7 @@ class Shtime:
                 year -= 1
         else:
             if week is None:
-                self.logger.error("beginning_of_week: " + self.translate("Week not specified"))
+                self.logger.error('beginning_of_week: ' + self.translate('Week not specified'))
                 return self.today()
             if year is None:
                 year = self.current_year()
@@ -633,11 +633,11 @@ class Shtime:
                     year -= 1
         self.logger.debug(
             self.translate(
-                "Calculating beginning of week based on year {year}, week {week} and offset {offset}"
+                'Calculating beginning of week based on year {year}, week {week} and offset {offset}'
             ).format(year=year, week=week, offset=offset)
         )
         week_beginning = datetime.datetime.strptime(
-            "{year}-{week}-1".format(year=year, week=week), "%G-%V-%u"
+            '{year}-{week}-1'.format(year=year, week=week), '%G-%V-%u'
         ) + dateutil.relativedelta.relativedelta(weeks=offset)
 
         return week_beginning.date()
@@ -755,31 +755,31 @@ class Shtime:
         """
         month = self.current_month(offset)
         if month == 1:
-            monthname = "Januar"
+            monthname = 'Januar'
         elif month == 2:
-            monthname = "Februar"
+            monthname = 'Februar'
         elif month == 3:
-            monthname = "März"
+            monthname = 'März'
         elif month == 4:
-            monthname = "April"
+            monthname = 'April'
         elif month == 5:
-            monthname = "Mai"
+            monthname = 'Mai'
         elif month == 6:
-            monthname = "Juni"
+            monthname = 'Juni'
         elif month == 7:
-            monthname = "Juli"
+            monthname = 'Juli'
         elif month == 8:
-            monthname = "August"
+            monthname = 'August'
         elif month == 9:
-            monthname = "September"
+            monthname = 'September'
         elif month == 10:
-            monthname = "Oktober"
+            monthname = 'Oktober'
         elif month == 11:
-            monthname = "November"
+            monthname = 'November'
         elif month == 12:
-            monthname = "Dezember"
+            monthname = 'Dezember'
         else:
-            monthname = "?"
+            monthname = '?'
 
         return self.translate(monthname)
 
@@ -840,9 +840,9 @@ class Shtime:
         if next_month == 12:
             next_year += 1
             next_month = 0
-        debug_month = "" if offset == 0 else " (offset {offset})".format(offset=offset)
+        debug_month = '' if offset == 0 else ' (offset {offset})'.format(offset=offset)
         self.logger.debug(
-            self.translate("Calculating length of month based on year {year}, month {month}{debug_month}").format(
+            self.translate('Calculating length of month based on year {year}, month {month}{debug_month}').format(
                 year=year, month=month, debug_month=debug_month
             )
         )
@@ -927,21 +927,21 @@ class Shtime:
 
         wday = self.weekday(dt)
         if wday == 1:
-            day = "Montag"
+            day = 'Montag'
         elif wday == 2:
-            day = "Dienstag"
+            day = 'Dienstag'
         elif wday == 3:
-            day = "Mittwoch"
+            day = 'Mittwoch'
         elif wday == 4:
-            day = "Donnerstag"
+            day = 'Donnerstag'
         elif wday == 5:
-            day = "Freitag"
+            day = 'Freitag'
         elif wday == 6:
-            day = "Samstag"
+            day = 'Samstag'
         elif wday == 7:
-            day = "Sonntag"
+            day = 'Sonntag'
         else:
-            day = "?"
+            day = '?'
 
         return self.translate(day)
 
@@ -966,7 +966,7 @@ class Shtime:
             d_diff = 7 - dow_1st + dow
         d_diff += (week - 1) * 7
         date = day_1st + datetime.timedelta(days=d_diff)
-        self.logger.debug("dow_1st: d_diff {} -> {}".format(d_diff, date))
+        self.logger.debug('dow_1st: d_diff {} -> {}'.format(d_diff, date))
         return date
 
     def _get_last_dow_in_month(self, dow, year, month):
@@ -987,7 +987,7 @@ class Shtime:
         else:
             d_diff = dow_last + 7 - dow
         date = day_last - datetime.timedelta(days=d_diff)
-        self.logger.debug("dow_last: d_diff {} -> {}".format(d_diff, date))
+        self.logger.debug('dow_last: d_diff {} -> {}'.format(d_diff, date))
         return date
 
     # -----------------------------------------------------------------------------------------------------
@@ -1002,12 +1002,12 @@ class Shtime:
 
         """
         cust_dict = {}
-        self.logger.info(self.translate("custom holiday") + " (date): {}".format(cust_date))
+        self.logger.info(self.translate('custom holiday') + ' (date): {}'.format(cust_date))
 
         for year in gen_for_years:
-            d = datetime.date(year, cust_date["month"], cust_date["day"])
+            d = datetime.date(year, cust_date['month'], cust_date['day'])
 
-            cust_dict[d] = cust_date.get("name", "")
+            cust_dict[d] = cust_date.get('name', '')
 
         self.holidays.append(cust_dict)
         return
@@ -1020,40 +1020,40 @@ class Shtime:
 
         """
         cust_dict = {}
-        self.logger.info(self.translate("custom holiday") + " (dow): {}".format(cust_date))
-        month = cust_date.get("month", None)
+        self.logger.info(self.translate('custom holiday') + ' (dow): {}'.format(cust_date))
+        month = cust_date.get('month', None)
         try:
-            dow_week = int(cust_date.get("dow_week", 0))
+            dow_week = int(cust_date.get('dow_week', 0))
             if dow_week < 1:
                 return
         except ValueError:
-            if str(cust_date.get("dow_week", None)).lower() == "last":
-                dow_week = str(cust_date.get("dow_week", None)).lower()
+            if str(cust_date.get('dow_week', None)).lower() == 'last':
+                dow_week = str(cust_date.get('dow_week', None)).lower()
             else:
                 return
 
         try:
-            dow_start_week = int(cust_date.get("dow_start_week", dow_week))
+            dow_start_week = int(cust_date.get('dow_start_week', dow_week))
         except ValueError:
             dow_start_week = dow_week
 
         for year in gen_for_years:
             if month is None:
                 # get every nth day-of-week in a year
-                date = self._get_nth_dow_in_month(cust_date.get("dow", None), dow_start_week, year, 1)
+                date = self._get_nth_dow_in_month(cust_date.get('dow', None), dow_start_week, year, 1)
                 while date.year == year:
-                    cust_dict[date] = cust_date.get("name", "")
+                    cust_dict[date] = cust_date.get('name', '')
                     date = date + datetime.timedelta(7 * dow_week)
             else:
                 # get a day-of-week in a given month
-                if str(cust_date.get("dow_week", None)).lower() == "last":
-                    date = self._get_last_dow_in_month(cust_date.get("dow", None), year, month)
+                if str(cust_date.get('dow_week', None)).lower() == 'last':
+                    date = self._get_last_dow_in_month(cust_date.get('dow', None), year, month)
                 else:
                     date = self._get_nth_dow_in_month(
-                        cust_date.get("dow", None), cust_date.get("dow_week", None), year, month
+                        cust_date.get('dow', None), cust_date.get('dow_week', None), year, month
                     )
 
-                cust_dict[date] = cust_date.get("name", "")
+                cust_dict[date] = cust_date.get('name', '')
 
         self.holidays.append(cust_dict)
         return
@@ -1066,11 +1066,11 @@ class Shtime:
         """
         if self.holidays is None:
             self.logger.info(
-                "_add_custom_holidays: " + self.translate("Holidays are not initialized, cannot add custom holidays")
+                '_add_custom_holidays: ' + self.translate('Holidays are not initialized, cannot add custom holidays')
             )
             return 0
 
-        custom = self.config.get("custom", [])
+        custom = self.config.get('custom', [])
         if custom is None:
             custom = []
         count = 0
@@ -1081,20 +1081,20 @@ class Shtime:
                 else:
                     cust_date = entry
                 # generate for range of years or a given year
-                if cust_date.get("year", None) is None:
+                if cust_date.get('year', None) is None:
                     gen_for_years = self.years
                 else:
-                    gen_for_years = [cust_date["year"]]
+                    gen_for_years = [cust_date['year']]
 
                 # {'day': 2, 'month': 12, 'name': "Martin's Geburtstag"}
-                if cust_date.get("month", None) and cust_date.get("day", None):
+                if cust_date.get('month', None) and cust_date.get('day', None):
                     # generate holiday(s) for a given date (day/month)
                     self._add_holiday_by_date(cust_date, gen_for_years)
                     count += 1
                 elif (
-                    cust_date.get("dow", None)
-                    and cust_date.get("dow_week", None)
-                    and (0 < cust_date.get("dow", None) < 8)
+                    cust_date.get('dow', None)
+                    and cust_date.get('dow_week', None)
+                    and (0 < cust_date.get('dow', None) < 8)
                 ):
                     # generate holiday(s) for a given weekday (dow/dowweek/month)
                     self._add_holiday_by_dow(cust_date, gen_for_years)
@@ -1111,30 +1111,30 @@ class Shtime:
         """
         if self.holidays is None:
             self.logger.info(
-                "add_custom_holiday: " + self.translate("Holidays are not initialized, cannot add custom holidays")
+                'add_custom_holiday: ' + self.translate('Holidays are not initialized, cannot add custom holidays')
             )
             return
 
         # generate for range of years or a given year
-        if cust_date.get("year", None) is None:
+        if cust_date.get('year', None) is None:
             gen_for_years = self.years
         else:
-            gen_for_years = [cust_date["year"]]
+            gen_for_years = [cust_date['year']]
 
         # {'day': 2, 'month': 12, 'name': "Martin's Geburtstag"}
-        if cust_date.get("month", None) and cust_date.get("day", None):
+        if cust_date.get('month', None) and cust_date.get('day', None):
             # generate holiday(s) for a given date (day/month)
             self._add_holiday_by_date(cust_date, gen_for_years)
-        elif cust_date.get("dow", None) and cust_date.get("dow_week", None) and (0 < cust_date.get("dow", None) < 8):
+        elif cust_date.get('dow', None) and cust_date.get('dow_week', None) and (0 < cust_date.get('dow', None) < 8):
             # generate holiday(s) for a given weekday (dow/dowweek/month)
             self._add_holiday_by_dow(cust_date, gen_for_years)
 
-        log_msg = self.translate("Custom holiday definitions defined during runtime: {cust_date}")
+        log_msg = self.translate('Custom holiday definitions defined during runtime: {cust_date}')
         self.logger.warning(log_msg.format(cust_date=cust_date))
 
         return
 
-    def add_custom_holiday_range(self, from_date, to_date=None, holiday_name=""):
+    def add_custom_holiday_range(self, from_date, to_date=None, holiday_name=''):
         """
         Add a range of dates to the custom holidays
 
@@ -1169,36 +1169,36 @@ class Shtime:
 
         if self.holidays is None:
             self.config = shyaml.yaml_load(self._sh.get_config_file(BASE_HOLIDAY))
-            location = self.config.get("location", None)
+            location = self.config.get('location', None)
 
             # prepopulate holidays for following years
             this_year = self.today().year
             self.years = [this_year, this_year + 1, this_year + 2]
 
             if location:
-                country = location.get("country", "DE")
-                prov = location.get("province", None)
-                state = location.get("state", None)
+                country = location.get('country', 'DE')
+                prov = location.get('province', None)
+                state = location.get('state', None)
                 try:
                     self.holidays = holidays.country_holidays(country, years=self.years, subdiv=prov or state)
                 except KeyError as e:
-                    self.logger.error("Error initializing self.holidays: {}".format(e))
+                    self.logger.error('Error initializing self.holidays: {}'.format(e))
                 try:
                     self.public_holidays = holidays.country_holidays(country, years=self.years, subdiv=prov or state)
                 except KeyError as e:
-                    self.logger.error("Error initializing self.public_holidays: {}".format(e))
+                    self.logger.error('Error initializing self.public_holidays: {}'.format(e))
             else:
-                self.holidays = holidays.country_holidays("US", years=self.years)
-                self.public_holidays = holidays.country_holidays("US", years=self.years)
+                self.holidays = holidays.country_holidays('US', years=self.years)
+                self.public_holidays = holidays.country_holidays('US', years=self.years)
 
             if self.holidays is not None:
-                c_logtext = self.translate("not defined")
-                c_logcount = ""
+                c_logtext = self.translate('not defined')
+                c_logcount = ''
                 count = self._add_custom_holidays()
                 if count > 0:
-                    c_logcount = " " + str(count)
-                    c_logtext = self.translate("defined")
-                defined_state = ""
+                    c_logcount = ' ' + str(count)
+                    c_logtext = self.translate('defined')
+                defined_state = ''
                 # Test if class of self.holiday has an attribute 'state'
                 try:
                     state = self.holidays.state
@@ -1226,9 +1226,9 @@ class Shtime:
                 )
                 self.logger.info(self.log_msg)
 
-                self.logger.info(self.translate("Defined holidays") + ":")
+                self.logger.info(self.translate('Defined holidays') + ':')
                 for ft in sorted(self.holidays):
-                    self.logger.info(" - {}: {}".format(ft, self.holidays[ft]))
+                    self.logger.info(' - {}: {}'.format(ft, self.holidays[ft]))
 
         return
 
@@ -1324,7 +1324,7 @@ class Shtime:
         else:
             if self.holidays.get(dt):
                 return self.holidays.get(dt)
-        return ""
+        return ''
 
     def holiday_list(self, year=None):
         """

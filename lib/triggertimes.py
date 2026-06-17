@@ -181,7 +181,7 @@ class TriggerTimes:
         if not isinstance(triggertime, str):
             triggertime = str(triggertime)
         triggertime = triggertime.strip()  # remove spaces in front and at end
-        triggertime = re.sub(" +", " ", triggertime)  # replace multiple spaces by a single one
+        triggertime = re.sub(' +', ' ', triggertime)  # replace multiple spaces by a single one
         return triggertime
 
     # --------------------------------------------------------------------------------------------------------
@@ -198,6 +198,7 @@ class TriggerTimes:
         .. code-block:: python
 
             from lib.triggertimes import TriggerTimes
+
             sh_triggertimes = TriggerTimes.get_instance()
 
             # to access a method (eg. get_next()):
@@ -234,35 +235,35 @@ class TriggerTime:
     """
 
     named_days = {
-        "mon": "0",
-        "tue": "1",
-        "wed": "2",
-        "thu": "3",
-        "fri": "4",
-        "sat": "5",
-        "sun": "6",
-        "mo": "0",
-        "di": "1",
-        "mi": "2",
-        "do": "3",
-        "fr": "4",
-        "sa": "5",
-        "so": "6",
+        'mon': '0',
+        'tue': '1',
+        'wed': '2',
+        'thu': '3',
+        'fri': '4',
+        'sat': '5',
+        'sun': '6',
+        'mo': '0',
+        'di': '1',
+        'mi': '2',
+        'do': '3',
+        'fr': '4',
+        'sa': '5',
+        'so': '6',
     }
 
     named_months = {
-        "jan": "1",
-        "feb": "2",
-        "mar": "3",
-        "apr": "4",
-        "may": "5",
-        "jun": "6",
-        "jul": "7",
-        "aug": "8",
-        "sep": "9",
-        "oct": "10",
-        "nov": "11",
-        "dec": "12",
+        'jan': '1',
+        'feb': '2',
+        'mar': '3',
+        'apr': '4',
+        'may': '5',
+        'jun': '6',
+        'jul': '7',
+        'aug': '8',
+        'sep': '9',
+        'oct': '10',
+        'nov': '11',
+        'dec': '12',
     }
 
     def __init__(self, triggertime):
@@ -294,24 +295,24 @@ class TriggerTime:
         item_range = []
 
         # Check for multiple items and process each item recursively
-        if "," in entry:
-            for item in entry.split(","):
+        if ',' in entry:
+            for item in entry.split(','):
                 result.extend(Crontab.integer_range(item, low, high))
 
         # Check for intervals, e.g. "*/2", "9-17/2"
-        elif "/" in entry:
-            spec_range, interval = entry.split("/")
-            logger.debug(f"Cron spec interval {entry} -> {spec_range},{interval}")
+        elif '/' in entry:
+            spec_range, interval = entry.split('/')
+            logger.debug(f'Cron spec interval {entry} -> {spec_range},{interval}')
             result = Crontab.integer_range(spec_range, low, high)[:: int(interval)]
 
         # Check for numeric ranges, e.g. "9-17"
-        elif "-" in entry:
-            spec_low, spec_high = entry.split("-")
-            result = Crontab.integer_range("*", int(spec_low), int(spec_high))
+        elif '-' in entry:
+            spec_low, spec_high = entry.split('-')
+            result = Crontab.integer_range('*', int(spec_low), int(spec_high))
 
         # Process single item
         else:
-            if entry == "*":
+            if entry == '*':
                 item_range = list(range(low, high + 1))
             else:
                 item = int(entry)
@@ -386,13 +387,13 @@ class Crontab(TriggerTime):
     """
 
     crontab_presets = {
-        "@yearly": "0 0 1 1 *",
-        "@annually": "0 0 1 1 *",
-        "@monthly": "0 0 1 * *",
-        "@weekly": "0 0 * * 0",
-        "@daily": "0 0 * * *",
-        "@midnight": "0 0 * * *",
-        "@hourly": "0 * * * *",
+        '@yearly': '0 0 1 1 *',
+        '@annually': '0 0 1 1 *',
+        '@monthly': '0 0 1 * *',
+        '@weekly': '0 0 * * 0',
+        '@daily': '0 0 * * *',
+        '@midnight': '0 0 * * *',
+        '@hourly': '0 * * * *',
     }
 
     def __init__(self, triggertime):
@@ -420,7 +421,7 @@ class Crontab(TriggerTime):
 
     def parse_triggertime(self):
         """parse the crontab string for details and store them to the class variables for later use"""
-        logger.debug(f"Enter Crontab.parse_triggertime({self._triggertime})")
+        logger.debug(f'Enter Crontab.parse_triggertime({self._triggertime})')
 
         with self._lock:
             triggertime = self._triggertime
@@ -440,17 +441,17 @@ class Crontab(TriggerTime):
                 logger.error(f"crontab entry '{triggertime}' has fewer than 4 parts and is invalid")
                 return False
             elif self.parameter_count == 4:
-                logger.debug(f"old smarthome.py style parameter set {triggertime} given")
+                logger.debug(f'old smarthome.py style parameter set {triggertime} given')
                 self.minute, self.hour, self.day, self.wday = (
                     parameter_set[0],
                     parameter_set[1],
                     parameter_set[2],
                     parameter_set[3],
                 )
-                self.month = "*"
-                self.second = "0"
+                self.month = '*'
+                self.second = '0'
             elif self.parameter_count == 5:
-                logger.debug(f"new SmartHomeNG style parameter set {triggertime} given")
+                logger.debug(f'new SmartHomeNG style parameter set {triggertime} given')
                 self.minute, self.hour, self.day, self.month, self.wday = (
                     parameter_set[0],
                     parameter_set[1],
@@ -458,9 +459,9 @@ class Crontab(TriggerTime):
                     parameter_set[3],
                     parameter_set[4],
                 )
-                self.second = "0"
+                self.second = '0'
             elif self.parameter_count == 6:
-                logger.debug(f"new SmartHomeNG style parameter set {triggertime} given")
+                logger.debug(f'new SmartHomeNG style parameter set {triggertime} given')
                 self.second, self.minute, self.hour, self.day, self.month, self.wday = (
                     parameter_set[0],
                     parameter_set[1],
@@ -495,10 +496,10 @@ class Crontab(TriggerTime):
             self.weekday_range = Crontab.integer_range(self.wday, 0, 6)
             self._is_valid = True
 
-        logger.debug("Leave Crontab.parse_triggertime()")
+        logger.debug('Leave Crontab.parse_triggertime()')
 
     def __str__(self):
-        r = f"""{self._triggertime} is {"" if self._is_valid else "not"} valid, parameter count {self.parameter_count}:
+        r = f"""{self._triggertime} is {'' if self._is_valid else 'not'} valid, parameter count {self.parameter_count}:
         Hours:   {self.hour} -> {self.hour_range}
         Minutes: {self.minute} -> {self.minute_range}
         Seconds: {self.second} -> {self.second_range}
@@ -527,7 +528,7 @@ class Crontab(TriggerTime):
                 self.next_event = self.next_event.replace(tzinfo=starttime.tzinfo)
             if starttime < self.next_event:
                 logger.debug(
-                    f"looking for the next event after {starttime} was already calculated as {self.next_event}"
+                    f'looking for the next event after {starttime} was already calculated as {self.next_event}'
                 )
                 return self.next_event
             days_max_count = 365 * 25
@@ -604,16 +605,16 @@ class Crontab(TriggerTime):
             self.next_event = searchtime
             tok = time.perf_counter() - tik
             self.max_calc_time = max(self.max_calc_time, tok)
-            logger.debug(f"next event is at {searchtime}, calc took {tok:0.4f} sec, max: {self.max_calc_time:0.4f} sec")
+            logger.debug(f'next event is at {searchtime}, calc took {tok:0.4f} sec, max: {self.max_calc_time:0.4f} sec')
 
             # find out how the new function compares to old implementation
             if self.parameter_count == 4:
                 tik = time.perf_counter()
                 foo = self.get_next_old(starttime)
                 tok = time.perf_counter() - tik
-                logger.debug(f"OLD: next event is at {foo}, calc took {tok:0.4f} sec")
+                logger.debug(f'OLD: next event is at {foo}, calc took {tok:0.4f} sec')
                 if searchtime != foo:
-                    logger.error(f"NEW gives {searchtime} but OLD gives {foo}")
+                    logger.error(f'NEW gives {searchtime} but OLD gives {foo}')
 
             return searchtime
 
@@ -654,14 +655,14 @@ class Crontab(TriggerTime):
         else:
             mdays = calendar.monthrange(starttime.year, starttime.month + 1)[1]
 
-        if self.wday == "*" and self.day == "*":
-            day_range = self._day_range("0, 1, 2, 3, 4, 5, 6")
-        elif self.wday != "*" and self.day == "*":
+        if self.wday == '*' and self.day == '*':
+            day_range = self._day_range('0, 1, 2, 3, 4, 5, 6')
+        elif self.wday != '*' and self.day == '*':
             day_range = self._range(self.wday, 0, 6)
-            day_range = self._day_range(",".join(day_range))
-        elif self.wday != "*" and self.day != "*":
+            day_range = self._day_range(','.join(day_range))
+        elif self.wday != '*' and self.day != '*':
             day_range = self._range(self.wday, 0, 6)
-            day_range = self._day_range(",".join(day_range))
+            day_range = self._day_range(','.join(day_range))
             day_range = day_range + self._range(self.day, 0o1, mdays)
         else:
             day_range = self._range(self.day, 0o1, mdays)
@@ -669,7 +670,7 @@ class Crontab(TriggerTime):
         # combine the different ranges
         event_range = sorted(
             [
-                str(day) + "-" + str(hour) + "-" + str(minute)
+                str(day) + '-' + str(hour) + '-' + str(minute)
                 for minute in minute_range
                 for hour in hour_range
                 for day in day_range
@@ -679,12 +680,12 @@ class Crontab(TriggerTime):
             next_event = event_range[0]
             next_time = starttime + dateutil.relativedelta.relativedelta(months=+1)
         else:  # this month
-            now_str = starttime.strftime("%d-%H-%M")
+            now_str = starttime.strftime('%d-%H-%M')
             next_event = self._next(lambda event: event > now_str, event_range)
             if not next_event:
                 return False
             next_time = starttime
-        day, hour, minute = next_event.split("-")
+        day, hour, minute = next_event.split('-')
         return next_time.replace(day=int(day), hour=int(hour), minute=int(minute), second=0, microsecond=0)
 
     def _next(self, f, seq):
@@ -708,24 +709,24 @@ class Crontab(TriggerTime):
         item_range = []
 
         # Check for multiple comma separated values and process each of them recursively
-        if "," in entry:
-            for item in entry.split(","):
+        if ',' in entry:
+            for item in entry.split(','):
                 result.extend(self._range(item, low, high))
 
         # Check for intervals, e.g. "*/2", "9-17/2"
-        elif "/" in entry:
-            spec_range, interval = entry.split("/")
+        elif '/' in entry:
+            spec_range, interval = entry.split('/')
             # logger.debug('Cron spec interval {} {}'.format(entry, interval))
             result = self._range(spec_range, low, high)[:: int(interval)]
 
         # Check for numeric ranges, e.g. "9-17"
-        elif "-" in entry:
-            spec_low, spec_high = entry.split("-")
-            result = self._range("*", int(spec_low), int(spec_high))
+        elif '-' in entry:
+            spec_low, spec_high = entry.split('-')
+            result = self._range('*', int(spec_low), int(spec_high))
 
         # Process single value
         else:
-            if entry == "*":
+            if entry == '*':
                 item_range = list(range(low, high + 1))
             else:
                 item = int(entry)
@@ -733,7 +734,7 @@ class Crontab(TriggerTime):
                     item = high  # truncate value to highest possible
                 item_range.append(item)
             for entry in item_range:
-                result.append("{:02d}".format(entry))
+                result.append('{:02d}'.format(entry))
 
         return result
 
@@ -747,14 +748,14 @@ class Crontab(TriggerTime):
         now = datetime.date.today()
         wdays = [MO, TU, WE, TH, FR, SA, SU]
         result = []
-        for day in days.split(","):
+        for day in days.split(','):
             wday = wdays[int(day)]
             # add next weekday occurrence
             day = now + dateutil.relativedelta.relativedelta(weekday=wday)
-            result.append(day.strftime("%d"))
+            result.append(day.strftime('%d'))
             # safety add-on if weekday equals todays weekday
             day = now + dateutil.relativedelta.relativedelta(weekday=wday(+2))
-            result.append(day.strftime("%d"))
+            result.append(day.strftime('%d'))
         return result
 
 
@@ -764,7 +765,7 @@ class Skytime(TriggerTime):
     """
 
     sh = None
-    skyevents = ["sunrise", "sunset", "moonrise", "moonset"]
+    skyevents = ['sunrise', 'sunset', 'moonrise', 'moonset']
 
     def __init__(self, triggertime, location=None):
         super().__init__(triggertime)
@@ -778,9 +779,9 @@ class Skytime(TriggerTime):
         self.moff = None  # Either None or an int
 
         # extended syntax that allows day, month and weekday as well
-        self.day = "*"
-        self.wday = "*"
-        self.month = "*"
+        self.day = '*'
+        self.wday = '*'
+        self.month = '*'
         self.day_range = Skytime.integer_range(
             self.day, 1, 31
         )  # not zero based, limited to 1..31 days, needs to be clipped for actual month
@@ -813,8 +814,8 @@ class Skytime(TriggerTime):
         :return: a tuple of the parts
         :rtype: tuple
         """
-        assert isinstance(triggertime, str), "triggerime must be a string"
-        tabs = triggertime.split("<")
+        assert isinstance(triggertime, str), 'triggerime must be a string'
+        tabs = triggertime.split('<')
         if len(tabs) == 1:
             smin = None
             cron = tabs[0].strip()
@@ -833,7 +834,7 @@ class Skytime(TriggerTime):
             cron = tabs[1].strip()
             smax = tabs[2].strip()
         else:
-            raise SyntaxError(f"Wrong syntax: {triggertime}. Should be [H:M<](sunrise|sunset)[+|-][offset][unit][<H:M]")
+            raise SyntaxError(f'Wrong syntax: {triggertime}. Should be [H:M<](sunrise|sunset)[+|-][offset][unit][<H:M]')
         return (smin, cron, smax)
 
     @staticmethod
@@ -850,19 +851,19 @@ class Skytime(TriggerTime):
         """
         doff = 0.0  # degree offset
         moff = 0  # minute offset
-        tmp, op, offs = skyevent.rpartition("+")
-        revent = ""
+        tmp, op, offs = skyevent.rpartition('+')
+        revent = ''
         if op:
-            if offs.endswith("m"):
-                moff = int(offs.strip("m"))
+            if offs.endswith('m'):
+                moff = int(offs.strip('m'))
             else:
                 doff = float(offs)
             revent = tmp
         else:
-            tmp, op, offs = skyevent.rpartition("-")
+            tmp, op, offs = skyevent.rpartition('-')
             if op:
-                if offs.endswith("m"):
-                    moff = -int(offs.strip("m"))
+                if offs.endswith('m'):
+                    moff = -int(offs.strip('m'))
                 else:
                     doff = -float(offs)
                 revent = tmp
@@ -874,13 +875,13 @@ class Skytime(TriggerTime):
     @staticmethod
     def keep_in_range(value, minvalue, maxvalue):
         if minvalue > maxvalue:
-            logger.error(f"minvalue={minvalue} is greater than maxvalue={maxvalue}")
+            logger.error(f'minvalue={minvalue} is greater than maxvalue={maxvalue}')
         if value < minvalue:
             value = minvalue
-            logger.warning(f"{value}<{minvalue} --> {value}={minvalue}")
+            logger.warning(f'{value}<{minvalue} --> {value}={minvalue}')
         if value > maxvalue:
             value = maxvalue
-            logger.warning(f"{value}>{maxvalue} --> {value}={maxvalue}")
+            logger.warning(f'{value}>{maxvalue} --> {value}={maxvalue}')
         return value
 
     @staticmethod
@@ -888,10 +889,10 @@ class Skytime(TriggerTime):
         if timepoint is None:
             return None
         timepoint = timepoint.strip()
-        if timepoint == "":
+        if timepoint == '':
             return None
 
-        h, sep, m = timepoint.partition(":")
+        h, sep, m = timepoint.partition(':')
         try:
             h = int(h)
             h = Skytime.keep_in_range(h, 0, 23)
@@ -902,7 +903,7 @@ class Skytime(TriggerTime):
         return (h, m)
 
     def __str__(self):
-        r = f"""{self._triggertime} is {"" if self._is_valid else "not "}valid and evaluates to:
+        r = f"""{self._triggertime} is {'' if self._is_valid else 'not '}valid and evaluates to:
         min:   {self.h_min}:{self.m_min}
         event:  {self.event}
         degree offset: {self.doff}
@@ -916,7 +917,7 @@ class Skytime(TriggerTime):
 
     def parse_triggertime(self):
         """parses internal set triggertime into parts"""
-        logger.debug(f"Enter Skytime.parse_triggertime({self._triggertime})")
+        logger.debug(f'Enter Skytime.parse_triggertime({self._triggertime})')
         try:
             with self._lock:
                 triggertime = self._triggertime
@@ -929,13 +930,13 @@ class Skytime(TriggerTime):
 
                 self.parameter_count = len(parameter_set)
                 if self.parameter_count == 1:
-                    logger.debug(f"old smarthome.py style parameter set {triggertime} given")
+                    logger.debug(f'old smarthome.py style parameter set {triggertime} given')
                     self.timeset = parameter_set[0]  # this contains something like 'mm:hh<skyevent+offset<mm:hh'
-                    self.day = "*"
-                    self.wday = "*"
-                    self.month = "*"
+                    self.day = '*'
+                    self.wday = '*'
+                    self.month = '*'
                 elif self.parameter_count == 4:
-                    logger.debug(f"new SmartHomeNG style parameter set {triggertime} given")
+                    logger.debug(f'new SmartHomeNG style parameter set {triggertime} given')
                     self.timeset, self.day, self.month, self.wday = (
                         parameter_set[0],
                         parameter_set[1],
@@ -943,7 +944,7 @@ class Skytime(TriggerTime):
                         parameter_set[3],
                     )
                 else:
-                    logger.debug(f"wrong parameter set {triggertime} given")
+                    logger.debug(f'wrong parameter set {triggertime} given')
 
                 if self.parameter_count == 4:
                     self.month = self.month.lower()
@@ -973,9 +974,9 @@ class Skytime(TriggerTime):
                 if self.event in Skytime.skyevents:
                     self._is_valid = True
         except Exception as e:
-            logger.debug(f"Error in Skytime.parse_triggertime({self._triggertime}): {e}")
+            logger.debug(f'Error in Skytime.parse_triggertime({self._triggertime}): {e}')
         finally:
-            logger.debug(f"Leave Skytime.parse_triggertime({self._triggertime})")
+            logger.debug(f'Leave Skytime.parse_triggertime({self._triggertime})')
 
     def get_next(self, starttime: datetime):
         """
@@ -987,13 +988,13 @@ class Skytime(TriggerTime):
         :rtype: datetime
         """
         mappings = {
-            "sunrise": Skytime.sh.sun.rise,
-            "sunset": Skytime.sh.sun.set,
-            "moonrise": Skytime.sh.moon.rise,
-            "moonset": Skytime.sh.moon.set,
+            'sunrise': Skytime.sh.sun.rise,
+            'sunset': Skytime.sh.sun.set,
+            'moonrise': Skytime.sh.moon.rise,
+            'moonset': Skytime.sh.moon.set,
         }
         if not self._is_valid:
-            raise ValueError(f"definition of {self._triggertime} was not successfully parsed!")
+            raise ValueError(f'definition of {self._triggertime} was not successfully parsed!')
         with self._lock:
             tik = time.perf_counter()
             if self.next_event is None:
@@ -1001,7 +1002,7 @@ class Skytime(TriggerTime):
                 self.next_event = self.next_event.replace(tzinfo=starttime.tzinfo)
             if starttime < self.next_event:
                 logger.debug(
-                    f"looking for the next event after {starttime} was already calculated as {self.next_event}"
+                    f'looking for the next event after {starttime} was already calculated as {self.next_event}'
                 )
                 return self.next_event
             days_max_count = 365 * 25
@@ -1036,11 +1037,11 @@ class Skytime(TriggerTime):
                             if self.event in mappings:
                                 try:
                                     logger.debug(
-                                        f"get next eventtime for {self.event} with degree offset {self.doff}, minute offset {self.moff} beginning with {searchtime}"
+                                        f'get next eventtime for {self.event} with degree offset {self.doff}, minute offset {self.moff} beginning with {searchtime}'
                                     )
                                     eventtime = mappings[self.event](self.doff, self.moff, dt=searchtime)
                                     logger.debug(
-                                        f"eventtime found is {eventtime.astimezone(Skytime.sh.shtime.tzinfo())}"
+                                        f'eventtime found is {eventtime.astimezone(Skytime.sh.shtime.tzinfo())}'
                                     )
                                 except Exception:
                                     eventtime = None
@@ -1053,9 +1054,9 @@ class Skytime(TriggerTime):
                                 if eventtime.tzinfo == tzutc():
                                     eventtime = eventtime.astimezone(Skytime.sh.shtime.tzinfo())
                                 else:
-                                    logger.error("searchtime.tzinfo was not given as utc!")
+                                    logger.error('searchtime.tzinfo was not given as utc!')
                             else:
-                                logger.error(f"No function found to get next skyevent time for {self._triggertime}")
+                                logger.error(f'No function found to get next skyevent time for {self._triggertime}')
                                 return get_invalid_time()
 
                             # eventtime will contain the next time e.g. a sunset will take place
@@ -1064,7 +1065,7 @@ class Skytime(TriggerTime):
                             #  - eventtime might be one or more day(s) later
 
                             logger.debug(
-                                f"starting with {starttime} the current next {self.event}({self.doff},{self.moff}) is {eventtime}, searchtime is {searchtime}"
+                                f'starting with {starttime} the current next {self.event}({self.doff},{self.moff}) is {eventtime}, searchtime is {searchtime}'
                             )
 
                             # if the dates differ then it must be certain that the new date adheres to the
@@ -1074,7 +1075,7 @@ class Skytime(TriggerTime):
                                     f"starting with {starttime} the eventtime date({eventtime}) is at least a day later than current searchtime date ({searchtime}), skip to eventtime's early morning"
                                 )
                                 searchtime = eventtime.replace(hour=0, minute=0, second=0, microsecond=0)
-                                logger.debug(f"set searchtime to {searchtime}")
+                                logger.debug(f'set searchtime to {searchtime}')
                                 continue  # need to start over for a matching date
 
                             if eventtime.date() < searchtime.date():
@@ -1084,7 +1085,7 @@ class Skytime(TriggerTime):
                                 searchtime = searchtime.replace(
                                     hour=0, minute=0, second=0, microsecond=0
                                 ) + datetime.timedelta(days=1)
-                                logger.debug(f"set searchtime to {searchtime}")
+                                logger.debug(f'set searchtime to {searchtime}')
                                 continue
 
                             # eventtime and searchtime have the same day
@@ -1096,7 +1097,7 @@ class Skytime(TriggerTime):
                                     )
                                 except Exception:
                                     logger.error(
-                                        "Wrong syntax: {self._triggertime}. Should be [H:M<](skyevent)[+|-][offset][<H:M]"
+                                        'Wrong syntax: {self._triggertime}. Should be [H:M<](skyevent)[+|-][offset][<H:M]'
                                     )
                                     return get_invalid_time()
                                 if dmin > eventtime:
@@ -1107,10 +1108,10 @@ class Skytime(TriggerTime):
                                     dmax = eventtime.replace(
                                         hour=self.h_max, minute=self.m_max, second=0, microsecond=0
                                     )
-                                    logger.debug(f"searchtime={searchtime}, eventtime={eventtime}, dmax={dmax}")
+                                    logger.debug(f'searchtime={searchtime}, eventtime={eventtime}, dmax={dmax}')
                                 except Exception:
                                     logger.error(
-                                        "Wrong syntax: {self._triggertime}. Should be [H:M<](skyevent)[+|-][offset][<H:M]"
+                                        'Wrong syntax: {self._triggertime}. Should be [H:M<](skyevent)[+|-][offset][<H:M]'
                                     )
                                     return get_invalid_time()
 
@@ -1132,7 +1133,7 @@ class Skytime(TriggerTime):
                                 searchtime = searchtime.replace(
                                     hour=0, minute=0, second=0, microsecond=0
                                 ) + datetime.timedelta(days=1)
-                                logger.debug(f"searchtime is now {searchtime}")
+                                logger.debug(f'searchtime is now {searchtime}')
                                 continue
 
                             # logger.debug(f"next trigger time found: {eventtime}")
@@ -1162,6 +1163,6 @@ class Skytime(TriggerTime):
             tok = time.perf_counter() - tik
             self.max_calc_time = max(self.max_calc_time, tok)
             logger.debug(
-                f"next event is at {searchtime}, calc took {tok:0.4f} seconds, maximum was {self.max_calc_time:0.4f}"
+                f'next event is at {searchtime}, calc took {tok:0.4f} seconds, maximum was {self.max_calc_time:0.4f}'
             )
             return searchtime

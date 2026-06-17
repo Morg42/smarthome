@@ -30,15 +30,15 @@ import lib.shyaml as shyaml
 from lib.constants import YAML_FILE, FOO, META_DATA_TYPES, META_DATA_DEFAULTS, DIR_PLUGINS, DIR_MODULES
 from lib.model.sdp.globals import SDP_VERSION
 
-META_MODULE_PARAMETER_SECTION = "parameters"
-META_PLUGIN_SECTION = "plugin"
-META_PLUGIN_PARAMETER_SECTION = "parameters"
-META_PLUGIN_ITEMATTRIBUTE_SECTION = "item_attributes"
-META_PLUGIN_ITEMATTRIBUTEPREFIX_SECTION = "item_attribute_prefixes"
-META_PLUGIN_LOGIC_PARAMETER_SECTION = "logic_parameters"
-META_PLUGIN_FUNCTION_SECTION = "plugin_functions"
+META_MODULE_PARAMETER_SECTION = 'parameters'
+META_PLUGIN_SECTION = 'plugin'
+META_PLUGIN_PARAMETER_SECTION = 'parameters'
+META_PLUGIN_ITEMATTRIBUTE_SECTION = 'item_attributes'
+META_PLUGIN_ITEMATTRIBUTEPREFIX_SECTION = 'item_attribute_prefixes'
+META_PLUGIN_LOGIC_PARAMETER_SECTION = 'logic_parameters'
+META_PLUGIN_FUNCTION_SECTION = 'plugin_functions'
 
-META_STRUCT_SECTION = "item_structs"
+META_STRUCT_SECTION = 'item_structs'
 # META_DATA_TYPES=['bool', 'int', 'float','num', 'scene', 'str', ['list','list(subtype)'], 'dict', 'ip', 'ipv4', 'ipv6', 'mac', 'knx_ga', 'foo']
 # META_DATA_DEFAULTS={'bool': False, 'int': 0, 'float': 0.0, 'scene': 0, 'str': '', 'list': [], 'dict': {}, 'OrderedDict': {}, 'num': 0, 'scene': 0, 'ip': '0.0.0.0', 'ipv4': '0.0.0.0', 'mac': '00:00:00:00:00:00', 'knx_ga': '', 'foo': None}
 
@@ -52,9 +52,9 @@ all_prefixes_tuple = None
 
 
 class Metadata:
-    _version = "?"
+    _version = '?'
 
-    def __init__(self, sh, addon_name, addon_type, classpath=""):
+    def __init__(self, sh, addon_name, addon_type, classpath=''):
         """
         Initialzes the metadata for an addon (plugin or module) from the definition file
 
@@ -77,16 +77,16 @@ class Metadata:
         self._log_premsg = "{} '{}': ".format(addon_type, self._addon_name)
 
         #        logger.warning(self._log_premsg + "classpath = '{}'".format(classpath))
-        if classpath == "":
-            if addon_type == "plugin":
+        if classpath == '':
+            if addon_type == 'plugin':
                 addon_type_dir = DIR_PLUGINS
-            elif addon_type == "module":
+            elif addon_type == 'module':
                 addon_type_dir = DIR_MODULES
             else:
                 return
             self.relative_filename = os.path.join(addon_type_dir, self._addon_name, addon_type + YAML_FILE)
         else:
-            self.relative_filename = os.path.join(classpath.replace(".", os.sep), addon_type + YAML_FILE)
+            self.relative_filename = os.path.join(classpath.replace('.', os.sep), addon_type + YAML_FILE)
         #        logger.warning(self._log_premsg + "relative_filename = '{}'".format(self.relative_filename))
 
         # read complete definitions from metadata file
@@ -109,41 +109,41 @@ class Metadata:
         # Add dummy prefixes only, if all_itemprefixdefinitions is still empty
         if all_itemprefixdefinitions == {}:
             # dummy 'my_' prefix for user's attributes for logics, etc.
-            prefix_name = "my_"
+            prefix_name = 'my_'
             all_itemprefixdefinitions[prefix_name] = {
-                "type": "foo",
-                "description": {"de": "Attribute für verschiedene Tests", "en": "Attributes for various tests"},
-                "listtype": ["foo"],
-                "listlen": 0,
-                "_addon_name": "lib_metadata",
-                "_addon_type": "plugin",
-                "_name": prefix_name,
-                "_type": "prefix",
+                'type': 'foo',
+                'description': {'de': 'Attribute für verschiedene Tests', 'en': 'Attributes for various tests'},
+                'listtype': ['foo'],
+                'listlen': 0,
+                '_addon_name': 'lib_metadata',
+                '_addon_type': 'plugin',
+                '_name': prefix_name,
+                '_type': 'prefix',
             }
 
             # dummy '_' prefix for hidden user's attributes for logics, etc.
-            prefix_name = "_"
+            prefix_name = '_'
             all_itemprefixdefinitions[prefix_name] = {
-                "type": "foo",
-                "description": {
-                    "de": "Attribute für internes Handling (z.B. in structs",
-                    "en": "Attributes for internal handling (e.g. in structs)",
+                'type': 'foo',
+                'description': {
+                    'de': 'Attribute für internes Handling (z.B. in structs',
+                    'en': 'Attributes for internal handling (e.g. in structs)',
                 },
-                "listtype": ["foo"],
-                "listlen": 0,
-                "_addon_name": "lib_metadata",
-                "_addon_type": "plugin",
-                "_name": prefix_name,
-                "_type": "prefix",
+                'listtype': ['foo'],
+                'listlen': 0,
+                '_addon_name': 'lib_metadata',
+                '_addon_type': 'plugin',
+                '_name': prefix_name,
+                '_type': 'prefix',
             }
 
             logger.info(
-                f"Definierte spezielle Präfixe für Namen von Attributen: {list(all_itemprefixdefinitions.keys())}"
+                f'Definierte spezielle Präfixe für Namen von Attributen: {list(all_itemprefixdefinitions.keys())}'
             )
 
         if self.meta is not None:
             # read paramter and item definition sections
-            if self._addon_type == "module":
+            if self._addon_type == 'module':
                 self.parameters = self.meta.get(META_MODULE_PARAMETER_SECTION)
                 self.itemstructs = self.meta.get(META_STRUCT_SECTION)
             else:
@@ -162,23 +162,23 @@ class Metadata:
 
             # test validity of parameter definition section
             if self.parameters is not None:
-                if self.parameters == "NONE":
+                if self.parameters == 'NONE':
                     self.parameters = None
                 else:
                     for param_name in self.parameters.keys():
                         if self.parameters.get(param_name, None) is not None:
-                            self.parameters[param_name]["_name"] = param_name
-                            self.parameters[param_name]["_type"] = "parameter"
+                            self.parameters[param_name]['_name'] = param_name
+                            self.parameters[param_name]['_type'] = 'parameter'
                     self._paramlist = list(self.parameters.keys())
                     logger.info(self._log_premsg + "Metadata paramlist = '{}'".format(str(self._paramlist)))
             if self.parameters is not None:
                 self._test_definitions(self._paramlist, self.parameters)
             else:
-                logger.debug(self._log_premsg + "has no parameter definitions in metadata")
+                logger.debug(self._log_premsg + 'has no parameter definitions in metadata')
 
             # test validity of item definition section
             if self.itemdefinitions is not None:
-                if self.itemdefinitions == "NONE":
+                if self.itemdefinitions == 'NONE':
                     self.itemdefinitions = None
                 else:
                     self._itemdeflist = list(self.itemdefinitions.keys())
@@ -186,11 +186,11 @@ class Metadata:
             if self.itemdefinitions is not None:
                 self._test_definitions(self._itemdeflist, self.itemdefinitions)
             else:
-                logger.debug(self._log_premsg + "has no item definitions in metadata")
+                logger.debug(self._log_premsg + 'has no item definitions in metadata')
 
             # test validity of item-prefix definition section
             if self.itemprefixdefinitions is not None:
-                if self.itemprefixdefinitions == "NONE":
+                if self.itemprefixdefinitions == 'NONE':
                     self.itemprefixdefinitions = None
                 else:
                     self._itemprefixdeflist = list(self.itemprefixdefinitions.keys())
@@ -200,30 +200,30 @@ class Metadata:
             if self.itemprefixdefinitions is not None:
                 self._test_definitions(self._itemprefixdeflist, self.itemprefixdefinitions)
             else:
-                logger.debug(self._log_premsg + "has no item definitions in metadata")
+                logger.debug(self._log_premsg + 'has no item definitions in metadata')
 
             # build dict for checking of item attributes and their values
             if self.itemdefinitions is not None:
                 for attr_name in self.itemdefinitions:
                     all_itemdefinitions[attr_name] = self.itemdefinitions[attr_name]
-                    all_itemdefinitions[attr_name]["_addon_name"] = self._addon_name
-                    all_itemdefinitions[attr_name]["_addon_type"] = self._addon_type
-                    all_itemdefinitions[attr_name]["_name"] = attr_name
-                    all_itemdefinitions[attr_name]["_type"] = "attribute"
+                    all_itemdefinitions[attr_name]['_addon_name'] = self._addon_name
+                    all_itemdefinitions[attr_name]['_addon_type'] = self._addon_type
+                    all_itemdefinitions[attr_name]['_name'] = attr_name
+                    all_itemdefinitions[attr_name]['_type'] = 'attribute'
 
             # build dict for checking of item attributes and their values
             if self.itemprefixdefinitions is not None:
                 # add all prefixes loaded from metadate of the plugin
                 for prefix_name in self.itemprefixdefinitions:
                     all_itemprefixdefinitions[prefix_name] = self.itemprefixdefinitions[prefix_name]
-                    all_itemprefixdefinitions[prefix_name]["_addon_name"] = self._addon_name
-                    all_itemprefixdefinitions[prefix_name]["_addon_type"] = self._addon_type
-                    all_itemprefixdefinitions[prefix_name]["_name"] = prefix_name
-                    all_itemprefixdefinitions[prefix_name]["_type"] = "prefix"
+                    all_itemprefixdefinitions[prefix_name]['_addon_name'] = self._addon_name
+                    all_itemprefixdefinitions[prefix_name]['_addon_type'] = self._addon_type
+                    all_itemprefixdefinitions[prefix_name]['_name'] = prefix_name
+                    all_itemprefixdefinitions[prefix_name]['_type'] = 'prefix'
 
             # test validity of logic-parameter definition section
             if self.logic_parameters is not None:
-                if self.logic_parameters == "NONE":
+                if self.logic_parameters == 'NONE':
                     self.logic_parameters = None
                 else:
                     self._logic_paramlist = list(self.logic_parameters.keys())
@@ -231,11 +231,11 @@ class Metadata:
             if self.logic_parameters is not None:
                 self._test_definitions(self._logic_paramlist, self.logic_parameters)
             else:
-                logger.debug(self._log_premsg + "has no logic-parameter definitions in metadata")
+                logger.debug(self._log_premsg + 'has no logic-parameter definitions in metadata')
 
             # test validity of plugin-function definition section
             if self.plugin_functions is not None:
-                if self.plugin_functions == "NONE":
+                if self.plugin_functions == 'NONE':
                     self.plugin_functions = None
                 else:
                     self._plugin_functionlist = list(self.plugin_functions.keys())
@@ -250,11 +250,11 @@ class Metadata:
                 self.get_plugin_function_defstrings(with_type=False, with_default=True)
                 self.get_plugin_function_defstrings(with_type=True, with_default=True)
             else:
-                logger.debug(self._log_premsg + "has no plugin-function definitions in metadata")
+                logger.debug(self._log_premsg + 'has no plugin-function definitions in metadata')
 
             # test validity of structs definition section
             if self.itemstructs is not None:
-                if self.itemstructs == "NONE":
+                if self.itemstructs == 'NONE':
                     self.itemstructs = None
                 else:
                     logger.info(self._log_premsg + "Metadata itemstructlist = '{}'".format(self._itemstructlist))
@@ -269,7 +269,7 @@ class Metadata:
             #                self._test_definitions(self._itemdeflist, self.itemdefinitions)
             #                pass
             else:
-                logger.info(self._log_premsg + "has no item-struct definitions in metadata")
+                logger.info(self._log_premsg + 'has no item-struct definitions in metadata')
 
         # Read global metadata for addon (either 'plugin' or 'module'
         if self.meta is not None:
@@ -283,38 +283,38 @@ class Metadata:
 
         result = {}
 
-        if self._sh.modules.get_module("http") is not None:
+        if self._sh.modules.get_module('http') is not None:
             # only if http module is loaded:
             # global plugin parameter 'webif_pagelength'
-            result["webif_pagelength"] = {}
-            result["webif_pagelength"]["type"] = "int"
-            result["webif_pagelength"]["valid_list"] = [-1, 0, 25, 50, 100]
-            result["webif_pagelength"]["description"] = {}
+            result['webif_pagelength'] = {}
+            result['webif_pagelength']['type'] = 'int'
+            result['webif_pagelength']['valid_list'] = [-1, 0, 25, 50, 100]
+            result['webif_pagelength']['description'] = {}
             # get description of webif_pagelength-parameter in all available laguages
-            result["webif_pagelength"]["description"] = (
-                self._sh.modules.get_module("http")
-                ._metadata.meta["parameters"]["webif_pagelength"]
-                .get("description", {"en": "No description found!"})
+            result['webif_pagelength']['description'] = (
+                self._sh.modules.get_module('http')
+                ._metadata.meta['parameters']['webif_pagelength']
+                .get('description', {'en': 'No description found!'})
             )
             try:
-                result["webif_pagelength"]["default"] = self._sh.modules.get_module("http")._webif_pagelength
+                result['webif_pagelength']['default'] = self._sh.modules.get_module('http')._webif_pagelength
             except AttributeError:
-                result["webif_pagelength"]["default"] = 0
+                result['webif_pagelength']['default'] = 0
 
         self.pluginsettings = self.meta.get(META_PLUGIN_SECTION)
-        if self.pluginsettings.get("multi_instance", False):
+        if self.pluginsettings.get('multi_instance', False):
             # only for multi-instance Plugins:
             # global plugin parameter 'instance'
-            result["instance"] = {}
-            result["instance"]["type"] = "str"
-            result["instance"]["description"] = {}
-            result["instance"]["description"]["de"] = (
-                "Falls mehrere Instanzen eines Multi-Instance Plugins konfiguriert sind, muss hier ein eindeutiger Instanz-Name angegeben werden (eine Instanz darf ohnen Namen bleiben). Falls nur eine Instanz konfiguriert ist, sollte hier kein Name vergeben werden."
+            result['instance'] = {}
+            result['instance']['type'] = 'str'
+            result['instance']['description'] = {}
+            result['instance']['description']['de'] = (
+                'Falls mehrere Instanzen eines Multi-Instance Plugins konfiguriert sind, muss hier ein eindeutiger Instanz-Name angegeben werden (eine Instanz darf ohnen Namen bleiben). Falls nur eine Instanz konfiguriert ist, sollte hier kein Name vergeben werden.'
             )
-            result["instance"]["description"]["en"] = (
-                "If several instances of a multi-instance plugin are configured, a unique instance name must be specified here (one instance may remain without a name). If only one instance is configured, no name should be assigned here."
+            result['instance']['description']['en'] = (
+                'If several instances of a multi-instance plugin are configured, a unique instance name must be specified here (one instance may remain without a name). If only one instance is configured, no name should be assigned here.'
             )
-            result["instance"]["description"]["fr"] = (
+            result['instance']['description']['fr'] = (
                 "Si plusieurs instances d'un plug-in multi-instance sont configurées, un nom d'instance unique doit être spécifié ici (une instance peut rester sans nom). Si une seule instance est configurée, aucun nom ne doit être attribué ici."
             )
 
@@ -330,28 +330,28 @@ class Metadata:
         docstr_list = []
         if self.plugin_functions is not None:
             for f in sorted(self.plugin_functions):
-                fp = ""
-                func_param_yaml = self.plugin_functions[f].get("parameters", None)
+                fp = ''
+                func_param_yaml = self.plugin_functions[f].get('parameters', None)
                 if func_param_yaml is not None:
                     for par in func_param_yaml:
-                        if fp != "":
-                            fp += ", "
+                        if fp != '':
+                            fp += ', '
                         fp += par
                         if with_type:
-                            if func_param_yaml[par].get("type", None) is not None:
-                                type = str(func_param_yaml[par].get("type", None))
-                                fp += ":" + type
+                            if func_param_yaml[par].get('type', None) is not None:
+                                type = str(func_param_yaml[par].get('type', None))
+                                fp += ':' + type
                         if with_default:
-                            if func_param_yaml[par].get("default", None) is not None:
-                                default = str(func_param_yaml[par].get("default", None))
-                                if func_param_yaml[par].get("type", "foo") == "str":
-                                    if default == "None*":
-                                        default = "None"
+                            if func_param_yaml[par].get('default', None) is not None:
+                                default = str(func_param_yaml[par].get('default', None))
+                                if func_param_yaml[par].get('type', 'foo') == 'str':
+                                    if default == 'None*':
+                                        default = 'None'
                                     else:
                                         default = " '" + default + "'"
-                                fp += "=" + default
+                                fp += '=' + default
 
-                docstr_list.append(f + "(" + fp + ")")
+                docstr_list.append(f + '(' + fp + ')')
         logger.info(self._log_premsg + "Metadata get_plugin_function_defstrings -> '{}'".format(docstr_list))
         return docstr_list
 
@@ -363,35 +363,35 @@ class Metadata:
         #        logger.warning(self._log_premsg + "Metadata definition_list = '{}'".format(definition_list))
         for definition in definition_list:
             if definition_dict[definition] is not None:
-                typ = str(definition_dict[definition].get("type", FOO)).lower()
+                typ = str(definition_dict[definition].get('type', FOO)).lower()
                 # to be implemented: timeframe
-                definition_dict[definition]["listtype"] = [FOO]
-                definition_dict[definition]["listlen"] = 0
-                if definition_dict[definition].get("type", FOO) == "list":
+                definition_dict[definition]['listtype'] = [FOO]
+                definition_dict[definition]['listlen'] = 0
+                if definition_dict[definition].get('type', FOO) == 'list':
                     logger.debug(
                         self._log_premsg
                         + "definition = '{}' of type '{}'".format(
-                            definition, str(definition_dict[definition].get("type", FOO)).lower()
+                            definition, str(definition_dict[definition].get('type', FOO)).lower()
                         )
                     )
                 if typ not in META_DATA_TYPES:
                     # test for list with specified datatype
-                    if typ.startswith("list(") and typ.endswith(")"):
+                    if typ.startswith('list(') and typ.endswith(')'):
                         logger.debug(
                             self._log_premsg
                             + "definition = '{}' of type '{}'".format(
-                                definition, str(definition_dict[definition].get("type", FOO)).lower()
+                                definition, str(definition_dict[definition].get('type', FOO)).lower()
                             )
                         )
-                        definition_dict[definition]["type"] = "list"
+                        definition_dict[definition]['type'] = 'list'
                         listparam = typ[5:]
-                        listparam = listparam[:-1].strip().split(",")
+                        listparam = listparam[:-1].strip().split(',')
                         if len(listparam) > 0:
                             if Utils.is_int(listparam[0]):
                                 listlen = int(listparam[0])
                                 if listlen < 0:
                                     listlen = 0
-                                definition_dict[definition]["listlen"] = listlen
+                                definition_dict[definition]['listlen'] = listlen
                                 listparam.pop(0)
                             if len(listparam) == 0:
                                 listparam = [FOO]
@@ -410,7 +410,7 @@ class Metadata:
                                     )
                             listparam = listparam2
 
-                        definition_dict[definition]["listtype"] = listparam
+                        definition_dict[definition]['listtype'] = listparam
 
                     else:
                         logger.error(
@@ -419,20 +419,20 @@ class Metadata:
                                 self.relative_filename, typ, definition, FOO
                             )
                         )
-                        definition_dict[definition]["type"] = FOO
+                        definition_dict[definition]['type'] = FOO
 
-                if definition_dict[definition].get("type", FOO) == "list":
+                if definition_dict[definition].get('type', FOO) == 'list':
                     logger.debug(
                         self._log_premsg
                         + "definition = '{}' list of subtype_list = {}, listlen={}".format(
-                            definition, definition_dict[definition]["listtype"], definition_dict[definition]["listlen"]
+                            definition, definition_dict[definition]['listtype'], definition_dict[definition]['listlen']
                         )
                     )
                 else:
                     logger.debug(
                         self._log_premsg
                         + "definition = '{}' list of listparam = >{}<, listlen={}".format(
-                            definition, definition_dict[definition]["listtype"], definition_dict[definition]["listlen"]
+                            definition, definition_dict[definition]['listtype'], definition_dict[definition]['listlen']
                         )
                     )
             else:
@@ -464,9 +464,9 @@ class Metadata:
         :rtype: str
         """
         if self.addon_metadata is None:
-            return ""
+            return ''
 
-        return self.addon_metadata.get(key, "")
+        return self.addon_metadata.get(key, '')
 
     def get_mlstring(self, mlkey):
         """
@@ -483,21 +483,21 @@ class Metadata:
         :rtype: str
         """
         if self.addon_metadata is None:
-            return ""
+            return ''
 
         key_dict = self.addon_metadata.get(mlkey)
         if key_dict is None:
-            return ""
+            return ''
         if isinstance(key_dict, str):
             return key_dict
         try:
-            result = key_dict.get(self._sh.get_defaultlanguage(), "")
+            result = key_dict.get(self._sh.get_defaultlanguage(), '')
         except (KeyError, TypeError):
-            return ""
-        if result == "":
-            result = key_dict.get("en", "")
-            if result == "":
-                result = key_dict.get("de", "")
+            return ''
+        if result == '':
+            result = key_dict.get('en', '')
+            if result == '':
+                result = key_dict.get('de', '')
         return result
 
     def get_bool(self, key):
@@ -513,7 +513,7 @@ class Metadata:
         if self.addon_metadata is None:
             return False
 
-        return Utils.to_bool(self.addon_metadata.get(key, ""))
+        return Utils.to_bool(self.addon_metadata.get(key, ''))
 
     def test_shngcompatibility(self):
         """
@@ -522,21 +522,21 @@ class Metadata:
         :return: True if the SmartHomeNG version is in the supported range
         :rtype: bool
         """
-        shng_version = Version.format(self._sh.version.split("-")[0])
-        min_shngversion = Version.format(str(self.get_string("sh_minversion")))
-        max_shngversion = Version.format(str(self.get_string("sh_maxversion")))
-        mod_version = Version.format(self.get_string("version"))
+        shng_version = Version.format(self._sh.version.split('-')[0])
+        min_shngversion = Version.format(str(self.get_string('sh_minversion')))
+        max_shngversion = Version.format(str(self.get_string('sh_maxversion')))
+        mod_version = Version.format(self.get_string('version'))
 
-        if min_shngversion != "":
+        if min_shngversion != '':
             # if min_shngversion > shng_version:
-            if Version.compare(min_shngversion, shng_version, ">"):
+            if Version.compare(min_shngversion, shng_version, '>'):
                 logger.error(
                     f"{self._addon_type} '{self._addon_name}' {mod_version}: SmartHomeNG {shng_version} is too old for this {self._addon_type}. It requires at least version {Version.format(min_shngversion)}. The {self._addon_type} was not loaded."
                 )
                 return False
-        if max_shngversion != "":
+        if max_shngversion != '':
             # if max_shngversion < shng_version:
-            if Version.compare(max_shngversion, shng_version, "<"):
+            if Version.compare(max_shngversion, shng_version, '<'):
                 logger.error(
                     f"{self._addon_type} '{self._addon_name}' {mod_version}: SmartHomeNG {shng_version} is too new for this {self._addon_type}. It requires a version up to {Version.format(max_shngversion)}. The {self._addon_type} was not loaded."
                 )
@@ -551,32 +551,32 @@ class Metadata:
         :rtype: bool
         """
         vi = sys.version_info
-        py_version = Version.format(str(vi[0]) + "." + str(vi[1]) + "." + str(vi[2]))
-        min_pyversion = Version.format(str(self.get_string("py_minversion")))
-        max = str(self.get_string("py_maxversion"))
-        if len(max.split(".")) == 2:
+        py_version = Version.format(str(vi[0]) + '.' + str(vi[1]) + '.' + str(vi[2]))
+        min_pyversion = Version.format(str(self.get_string('py_minversion')))
+        max = str(self.get_string('py_maxversion'))
+        if len(max.split('.')) == 2:
             # if given max version has only two parts, make it the max for that version: 3.8 -> 3.8.999
-            max += ".999"
+            max += '.999'
         max_pyversion = Version.format(str(max))
-        mod_version = Version.format(self.get_string("version"))
+        mod_version = Version.format(self.get_string('version'))
 
         # if min_pyversion != '' or max_pyversion != '':
         #    logger.notice(f"{self._addon_type} '{self._addon_name}' {mod_version}: Python Version: {py_version}, min: {min_pyversion}, max: {max_pyversion}")
 
-        if min_pyversion != "":
+        if min_pyversion != '':
             # self._compare_versions(min_pyversion, py_version, '>', (min_pyversion > py_version))
             # if min_pyversion > py_version:
             # if self._compare_versions(min_pyversion, py_version, '>', (min_pyversion > py_version)):
-            if Version.compare(min_pyversion, py_version, ">"):
+            if Version.compare(min_pyversion, py_version, '>'):
                 logger.error(
                     f"{self._addon_type} '{self._addon_name}' {mod_version}: The Python version {py_version} is too old for this {self._addon_type}. It requires at least version {min_pyversion}. The {self._addon_type} was not loaded."
                 )
                 return False
-        if max_pyversion != "":
+        if max_pyversion != '':
             # self._compare_versions(max_pyversion, py_version, '<', (max_pyversion < py_version))
             # if max_pyversion < py_version:
             # if self._compare_versions(max_pyversion, py_version, '<', (max_pyversion < py_version)):
-            if Version.compare(max_pyversion, py_version, "<"):
+            if Version.compare(max_pyversion, py_version, '<'):
                 logger.error(
                     f"{self._addon_type} '{self._addon_name}' {mod_version}: The Python version {py_version} is too new for this {self._addon_type}. It requires a version up to {max_pyversion}. The {self._addon_type} was not loaded."
                 )
@@ -591,18 +591,18 @@ class Metadata:
         :rtype: bool
         """
         sdp_version = SDP_VERSION
-        min_sdpversion = Version.format(str(self.get_string("sdp_minversion")))
-        max_sdpversion = Version.format(str(self.get_string("sdp_maxversion")))
-        mod_version = Version.format(self.get_string("version"))
+        min_sdpversion = Version.format(str(self.get_string('sdp_minversion')))
+        max_sdpversion = Version.format(str(self.get_string('sdp_maxversion')))
+        mod_version = Version.format(self.get_string('version'))
 
-        if min_sdpversion != "":
-            if Version.compare(min_sdpversion, sdp_version, ">"):
+        if min_sdpversion != '':
+            if Version.compare(min_sdpversion, sdp_version, '>'):
                 logger.error(
                     f"{self._addon_type} '{self._addon_name}' {mod_version}: SmartDevicePlugin {sdp_version} is too old for this {self._addon_type}. It requires at least version {Version.format(min_sdpversion)}. The {self._addon_type} was not loaded."
                 )
                 return False
-        if max_sdpversion != "":
-            if Version.compare(max_sdpversion, sdp_version, "<"):
+        if max_sdpversion != '':
+            if Version.compare(max_sdpversion, sdp_version, '<'):
                 logger.error(
                     f"{self._addon_type} '{self._addon_name}' {mod_version}: SmartDevicePlugin {sdp_version} is too new for this {self._addon_type}. It requires a version up to {Version.format(max_sdpversion)}. The {self._addon_type} was not loaded."
                 )
@@ -619,8 +619,8 @@ class Metadata:
         :return: version
         :rtype: str
         """
-        if self._version == "?":
-            self._version = self.get_string("version")
+        if self._version == '?':
+            self._version = self.get_string('version')
         return self._version
 
     def test_version(self, code_version):
@@ -633,7 +633,7 @@ class Metadata:
         :return: True: version numbers match, or Python code has no version
         :rtype: bool
         """
-        self._version = self.get_string("version")
+        self._version = self.get_string('version')
         if code_version is None:
             logger.info(
                 "{} '{}' version not defined in Python code, metadata version is {}".format(
@@ -642,17 +642,17 @@ class Metadata:
             )
             return True
         else:
-            if 2 > code_version.count(".") > 4:
+            if 2 > code_version.count('.') > 4:
                 logger.warning(
                     "{} '{}' code version not compliant to plugin version schemas x.x.x or x.x.x.x ".format(
                         self._addon_type, self._addon_name
                     )
                 )
-            if self._version == "":
+            if self._version == '':
                 logger.info("{} '{}' metadata contains no version number".format(self._addon_type, self._addon_name))
                 self._version = code_version
             else:
-                if 2 > str(self._version).count(".") < 4:
+                if 2 > str(self._version).count('.') < 4:
                     logger.warning(
                         "{} '{}' metadata version not compliant to plugin version schemas x.x.x or x.x.x.x ".format(
                             self._addon_type, self._addon_name
@@ -676,21 +676,21 @@ class Metadata:
         Returns True, if the value can be converted to the specified type
         """
         #        logger.warning(self._log_premsg + "_test_valuetype-list: typ={}, subtype={}, value={}".format(typ, subtype, value))
-        if typ == "bool":
-            return Utils.to_bool(value, default="?") != "?"
-        elif typ == "int":
+        if typ == 'bool':
+            return Utils.to_bool(value, default='?') != '?'
+        elif typ == 'int':
             return Utils.is_int(value)
-        elif typ in ["float", "num"]:
+        elif typ in ['float', 'num']:
             return Utils.is_float(value)
-        elif typ == "scene":
+        elif typ == 'scene':
             if Utils.is_int(value):
                 return (int(value) >= 0) and (int(value) < 256)
             else:
                 return False
-        elif typ in ["str", "password"]:
+        elif typ in ['str', 'password']:
             return True  # Everything can be converted to a string
-        elif typ == "list":
-            if subtype != "" and subtype != FOO:
+        elif typ == 'list':
+            if subtype != '' and subtype != FOO:
                 result = True
                 if isinstance(value, list):
                     for i in range(0, len(value)):
@@ -698,13 +698,13 @@ class Metadata:
                             sub = subtype[i]
                         else:
                             sub = subtype[len(subtype) - 1]
-                        if not self._test_valuetype(sub, "", value[i]):
+                        if not self._test_valuetype(sub, '', value[i]):
                             result = False
                 #                            logger.warning("_test_valuetype: value[{}] = {}, sub = {}, result = False".format(i, value[i], sub))
                 #                    logger.warning("_test_valuetype: value = {}, type(value) = {}, typ = {}, subtype = {}".format(value, type(value), typ, subtype))
                 return result
             return type(value) is list
-        elif typ == "dict":
+        elif typ == 'dict':
             try:
                 d = dict(value)
             except (TypeError, ValueError):
@@ -715,19 +715,19 @@ class Metadata:
                 except (ValueError, SyntaxError):
                     return False
             return isinstance(d, dict)
-        elif typ == "ip":
+        elif typ == 'ip':
             if Utils.is_ipv4(value):
                 return True
             if Utils.is_ipv6(value):
                 return True
             return Utils.is_hostname(value)
-        elif typ == "ipv4":
+        elif typ == 'ipv4':
             return Utils.is_ipv4(value)
-        elif typ == "ipv6":
+        elif typ == 'ipv6':
             return Utils.is_ipv6(value)
-        elif typ == "mac":
+        elif typ == 'mac':
             return Utils.is_mac(value)
-        elif typ == "knx_ga":
+        elif typ == 'knx_ga':
             return Utils.is_knx_groupaddress(value)
         elif typ == FOO:
             return True
@@ -745,10 +745,10 @@ class Metadata:
         :rtype: bool
         """
         if definition is not None:
-            typ = definition.get("type", "foo")
-            subtype = ""
-            if typ == "list":
-                subtype = definition.get("listtype", ["?"])
+            typ = definition.get('type', 'foo')
+            subtype = ''
+            if typ == 'list':
+                subtype = definition.get('listtype', ['?'])
             #    if subtype != '':
             #        logger.warning("_test_value '{}': before _test_valuetype(): typ = {}, subtype = {}, value = {}".format(param, typ, subtype, value))
             return self._test_valuetype(typ, subtype, value)
@@ -768,8 +768,8 @@ class Metadata:
         """
         result = value
         if definition is not None:
-            typ = definition.get("type", "foo")
-            if (typ == "list") and (not isinstance(value, list)):
+            typ = definition.get('type', 'foo')
+            if (typ == 'list') and (not isinstance(value, list)):
                 result = Utils.string_to_list(value)
         #            if (typ == 'list'):
         #                logger.warning(self._log_premsg + "_expand_listvalues: value = >{}<, type(value) = >{}<, result = >{}<, type(result) = >{}<".format(value, type(value), result, type(result)))
@@ -779,20 +779,20 @@ class Metadata:
         """
         Returns the value converted to the parameters type
         """
-        if typ == "bool":
+        if typ == 'bool':
             result = Utils.to_bool(value)
-        elif typ in ["int", "scene"]:
+        elif typ in ['int', 'scene']:
             result = int(value)
-        elif typ in ["float", "num"]:
+        elif typ in ['float', 'num']:
             result = float(value)
-        elif typ in ["str", "password"]:
+        elif typ in ['str', 'password']:
             result = str(value)
-        elif typ == "list":
+        elif typ == 'list':
             if isinstance(value, list):
                 result = value
             else:
                 result = [value]
-        elif typ == "dict":
+        elif typ == 'dict':
             try:
                 result = dict(value)
             except (TypeError, ValueError):
@@ -802,14 +802,14 @@ class Metadata:
                     result = ast.literal_eval(value)
                 except (ValueError, SyntaxError):
                     result = {}
-        elif typ in ["ip", "ipv4", "ipv6", "mac"]:
+        elif typ in ['ip', 'ipv4', 'ipv6', 'mac']:
             result = str(value)
-        elif typ in ["knx_ga"]:
+        elif typ in ['knx_ga']:
             result = str(value)
         elif typ == FOO:
             result = value
         else:
-            logger.error(self._log_premsg + "unhandled type {}".format(typ))
+            logger.error(self._log_premsg + 'unhandled type {}'.format(typ))
         return result
 
     def _convert_value(self, value, definition, is_default=False):
@@ -818,12 +818,12 @@ class Metadata:
         """
         result = False
         if definition is not None:
-            typ = definition.get("type", "foo")
+            typ = definition.get('type', 'foo')
             result = self._convert_valuetotype(typ, value)
             orig = result
-            if "valid_list_ci" in definition.keys():
+            if 'valid_list_ci' in definition.keys():
                 orig = str(orig).lower()
-            result = self._test_validity("", result, definition, is_default)
+            result = self._test_validity('', result, definition, is_default)
             if result != orig:
                 # Für non-default Prüfung nur Warning
                 if is_default:
@@ -848,10 +848,10 @@ class Metadata:
         # test against list of valid entries
         result = value
 
-        valid_list_ci = definition.get("valid_list_ci", None)
+        valid_list_ci = definition.get('valid_list_ci', None)
         if (valid_list_ci is None) or (len(valid_list_ci) == 0):
             # test case sensitive
-            valid_list = definition.get("valid_list", None)
+            valid_list = definition.get('valid_list', None)
             if (valid_list is None) or (len(valid_list) == 0):
                 pass
             else:
@@ -877,36 +877,36 @@ class Metadata:
         """
         result = value
         if definition is not None:
-            if definition.get("type", "foo") in ["int", "float", "num", "scene"]:
-                valid_min = definition.get("valid_min")
+            if definition.get('type', 'foo') in ['int', 'float', 'num', 'scene']:
+                valid_min = definition.get('valid_min')
                 if valid_min is not None:
                     if self._test_value(valid_min, definition):
-                        if result < self._convert_valuetotype(definition.get("type", "foo"), valid_min):
+                        if result < self._convert_valuetotype(definition.get('type', 'foo'), valid_min):
                             if not is_default:
                                 result = valid_min
                             else:
                                 result = valid_min
-                valid_max = definition.get("valid_max")
+                valid_max = definition.get('valid_max')
                 if valid_max is not None:
                     if self._test_value(valid_max, definition):
-                        if result > self._convert_valuetotype(definition.get("type", "foo"), valid_max):
+                        if result > self._convert_valuetotype(definition.get('type', 'foo'), valid_max):
                             if not is_default:
                                 result = valid_max
                             else:
                                 result = valid_max
-            elif definition.get("type", "foo") in ["list"]:
-                if definition["listlen"] > 0:
-                    if definition["listlen"] != len(value):
+            elif definition.get('type', 'foo') in ['list']:
+                if definition['listlen'] > 0:
+                    if definition['listlen'] != len(value):
                         logger.warning(
                             self._log_premsg
                             + "Invalid value '{}' in plugin configuration file for parameter '{}' -> length of list is not {}".format(
-                                value, param, self.parameters[param]["listlen"]
+                                value, param, self.parameters[param]['listlen']
                             )
                         )
-                        while len(value) < definition["listlen"]:
-                            value.append("")
+                        while len(value) < definition['listlen']:
+                            value.append('')
                         result = value
-            elif definition.get("type", "foo") in ["dict"]:
+            elif definition.get('type', 'foo') in ['dict']:
                 # No real testing for dicts
                 result = value
 
@@ -916,9 +916,9 @@ class Metadata:
             return result
 
         elif self.parameters[param] is not None:
-            logger.warning("_test_validity: old version for param={}, value={}".format(param, value))
-            if self.parameters[param].get("type") in ["int", "float", "num", "scene"]:
-                valid_min = self.parameters[param].get("valid_min")
+            logger.warning('_test_validity: old version for param={}, value={}'.format(param, value))
+            if self.parameters[param].get('type') in ['int', 'float', 'num', 'scene']:
+                valid_min = self.parameters[param].get('valid_min')
                 if valid_min is not None:
                     if self._test_value(valid_min, self.parameters[param]):
                         if result < self._convert_valuetotype(self.get_parameter_type(param), valid_min):
@@ -926,7 +926,7 @@ class Metadata:
                                 result = valid_min
                             else:
                                 result = valid_min
-                valid_max = self.parameters[param].get("valid_max")
+                valid_max = self.parameters[param].get('valid_max')
                 if valid_max is not None:
                     if self._test_value(valid_max, self.parameters[param]):
                         if result > self._convert_valuetotype(self.get_parameter_type(param), valid_max):
@@ -934,21 +934,21 @@ class Metadata:
                                 result = valid_max
                             else:
                                 result = valid_max
-            elif self.parameters[param].get("type") in ["list"]:
-                if self.parameters[param]["listlen"] > 0:
-                    if self.parameters[param]["listlen"] != len(value):
+            elif self.parameters[param].get('type') in ['list']:
+                if self.parameters[param]['listlen'] > 0:
+                    if self.parameters[param]['listlen'] != len(value):
                         logger.warning(
                             self._log_premsg
                             + "Invalid value '{}' in plugin configuration file for parameter '{}' -> length of list is not {}".format(
-                                value, param, self.parameters[param]["listlen"]
+                                value, param, self.parameters[param]['listlen']
                             )
                         )
-                        while len(value) < self.parameters[param]["listlen"]:
-                            value.append("")
+                        while len(value) < self.parameters[param]['listlen']:
+                            value.append('')
                         result = value
 
         if self.parameters[param] is None:
-            logger.warning(self._log_premsg + "_test_validity: param {}".format(param))
+            logger.warning(self._log_premsg + '_test_validity: param {}'.format(param))
         else:
             # test against list of valid entries
             result = self._test_against_valid_list(self.parameters[param], result)
@@ -999,7 +999,7 @@ class Metadata:
             return FOO
         if definitions[definition] is None:
             return FOO
-        return str(definitions[definition].get("type", FOO)).lower()
+        return str(definitions[definition].get('type', FOO)).lower()
 
     def get_parameter_type(self, param):
         """
@@ -1030,10 +1030,10 @@ class Metadata:
             return FOO
         if definitions[definition] is None:
             return FOO
-        result = str(definitions[definition].get("type", FOO)).lower()
-        sub = ""
-        if result == "list":
-            sub = definitions[definition].get("listtype", ["?"])
+        result = str(definitions[definition].get('type', FOO)).lower()
+        sub = ''
+        if result == 'list':
+            sub = definitions[definition].get('listtype', ['?'])
         return sub
 
     def get_parameter_subtype(self, param):
@@ -1062,10 +1062,10 @@ class Metadata:
             return FOO
         if definitions[definition] is None:
             return FOO
-        result = str(definitions.get("type", FOO)).lower()
+        result = str(definitions.get('type', FOO)).lower()
         llen = 0
-        if result == "list":
-            llen = definitions.get("listlen", ["?"])
+        if result == 'list':
+            llen = definitions.get('listlen', ['?'])
         return llen
 
     def get_parameter_listlen(self, param):
@@ -1100,13 +1100,13 @@ class Metadata:
             return FOO
         result = self._get_definition_type(definition, definitions)
         sub = self._get_definition_subtype(definition, definitions)
-        if sub != "":
+        if sub != '':
             llen = self._get_definition_listlen(definition, definitions)
             if llen > 0:
-                sub = str(llen) + "," + str.join(",", sub)
+                sub = str(llen) + ',' + str.join(',', sub)
             else:
-                sub = str.join(",", sub)
-            result = result + "(" + sub + ")"
+                sub = str.join(',', sub)
+            result = result + '(' + sub + ')'
         return result
 
     def get_parameter_type_with_subtype(self, param):
@@ -1139,18 +1139,18 @@ class Metadata:
         value = None
         if definition in definitionlist:
             if self.parameters[definition] is not None:
-                if self._get_definition_type(definition, definitions) == "dict":
-                    if definitions[definition].get("default") is not None:
-                        value = dict(definitions[definition].get("default"))
+                if self._get_definition_type(definition, definitions) == 'dict':
+                    if definitions[definition].get('default') is not None:
+                        value = dict(definitions[definition].get('default'))
                         # import ast
                         # try:
                         #    value = ast.literal_eval(value)
                         # except:
                         #    value = {}
                 else:
-                    value = definitions[definition].get("default")
+                    value = definitions[definition].get('default')
                 typ = self._get_definition_type(definition, definitions)
-                if value == "None*":
+                if value == 'None*':
                     logger.info("_get_definition_defaultvalue: default value is 'None*' -> None")
                     value = None
                 else:
@@ -1163,7 +1163,7 @@ class Metadata:
                         logger.error(
                             self._log_premsg
                             + "Invalid data for type '{}' in metadata file '{}': default '{}' for parameter '{}' -> using '{}' instead".format(
-                                definitions[definition].get("type"),
+                                definitions[definition].get('type'),
                                 self.relative_filename,
                                 value,
                                 definition,
@@ -1176,7 +1176,7 @@ class Metadata:
                     value = self._convert_value(value, self.parameters[definition], is_default=True)
 
                     orig_value = value
-                    value = self._test_validity("", value, self.parameters[definition], is_default=True)
+                    value = self._test_validity('', value, self.parameters[definition], is_default=True)
                     if value != orig_value:
                         # Für non-default Prüfung nur Warning
                         logger.error(
@@ -1213,7 +1213,7 @@ class Metadata:
         :rtype: str
         """
         try:
-            result = definitions[definition].get("key")
+            result = definitions[definition].get('key')
         except KeyError:
             result = None
         return result
@@ -1248,10 +1248,10 @@ class Metadata:
         addon_params = collections.OrderedDict()
         hide_params = collections.OrderedDict()
         if self.meta is None:
-            logger.info(self._log_premsg + "No metadata found")
+            logger.info(self._log_premsg + 'No metadata found')
             return (addon_params, True, hide_params)
         if self.parameters is None:
-            logger.info(self._log_premsg + "No parameter definitions found in metadata")
+            logger.info(self._log_premsg + 'No parameter definitions found in metadata')
             return (addon_params, True, hide_params)
 
         allparams_ok = True
@@ -1260,7 +1260,7 @@ class Metadata:
                 value = Utils.strip_quotes(args.get(param))
                 if value is None:
                     if self.parameters[param] is not None:
-                        if self.parameters[param].get("mandatory"):
+                        if self.parameters[param].get('mandatory'):
                             logger.error(
                                 self._log_premsg
                                 + "'{}' is mandatory, but was not found in /etc/{}".format(
@@ -1270,7 +1270,7 @@ class Metadata:
                             allparams_ok = False
                         else:
                             addon_params[param] = self.get_parameter_defaultvalue(param)
-                            hide_params[param] = Utils.to_bool(self.parameters[param].get("hide"), default=False)
+                            hide_params[param] = Utils.to_bool(self.parameters[param].get('hide'), default=False)
                             logger.info(
                                 self._log_premsg
                                 + "value not found in plugin configuration file for parameter '{}' -> using default value '{}' instead".format(
@@ -1286,14 +1286,14 @@ class Metadata:
                         if self.parameters[param] is None:
                             hide_params[param] = None
                         else:
-                            hide_params[param] = Utils.to_bool(self.parameters[param].get("hide"), default=False)
+                            hide_params[param] = Utils.to_bool(self.parameters[param].get('hide'), default=False)
                         logger.debug(
                             self._log_premsg
                             + "Found '{}' with value '{}' in /etc/{}".format(param, value, self._addon_type + YAML_FILE)
                         )
                     else:
                         if self.parameters.get(param) is not None:
-                            if bool(self.parameters[param].get("mandatory", False)) is True:
+                            if bool(self.parameters[param].get('mandatory', False)) is True:
                                 logger.error(
                                     self._log_premsg
                                     + "'{}' is mandatory, but no valid value was found in /etc/{}".format(
@@ -1303,13 +1303,13 @@ class Metadata:
                                 allparams_ok = False
                             else:
                                 addon_params[param] = self.get_parameter_defaultvalue(param)
-                                hide_params[param] = Utils.to_bool(self.parameters[param].get("hide"), default=False)
+                                hide_params[param] = Utils.to_bool(self.parameters[param].get('hide'), default=False)
                                 logger.error(
                                     self._log_premsg
                                     + "Found invalid value '{}' for parameter '{}' (type {}) in /etc/{}, using default value '{}' instead".format(
                                         value,
                                         param,
-                                        self.parameters[param]["type"],
+                                        self.parameters[param]['type'],
                                         self._addon_type + YAML_FILE,
                                         str(addon_params[param]),
                                     )
@@ -1340,26 +1340,26 @@ class Metadata:
             all_prefixes_tuple = tuple(all_itemprefixdefinitions.keys())
 
         if defined_in_file is None:
-            def_in = ""
+            def_in = ''
         else:
-            def_in = "(defined in " + defined_in_file + ")"
+            def_in = '(defined in ' + defined_in_file + ')'
 
         attr_definition = all_itemdefinitions.get(attribute, None)
         if attr_definition is None:
             for prefix in all_itemprefixdefinitions.keys():
                 if attribute.startswith(prefix):
                     attr_definition = dict(all_itemprefixdefinitions[prefix])
-                    attr_definition["_prefix"] = True
+                    attr_definition['_prefix'] = True
                     break
             if not (attribute.startswith(all_prefixes_tuple)):
-                if not (item.property.path.startswith("env.core.") or item.property.path.startswith("env.system.")):
+                if not (item.property.path.startswith('env.core.') or item.property.path.startswith('env.system.')):
                     logger.notice(
                         f"Item '{item.property.path}', attribute '{attribute}': Attribute is undefined and has value '{value}' {def_in}"
                     )
                 return value
 
-        attr_definition["_def_in"] = def_in
-        attr_type = attr_definition.get("type", "foo")
+        attr_definition['_def_in'] = def_in
+        attr_type = attr_definition.get('type', 'foo')
 
         # If a parameter is defined as a list, but the value is of a basic datatype, value is expanded to a list.
         value = self._expand_listvalues(value, attr_definition)
@@ -1368,8 +1368,8 @@ class Metadata:
             value = self._convert_value(value, attr_definition)
         else:
             # handle invalid value that cannot be converted to defined type
-            additional_text = ""
-            default_value = attr_definition.get("default", None)
+            additional_text = ''
+            default_value = attr_definition.get('default', None)
             if default_value is not None:
                 additional_text = ", using default value '" + str(default_value) + "' instead"
             logger.warning(
@@ -1378,7 +1378,7 @@ class Metadata:
                 )
             )
             if default_value is None:
-                value = ""
+                value = ''
             else:
                 value = default_value
 
@@ -1402,11 +1402,11 @@ class Metadata:
         v2 = self._version_to_list(vers2)
 
         result = False
-        if v1 == v2 and operator in [">=", "==", "<="]:
+        if v1 == v2 and operator in ['>=', '==', '<=']:
             result = True
-        if v1 < v2 and operator in ["<", "<="]:
+        if v1 < v2 and operator in ['<', '<=']:
             result = True
-        if v1 > v2 and operator in [">", ">="]:
+        if v1 > v2 and operator in ['>', '>=']:
             result = True
         # logger.warning(f"_compare_versions: {self._addon_name:12} v1={v1}, v2={v2}, operator='{operator}', result={result}, res_old={res_old}")
 
@@ -1427,9 +1427,9 @@ class Metadata:
         :rtype: list
         """
         # create list with [major,minor,revision,build]
-        vsplit = vers.split(".")
+        vsplit = vers.split('.')
         while len(vsplit) < 4:
-            vsplit.append("0")
+            vsplit.append('0')
 
         import re
 
@@ -1437,7 +1437,7 @@ class Metadata:
         vlist = []
         for v in vsplit:
             # v = re.findall('\d+', v)[0]
-            v = re.findall(r"\d+", v)[0]
+            v = re.findall(r'\d+', v)[0]
             vi = 0
             try:
                 vi = int(v)

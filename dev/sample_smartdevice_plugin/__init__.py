@@ -27,7 +27,7 @@ import builtins
 import os
 import sys
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # just needed for standalone mode
     builtins.SDP_standalone = True
 
@@ -45,7 +45,7 @@ else:
     # SDP uses builtins so all modules in the same process share one flag
     # without any import dependency. This is the established SDP convention —
     # do not change without understanding the full SDP standalone mechanism.
-    if not hasattr(builtins, "SDP_standalone"):
+    if not hasattr(builtins, 'SDP_standalone'):
         builtins.SDP_standalone = False
 # <--
 
@@ -66,7 +66,7 @@ if not SDP_standalone:
 class SdpExample(SmartDevicePlugin):
     """Example class for SmartDevicePlugin."""
 
-    PLUGIN_VERSION = "0.1.0"  # adjust, must match version in plugin.yaml
+    PLUGIN_VERSION = '0.1.0'  # adjust, must match version in plugin.yaml
     ALLOW_MULTIINSTANCE = True  # set to False if only one instance should run at a time
 
     def _set_device_defaults(self):
@@ -87,15 +87,15 @@ class SdpExample(SmartDevicePlugin):
         # the plugins' __init__ method has finished
         # otherwise, remove this method
 
-        self._my_property = "foo"
+        self._my_property = 'foo'
 
     def on_connect(self, by=None):
         """callback if connection is made."""
-        self.logger.info("SdpExample plugin connected")
+        self.logger.info('SdpExample plugin connected')
 
     def on_disconnect(self, by=None):
         """callback if connection is broken."""
-        self.logger.info("SdpExample plugin disconnected")
+        self.logger.info('SdpExample plugin disconnected')
 
     # if you want to use the suspend/resume feature, you can overwrite these
     # methods and customize to your liking. If not, you can safely delete them
@@ -103,14 +103,14 @@ class SdpExample(SmartDevicePlugin):
 
     def on_suspend(self):
         """called when suspend is enabled. Overwrite as needed"""
-        self.logger.info("suspend enabled, on_suspend called")
+        self.logger.info('suspend enabled, on_suspend called')
 
     def on_resume(self):
         """called when suspend is disabled. Overwrite as needed"""
-        self.logger.info("suspend disabled, plugin resumed, on_resume called")
+        self.logger.info('suspend disabled, plugin resumed, on_resume called')
 
 
 # needed to start operation in standalone mode
 # as we don't have a run_standalone() method, only struct generation can be used
-if __name__ == "__main__":
+if __name__ == '__main__':
     s = Standalone(SdpExample, sys.argv[0])

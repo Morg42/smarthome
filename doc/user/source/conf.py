@@ -10,8 +10,8 @@ import os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath("../../../"))
-print("Looking within following pathes:")
+sys.path.insert(0, os.path.abspath('../../../'))
+print('Looking within following pathes:')
 for i in sys.path:
     print(i)
 
@@ -22,9 +22,9 @@ import datetime
 import locale
 
 try:
-    locale.setlocale(locale.LC_TIME, "de_DE.utf8")
+    locale.setlocale(locale.LC_TIME, 'de_DE.utf8')
 except Exception:
-    locale.setlocale(locale.LC_ALL, "C")
+    locale.setlocale(locale.LC_ALL, 'C')
 now = datetime.datetime.now()
 import calendar
 
@@ -38,30 +38,30 @@ import calendar
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 # Disabled: , 'sphinx.ext.intersphinx'
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
-    "sphinx.ext.todo",
-    "sphinx.ext.ifconfig",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.githubpages",
-    "sphinx_autodoc_typehints",
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.todo',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.githubpages',
+    'sphinx_autodoc_typehints',
     #  'sphinx_tabs.tabs',
-    "myst_parser",
-    "sphinx_treeview",
-    "sphinx_design",
+    'myst_parser',
+    'sphinx_treeview',
+    'sphinx_design',
 ]
 #  'rst2pdf.pdfbuilder']
 
 # for sphinx-treeview
-myst_enable_extensions = ["colon_fence"]
+myst_enable_extensions = ['colon_fence']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
+templates_path = ['_templates']
 
 # Markdown Support via MyST
 # without the following, we will get warnings from Parsing old Readme.md as described in
 # https://myst-parser.readthedocs.io/en/latest/using/howto.html#suppress-warnings
-suppress_warnings = ["myst.header"]
+suppress_warnings = ['myst.header']
 
 # Not used any more
 # from recommonmark.parser import CommonMarkParser
@@ -76,10 +76,10 @@ suppress_warnings = ["myst.header"]
 # deprecated: source_suffix = ['.md','.rst']
 
 # The encoding of source files.
-source_encoding = "utf-8-sig"
+source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = "index"
+master_doc = 'index'
 
 # To get rid of the ¶ sign on descriptions over a box
 # html_add_permalinks = "" is deprecated since version 3.5
@@ -95,38 +95,38 @@ shversion = shngversion.get_shng_main_version()
 
 # General information about the project.
 # project = u'SmartHomeNG'
-project = "Dokumentation "
-copyright = "2016-2025 SmartHomeNG Team  -  SmartHomeNG is based on smarthome.py © Marcus Popp"
+project = 'Dokumentation '
+copyright = '2016-2025 SmartHomeNG Team  -  SmartHomeNG is based on smarthome.py © Marcus Popp'
 
 # The full version, including alpha/beta/rc tags.
 # release = '1.3a dev (as of 13. October 2017)'  13. October 2017 is replaced by makefile with a date in the form of '2. September 2017'
 # release = '1.3c dev (as of 13. October 2017)'
 #
 # plgrelease = '1.3c dev (as of 13. October 2017)'
-if os.path.isfile(os.getcwd() + "/doc_version.flg"):
-    release = "1.4.x"
-    with open(os.getcwd() + "/doc_version.flg", encoding="UTF-8") as f:
+if os.path.isfile(os.getcwd() + '/doc_version.flg'):
+    release = '1.4.x'
+    with open(os.getcwd() + '/doc_version.flg', encoding='UTF-8') as f:
         release = f.readline()
-    branch = "master"
-    commit = ""
-    comit_short = ""
-    describe = ""
+    branch = 'master'
+    commit = ''
+    comit_short = ''
+    describe = ''
 else:
     release = shngversion.get_shng_docversion()
     commit, commit_short, branch, describe = shngversion._get_git_data()
-if branch == "master":
-    release += " (Stand " + shngversion.get_shng_version_date() + ")"
-    tags.add("master_branch")
+if branch == 'master':
+    release += ' (Stand ' + shngversion.get_shng_version_date() + ')'
+    tags.add('master_branch')
 else:
-    release += " (Stand " + now.strftime("%-d. %B %Y") + ", commit " + commit_short + ")"
-    tags.add("develop_branch")
+    release += ' (Stand ' + now.strftime('%-d. %B %Y') + ', commit ' + commit_short + ')'
+    tags.add('develop_branch')
 # release = sphinx_bootstrap_theme.__version__
 
 plgrelease = shngversion.get_shng_plugins_version()
 plgbranch = pluginsversion.plugin_branch()
-if plgbranch != "master":
-    copyright = "2016-2025 SmartHomeNG Team  -  ACHTUNG: Dokumentation zum Develop Branch - Work in Progress"
-    plgrelease += " " + plgbranch
+if plgbranch != 'master':
+    copyright = '2016-2025 SmartHomeNG Team  -  ACHTUNG: Dokumentation zum Develop Branch - Work in Progress'
+    plgrelease += ' ' + plgbranch
 version = plgrelease
 
 if plgrelease > shversion:
@@ -138,8 +138,8 @@ else:
 # for a list of supported languages.
 # language = None
 # for multi language (of developer documentation)
-language = "de"
-locale_dirs = ["locale/"]
+language = 'de'
+locale_dirs = ['locale/']
 gettext_compact = True
 
 # There are two options for replacing |today|: either, you set today to some
@@ -154,15 +154,15 @@ gettext_compact = True
 # exclude_patterns = ['plugins/deprecated_plugins', 'plugins/backend_shng_1_3/static', 'plugins/backend/static', '**/._*md']
 # exclude_patterns = ['**/._*.rst', '**/priv_*', '**/user_doc_en.rst', 'plugins/deprecated_plugins', 'modules/http/webif/gstatic', 'plugins/blockly/webif/static', '**/_pv_*', '**/pv_*', '**/._*md', '**/developer_doc.*']
 exclude_patterns = [
-    "**/._*.rst",
-    "**/priv_*",
-    "**/user_doc_en.rst",
-    "plugins/deprecated_plugins",
-    "modules/http/webif/gstatic",
-    "plugins/blockly/webif/static",
-    "**/_pv_*",
-    "**/pv_*",
-    "**/._*md",
+    '**/._*.rst',
+    '**/priv_*',
+    '**/user_doc_en.rst',
+    'plugins/deprecated_plugins',
+    'modules/http/webif/gstatic',
+    'plugins/blockly/webif/static',
+    '**/_pv_*',
+    '**/pv_*',
+    '**/._*md',
 ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
@@ -180,7 +180,7 @@ exclude_patterns = [
 show_authors = True
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -190,21 +190,17 @@ pygments_style = "sphinx"
 
 def setup(app):
     # deprecated in Sphinx 4: app.add_stylesheet('custom.css')
-    app.add_css_file("custom.css")
+    app.add_css_file('custom.css')
 
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "sphinx_rtd_theme"
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {
-    "collapse_navigation": False,
-    "display_version": False,
-    "navigation_depth": 5,
-}
+html_theme_options = {'collapse_navigation': False, 'display_version': False, 'navigation_depth': 5}
 
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -221,18 +217,18 @@ html_theme_options = {
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 # html_logo = None
-html_logo = "_static/img/logo_long_inverse3.png"
+html_logo = '_static/img/logo_long_inverse3.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
 # html_favicon = None
-html_favicon = "_static/img/favicon.ico"
+html_favicon = '_static/img/favicon.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static", "_static/img", "_static/css"]
+html_static_path = ['_static', '_static/img', '_static/css']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -280,10 +276,10 @@ html_show_sphinx = False
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "SmartHomeNGDoc"
+htmlhelp_basename = 'SmartHomeNGDoc'
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"http://docs.python.org/": None}
+intersphinx_mapping = {'http://docs.python.org/': None}
 
 # for autostructify
 # def setup(app):
@@ -309,13 +305,11 @@ intersphinx_mapping = {"http://docs.python.org/": None}
 #
 # would mean that specific document would be compressed
 # regardless of the global 'pdf_compressed' setting.
-pdf_documents = [
-    ("index", "SmartHomeNG", "SmartHomeNG", "SmartHomeNG Team"),
-]
+pdf_documents = [('index', 'SmartHomeNG', 'SmartHomeNG', 'SmartHomeNG Team')]
 # A comma-separated list of custom stylesheets. Example:
-pdf_stylesheets = ["sphinx", "kerning", "a4"]
+pdf_stylesheets = ['sphinx', 'kerning', 'a4']
 # A list of folders to search for stylesheets. Example:
-pdf_style_path = [".", "_styles"]
+pdf_style_path = ['.', '_styles']
 # Create a compressed PDF
 # Use True/False or 1/0
 # Example: compressed=True
@@ -326,7 +320,7 @@ pdf_style_path = [".", "_styles"]
 
 # Language to be used for hyphenation support
 # pdf_language = "en_US"
-pdf_language = "de_DE"
+pdf_language = 'de_DE'
 
 # Mode for literal blocks wider than the frame. Can be
 # overflow, shrink or truncate
@@ -389,7 +383,7 @@ pdf_toc_depth = 9999
 pdf_use_numbered_links = False
 
 # Background images fitting mode
-pdf_fit_background_mode = "scale"
+pdf_fit_background_mode = 'scale'
 
 # Repeat table header on tables that cross a page boundary?
 pdf_repeat_table_rows = True

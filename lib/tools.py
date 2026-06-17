@@ -45,9 +45,9 @@ class Tools:
         self._start = datetime.datetime.now()
 
     def ping(self, host):
-        if os.name != "nt":
+        if os.name != 'nt':
             try:
-                retcode = subprocess.call("ping -W 1 -c 1 " + host + " > /dev/null", shell=True)
+                retcode = subprocess.call('ping -W 1 -c 1 ' + host + ' > /dev/null', shell=True)
                 if retcode == 0:
                     return True
                 else:
@@ -56,14 +56,14 @@ class Tools:
                 return False
         else:
             try:
-                ping_response = subprocess.run(["ping", host, "-n", "1"], stdout=subprocess.PIPE, timeout=5)
+                ping_response = subprocess.run(['ping', host, '-n', '1'], stdout=subprocess.PIPE, timeout=5)
                 if ping_response.returncode == 0:
                     # need to inspect the returned output since it could be that
                     # **destination is unreachable** anyway which does not generate an error code
                     # as the result is a bytearray which codepage might vary between cp850, cp1252 and utf8,
                     # it is a quick hack to just look if ms is inside this string.
                     # if not, it is sure that destination could not be reached
-                    if b"ms" in ping_response.stdout:
+                    if b'ms' in ping_response.stdout:
                         return True
                     return False
                 else:
@@ -84,38 +84,38 @@ class Tools:
         return dt.timestamp()
 
     def fetch_url(
-        self, url, username=None, password=None, timeout=2, warn_no_connect=1, method="GET", body=None, errorItem=None
+        self, url, username=None, password=None, timeout=2, warn_no_connect=1, method='GET', body=None, errorItem=None
     ):
-        connErrors = ["Host is down", "timed out", "[Errno 113] No route to host"]
-        headers = {"Accept": "text/plain"}
+        connErrors = ['Host is down', 'timed out', '[Errno 113] No route to host']
+        headers = {'Accept': 'text/plain'}
         plain = True
-        if url.startswith("https"):
+        if url.startswith('https'):
             plain = False
-        lurl = url.split("/")
+        lurl = url.split('/')
         host = lurl[2]
-        purl = "/" + "/".join(lurl[3:])
+        purl = '/' + '/'.join(lurl[3:])
         if plain:
             conn = http.client.HTTPConnection(host, timeout=timeout)
         else:
             conn = http.client.HTTPSConnection(host, timeout=timeout)
         if username and password:
-            headers["Authorization"] = "Basic ".encode() + base64.b64encode((username + ":" + password).encode())
+            headers['Authorization'] = 'Basic '.encode() + base64.b64encode((username + ':' + password).encode())
         try:
             conn.request(method, purl, body, headers)
         except Exception as e:
             if format(e) in connErrors:
                 # diese fehler bekommen einen status, der in der visu oder sonst genutzt werden kann
                 if errorItem is not None:
-                    errorItem(True, "_fetch_url")
+                    errorItem(True, '_fetch_url')
             if warn_no_connect == 1:
-                logger.warning("Problem fetching {0}: {1}".format(url, e))
+                logger.warning('Problem fetching {0}: {1}'.format(url, e))
             conn.close()
             return False
         resp = conn.getresponse()
         if resp.status == 200:
             content = resp.read()
         else:
-            logger.warning("Problem fetching {0}: {1} {2}".format(url, resp.status, resp.reason))
+            logger.warning('Problem fetching {0}: {1} {2}'.format(url, resp.status, resp.reason))
             content = False
         conn.close()
         return content

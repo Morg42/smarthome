@@ -41,7 +41,7 @@ import logging
 
 from .helpers import fadejob
 
-logger = logging.getLogger("lib.item")
+logger = logging.getLogger('lib.item')
 
 
 def fade(item, dest, step=1, delta=1, caller=None, stop_fade=None, continue_fade=None, instant_set=True, update=False):
@@ -66,22 +66,22 @@ def fade(item, dest, step=1, delta=1, caller=None, stop_fade=None, continue_fade
                           with the new parameters on the fly.
     """
     if stop_fade and not isinstance(stop_fade, list):
-        logger.warning(f"stop_fade parameter {stop_fade} for fader {item} has to be a list. Ignoring")
+        logger.warning(f'stop_fade parameter {stop_fade} for fader {item} has to be a list. Ignoring')
         stop_fade = None
     if continue_fade and not isinstance(continue_fade, list):
-        logger.warning(f"continue_fade parameter {continue_fade} for fader {item} has to be a list. Ignoring")
+        logger.warning(f'continue_fade parameter {continue_fade} for fader {item} has to be a list. Ignoring')
         continue_fade = None
 
     dest = float(dest)
     if not item._fading or (item._fading and update):
         item._fadingdetails = {
-            "value": item._value,
-            "dest": dest,
-            "step": step,
-            "delta": delta,
-            "caller": caller,
-            "stop_fade": stop_fade,
-            "continue_fade": continue_fade,
-            "instant_set": instant_set,
+            'value': item._value,
+            'dest': dest,
+            'step': step,
+            'delta': delta,
+            'caller': caller,
+            'stop_fade': stop_fade,
+            'continue_fade': continue_fade,
+            'instant_set': instant_set,
         }
-    item._sh.trigger(item._path, fadejob, value={"item": item})
+    item._sh.trigger(item._path, fadejob, value={'item': item})

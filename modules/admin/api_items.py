@@ -38,7 +38,7 @@ class ItemsController(RESTResource, ItemData):
         self.module = module
         self.base_dir = self._sh.get_basedir()
         self.logger = logging.getLogger(
-            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
         )
 
         ItemData.__init__(self)
@@ -59,20 +59,20 @@ class ItemsController(RESTResource, ItemData):
         if self.items is None:
             self.items = Items.get_instance()
 
-        if id == "structs":
+        if id == 'structs':
             # /api/items/structs
-            self.logger.info(f"ItemsController GET /api/items/{id}")
+            self.logger.info(f'ItemsController GET /api/items/{id}')
             result = self.items.return_struct_definitions(all=False)
             return json.dumps(result)
 
-        if id == "tree":
+        if id == 'tree':
             # /api/items/tree  — returns [count, tree_data] matching the legacy items_json() format
-            self.logger.info("ItemsController GET /api/items/tree")
-            return self.items_json("tree")
+            self.logger.info('ItemsController GET /api/items/tree')
+            return self.items_json('tree')
 
         if id is not None:
             # /api/items/{item_path}  — returns item detail array (same format as legacy endpoint)
-            self.logger.info(f"ItemsController GET /api/items/{id}")
+            self.logger.info(f'ItemsController GET /api/items/{id}')
             result = self.item_detail_json_html(id)
             if result is None:
                 raise cherrypy.HTTPError(404, f"Item '{id}' not found")
@@ -93,7 +93,7 @@ class ItemsController(RESTResource, ItemData):
         Request body: JSON object with a "value" key.
         """
         if id is None:
-            raise cherrypy.HTTPError(400, "Item path required")
+            raise cherrypy.HTTPError(400, 'Item path required')
 
         if self.items is None:
             self.items = Items.get_instance()
@@ -101,7 +101,7 @@ class ItemsController(RESTResource, ItemData):
         body = cherrypy.request.body.read()
         try:
             data = json.loads(body)
-            value = data.get("value")
+            value = data.get('value')
         except (json.JSONDecodeError, AttributeError, TypeError):
             raise cherrypy.HTTPError(400, 'Invalid JSON body — expected {"value": ...}')
 
@@ -109,17 +109,17 @@ class ItemsController(RESTResource, ItemData):
         if item is None:
             raise cherrypy.HTTPError(404, f"Item '{id}' not found")
 
-        self.logger.info(f"ItemsController PUT /api/items/{id}: value={value!r}")
+        self.logger.info(f'ItemsController PUT /api/items/{id}: value={value!r}')
 
-        if item.type() and "num" in item.type():
+        if item.type() and 'num' in item.type():
             if isinstance(value, str):
-                if "." in value or "," in value:
-                    value = float(value.replace(",", "."))
+                if '.' in value or ',' in value:
+                    value = float(value.replace(',', '.'))
                 else:
-                    value = int(value) if value != "" else 0
+                    value = int(value) if value != '' else 0
 
-        item(value, caller="admin")
-        return json.dumps({"result": "ok"})
+        item(value, caller='admin')
+        return json.dumps({'result': 'ok'})
 
     update.expose_resource = True
     update.authentication_needed = True
@@ -147,7 +147,7 @@ class ItemsListController(RESTResource):
         if self.items is None:
             self.items = Items.get_instance()
 
-        items_sorted = sorted(self.items.return_items(), key=lambda k: str.lower(k["_path"]), reverse=False)
+        items_sorted = sorted(self.items.return_items(), key=lambda k: str.lower(k['_path']), reverse=False)
 
         item_list = []
         for item in items_sorted:

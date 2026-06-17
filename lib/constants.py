@@ -25,143 +25,143 @@ This file describes a group of system wide constants for items, plugins and file
 """
 
 # item types
-ITEM_TYPES = ["num", "str", "bool", "list", "dict", "foo", "scene", "timestamp", "datetime"]
+ITEM_TYPES = ['num', 'str', 'bool', 'list', 'dict', 'foo', 'scene', 'timestamp', 'datetime']
 ITEM_DEFAULTS = __defaults = {
-    "num": 0,
-    "str": "",
-    "bool": False,
-    "list": [],
-    "dict": {},
-    "foo": None,
-    "scene": 0,
-    "timestamp": 0.0,
-    "datetime": None,
+    'num': 0,
+    'str': '',
+    'bool': False,
+    'list': [],
+    'dict': {},
+    'foo': None,
+    'scene': 0,
+    'timestamp': 0.0,
+    'datetime': None,
 }
-FOO = "foo"
+FOO = 'foo'
 
 # metadata types
 META_DATA_TYPES = [
-    "bool",
-    "int",
-    "float",
-    "num",
-    "scene",
-    "str",
-    "password",
-    "list",
-    "dict",
-    "ip",
-    "ipv4",
-    "ipv6",
-    "mac",
-    "knx_ga",
-    "foo",
-    "timestamp",
+    'bool',
+    'int',
+    'float',
+    'num',
+    'scene',
+    'str',
+    'password',
+    'list',
+    'dict',
+    'ip',
+    'ipv4',
+    'ipv6',
+    'mac',
+    'knx_ga',
+    'foo',
+    'timestamp',
 ]
 META_DATA_DEFAULTS = {
-    "bool": False,
-    "int": 0,
-    "float": 0.0,
-    "num": 0,
-    "scene": 0,
-    "str": "",
-    "password": "",
-    "list": [],
-    "dict": {},
-    "OrderedDict": {},
-    "ip": "0.0.0.0",
-    "ipv4": "0.0.0.0",
-    "ipv6": "",
-    "mac": "00:00:00:00:00:00",
-    "knx_ga": "",
-    "foo": None,
-    "timestamp": 0.0,
+    'bool': False,
+    'int': 0,
+    'float': 0.0,
+    'num': 0,
+    'scene': 0,
+    'str': '',
+    'password': '',
+    'list': [],
+    'dict': {},
+    'OrderedDict': {},
+    'ip': '0.0.0.0',
+    'ipv4': '0.0.0.0',
+    'ipv6': '',
+    'mac': '00:00:00:00:00:00',
+    'knx_ga': '',
+    'foo': None,
+    'timestamp': 0.0,
 }
 
 # config params for items
-KEY_ENFORCE_UPDATES = "enforce_updates"
-KEY_ENFORCE_CHANGE = "enforce_change"
-KEY_CACHE = "cache"
-KEY_CYCLE = "cycle"
-KEY_NAME = "name"
-KEY_DESCRIPTION = "description"
-KEY_TYPE = "type"
-KEY_VALUE = "value"
-KEY_INITVALUE = "initial_value"
-KEY_CRONTAB = "crontab"
-KEY_EVAL_TRIGGER = "eval_trigger"
-KEY_TRIGGER = "trigger"
-KEY_EVAL_TRIGGER_ONLY = "eval_on_trigger_only"
-KEY_CONDITION = "trigger_condition"
-KEY_EVAL = "eval"
-KEY_THRESHOLD = "threshold"
-KEY_AUTOTIMER = "autotimer"
-KEY_ON_UPDATE = "on_update"
-KEY_ON_CHANGE = "on_change"
+KEY_ENFORCE_UPDATES = 'enforce_updates'
+KEY_ENFORCE_CHANGE = 'enforce_change'
+KEY_CACHE = 'cache'
+KEY_CYCLE = 'cycle'
+KEY_NAME = 'name'
+KEY_DESCRIPTION = 'description'
+KEY_TYPE = 'type'
+KEY_VALUE = 'value'
+KEY_INITVALUE = 'initial_value'
+KEY_CRONTAB = 'crontab'
+KEY_EVAL_TRIGGER = 'eval_trigger'
+KEY_TRIGGER = 'trigger'
+KEY_EVAL_TRIGGER_ONLY = 'eval_on_trigger_only'
+KEY_CONDITION = 'trigger_condition'
+KEY_EVAL = 'eval'
+KEY_THRESHOLD = 'threshold'
+KEY_AUTOTIMER = 'autotimer'
+KEY_ON_UPDATE = 'on_update'
+KEY_ON_CHANGE = 'on_change'
 
-KEY_LOG_CHANGE = "log_change"
-KEY_LOG_LEVEL = "log_level"
-KEY_LOG_TEXT = "log_text"
-KEY_LOG_MAPPING = "log_mapping"
-KEY_LOG_RULES = "log_rules"
-KEY_LOG_RULES_LOWLIMIT = "lowlimit"
-KEY_LOG_RULES_HIGHLIMIT = "highlimit"
-KEY_LOG_RULES_FILTER = "filter"
-KEY_LOG_RULES_EXCLUDE = "exclude"
-KEY_LOG_RULES_ITEMVALUE = "itemvalue"
-KEY_HYSTERESIS_INPUT = "hysteresis_input"
-KEY_HYSTERESIS_UPPER_THRESHOLD = "hysteresis_upper_threshold"
-KEY_HYSTERESIS_LOWER_THRESHOLD = "hysteresis_lower_threshold"
+KEY_LOG_CHANGE = 'log_change'
+KEY_LOG_LEVEL = 'log_level'
+KEY_LOG_TEXT = 'log_text'
+KEY_LOG_MAPPING = 'log_mapping'
+KEY_LOG_RULES = 'log_rules'
+KEY_LOG_RULES_LOWLIMIT = 'lowlimit'
+KEY_LOG_RULES_HIGHLIMIT = 'highlimit'
+KEY_LOG_RULES_FILTER = 'filter'
+KEY_LOG_RULES_EXCLUDE = 'exclude'
+KEY_LOG_RULES_ITEMVALUE = 'itemvalue'
+KEY_HYSTERESIS_INPUT = 'hysteresis_input'
+KEY_HYSTERESIS_UPPER_THRESHOLD = 'hysteresis_upper_threshold'
+KEY_HYSTERESIS_LOWER_THRESHOLD = 'hysteresis_lower_threshold'
 
-ATTRIBUTE_SEPARATOR = ";"
+ATTRIBUTE_SEPARATOR = ';'
 
-KEY_STRUCT = "struct"
-KEY_REMARK = "remark"
+KEY_STRUCT = 'struct'
+KEY_REMARK = 'remark'
 
 # global config params for plugins
-KEY_INSTANCE = "instance"
-KEY_DEFAULT_INSTANCE = "default_instance"
-KEY_WEBIF_PAGELENGTH = "webif_pagelength"
-KEY_CLASS_PATH = "class_path"
-KEY_CLASS_NAME = "class_name"
+KEY_INSTANCE = 'instance'
+KEY_DEFAULT_INSTANCE = 'default_instance'
+KEY_WEBIF_PAGELENGTH = 'webif_pagelength'
+KEY_CLASS_PATH = 'class_path'
+KEY_CLASS_NAME = 'class_name'
 
-CACHE_PICKLE = "pickle"
-CACHE_JSON = "json"
+CACHE_PICKLE = 'pickle'
+CACHE_JSON = 'json'
 CACHE_FORMAT = CACHE_PICKLE
 
 # plugin methods
-PLUGIN_PARSE_ITEM = "parse_item"
-PLUGIN_PARSE_LOGIC = "parse_logic"
-PLUGIN_REMOVE_ITEM = "remove_item"
+PLUGIN_PARSE_ITEM = 'parse_item'
+PLUGIN_PARSE_LOGIC = 'parse_logic'
+PLUGIN_REMOVE_ITEM = 'remove_item'
 
 # file extensions
-YAML_FILE = ".yaml"
-DEFAULT_FILE = ".default"
+YAML_FILE = '.yaml'
+DEFAULT_FILE = '.default'
 
-DIR_VAR = "var"
-DIR_LIB = "lib"
-DIR_CACHE = "cache"
-DIR_ENV = "env"
-DIR_TPL = "templates"
-DIR_PLUGINS = "plugins"
-DIR_MODULES = "modules"
-DIR_ETC = "etc"
-DIR_ITEMS = "items"
-DIR_STRUCTS = "structs"
-DIR_LOGICS = "logics"
-DIR_UF = "functions"
-DIR_PRIV_TOOLS = "priv_tools"
-DIR_SCENES = "scenes"
+DIR_VAR = 'var'
+DIR_LIB = 'lib'
+DIR_CACHE = 'cache'
+DIR_ENV = 'env'
+DIR_TPL = 'templates'
+DIR_PLUGINS = 'plugins'
+DIR_MODULES = 'modules'
+DIR_ETC = 'etc'
+DIR_ITEMS = 'items'
+DIR_STRUCTS = 'structs'
+DIR_LOGICS = 'logics'
+DIR_UF = 'functions'
+DIR_PRIV_TOOLS = 'priv_tools'
+DIR_SCENES = 'scenes'
 
-BASE_SH = "smarthome"
-BASE_LOG = "logging"
-BASE_MODULE = "module"
-BASE_PLUGIN = "plugin"
-BASE_LOGIC = "logic"
-BASE_LOGIC_GROUPS = "logic_groups"
-BASE_STRUCT = "struct"
-BASE_HOLIDAY = "holidays"
-BASE_ADMIN = "admin"
+BASE_SH = 'smarthome'
+BASE_LOG = 'logging'
+BASE_MODULE = 'module'
+BASE_PLUGIN = 'plugin'
+BASE_LOGIC = 'logic'
+BASE_LOGIC_GROUPS = 'logic_groups'
+BASE_STRUCT = 'struct'
+BASE_HOLIDAY = 'holidays'
+BASE_ADMIN = 'admin'
 
 DIRS = (
     DIR_VAR,
@@ -192,6 +192,6 @@ BASES = (
 FILES = DIRS + BASES
 
 # attributes for 'autotimer' parameter
-KEY_ATTRIB_COMPAT = "assign_compatibility"  # name of key in smarthome.yaml
-ATTRIB_COMPAT_V12 = "compat_1.2"
-ATTRIB_COMPAT_LATEST = "latest"
+KEY_ATTRIB_COMPAT = 'assign_compatibility'  # name of key in smarthome.yaml
+ATTRIB_COMPAT_V12 = 'compat_1.2'
+ATTRIB_COMPAT_LATEST = 'latest'

@@ -35,7 +35,7 @@ class SchedulersController(RESTResource):
         self.module = module
         self.base_dir = self._sh.get_basedir()
         self.logger = logging.getLogger(
-            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
         )
 
         return
@@ -45,40 +45,40 @@ class SchedulersController(RESTResource):
         try:
             task_type = obj.__module__
         except AttributeError:
-            task_type = "?"
+            task_type = '?'
 
         try:
-            if task_type == "lib.logic":
+            if task_type == 'lib.logic':
                 task_name = obj.name
-            elif task_type.startswith("lib.item"):
+            elif task_type.startswith('lib.item'):
                 task_name = obj._path
             else:
                 task_name = obj.__name__
         except AttributeError:
             task_name = dir(obj)
 
-        if task_type == "lib.logic":
-            task_type = "logic"
+        if task_type == 'lib.logic':
+            task_type = 'logic'
             task_name = "'" + task_name + "'"
 
-        elif task_type.startswith("lib.item"):
-            task_name = ""
-            task_type = ""
+        elif task_type.startswith('lib.item'):
+            task_name = ''
+            task_type = ''
 
         else:
-            if task_type.startswith("plugins."):
-                task_name = task_type.split(".")[1] + "." + task_name
-                task_type = "plugin method"
+            if task_type.startswith('plugins.'):
+                task_name = task_type.split('.')[1] + '.' + task_name
+                task_type = 'plugin method'
 
-            if task_type == "__main__":
-                task_name = "sh." + task_name
-                task_type = "main method"
+            if task_type == '__main__':
+                task_name = 'sh.' + task_name
+                task_type = 'main method'
 
-            if task_type.startswith("lib."):
-                task_name = task_type.split(".")[1] + "." + task_name
-                task_type = "lib method"
+            if task_type.startswith('lib.'):
+                task_name = task_type.split('.')[1] + '.' + task_name
+                task_type = 'lib method'
 
-            task_name += "()"
+            task_name += '()'
 
         return (task_type, task_name)
 
@@ -95,36 +95,36 @@ class SchedulersController(RESTResource):
         for entry in self._sh.scheduler._scheduler:
             schedule = dict()
             s = self._sh.scheduler._scheduler[entry]
-            if s["next"] is not None and s["cycle"] != "" and s["cron"] != "":
-                schedule["fullname"] = entry
-                schedule["name"] = entry
-                schedule["group"] = "other"
-                schedule["next"] = s["next"].strftime("%Y-%m-%d %H:%M:%S%z")
+            if s['next'] is not None and s['cycle'] != '' and s['cron'] != '':
+                schedule['fullname'] = entry
+                schedule['name'] = entry
+                schedule['group'] = 'other'
+                schedule['next'] = s['next'].strftime('%Y-%m-%d %H:%M:%S%z')
                 # unpack cycle dict
-                cy = s["cycle"]
+                cy = s['cycle']
                 # keep <cycle> = {'cycle': <value>}, so commented this out
                 # if isinstance(cy, dict) and 'cycle' in cy:
                 #     cy = cy['cycle']
-                schedule["cycle"] = str(cy)
+                schedule['cycle'] = str(cy)
                 #            schedule['cron'] = html.escape(str(s['cron']))
-                schedule["cron"] = str(s["cron"])
-                schedule["prio"] = s["prio"]
-                schedule["active"] = s["active"]
-                schedule["value"] = str(s["value"])
+                schedule['cron'] = str(s['cron'])
+                schedule['prio'] = s['prio']
+                schedule['active'] = s['active']
+                schedule['value'] = str(s['value'])
 
-                if schedule["cycle"] == "None":
-                    schedule["cycle"] = "-"
-                if schedule["cron"] == "None":
-                    schedule["cron"] = "-"
+                if schedule['cycle'] == 'None':
+                    schedule['cycle'] = '-'
+                if schedule['cron'] == 'None':
+                    schedule['cron'] = '-'
 
-                nl = entry.split(".")
-                if nl[0].lower() in ["items", "logics", "plugins"]:
-                    schedule["group"] = nl[0].lower()
-                    schedule["group"] = schedule["group"][:-1]  # items -> item, logics -> logic, plugins -> plugin
+                nl = entry.split('.')
+                if nl[0].lower() in ['items', 'logics', 'plugins']:
+                    schedule['group'] = nl[0].lower()
+                    schedule['group'] = schedule['group'][:-1]  # items -> item, logics -> logic, plugins -> plugin
                     del nl[0]
-                    schedule["name"] = ".".join(nl)
+                    schedule['name'] = '.'.join(nl)
 
-                (schedule["task_type"], schedule["task_name"]) = self.build_task_info(s["obj"])
+                (schedule['task_type'], schedule['task_name']) = self.build_task_info(s['obj'])
                 schedule_list.append(schedule)
 
         # Handle all waiting triggers
@@ -136,21 +136,21 @@ class SchedulersController(RESTResource):
             triggerinfo = dict()
             (dt, prio), (name, obj, by, source, dest, value) = trigger
 
-            triggerinfo["fullname"] = "trigger." + name
-            triggerinfo["name"] = "trigger." + name
-            triggerinfo["group"] = "trigger"  # later: 'trigger'
-            triggerinfo["next"] = dt.strftime("%Y-%m-%d %H:%M:%S%z")
-            triggerinfo["cycle"] = "-"
-            triggerinfo["cron"] = "-"
-            triggerinfo["prio"] = prio
+            triggerinfo['fullname'] = 'trigger.' + name
+            triggerinfo['name'] = 'trigger.' + name
+            triggerinfo['group'] = 'trigger'  # later: 'trigger'
+            triggerinfo['next'] = dt.strftime('%Y-%m-%d %H:%M:%S%z')
+            triggerinfo['cycle'] = '-'
+            triggerinfo['cron'] = '-'
+            triggerinfo['prio'] = prio
             # triggerinfo['active'] = True
-            triggerinfo["value"] = str(value)
-            triggerinfo["by"] = by
+            triggerinfo['value'] = str(value)
+            triggerinfo['by'] = by
             #     # obj, source, dest
-            (triggerinfo["task_type"], triggerinfo["task_name"]) = self.build_task_info(obj)
+            (triggerinfo['task_type'], triggerinfo['task_name']) = self.build_task_info(obj)
             schedule_list.append(triggerinfo)
 
-        schedule_list_sorted = sorted(schedule_list, key=lambda k: k["fullname"].lower())
+        schedule_list_sorted = sorted(schedule_list, key=lambda k: k['fullname'].lower())
         return json.dumps(schedule_list_sorted)
 
     read.expose_resource = True

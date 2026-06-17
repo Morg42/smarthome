@@ -25,7 +25,7 @@ from tests.common import BASE
 # logging.addLevelName(12, 'DBGMED')
 # logging.addLevelName(11, 'DBGLOW')
 
-logger = logging.getLogger("Mockup")
+logger = logging.getLogger('Mockup')
 
 
 class MockScheduler:
@@ -37,56 +37,56 @@ class MockScheduler:
 
     def add(self, name, obj, prio=3, cron=None, cycle=None, value=None, offset=None, next=None):
         logger.warning(
-            "MockScheduler (add): {}, cron={}, cycle={}, value={}, offset={}".format(
+            'MockScheduler (add): {}, cron={}, cycle={}, value={}, offset={}'.format(
                 name, str(cron), str(cycle), str(value), str(offset)
             )
         )
         try:
             if isinstance(obj.__self__, SmartPlugin):
-                name = name + "_" + obj.__self__.get_instance_name()
+                name = name + '_' + obj.__self__.get_instance_name()
         except AttributeError:
             pass
 
     def remove(self, name):
-        logger.warning("MockScheduler (remove): {}".format(name))
+        logger.warning('MockScheduler (remove): {}'.format(name))
 
 
 class MockSmartHome:
     cwd = os.getcwd()
-    print(f"MockSmartHome: cwd={cwd}")
-    print(f"MockSmartHome: __file__={__file__}")
+    print(f'MockSmartHome: cwd={cwd}')
+    print(f'MockSmartHome: __file__={__file__}')
 
     _base_dir = BASE
     base_dir = _base_dir  # for external modules using that var (backend, ...?)
-    _default_language = "de"
+    _default_language = 'de'
     _default_logtext = None
 
-    shng_status = {"code": 20, "text": "Running"}
+    shng_status = {'code': 20, 'text': 'Running'}
 
     _restart_on_num_workers = 30
 
     _legacy_instances = False
 
-    _etc_dir = os.path.join(_base_dir, "tests", "resources", "etc")
-    _structs_dir = os.path.join(_base_dir, "tests", "resources", "structs")
-    _var_dir = os.path.join(_base_dir, "var")
-    _lib_dir = os.path.join(_base_dir, "lib")
-    _env_dir = os.path.join(_lib_dir, "env" + os.path.sep)
+    _etc_dir = os.path.join(_base_dir, 'tests', 'resources', 'etc')
+    _structs_dir = os.path.join(_base_dir, 'tests', 'resources', 'structs')
+    _var_dir = os.path.join(_base_dir, 'var')
+    _lib_dir = os.path.join(_base_dir, 'lib')
+    _env_dir = os.path.join(_lib_dir, 'env' + os.path.sep)
 
-    _module_conf_basename = os.path.join(_etc_dir, "module")
-    _module_conf = ""  # is filled by module.py while reading the configuration file, needed by Backend plugin
+    _module_conf_basename = os.path.join(_etc_dir, 'module')
+    _module_conf = ''  # is filled by module.py while reading the configuration file, needed by Backend plugin
 
-    _plugin_conf_basename = os.path.join(_etc_dir, "plugin")
-    _plugin_conf = ""  # is filled by plugin.py while reading the configuration file, needed by Backend plugin
+    _plugin_conf_basename = os.path.join(_etc_dir, 'plugin')
+    _plugin_conf = ''  # is filled by plugin.py while reading the configuration file, needed by Backend plugin
 
-    _env_logic_conf_basename = os.path.join(_env_dir, "logic")
+    _env_logic_conf_basename = os.path.join(_env_dir, 'logic')
     #    _items_dir = os.path.join(_base_dir, 'items'+os.path.sep)
-    _logic_conf_basename = os.path.join(_etc_dir, "logic")
-    _logic_dir = os.path.join(_base_dir, "tests", "resources", "logics" + os.path.sep)
+    _logic_conf_basename = os.path.join(_etc_dir, 'logic')
+    _logic_dir = os.path.join(_base_dir, 'tests', 'resources', 'logics' + os.path.sep)
     # for now, later remove _logic_dir, see lib/smarthome.py
     _logics_dir = _logic_dir
     #    _cache_dir = os.path.join(_var_dir,'cache'+os.path.sep)
-    _log_conf_basename = os.path.join(_etc_dir, "logging")
+    _log_conf_basename = os.path.join(_etc_dir, 'logging')
     #    _smarthome_conf_basename = None
 
     # the APIs available though the smarthome object instance:
@@ -127,7 +127,7 @@ class MockSmartHome:
         self.version = bin.shngversion.shNG_version
         self.plugins_version = bin.shngversion.get_plugins_version()
 
-        MODE = "default"
+        MODE = 'default'
         self._mode = MODE
 
         self.initialize_vars()
@@ -135,12 +135,12 @@ class MockSmartHome:
         # make sure we have an etc directory
         os.makedirs(self._etc_dir, exist_ok=True)
 
-        self.python_bin = os.environ.get("_", "")
+        self.python_bin = os.environ.get('_', '')
         self.__logs = {}
         #        self.__item_dict = {}
         #        self.__items = []
         self.children = []
-        self._use_modules = "True"
+        self._use_modules = 'True'
         self._moduledict = {}
         # if self.shtime is None:
         #    self.shtime = Shtime.get_instance()
@@ -276,14 +276,14 @@ class MockSmartHome:
         # method would work fine without this check, but...
         # make sure we don't allow "any" function call here
         if config not in DIRS:
-            return ""
+            return ''
 
-        if hasattr(self, f"get_{config}dir"):
-            return getattr(self, f"get_{config}dir")()
-        elif hasattr(self, f"_{config}_dir"):
-            return getattr(self, f"_{config}_dir")
+        if hasattr(self, f'get_{config}dir'):
+            return getattr(self, f'get_{config}dir')()
+        elif hasattr(self, f'_{config}_dir'):
+            return getattr(self, f'_{config}_dir')
 
-        return ""
+        return ''
 
     def get_config_file(self, config, extension=YAML_FILE):
         """
@@ -297,12 +297,12 @@ class MockSmartHome:
         # method would work fine without this check, but...
         # make sure we don't allow "any" function call here
         if config not in BASES:
-            return ""
+            return ''
 
         return os.path.join(self.get_etcdir(), config + extension)
 
-    def trigger(self, name, obj=None, by="Logic", source=None, value=None, dest=None, prio=3, dt=None):
-        logger.warning("MockSmartHome (trigger): {}".format(str(obj)))
+    def trigger(self, name, obj=None, by='Logic', source=None, value=None, dest=None, prio=3, dt=None):
+        logger.warning('MockSmartHome (trigger): {}'.format(str(obj)))
 
     def with_plugins_from(self, conf):
         lib.plugin._plugins_instance = None
@@ -326,7 +326,7 @@ class MockSmartHome:
                 try:
                     child = lib.item.item.Item(self, self, child_path, value)
                 except Exception as e:
-                    print("Item {}: problem creating: {}".format(child_path, e))
+                    print('Item {}: problem creating: {}'.format(child_path, e))
                 else:
                     vars(self)[attr] = child
                     self.add_item(child_path, child)
@@ -336,33 +336,33 @@ class MockSmartHome:
     def add_log(self, name, log):
         self.__logs[name] = log
 
-    def init_logging(self, conf_basename="", MODE="default"):
+    def init_logging(self, conf_basename='', MODE='default'):
         """
         This function initiates the logging for SmartHomeNG.
         """
-        if conf_basename == "":
+        if conf_basename == '':
             conf_basename = self._log_conf_basename
         # conf_dict = lib.shyaml.yaml_load(conf_basename + YAML_FILE, True)
 
         if not self.logs.configure_logging():
-            conf_basename = self._log_conf_basename + YAML_FILE + ".default"
-            print("       Trying default logging configuration from:")
-            print(f"       {conf_basename}")
+            conf_basename = self._log_conf_basename + YAML_FILE + '.default'
+            print('       Trying default logging configuration from:')
+            print(f'       {conf_basename}')
             print()
             # conf_dict = lib.shyaml.yaml_load(conf_basename + YAML_FILE + '.default', True)
-            if not self.logs.configure_logging("logging.yaml.default"):
-                print("ABORTING")
+            if not self.logs.configure_logging('logging.yaml.default'):
+                print('ABORTING')
                 print()
                 exit(1)
-            print("Starting with default logging configuration")
+            print('Starting with default logging configuration')
 
-        if MODE == "interactive":  # remove default stream handler
+        if MODE == 'interactive':  # remove default stream handler
             logging.getLogger().disabled = True
-        elif MODE == "verbose":
+        elif MODE == 'verbose':
             logging.getLogger().setLevel(logging.INFO)
-        elif MODE == "debug":
+        elif MODE == 'debug':
             logging.getLogger().setLevel(logging.DEBUG)
-        elif MODE == "quiet":
+        elif MODE == 'quiet':
             logging.getLogger().setLevel(logging.WARNING)
         return
 
@@ -387,7 +387,7 @@ class MockSmartHome:
                 self.__event_listeners[event] = [method]
         self.__all_listeners.append(method)
 
-    def return_event_listeners(self, event="all"):
+    def return_event_listeners(self, event='all'):
         """
         This function returns the listeners for a specified event.
 
@@ -398,7 +398,7 @@ class MockSmartHome:
         :rtype: list
         """
 
-        if event == "all":
+        if event == 'all':
             return self.__all_listeners
         elif event in self.__event_listeners:
             return self.__event_listeners[event]

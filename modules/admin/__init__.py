@@ -56,17 +56,17 @@ from .api_plugins import *
 from .api_plugin import *
 # from .api_plginst import *
 
-suburl = "admin"
+suburl = 'admin'
 
 
 class Admin(Module):
-    version = "1.9.0"
-    longname = "Admin module for SmartHomeNG"
+    version = '1.9.0'
+    longname = 'Admin module for SmartHomeNG'
     _port = 0
 
     _stop_methods = []  # list of stop methods defined by the various controllers of the admin api
 
-    def __init__(self, sh, testparam=""):
+    def __init__(self, sh, testparam=''):
         """
         Initialization Routine for the module
         """
@@ -82,12 +82,12 @@ class Admin(Module):
         self.logger.debug("Module '{}': Parameters = '{}'".format(self._shortname, str(self._parameters)))
 
         # for authentication
-        self.send_hash = "shNG0160$"
-        self.jwt_secret = "SmartHomeNG$0815"
+        self.send_hash = 'shNG0160$'
+        self.jwt_secret = 'SmartHomeNG$0815'
 
         try:
             self.mod_http = Modules.get_instance().get_module(
-                "http"
+                'http'
             )  # try/except to handle running in a core version that does not support modules
         except Exception:
             self.mod_http = None
@@ -103,15 +103,15 @@ class Admin(Module):
         self._showtraceback = self.mod_http._showtraceback
 
         try:
-            self.login_expiration = self._parameters["login_expiration"]
-            self.login_autorenew = self._parameters["login_autorenew"]
-            self.pypi_timeout = self._parameters["pypi_timeout"]
-            self.itemtree_fullpath = self._parameters["itemtree_fullpath"]
-            self.itemtree_searchstart = self._parameters["itemtree_searchstart"]
-            self.log_chunksize = self._parameters["log_chunksize"]
-            self.developer_mode = self._parameters["developer_mode"]
-            self.rest_dispatch_force_exception = self._parameters["rest_dispatch_force_exception"]
-            self.click_dropdown_header = self._parameters["click_dropdown_header"]
+            self.login_expiration = self._parameters['login_expiration']
+            self.login_autorenew = self._parameters['login_autorenew']
+            self.pypi_timeout = self._parameters['pypi_timeout']
+            self.itemtree_fullpath = self._parameters['itemtree_fullpath']
+            self.itemtree_searchstart = self._parameters['itemtree_searchstart']
+            self.log_chunksize = self._parameters['log_chunksize']
+            self.developer_mode = self._parameters['developer_mode']
+            self.rest_dispatch_force_exception = self._parameters['rest_dispatch_force_exception']
+            self.click_dropdown_header = self._parameters['click_dropdown_header']
         except Exception:
             self.logger.critical(
                 "Module '{}': Inconsistent module (invalid metadata definition)".format(self._shortname)
@@ -121,8 +121,8 @@ class Admin(Module):
 
         # Deprecation: websocket_host/websocket_port belong to the websocket module,
         # not to the admin module.  Warn users who still have them in admin config.
-        _dep_host = self._parameters.get("websocket_host")
-        _dep_port = self._parameters.get("websocket_port")
+        _dep_host = self._parameters.get('websocket_host')
+        _dep_port = self._parameters.get('websocket_port')
         _default_ws_port = 2424
         if _dep_host:
             self.logger.warning(
@@ -150,15 +150,15 @@ class Admin(Module):
         self.websocket_host = None
         self.websocket_port = str(_default_ws_port)
 
-        mysuburl = ""
-        if suburl != "":
-            mysuburl = "/" + suburl
+        mysuburl = ''
+        if suburl != '':
+            mysuburl = '/' + suburl
         ip = Utils.get_local_ipv4_address()
         self._port = self.mod_http._port
         # self.logger.warning('port = {}'.format(self._port))
-        self.shng_url_root = "http://" + ip + ":" + str(self._port)  # for links mto plugin webinterfaces
+        self.shng_url_root = 'http://' + ip + ':' + str(self._port)  # for links mto plugin webinterfaces
         self.url_root = self.shng_url_root + mysuburl
-        self.api_url_root = self.shng_url_root + "api"
+        self.api_url_root = self.shng_url_root + 'api'
 
     def start(self):
         """
@@ -166,11 +166,11 @@ class Admin(Module):
 
         Initialization and startup code of the module
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "start()"}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'start()'}))
 
         # Resolve websocket host/port now that all modules are started.
         try:
-            mod_ws = Modules.get_instance().get_module("websocket")
+            mod_ws = Modules.get_instance().get_module('websocket')
             if mod_ws is not None:
                 actual_port = mod_ws.get_port()
                 if actual_port:
@@ -178,8 +178,8 @@ class Admin(Module):
                 # Use the websocket module's bind IP only when it is a specific
                 # address; 0.0.0.0 / :: are wildcard bind addresses that the
                 # browser cannot connect to.
-                ws_ip = getattr(mod_ws, "ip", None)
-                if ws_ip and ws_ip not in ("0.0.0.0", "::", ""):
+                ws_ip = getattr(mod_ws, 'ip', None)
+                if ws_ip and ws_ip not in ('0.0.0.0', '::', ''):
                     self.websocket_host = ws_ip
             else:
                 self.logger.warning(
@@ -192,40 +192,40 @@ class Admin(Module):
         except Exception as e:
             self.logger.warning("Module '{}': Could not read websocket module config: {}".format(self._shortname, e))
 
-        self.webif_dir = os.path.dirname(os.path.abspath(__file__)) + "/webif"
+        self.webif_dir = os.path.dirname(os.path.abspath(__file__)) + '/webif'
 
         self.logger.info("Module '{}': webif_dir = webif_dir = {}".format(self._shortname, self.webif_dir))
         # config for Angular app (special: error page)
         config = {
-            "/": {
-                "tools.staticdir.root": self.webif_dir,
-                "tools.staticdir.on": True,
-                "tools.staticdir.dir": "static/browser",
-                "tools.staticdir.index": "index.html",
-                "tools.chaching.on": False,
-                "tools.caching.force": False,
-                "tools.caching.delay": 6,
-                "tools.expires.on": True,
-                "tools.expires.secs": 0,
+            '/': {
+                'tools.staticdir.root': self.webif_dir,
+                'tools.staticdir.on': True,
+                'tools.staticdir.dir': 'static/browser',
+                'tools.staticdir.index': 'index.html',
+                'tools.chaching.on': False,
+                'tools.caching.force': False,
+                'tools.caching.delay': 6,
+                'tools.expires.on': True,
+                'tools.expires.secs': 0,
                 # fix for path error
-                "error_page.404": self._spa_index,
+                'error_page.404': self._spa_index,
             }
         }
         # API config (special: request.dispatch)
         config_api = {
-            "/": {
-                "tools.chaching.on": False,
-                "tools.caching.force": False,
-                "tools.caching.delay": 6,
-                "tools.expires.on": True,
-                "tools.expires.secs": 6,
-                "request.dispatch": cherrypy.dispatch.MethodDispatcher(),
-                "error_page.404": self._error_page,
-                "error_page.400": self._error_page,
-                "error_page.401": self._error_page,
-                "error_page.405": self._error_page,
-                "error_page.411": self._error_page,
-                "error_page.500": self._error_page,
+            '/': {
+                'tools.chaching.on': False,
+                'tools.caching.force': False,
+                'tools.caching.delay': 6,
+                'tools.expires.on': True,
+                'tools.expires.secs': 6,
+                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'error_page.404': self._error_page,
+                'error_page.400': self._error_page,
+                'error_page.401': self._error_page,
+                'error_page.405': self._error_page,
+                'error_page.411': self._error_page,
+                'error_page.500': self._error_page,
             }
         }
 
@@ -234,10 +234,10 @@ class Admin(Module):
             WebInterface(self.webif_dir, self, self.shng_url_root, self.url_root),
             suburl,
             config,
-            "admin",
-            "",
-            description="Administrationsoberfläche für SmartHomeNG",
-            webifname="",
+            'admin',
+            '',
+            description='Administrationsoberfläche für SmartHomeNG',
+            webifname='',
             use_global_basic_auth=False,
             useprefix=False,
         )
@@ -245,35 +245,35 @@ class Admin(Module):
         # Register the web interface as a cherrypy app
         self.mod_http.register_webif(
             WebApi(self.webif_dir, self, self.shng_url_root, self.api_url_root),
-            "api",
+            'api',
             config_api,
-            "api",
-            "",
-            description="API der Administrationsoberfläche für SmartHomeNG",
-            webifname="",
+            'api',
+            '',
+            description='API der Administrationsoberfläche für SmartHomeNG',
+            webifname='',
             use_global_basic_auth=False,
             useprefix=False,
         )
 
         # Angular's polyfills bundle requests /3rdpartylicenses.txt at the server
         # root (not relative to base-href), so serve it from the root app.
-        license_file = os.path.join(self.webif_dir, "static", "3rdpartylicenses.txt")
-        if os.path.isfile(license_file) and "" in cherrypy.tree.apps:
-            cherrypy.tree.apps[""].config["/3rdpartylicenses.txt"] = {
-                "tools.staticfile.on": True,
-                "tools.staticfile.filename": license_file,
+        license_file = os.path.join(self.webif_dir, 'static', '3rdpartylicenses.txt')
+        if os.path.isfile(license_file) and '' in cherrypy.tree.apps:
+            cherrypy.tree.apps[''].config['/3rdpartylicenses.txt'] = {
+                'tools.staticfile.on': True,
+                'tools.staticfile.filename': license_file,
             }
 
     def stop(self):
         """ """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "stop()"}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'stop()'}))
 
-        self.logger.info(f"Shutting down {self._shortname}")
+        self.logger.info(f'Shutting down {self._shortname}')
         for stop_method in self._stop_methods:
             stop_method()
-        self.logger.info(f"{self._shortname} shut down ")
+        self.logger.info(f'{self._shortname} shut down ')
 
-    def add_stop_method(self, method, classname=""):
+    def add_stop_method(self, method, classname=''):
         """
         Class instances that implement their own stop() method should add those methods through this
         Method, so the stop() methods of the admin module can stop those instances too when stopping the module.
@@ -283,7 +283,7 @@ class Admin(Module):
         :type method: object
         :type classname: str
         """
-        self.logger.info("Adding stop method of class {}".format(classname))
+        self.logger.info('Adding stop method of class {}'.format(classname))
         self._stop_methods.append(method)
 
     def error_page(self, status, message, traceback, version):
@@ -305,8 +305,8 @@ class Admin(Module):
 
         # page = '<meta http-equiv="refresh" content="0; url=http://' + ip + ':' + str(self._port) + mysuburl + '/" />'
         # page = '<meta http-equiv="refresh" content="0; url=' + self.url_root + '/" />'
-        page = "404: Page not found!<br>" + message
-        self.logger.warning("error_page: status = {}, message = {}".format(status, message))
+        page = '404: Page not found!<br>' + message
+        self.logger.warning('error_page: status = {}, message = {}'.format(status, message))
         return page
 
     def _error_page(self, status, message, traceback, version):
@@ -335,16 +335,16 @@ class Admin(Module):
             '<h1 class="margin-base-vertical">'
             '<img src="/gstatic/img/logo_small_120x120.png" width="40" height="40" style="vertical-align:top">'
         )
-        result += " Oops, Error " + errno + ":"
-        result += "</h1><br/>"
-        result += "<h3>" + message + "</h3><br/>"
+        result += ' Oops, Error ' + errno + ':'
+        result += '</h1><br/>'
+        result += '<h3>' + message + '</h3><br/>'
 
-        if not self._showtraceback or (errno == "404"):
-            traceback = ""
+        if not self._showtraceback or (errno == '404'):
+            traceback = ''
         else:
-            traceback = traceback.replace("\n", "<br>&nbsp;&nbsp;")
-            traceback = traceback.replace(" ", "&nbsp;&nbsp;")
-            traceback = "&nbsp;&nbsp;" + traceback
+            traceback = traceback.replace('\n', '<br>&nbsp;&nbsp;')
+            traceback = traceback.replace(' ', '&nbsp;&nbsp;')
+            traceback = '&nbsp;&nbsp;' + traceback
 
             result += (
                 '<div class="card">'
@@ -352,19 +352,19 @@ class Admin(Module):
                 '<div class="card-body text-shng">'
             )
             result += traceback
-            result += "</div></div>"
+            result += '</div></div>'
 
-        result += "</div>"
+        result += '</div>'
 
         return result
 
     def _spa_index(self, status, message, traceback, version):
         cherrypy.response.status = 200
-        cherrypy.response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
-        cherrypy.response.headers["Pragma"] = "no-cache"
-        cherrypy.response.headers["Expires"] = "0"
-        index_path = os.path.join(self.webif_dir, "static", "browser", "index.html")
-        with open(index_path, "r", encoding="utf-8") as f:
+        cherrypy.response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+        cherrypy.response.headers['Pragma'] = 'no-cache'
+        cherrypy.response.headers['Expires'] = '0'
+        index_path = os.path.join(self.webif_dir, 'static', 'browser', 'index.html')
+        with open(index_path, 'r', encoding='utf-8') as f:
             return f.read()
 
 
@@ -441,6 +441,6 @@ class WebApi(RESTResource):
 
         return
 
-    @cherrypy.expose(["home", ""])
+    @cherrypy.expose(['home', ''])
     def index(self):
-        return "Give SmartHomeNG a REST."
+        return 'Give SmartHomeNG a REST.'

@@ -42,7 +42,7 @@ class MqttPlugin(SmartPlugin):
         # get instance of MQTT module
         try:
             self.mod_mqtt = Modules.get_instance().get_module(
-                "mqtt"
+                'mqtt'
             )  # try/except to handle running in a core version that does not support modules
         except Exception:
             self.mod_mqtt = None
@@ -69,15 +69,15 @@ class MqttPlugin(SmartPlugin):
 
         if self._add_translation is None:
             # test initially, if plugin has additional translations
-            translation_fn = os.path.join(self._plugin_dir, "locale.yaml")
+            translation_fn = os.path.join(self._plugin_dir, 'locale.yaml')
             self._add_translation = os.path.isfile(translation_fn)
 
         if self._add_translation:
             return lib_translate(
-                txt, vars, plugin_translations="plugin/" + self.get_shortname(), additional_translations="module/mqtt"
+                txt, vars, plugin_translations='plugin/' + self.get_shortname(), additional_translations='module/mqtt'
             )
         else:
-            return lib_translate(txt, vars, additional_translations="module/mqtt")
+            return lib_translate(txt, vars, additional_translations='module/mqtt')
 
     def start_subscriptions(self):
         """
@@ -106,28 +106,28 @@ class MqttPlugin(SmartPlugin):
                 for topic in self._subscribed_topics:
                     # stop subscription to all items for this topic
                     for item_path in self._subscribed_topics[topic]:
-                        current = str(self._subscribed_topics[topic][item_path]["current"])
-                        if item_path == "*no_item*":
-                            self.logger.info(f"Unsubscribing from topic {topic}")
+                        current = str(self._subscribed_topics[topic][item_path]['current'])
+                        if item_path == '*no_item*':
+                            self.logger.info(f'Unsubscribing from topic {topic}')
                         else:
-                            self.logger.info(f"Unsubscribing from topic {topic} for item {item_path}")
-                        self.mod_mqtt.unsubscribe_topic(self.get_shortname() + "-" + current, topic)
+                            self.logger.info(f'Unsubscribing from topic {topic} for item {item_path}')
+                        self.mod_mqtt.unsubscribe_topic(self.get_shortname() + '-' + current, topic)
             self._subscriptions_started = False
         return
 
     def _start_subscription(self, topic, item_path):
 
-        current = str(self._subscribed_topics[topic][item_path]["current"])
-        qos = self._subscribed_topics[topic][item_path].get("qos", None)
-        payload_type = self._subscribed_topics[topic][item_path].get("payload_type", None)
-        callback = self._subscribed_topics[topic][item_path].get("callback", None)
-        bool_values = self._subscribed_topics[topic][item_path].get("bool_values", None)
-        if item_path == "*no_item*":
+        current = str(self._subscribed_topics[topic][item_path]['current'])
+        qos = self._subscribed_topics[topic][item_path].get('qos', None)
+        payload_type = self._subscribed_topics[topic][item_path].get('payload_type', None)
+        callback = self._subscribed_topics[topic][item_path].get('callback', None)
+        bool_values = self._subscribed_topics[topic][item_path].get('bool_values', None)
+        if item_path == '*no_item*':
             self.logger.info(f"Subscribing to topic {topic}, payload_type '{payload_type}' - callback={callback}")
         else:
             self.logger.info(f"Subscribing to topic {topic}, payload_type '{payload_type}' - for item '{item_path}'")
         self.mod_mqtt.subscribe_topic(
-            self.get_shortname() + "-" + current,
+            self.get_shortname() + '-' + current,
             topic,
             callback=callback,
             qos=qos,
@@ -156,20 +156,20 @@ class MqttPlugin(SmartPlugin):
                 self._subscribed_topics[topic] = {}
             # add this item to topic
             if item is None:
-                item_path = "*no_item*"
+                item_path = '*no_item*'
             else:
                 item_path = item.property.path
             self._subscribed_topics[topic][item_path] = {}
             self._subscribe_current_number += 1
-            self._subscribed_topics[topic][item_path]["current"] = self._subscribe_current_number
-            self._subscribed_topics[topic][item_path]["item"] = item
-            self._subscribed_topics[topic][item_path]["qos"] = None
-            self._subscribed_topics[topic][item_path]["payload_type"] = payload_type
+            self._subscribed_topics[topic][item_path]['current'] = self._subscribe_current_number
+            self._subscribed_topics[topic][item_path]['item'] = item
+            self._subscribed_topics[topic][item_path]['qos'] = None
+            self._subscribed_topics[topic][item_path]['payload_type'] = payload_type
             if callback:
-                self._subscribed_topics[topic][item_path]["callback"] = callback
+                self._subscribed_topics[topic][item_path]['callback'] = callback
             else:
-                self._subscribed_topics[topic][item_path]["callback"] = self._on_mqtt_message
-            self._subscribed_topics[topic][item_path]["bool_values"] = bool_values
+                self._subscribed_topics[topic][item_path]['callback'] = self._on_mqtt_message
+            self._subscribed_topics[topic][item_path]['bool_values'] = bool_values
 
         if self._subscriptions_started:
             # directly subscribe to added subscription, if subscribtions are started
@@ -203,7 +203,7 @@ class MqttPlugin(SmartPlugin):
     #  methods to handle the broker connection
     # ----------------------------------------------------------------------------------------
 
-    _broker_version = "?"
+    _broker_version = '?'
     _broker = {}
     broker_config = {}
     broker_monitoring = False
@@ -219,9 +219,9 @@ class MqttPlugin(SmartPlugin):
         if self.shtime is None:
             self.shtime = Shtime.get_instance()
         try:
-            return self.shtime.seconds_to_displaystring(int(self._broker["uptime"]))
+            return self.shtime.seconds_to_displaystring(int(self._broker['uptime']))
         except Exception:
-            return "-"
+            return '-'
 
     def mqtt_init(self):
         """
@@ -254,7 +254,7 @@ class MqttPlugin(SmartPlugin):
         if self._subscribed_topics.get(topic, None):
             # at least 1 item has subscribed to this topic
             for item_path in self._subscribed_topics[topic]:
-                item = self._subscribed_topics[topic][item_path].get("item", None)
+                item = self._subscribed_topics[topic][item_path].get('item', None)
                 if item is not None:
                     try:
                         log_info = float(payload) != float(item())
@@ -285,11 +285,11 @@ class MqttPlugin(SmartPlugin):
         if not self._item_values.get(item.property.path):
             self._item_values[item.property.path] = {}
         if isinstance(payload, bool):
-            self._item_values[item.property.path]["value"] = str(payload)
+            self._item_values[item.property.path]['value'] = str(payload)
         else:
-            self._item_values[item.property.path]["value"] = payload
-        self._item_values[item.property.path]["last_update"] = item.last_update().strftime("%d.%m.%Y %H:%M:%S")
-        self._item_values[item.property.path]["last_change"] = item.last_change().strftime("%d.%m.%Y %H:%M:%S")
+            self._item_values[item.property.path]['value'] = payload
+        self._item_values[item.property.path]['last_update'] = item.last_update().strftime('%d.%m.%Y %H:%M:%S')
+        self._item_values[item.property.path]['last_change'] = item.last_change().strftime('%d.%m.%Y %H:%M:%S')
         return
 
 
@@ -312,16 +312,16 @@ class MqttPluginWebIf(SmartPluginWebIf):
 
         if self.plugin._add_translation is None:
             # test initially, if plugin has additional translations
-            translation_fn = os.path.join(self.plugin._plugin_dir, "locale.yaml")
+            translation_fn = os.path.join(self.plugin._plugin_dir, 'locale.yaml')
             self.plugin._add_translation = os.path.isfile(translation_fn)
 
         if self.plugin._add_translation:
             return lib_translate(
                 txt,
                 vars,
-                plugin_translations="plugin/" + self.plugin.get_shortname(),
-                module_translations="module/http",
-                additional_translations="module/mqtt",
+                plugin_translations='plugin/' + self.plugin.get_shortname(),
+                module_translations='module/http',
+                additional_translations='module/mqtt',
             )
         else:
-            return lib_translate(txt, vars, module_translations="module/http", additional_translations="module/mqtt")
+            return lib_translate(txt, vars, module_translations='module/http', additional_translations='module/mqtt')

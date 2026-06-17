@@ -33,11 +33,11 @@ from lib.Utils import Utils
 
 
 class SampleModule(Module):
-    version = "1.0.0"
-    longname = "... module for SmartHomeNG"
+    version = '1.0.0'
+    longname = '... module for SmartHomeNG'
     port = 0
 
-    def __init__(self, sh, testparam=""):
+    def __init__(self, sh, testparam=''):
         """
         Initialization Routine for the module
         """
@@ -84,7 +84,7 @@ class SampleModule(Module):
 
         Otherwise don't enter code here
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "start()"}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'start()'}))
         pass
 
     def stop(self):
@@ -94,7 +94,7 @@ class SampleModule(Module):
 
         Otherwise don't enter code here
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "stop()"}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'stop()'}))
         pass
 
 

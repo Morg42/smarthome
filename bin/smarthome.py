@@ -33,7 +33,7 @@ import sys
 if sys.hexversion < 0x03090000:
     print()
     print(
-        f"Sorry your python interpreter ({sys.version_info[0]}.{sys.version_info[1]}) is too old. Please update to 3.9 or newer."
+        f'Sorry your python interpreter ({sys.version_info[0]}.{sys.version_info[1]}) is too old. Please update to 3.9 or newer.'
     )
     print()
     exit(1)
@@ -44,13 +44,13 @@ if sys.hexversion < 0x03090000:
 #####################################################################
 import os
 
-if not os.name == "nt":
+if not os.name == 'nt':
     # Check only, if not running under Windows
     if os.geteuid() == 0:
-        print("SmartHomeNG should not run as root")
+        print('SmartHomeNG should not run as root')
         # exit()
     elif os.getegid() == 0:
-        print("SmartHomeNG should not run as user with membership of root group")
+        print('SmartHomeNG should not run as user with membership of root group')
         # exit()
 
 #####################################################################
@@ -70,65 +70,65 @@ import locale
 # argument handling here, because pip3_command is needed before all imports are done
 argparser = argparse.ArgumentParser()
 arggroup = argparser.add_mutually_exclusive_group()
-argparser.add_argument("-p", "--pip3_command", help="set path of pip3 command, if it is not automatically found")
+argparser.add_argument('-p', '--pip3_command', help='set path of pip3 command, if it is not automatically found')
 arggroup.add_argument(
-    "-i",
-    "--interactive",
-    help="open an interactive shell with tab completion and with verbose logging to the logfile",
-    action="store_true",
+    '-i',
+    '--interactive',
+    help='open an interactive shell with tab completion and with verbose logging to the logfile',
+    action='store_true',
 )
-arggroup.add_argument("-l", "--logics", help="reload all logics", action="store_true")
-arggroup.add_argument("-r", "--restart", help="restart SmartHomeNG", action="store_true")
-arggroup.add_argument("-R", "--restart_pid0", help="restart SmartHomeNG w/o PID 0 warning", action="store_true")
-arggroup.add_argument("-s", "--stop", help="stop SmartHomeNG", action="store_true")
-arggroup.add_argument("-V", "--version", help="show SmartHomeNG version", action="store_true")
+arggroup.add_argument('-l', '--logics', help='reload all logics', action='store_true')
+arggroup.add_argument('-r', '--restart', help='restart SmartHomeNG', action='store_true')
+arggroup.add_argument('-R', '--restart_pid0', help='restart SmartHomeNG w/o PID 0 warning', action='store_true')
+arggroup.add_argument('-s', '--stop', help='stop SmartHomeNG', action='store_true')
+arggroup.add_argument('-V', '--version', help='show SmartHomeNG version', action='store_true')
 arggroup.add_argument(
-    "--start", help="start SmartHomeNG and detach from console (default)", default=True, action="store_true"
-)
-arggroup.add_argument(
-    "-cb",
-    "--create_backup",
-    help="create backup of SmartHomeNG configuration (yaml configuration only)",
-    action="store_true",
+    '--start', help='start SmartHomeNG and detach from console (default)', default=True, action='store_true'
 )
 arggroup.add_argument(
-    "-cbt",
-    "--create_backup_t",
-    help="create backup of SmartHomeNG configuration with a timestamp in the filename",
-    action="store_true",
+    '-cb',
+    '--create_backup',
+    help='create backup of SmartHomeNG configuration (yaml configuration only)',
+    action='store_true',
 )
 arggroup.add_argument(
-    "-rb",
-    "--restore_backup",
-    help="restore backup of configuration to SmartHomeNG installation (yaml configuration only). CAUTION: Existing configuration is overwritten!",
-    action="store_true",
+    '-cbt',
+    '--create_backup_t',
+    help='create backup of SmartHomeNG configuration with a timestamp in the filename',
+    action='store_true',
+)
+arggroup.add_argument(
+    '-rb',
+    '--restore_backup',
+    help='restore backup of configuration to SmartHomeNG installation (yaml configuration only). CAUTION: Existing configuration is overwritten!',
+    action='store_true',
 )
 argparser.add_argument(
-    "-c", "--config_dir", help='use external config dir (should contain "etc", "logics" and "items" subdirectories)'
+    '-c', '--config_dir', help='use external config dir (should contain "etc", "logics" and "items" subdirectories)'
 )
 argparser.add_argument(
-    "-e",
-    "--config_etc",
+    '-e',
+    '--config_etc',
     help='look for all user-defined config (e.g. "items", "logics", "structs"...) below ./etc directory. If config directories exist at SmartHomeNG base dir, they are migrated to etc/<dir>.',
     default=False,
-    action="store_true",
+    action='store_true',
 )
 
 arggroup.add_argument(
-    "-v",
-    "--verbose",
-    help="verbose (info output) logging to the logfile - DEPRECATED use logging-configuration",
-    action="store_true",
+    '-v',
+    '--verbose',
+    help='verbose (info output) logging to the logfile - DEPRECATED use logging-configuration',
+    action='store_true',
 )
 arggroup.add_argument(
-    "-d",
-    "--debug",
-    help="stay in the foreground with verbose output - DEPRECATED use logging-configuration",
-    action="store_true",
+    '-d',
+    '--debug',
+    help='stay in the foreground with verbose output - DEPRECATED use logging-configuration',
+    action='store_true',
 )
-arggroup.add_argument("-f", "--foreground", help="stay in the foreground", action="store_true")
+arggroup.add_argument('-f', '--foreground', help='stay in the foreground', action='store_true')
 arggroup.add_argument(
-    "-q", "--quiet", help="reduce logging to the logfile - DEPRECATED use logging-configuration", action="store_true"
+    '-q', '--quiet', help='reduce logging to the logfile - DEPRECATED use logging-configuration', action='store_true'
 )
 # NOTE: argparser.parse_args() is intentionally NOT called here at module level.
 # Calling it here would cause argparse to read sys.argv (which contains pytest
@@ -156,7 +156,7 @@ except ImportError:
 #####################################################################
 BASE = os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2])
 sys.path.insert(0, BASE)
-PIDFILE = os.path.join(BASE, "var", "run", "smarthome.pid")
+PIDFILE = os.path.join(BASE, 'var', 'run', 'smarthome.pid')
 
 # Only used for Version Check in Plugins to decide if a logger must be explicitly declared
 import bin.shngversion
@@ -180,7 +180,7 @@ from lib.smarthome import SmartHome
 #####################################################################
 # Globals
 #####################################################################
-MODE = "default"
+MODE = 'default'
 
 #####################################################################
 # Private Methods
@@ -200,7 +200,7 @@ def _reload_logics():
 # Main
 #####################################################################
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = argparser.parse_args()
 
     #############################################################
@@ -212,44 +212,44 @@ if __name__ == "__main__":
 
     core_reqs = shpypi.test_core_requirements(logging=False, pip3_command=args.pip3_command)
     if core_reqs == 0:
-        print("Starting SmartHomeNG again...")
+        print('Starting SmartHomeNG again...')
         python_bin = sys.executable
-        if " " in python_bin:
+        if ' ' in python_bin:
             python_bin = '"' + python_bin + '"'
         # if we didn't change the working dir (yet), for example...
         # command = [python_bin] + sys.argv
-        command = [python_bin, os.path.join(BASE, "bin", "smarthome.py")]
+        command = [python_bin, os.path.join(BASE, 'bin', 'smarthome.py')]
         # if started with parameter to stay in foreground, don't fork
         if args.foreground or args.interactive or args.debug:
             try:
-                print("os.execv: python_bin={}, sys.argv={}".format(python_bin, sys.argv))
+                print('os.execv: python_bin={}, sys.argv={}'.format(python_bin, sys.argv))
                 # function call doesn't return; this process is replaced by the new one
                 os.execv(python_bin, [python_bin] + sys.argv)
             except OSError as e:
-                print("Restart command {} failed with error {}".format(python_bin, e))
+                print('Restart command {} failed with error {}'.format(python_bin, e))
                 exit(0)
 
         try:
-            command = command[0] + " " + command[1] + " -R"
+            command = command[0] + ' ' + command[1] + ' -R'
             p = subprocess.Popen(command, shell=True)
-            print("Waiting for restart...")
+            print('Waiting for restart...')
         except subprocess.SubprocessError as e:
             print("Restart command '{}' failed with error {}".format(command, e))
         time.sleep(15)
         exit(0)
     elif core_reqs == -1:
-        print("ERROR: Unable to install core requirements")
-        print("Use the commandline option --pip3_command to specify the path to the command")
+        print('ERROR: Unable to install core requirements')
+        print('Use the commandline option --pip3_command to specify the path to the command')
         print()
         exit(1)
 
     try:
         if locale.getlocale() == (None, None):
-            locale.setlocale(locale.LC_ALL, "C")
+            locale.setlocale(locale.LC_ALL, 'C')
         else:
-            locale.setlocale(locale.LC_ALL, "")
+            locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
-        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
     extern_conf_dir = BASE
     if args.config_dir is not None:
@@ -264,7 +264,7 @@ if __name__ == "__main__":
         time.sleep(5)
         lib.daemon.kill(PIDFILE, 30, pid0_warning=False)
     elif args.interactive:
-        MODE = "interactive"
+        MODE = 'interactive'
         import code
         import rlcompleter  # noqa
 
@@ -276,13 +276,13 @@ if __name__ == "__main__":
         import atexit
 
         # history file
-        histfile = os.path.join(os.environ["HOME"], ".history.python")
+        histfile = os.path.join(os.environ['HOME'], '.history.python')
         try:
             readline.read_history_file(histfile)
         except IOError:
             pass
         atexit.register(readline.write_history_file, histfile)
-        readline.parse_and_bind("tab: complete")
+        readline.parse_and_bind('tab: complete')
         sh = SmartHome(MODE=MODE, extern_conf_dir=extern_conf_dir, config_etc=args.config_etc)
         _sh_thread = threading.Thread(target=sh.start)
         _sh_thread.start()
@@ -297,43 +297,43 @@ if __name__ == "__main__":
         import bin.shngversion
 
         VERSION = bin.shngversion.get_shng_version()
-        print("{}".format(VERSION))
+        print('{}'.format(VERSION))
         exit(0)
     elif args.stop:
         lib.daemon.kill(PIDFILE, 30)
         exit(0)
     elif args.debug:
-        MODE = "debug"
+        MODE = 'debug'
     elif args.quiet:
         pass
     elif args.verbose:
-        MODE = "verbose"
+        MODE = 'verbose'
         pass
     elif args.foreground:
-        MODE = "foreground"
+        MODE = 'foreground'
         pass
     elif args.create_backup:
         fn = lib.backup.create_backup(extern_conf_dir, BASE, config_etc=args.config_etc)
         if fn:
-            print("Backup of configuration created at: \n{}".format(fn))
+            print('Backup of configuration created at: \n{}'.format(fn))
         exit(0)
     elif args.create_backup_t:
         fn = lib.backup.create_backup(extern_conf_dir, BASE, filename_with_timestamp=True, config_etc=args.config_etc)
         if fn:
-            print("Backup of configuration created at: \n{}".format(fn))
+            print('Backup of configuration created at: \n{}'.format(fn))
         exit(0)
     elif args.restore_backup:
         fn = lib.backup.restore_backup(extern_conf_dir, BASE, config_etc=args.config_etc)
         if fn is not None:
-            print("Configuration has been restored from: \n{}".format(fn))
-            print("Restart SmartHomeNG to use the restored configuration")
+            print('Configuration has been restored from: \n{}'.format(fn))
+            print('Restart SmartHomeNG to use the restored configuration')
         exit(0)
     # check for pid file
     if lib.daemon.check_sh_is_running(PIDFILE):
-        print("SmartHomeNG already running with pid {}".format(lib.daemon.read_pidfile(PIDFILE)))
+        print('SmartHomeNG already running with pid {}'.format(lib.daemon.read_pidfile(PIDFILE)))
         print("Run 'smarthome.py -s' to stop it or 'smarthome.py -r' to restart it.")
         exit()
-    if MODE == "debug":
+    if MODE == 'debug':
         lib.daemon.write_pidfile(psutil.Process().pid, PIDFILE)
     # Starting SmartHomeNG
     sh = SmartHome(MODE=MODE, extern_conf_dir=extern_conf_dir, config_etc=args.config_etc)

@@ -55,11 +55,11 @@ logger = logging.getLogger(__name__)
 
 
 def _onoff(value: bool) -> str:
-    return "On" if value else "Off"
+    return 'On' if value else 'Off'
 
 
 def _get_hysteresis_state_string(
-    item, lower: float, upper: float, input_value: float, log: bool = False, txt: str = ""
+    item, lower: float, upper: float, input_value: float, log: bool = False, txt: str = ''
 ) -> str:
     """
     Return a human-readable representation of the current hysteresis state.
@@ -73,33 +73,33 @@ def _get_hysteresis_state_string(
     :return:            state string
     """
     if log:
-        logger.notice(f"{item._path}: {txt}")
+        logger.notice(f'{item._path}: {txt}')
 
-    state = ""
+    state = ''
     if input_value > upper:
         if item._hysteresis_upper_timer_active:
-            state = "Timer -> "
-        state += "On"
+            state = 'Timer -> '
+        state += 'On'
         if log:
-            logger.notice(f" -> {state} - {txt}")
+            logger.notice(f' -> {state} - {txt}')
     elif input_value < lower:
         if item._hysteresis_lower_timer_active:
-            state = "Timer -> "
-        state += "Off"
+            state = 'Timer -> '
+        state += 'Off'
         if log:
-            logger.notice(f" -> {state} - {txt}")
+            logger.notice(f' -> {state} - {txt}')
     else:
-        state = "Stay (" + _onoff(item._value) + ")"
+        state = 'Stay (' + _onoff(item._value) + ')'
         if log:
-            logger.notice(f" -> {state} - {txt}")
+            logger.notice(f' -> {state} - {txt}')
 
     if not item._hysteresis_upper_timer_active and not item._hysteresis_lower_timer_active:
-        if item._history.get_last_update_by().lower() == "init:cache":
-            if not state.startswith("Stay"):
+        if item._history.get_last_update_by().lower() == 'init:cache':
+            if not state.startswith('Stay'):
                 if state != _onoff(item._value):
-                    state = "Cached (" + _onoff(item._value) + ")"
+                    state = 'Cached (' + _onoff(item._value) + ')'
                     if log:
-                        logger.notice(f" -> {state} - {txt}")
+                        logger.notice(f' -> {state} - {txt}')
 
     return state
 
@@ -109,7 +109,7 @@ def _get_hysteresis_state_string(
 # ---------------------------------------------------------------------------
 
 
-def run_hysteresis(item, value=None, caller="Hysteresis", source=None, dest=None):
+def run_hysteresis(item, value=None, caller='Hysteresis', source=None, dest=None):
     """
     Evaluate the hysteresis state machine for *item*.
 
@@ -122,12 +122,12 @@ def run_hysteresis(item, value=None, caller="Hysteresis", source=None, dest=None
     lower = item._run_attribute_eval(item._hysteresis_lower_threshold)
 
     if item._hysteresis_upper_timer_active and value <= upper:
-        item._sh.scheduler.remove(item._itemname_prefix + item.id() + "-UpTimer")
+        item._sh.scheduler.remove(item._itemname_prefix + item.id() + '-UpTimer')
         item._hysteresis_upper_timer_active = False
         item._hysteresis_active_timer_ends = None
 
     if item._hysteresis_lower_timer_active and value >= lower:
-        item._sh.scheduler.remove(item._itemname_prefix + item.id() + "-LoTimer")
+        item._sh.scheduler.remove(item._itemname_prefix + item.id() + '-LoTimer')
         item._hysteresis_lower_timer_active = False
         item._hysteresis_active_timer_ends = None
 
@@ -140,18 +140,18 @@ def run_hysteresis(item, value=None, caller="Hysteresis", source=None, dest=None
                 if timer < 0:
                     logger.warning(
                         f"Item '{item._path}': Hysteresis upper-timer evaluated to"
-                        f" an value less than zero ({timer}), using 0 instead"
+                        f' an value less than zero ({timer}), using 0 instead'
                     )
                     timer = 0
                 item._hysteresis_upper_timer_active = True
                 next_time = item.shtime.now() + datetime.timedelta(seconds=timer)
                 item.active_timer_ends = next_time
                 if item._hysteresis_log:
-                    logger.notice(f"__run_hysteresis {item._path}: scheduler.add {item._path}-UpTimer")
+                    logger.notice(f'__run_hysteresis {item._path}: scheduler.add {item._path}-UpTimer')
                 item._sh.scheduler.add(
-                    item._itemname_prefix + item.id() + "-UpTimer",
+                    item._itemname_prefix + item.id() + '-UpTimer',
                     item.__call__,
-                    value={"value": True, "caller": "Hysteresis"},
+                    value={'value': True, 'caller': 'Hysteresis'},
                     next=next_time,
                 )
 
@@ -164,18 +164,18 @@ def run_hysteresis(item, value=None, caller="Hysteresis", source=None, dest=None
                 if timer < 0:
                     logger.warning(
                         f"Item '{item._path}': Hysteresis lower-timer evaluated to"
-                        f" an value less than zero ({timer}), using 0 instead"
+                        f' an value less than zero ({timer}), using 0 instead'
                     )
                     timer = 0
                 item._hysteresis_lower_timer_active = True
                 next_time = item.shtime.now() + datetime.timedelta(seconds=timer)
                 item._hysteresis_active_timer_ends = next_time
                 if item._hysteresis_log:
-                    logger.notice(f"__run_hysteresis {item._path}: scheduler.add {item._path}-LoTimer")
+                    logger.notice(f'__run_hysteresis {item._path}: scheduler.add {item._path}-LoTimer')
                 item._sh.scheduler.add(
-                    item._itemname_prefix + item.id() + "-LoTimer",
+                    item._itemname_prefix + item.id() + '-LoTimer',
                     item.__call__,
-                    value={"value": False, "caller": "Hysteresis"},
+                    value={'value': False, 'caller': 'Hysteresis'},
                     next=next_time,
                 )
 
@@ -205,21 +205,16 @@ def get_hysteresis_state(item):
 
     if item._hysteresis_state_set is None:
         state = _get_hysteresis_state_string(
-            item,
-            lower,
-            upper,
-            input_value,
-            log=item._hysteresis_log,
-            txt="hysteresis_state",
+            item, lower, upper, input_value, log=item._hysteresis_log, txt='hysteresis_state'
         )
     else:
-        state = ["Set (Off)", "Set (On)"][item._hysteresis_state_set]
+        state = ['Set (Off)', 'Set (On)'][item._hysteresis_state_set]
 
     if item._hysteresis_log:
         logger.notice(
-            f"hysteresis_state ({item._path}): state={state},"
-            f" input_value={input_value}, value={item._value},"
-            f" __updated_by={item._history.get_last_update_by()}"
+            f'hysteresis_state ({item._path}): state={state},'
+            f' input_value={input_value}, value={item._value},'
+            f' __updated_by={item._history.get_last_update_by()}'
         )
     return state
 
@@ -255,36 +250,31 @@ def get_hysteresis_data(item):
 
     if item._hysteresis_state_set is None:
         state = _get_hysteresis_state_string(
-            item,
-            lower,
-            upper,
-            input_value,
-            log=item._hysteresis_log,
-            txt="hysteresis_data",
+            item, lower, upper, input_value, log=item._hysteresis_log, txt='hysteresis_data'
         )
     else:
-        state = ["Set (Off)", "Set (On)"][item._hysteresis_state_set]
+        state = ['Set (Off)', 'Set (On)'][item._hysteresis_state_set]
 
     data = {
-        "lower_threshold": lower,
-        "lower_timer": lower_timer,
-        "upper_threshold": upper,
-        "upper_timer": upper_timer,
-        "input": input_value,
-        "output": item._value,
-        "state": state,
-        "lower_timer_active": item._hysteresis_lower_timer_active,
-        "upper_timer_active": item._hysteresis_upper_timer_active,
-        "state_set": item._hysteresis_state_set,
+        'lower_threshold': lower,
+        'lower_timer': lower_timer,
+        'upper_threshold': upper,
+        'upper_timer': upper_timer,
+        'input': input_value,
+        'output': item._value,
+        'state': state,
+        'lower_timer_active': item._hysteresis_lower_timer_active,
+        'upper_timer_active': item._hysteresis_upper_timer_active,
+        'state_set': item._hysteresis_state_set,
     }
     if (
         item._hysteresis_lower_timer_active or item._hysteresis_upper_timer_active
     ) and item._hysteresis_active_timer_ends is not None:
-        data["active_timer_ends"] = (
-            item._hysteresis_active_timer_ends.strftime("%d.%m.%Y %H:%M:%S")
-            + " "
+        data['active_timer_ends'] = (
+            item._hysteresis_active_timer_ends.strftime('%d.%m.%Y %H:%M:%S')
+            + ' '
             + item._hysteresis_active_timer_ends.tzname()
         )
     if item._hysteresis_log:
-        logger.notice(f"hysteresis_data ({item._path}): {data}, __updated_by={item._history.get_last_update_by()}")
+        logger.notice(f'hysteresis_data ({item._path}): {data}, __updated_by={item._history.get_last_update_by()}')
     return data

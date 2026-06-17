@@ -61,20 +61,20 @@ class ItemHistory:
     """
 
     __slots__ = (
-        "_last_change",
-        "_prev_change",
-        "_changed_by",
-        "_prev_change_by",
-        "_last_update",
-        "_prev_update",
-        "_updated_by",
-        "_prev_update_by",
-        "_last_trigger",
-        "_prev_trigger",
-        "_triggered_by",
-        "_prev_trigger_by",
-        "_last_value",
-        "_prev_value",
+        '_last_change',
+        '_prev_change',
+        '_changed_by',
+        '_prev_change_by',
+        '_last_update',
+        '_prev_update',
+        '_updated_by',
+        '_prev_update_by',
+        '_last_trigger',
+        '_prev_trigger',
+        '_triggered_by',
+        '_prev_trigger_by',
+        '_last_value',
+        '_prev_value',
     )
 
     def __init__(self, initial_time):
@@ -85,12 +85,12 @@ class ItemHistory:
         self._prev_update = now
         self._last_trigger = now
         self._prev_trigger = now
-        self._changed_by = "Init:None"
-        self._updated_by = "Init:None"
-        self._triggered_by = "N/A"
-        self._prev_change_by = "N/A"
-        self._prev_update_by = "N/A"
-        self._prev_trigger_by = "N/A"
+        self._changed_by = 'Init:None'
+        self._updated_by = 'Init:None'
+        self._triggered_by = 'N/A'
+        self._prev_change_by = 'N/A'
+        self._prev_update_by = 'N/A'
+        self._prev_trigger_by = 'N/A'
         self._last_value = None
         self._prev_value = None
 
@@ -119,7 +119,7 @@ class ItemHistory:
         self._prev_update = self._last_update
         self._last_update = self._last_change
 
-        caller_source = "{0}:{1}".format(caller, source)
+        caller_source = '{0}:{1}'.format(caller, source)
         self._prev_change_by = self._changed_by
         self._prev_update_by = self._updated_by
         self._changed_by = caller_source
@@ -136,7 +136,7 @@ class ItemHistory:
         self._prev_update = self._last_update
         self._last_update = shtime.now()
         self._prev_update_by = self._updated_by
-        self._updated_by = "{0}:{1}".format(caller, source)
+        self._updated_by = '{0}:{1}'.format(caller, source)
 
     def record_trigger(self, caller, source, shtime):
         """
@@ -144,7 +144,7 @@ class ItemHistory:
         Advances last_trigger / prev_trigger tracking.
         """
         self._prev_trigger_by = self._triggered_by
-        self._triggered_by = "{0}:{1}".format(caller, source)
+        self._triggered_by = '{0}:{1}'.format(caller, source)
         self._prev_trigger = self._last_trigger
         self._last_trigger = shtime.now()
 
@@ -167,14 +167,14 @@ class ItemHistory:
         self._prev_update = cache_time
         self._changed_by = caller
         self._updated_by = caller
-        self._triggered_by = "N/A"
+        self._triggered_by = 'N/A'
 
     def record_trigger_none(self, caller, source):
         """
         Called from __run_eval when the eval result is None.
         Only updates triggered_by (no timestamp advance).
         """
-        self._triggered_by = "{0}:{1}:None".format(caller, source)
+        self._triggered_by = '{0}:{1}:None'.format(caller, source)
 
     # -----------------------------------------------------------------------
     # Read paths (used by Item._get_*() delegation methods)

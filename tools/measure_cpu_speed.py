@@ -28,7 +28,7 @@ import platform
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(os.path.basename(__file__))))
 
-VERSION = "0.1.0"
+VERSION = '0.1.0'
 
 
 def measure():
@@ -40,33 +40,33 @@ def measure():
 def read_cpuinfo():
 
     try:
-        with open("/proc/cpuinfo") as f:
+        with open('/proc/cpuinfo') as f:
             lines = f.readlines()
 
         for line in lines:
-            if line.startswith("model name"):
-                print("cpu " + line)
+            if line.startswith('model name'):
+                print('cpu ' + line)
                 break
     except OSError:
-        print("cpu model name\t: Could not determine cpu model - unable to read /proc/cpuinfo")
+        print('cpu model name\t: Could not determine cpu model - unable to read /proc/cpuinfo')
         print()
 
 
 # ==================================================================================
 #   Main Routine of the tool
 #
-if __name__ == "__main__":
-    print("")
-    print(os.path.basename(__file__) + " v" + VERSION + " - Check the cpu speed")
-    print("")
+if __name__ == '__main__':
+    print('')
+    print(os.path.basename(__file__) + ' v' + VERSION + ' - Check the cpu speed')
+    print('')
 
     version = platform.python_version()
-    print(f"Python version\t: {version}")
+    print(f'Python version\t: {version}')
     print()
 
     read_cpuinfo()
 
-    sys.stdout.write("test duration\t: ")
+    sys.stdout.write('test duration\t: ')
     sys.stdout.flush()
-    print(f"{measure()} seconds")
+    print(f'{measure()} seconds')
     print()

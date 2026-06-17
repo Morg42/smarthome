@@ -56,7 +56,7 @@ from . import aioudp
 
 # Turn off ssl warnings from urllib
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
 
 
 class Network(object):
@@ -77,8 +77,8 @@ class Network(object):
         :rtype: string
         """
         if Utils.is_ipv6(ip):
-            ip = f"[{ip}]"
-        return f"{ip}:{port}"
+            ip = f'[{ip}]'
+        return f'{ip}:{port}'
 
     @staticmethod
     def family_to_string(family):
@@ -91,7 +91,7 @@ class Network(object):
         :return: 'IPv4' or 'IPv6'
         :rtype: string
         """
-        return "IPv6" if family == socket.AF_INET6 else "IPv4"
+        return 'IPv6' if family == socket.AF_INET6 else 'IPv4'
 
     @staticmethod
     def ping(ip):
@@ -105,11 +105,11 @@ class Network(object):
         :rtype: bool
         """
         logger = logging.getLogger(__name__)
-        if subprocess.call(f"ping -c 1 {ip}", shell=True, stdout=open("/dev/null", "w"), stderr=subprocess.STDOUT) == 0:
-            logger.debug(f"Ping: {ip} is online")
+        if subprocess.call(f'ping -c 1 {ip}', shell=True, stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT) == 0:
+            logger.debug(f'Ping: {ip} is online')
             return True
         else:
-            logger.debug(f"Ping: {ip} is offline")
+            logger.debug(f'Ping: {ip} is offline')
             return False
 
     @staticmethod
@@ -130,16 +130,16 @@ class Network(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(2)
         if sock.connect_ex((ip, int(port))) == 0:
-            logger.debug(f"Ping: port {port} on {ip} is reachable")
+            logger.debug(f'Ping: port {port} on {ip} is reachable')
             sock.close()
             return True
         else:
-            logger.debug(f"Ping: port {port} on {ip} is offline or not reachable")
+            logger.debug(f'Ping: port {port} on {ip} is offline or not reachable')
             sock.close()
             return False
 
     @staticmethod
-    def send_wol(mac, ip="255.255.255.255"):
+    def send_wol(mac, ip='255.255.255.255'):
         """
         Send a wake on lan packet to the given mac address using ipv4 broadcast (or directed to specific ip).
 
@@ -150,21 +150,21 @@ class Network(object):
         if len(mac) == 12:
             pass
         elif len(mac) == 12 + 5:
-            mac = mac.replace(mac[2], "")
+            mac = mac.replace(mac[2], '')
         else:
-            logger.error("Incorrect MAC address format")
+            logger.error('Incorrect MAC address format')
             return
 
-        data = "".join(["FFFFFFFFFFFF", mac * 16])
-        send_data = b""
+        data = ''.join(['FFFFFFFFFFFF', mac * 16])
+        send_data = b''
         for i in range(0, len(data), 2):
-            send_data = b"".join([send_data, struct.pack("B", int(data[i : i + 2], 16))])
+            send_data = b''.join([send_data, struct.pack('B', int(data[i : i + 2], 16))])
 
         for _ in range(15):
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             sock.sendto(send_data, (ip, 9))
-        logger.debug(f"Sent WOL packet to {mac}")
+        logger.debug(f'Sent WOL packet to {mac}')
 
     @staticmethod
     def validate_inet_addr(addr, port):
@@ -180,11 +180,11 @@ class Network(object):
         """
         logger = logging.getLogger(__name__)
         # Test if host is empty
-        if addr == "":
-            return ("", port, socket.AF_INET)
+        if addr == '':
+            return ('', port, socket.AF_INET)
         else:
             # try to resolve addr to get more info
-            logger.debug(f"trying to resolve addr {addr} with port {port}")
+            logger.debug(f'trying to resolve addr {addr} with port {port}')
             try:
                 family, sockettype, proto, canonname, socketaddr = socket.getaddrinfo(addr, None)[0]
                 # Check if resolved address is IPv4 or IPv6
@@ -194,13 +194,13 @@ class Network(object):
                     ip, _, flow_info, scope_id = socketaddr
                 else:
                     # might be AF_UNIX or something esoteric?
-                    logger.error(f"Unsupported address family {family}")
+                    logger.error(f'Unsupported address family {family}')
                     ip = None
                 if ip is not None:
-                    logger.info(f"Resolved {addr} to {Network.family_to_string(family)} address {ip}")
+                    logger.info(f'Resolved {addr} to {Network.family_to_string(family)} address {ip}')
             except socket.gaierror as e:
                 # Unable to resolve hostname
-                logger.error(f"Cannot resolve {addr} to a valid ip address (v4 or v6): {e}")
+                logger.error(f'Cannot resolve {addr} to a valid ip address (v4 or v6): {e}')
                 ip = None
                 port = 0
                 family = None
@@ -208,7 +208,7 @@ class Network(object):
         return (ip, port, family)
 
     @staticmethod
-    def clean_uri(uri, mode="show"):
+    def clean_uri(uri, mode='show'):
         """
         Check URIs for embedded http/https login data (http://user:pass@domain.tld...) and clean it.
 
@@ -227,9 +227,9 @@ class Network(object):
         :rtype: str
         """
         # find login data
-        pattern = re.compile("http([s]?)://([^:]+:[^@]+@)")
+        pattern = re.compile('http([s]?)://([^:]+:[^@]+@)')
         # possible replacement modes
-        replacement = {"strip": "http\\g<1>://", "mask": "http\\g<1>://***:***@"}
+        replacement = {'strip': 'http\\g<1>://', 'mask': 'http\\g<1>://***:***@'}
 
         # if no change requested or no login data found, return unchanged
         if mode not in replacement or not pattern.match(uri):
@@ -273,7 +273,7 @@ class Connections(object):
                 obj.disconnect()
             except Exception as e:
                 # possibly remove later
-                logger.info(f"error on shutdown disconnect for {obj}: {e}")
+                logger.info(f'error on shutdown disconnect for {obj}: {e}')
 
 
 class Http(object):
@@ -289,7 +289,7 @@ class Http(object):
     :type hide_login: str
     """
 
-    def __init__(self, baseurl="", timeout=10, hide_login="show", name=None):
+    def __init__(self, baseurl='', timeout=10, hide_login='show', name=None):
         self.logger = logging.getLogger(__name__)
 
         self.baseurl = baseurl
@@ -298,7 +298,7 @@ class Http(object):
         self._session = requests.Session()
         self._hide_login = hide_login
 
-        self._id = f"({name if name else 'HTTP'}_{self.baseurl})"
+        self._id = f'({name if name else "HTTP"}_{self.baseurl})'
 
     def HTTPDigestAuth(self, user=None, password=None):
         """
@@ -340,7 +340,7 @@ class Http(object):
                 json = self._response.json()
             except Exception:
                 self.logger.warning(
-                    f"{self._id} invalid JSON received from {Network.clean_uri(url, self._hide_login) if url else self.baseurl}"
+                    f'{self._id} invalid JSON received from {Network.clean_uri(url, self._hide_login) if url else self.baseurl}'
                 )
             return json
         return None
@@ -368,7 +368,7 @@ class Http(object):
                 json = self._response.json()
             except Exception:
                 self.logger.warning(
-                    f"{self._id} invalid JSON received from {Network.clean_uri(url if url else self.baseurl, self._hide_login)}"
+                    f'{self._id} invalid JSON received from {Network.clean_uri(url if url else self.baseurl, self._hide_login)}'
                 )
             return json
         return None
@@ -396,7 +396,7 @@ class Http(object):
                 _text = self._response.text
             except Exception as e:
                 self.logger.error(
-                    f"{self._id} successful GET, but decoding response failed. This should never happen...error was: {e}"
+                    f'{self._id} successful GET, but decoding response failed. This should never happen...error was: {e}'
                 )
         return _text
 
@@ -421,14 +421,14 @@ class Http(object):
         """
         if self.__get(url=url, params=params, verify=verify, auth=auth, stream=True):
             self.logger.debug(
-                f"{self._id} download of {Network.clean_uri(url, self._hide_login)} successfully completed, saving to {local}"
+                f'{self._id} download of {Network.clean_uri(url, self._hide_login)} successfully completed, saving to {local}'
             )
-            with open(str(local), "wb") as f:
+            with open(str(local), 'wb') as f:
                 for chunk in self._response:
                     f.write(chunk)
             return True
         else:
-            self.logger.warning(f"{self._id} download error: {Network.clean_uri(url, self._hide_login)}")
+            self.logger.warning(f'{self._id} download error: {Network.clean_uri(url, self._hide_login)}')
             return False
 
     def get_binary(self, url=None, params=None):
@@ -463,7 +463,7 @@ class Http(object):
             (code, reason) = (self._response.status_code, self._response.reason)
         except Exception:
             code = 0
-            reason = "Unable to complete GET request"
+            reason = 'Unable to complete GET request'
         return (code, reason)
 
     def response_headers(self):
@@ -520,17 +520,17 @@ class Http(object):
         url = self.baseurl + url if url else self.baseurl
         timeout = timeout if timeout else self.timeout
         data = json if json else data
-        self.logger.info(f"{self._id} sending POST request {json} to {Network.clean_uri(url, self._hide_login)}")
+        self.logger.info(f'{self._id} sending POST request {json} to {Network.clean_uri(url, self._hide_login)}')
         try:
             self._response = self._session.post(
                 url, params=params, timeout=timeout, verify=verify, auth=auth, data=data, files=files
             )
             self.logger.debug(
-                f"{self.response_status()} Posted to URL {Network.clean_uri(self._response.url, self._hide_login)}"
+                f'{self.response_status()} Posted to URL {Network.clean_uri(self._response.url, self._hide_login)}'
             )
         except Exception as e:
             self.logger.warning(
-                f"{self._id} error sending POST request to {Network.clean_uri(url, self._hide_login)}: {e}"
+                f'{self._id} error sending POST request to {Network.clean_uri(url, self._hide_login)}: {e}'
             )
             return False
         return True
@@ -547,17 +547,17 @@ class Http(object):
         """
         url = self.baseurl + url if url else self.baseurl
         timeout = timeout if timeout else self.timeout
-        self.logger.info(f"{self._id} sending GET request to {Network.clean_uri(url, self._hide_login)}")
+        self.logger.info(f'{self._id} sending GET request to {Network.clean_uri(url, self._hide_login)}')
         try:
             self._response = self._session.get(
                 url, params=params, timeout=timeout, verify=verify, auth=auth, stream=stream
             )
             self.logger.debug(
-                f"{self._id} {self.response_status()} fetched URL {Network.clean_uri(self._response.url, self._hide_login)}"
+                f'{self._id} {self.response_status()} fetched URL {Network.clean_uri(self._response.url, self._hide_login)}'
             )
         except Exception as e:
             self.logger.warning(
-                f"{self._id} error sending GET request to {Network.clean_uri(url, self._hide_login)}: {e}"
+                f'{self._id} error sending GET request to {Network.clean_uri(url, self._hide_login)}: {e}'
             )
             self._response = None
             return False
@@ -674,15 +674,15 @@ class Tcp_client(object):
 
         self._host = host
         self._port = port
-        self._id = f"({self.name if self.name else 'TCP_Client'}_{self._host}:{self._port})"
+        self._id = f'({self.name if self.name else "TCP_Client"}_{self._host}:{self._port})'
         (self._hostip, self._port, self._family) = Network.validate_inet_addr(host, port)
         if self._hostip is not None:
-            self._id = f"({self.name if self.name else 'TCP_Client'}_{self._hostip}:{self._port})"
+            self._id = f'({self.name if self.name else "TCP_Client"}_{self._hostip}:{self._port})'
             self.logger.info(
-                f"{self._id} Initializing a connection to {self._host} on TCP port {self._port} {'with' if self._autoreconnect else 'without'} autoreconnect"
+                f'{self._id} Initializing a connection to {self._host} on TCP port {self._port} {"with" if self._autoreconnect else "without"} autoreconnect'
             )
         else:
-            self.logger.error(f"{self._id} Connection to {self._host} not possible, invalid address")
+            self.logger.error(f'{self._id} Connection to {self._host} not possible, invalid address')
 
     def set_callbacks(self, connected=None, receiving=None, data_received=None, disconnected=None):
         """
@@ -699,25 +699,25 @@ class Tcp_client(object):
         if connected:
             params = len(signature(connected).parameters)
             self.logger.debug(
-                f"connected_callback for {self._id} is {connected.__qualname__} and it expects {params} arguments"
+                f'connected_callback for {self._id} is {connected.__qualname__} and it expects {params} arguments'
             )
             self._connected_callback = connected
         if receiving:
             params = len(signature(receiving).parameters)
             self.logger.debug(
-                f"connected_callback for {self._id} is {receiving.__qualname__} and it expects {params} arguments"
+                f'connected_callback for {self._id} is {receiving.__qualname__} and it expects {params} arguments'
             )
             self._receiving_callback = receiving
         if disconnected:
             params = len(signature(disconnected).parameters)
             self.logger.debug(
-                f"connected_callback for {self._id} is {disconnected.__qualname__} and it expects {params} arguments"
+                f'connected_callback for {self._id} is {disconnected.__qualname__} and it expects {params} arguments'
             )
             self._disconnected_callback = disconnected
         if data_received:
             params = len(signature(data_received).parameters)
             self.logger.debug(
-                f"connected_callback for {self._id} is {data_received.__qualname__} and it expects {params} arguments"
+                f'connected_callback for {self._id} is {data_received.__qualname__} and it expects {params} arguments'
             )
             self._data_received_callback = data_received
 
@@ -732,28 +732,28 @@ class Tcp_client(object):
         :rtype: bool
         """
         if self._is_connected:  # return false if already connected
-            self.logger.debug(f"{self._id} already connected, ignoring new request")
+            self.logger.debug(f'{self._id} already connected, ignoring new request')
             return False
 
         if self._hostip is None:  # return False if no valid ip to connect to
-            self.logger.error(f"{self._id} no valid IP address to connect")
+            self.logger.error(f'{self._id} no valid IP address to connect')
             self._is_connected = False
             return False
 
         # prevent starting connect thread twice
         with self.__connect_threadlock:
-            self.logger.debug(f"Starting connect to {self._host}:{self._port}")
+            self.logger.debug(f'Starting connect to {self._host}:{self._port}')
             if not self.__connect_thread or not self.__connect_thread.is_alive():
                 # limit connection rates
                 if time.time() < self._last_connect + (1.0 / self._ratelimit):
                     self.logger.debug(
-                        f"connect: rate limit active, minimum delay is {1.0 / self._ratelimit}, current delay is {time.time() - self._last_connect}"
+                        f'connect: rate limit active, minimum delay is {1.0 / self._ratelimit}, current delay is {time.time() - self._last_connect}'
                     )
                     self._num_connects += 1
                     if self._num_connects >= self._max_rate_connects:
                         # too many rate limits reached
                         self.logger.debug(
-                            f"connect: max number of rate limits hit {self._max_rate_connects}, aborting connect"
+                            f'connect: max number of rate limits hit {self._max_rate_connects}, aborting connect'
                         )
                         if self._abort_callback:
                             self._abort_callback()
@@ -766,23 +766,23 @@ class Tcp_client(object):
 
                 self.logger.dbglow(f'connect() creating connect thread "TCP_Connect {self._id}')
                 self.__connect_thread = threading.Thread(
-                    target=self._connect_thread_worker, name=f"TCP_Connect {self._id}"
+                    target=self._connect_thread_worker, name=f'TCP_Connect {self._id}'
                 )
                 self.__connect_thread.daemon = True
             self.logger.dbglow(
-                f"connect() to {self._host}:{self._port}: self.__running={self.__running}, self.__connect_thread.is_alive()={self.__connect_thread.is_alive()}"
+                f'connect() to {self._host}:{self._port}: self.__running={self.__running}, self.__connect_thread.is_alive()={self.__connect_thread.is_alive()}'
             )
             if not self.__running or not self.__connect_thread.is_alive():
-                self.logger.dbglow(f"connect() to {self._host}:{self._port}: calling __connect_thread.start()")
+                self.logger.dbglow(f'connect() to {self._host}:{self._port}: calling __connect_thread.start()')
                 try:
                     self.__connect_thread.start()
                 except RuntimeError as e:
                     self.logger.dbglow(
-                        f"connect() starting thread failed, error was {e}, thread is {self.__connect_thread}, running={self.__running}, is_alive()={self.__connect_thread.is_alive()}"
+                        f'connect() starting thread failed, error was {e}, thread is {self.__connect_thread}, running={self.__running}, is_alive()={self.__connect_thread.is_alive()}'
                     )
                     return False
 
-        self.logger.dbglow(f"leaving connect() to {self._host}:{self._port}")
+        self.logger.dbglow(f'leaving connect() to {self._host}:{self._port}')
         return True
 
     def connected(self):
@@ -803,19 +803,19 @@ class Tcp_client(object):
         """
         if not isinstance(message, (bytes, bytearray)):
             try:
-                message = message.encode("utf-8")
+                message = message.encode('utf-8')
             except Exception:
-                self.logger.warning(f"{self._id} error encoding message for client")
+                self.logger.warning(f'{self._id} error encoding message for client')
                 return False
 
         # automatically (re)connect on send attempt
         if not self._is_connected:
             if self._autoconnect:
-                self.logger.debug(f"{self._id} autoconnecting on send attempt, message is {message}")
+                self.logger.debug(f'{self._id} autoconnecting on send attempt, message is {message}')
                 self.connect()
             else:
                 self.logger.warning(
-                    f"{self._id} trying to send {message}, but not connected and autoconnect not active. Aborting."
+                    f'{self._id} trying to send {message}, but not connected and autoconnect not active. Aborting.'
                 )
                 return False
 
@@ -824,7 +824,7 @@ class Tcp_client(object):
                 bytes_sent = self._socket.send(message)
                 if bytes_sent != len(message):
                     self.logger.warning(
-                        f"{self._id} error sending message {message}: message truncated, sent {bytes_sent} of {len(message)} bytes"
+                        f'{self._id} error sending message {message}: message truncated, sent {bytes_sent} of {len(message)} bytes'
                     )
             else:
                 return False
@@ -832,9 +832,9 @@ class Tcp_client(object):
         except (BrokenPipeError, TimeoutError, ConnectionResetError) as e:
             if e.errno == 60:
                 # timeout
-                self.logger.warning(f"{self._id} detected timeout, disconnecting, send failed.")
+                self.logger.warning(f'{self._id} detected timeout, disconnecting, send failed.')
             else:
-                self.logger.warning(f"{self._id} detected disconnect, send failed.")
+                self.logger.warning(f'{self._id} detected disconnect, send failed.')
             self._is_connected = False
             try:
                 self._socket.shutdown()
@@ -843,12 +843,12 @@ class Tcp_client(object):
             if self._disconnected_callback:
                 self._disconnected_callback(self)
             if self._autoreconnect:
-                self.logger.debug(f"{self._id} autoreconnect enabled")
+                self.logger.debug(f'{self._id} autoreconnect enabled')
                 self.connect()
             return False
 
         except Exception as e:  # log errors we are not prepared to handle and raise exception for further debugging
-            self.logger.warning(f"{self._id} unhandleded error on sending, cannot send data {message}. Error: {e}")
+            self.logger.warning(f'{self._id} unhandleded error on sending, cannot send data {message}. Error: {e}')
             raise
 
         return True
@@ -858,9 +858,9 @@ class Tcp_client(object):
         Thread worker to handle connection.
         """
         if self._is_connected:
-            self.logger.info(f"{self._id} already connected, ignoring new request")
+            self.logger.info(f'{self._id} already connected, ignoring new request')
             return
-        self.logger.debug(f"{self._id} starting connection cycle")
+        self.logger.debug(f'{self._id} starting connection cycle')
         self._connect_counter = 0
         self._retry_round_counter = 0
         self.__running = True
@@ -878,16 +878,16 @@ class Tcp_client(object):
                         self._last_connect = time.time()
                         if self._connected_callback:
                             self._connected_callback(self)
-                        name = f"TCP_Client {self._id}"
+                        name = f'TCP_Client {self._id}'
                         self.__receive_thread = threading.Thread(target=self.__receive_thread_worker, name=name)
                         self.__receive_thread.daemon = True
                         self.__receive_thread.start()
                     except Exception:
-                        self.logger.error(f"could not start __receive_thread_worker for {self.name}")
+                        self.logger.error(f'could not start __receive_thread_worker for {self.name}')
                         raise
                     return True
                 else:
-                    self.logger.warning(f"self._connect() for {self.name} did not work")
+                    self.logger.warning(f'self._connect() for {self.name} did not work')
                 if self.__running and self._connect_counter < self._connect_retries:
                     self._sleep(self._connect_cycle)
 
@@ -896,7 +896,7 @@ class Tcp_client(object):
                 if self._retry_abort and self._retry_round_counter == self._retry_abort and self._abort_callback:
                     self._abort_callback()
                     break
-                self.logger.debug(f"waiting {self._retry_cycle} seconds before next connection attempt")
+                self.logger.debug(f'waiting {self._retry_cycle} seconds before next connection attempt')
                 self._sleep(self._retry_cycle)
                 self._connect_counter = 0
             else:
@@ -907,37 +907,37 @@ class Tcp_client(object):
         Initiate connection.
         """
         self.logger.debug(
-            f"{self._id} connecting using TCP/{'IPv6' if self._family == socket.AF_INET6 else 'IPv4'} {'with' if self._autoreconnect else 'without'} autoreconnect"
+            f'{self._id} connecting using TCP/{"IPv6" if self._family == socket.AF_INET6 else "IPv4"} {"with" if self._autoreconnect else "without"} autoreconnect'
         )
         # Try to connect to remote host using ip (v4 or v6)
         try:
             self._socket = socket.socket(self._family, socket.SOCK_STREAM)
             self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
             self._socket.settimeout(5)
-            self._socket.connect((f"{self._hostip}", int(self._port)))
+            self._socket.connect((f'{self._hostip}', int(self._port)))
             self._socket.settimeout(self._timeout)
             self._is_connected = True
-            self.logger.info(f"{self._id} connected")
+            self.logger.info(f'{self._id} connected')
         # Connection error
         except Exception as err:
             self._is_connected = False
             self._connect_counter += 1
             self.logger.warning(
-                f"{self._id} TCP connection failed {self._connect_counter}/{int(self._connect_retries)} times, last error was: {err}"
+                f'{self._id} TCP connection failed {self._connect_counter}/{int(self._connect_retries)} times, last error was: {err}'
             )
 
     def __receive_thread_worker(self):
         """
         Thread worker to handle receiving.
         """
-        self.logger.debug(f"{self._id} started receive thread")
+        self.logger.debug(f'{self._id} started receive thread')
         # alt
         # waitobj = IOWait()
         # waitobj.watch(self._socket, read=True)
         # neu:
         selector = selectors.DefaultSelector()
         selector.register(self._socket, selectors.EVENT_READ)
-        __buffer = b""
+        __buffer = b''
 
         self._is_receiving = True
         if self._receiving_callback:
@@ -993,12 +993,12 @@ class Tcp_client(object):
                                     if self._data_received_callback is not None:
                                         try:
                                             self._data_received_callback(
-                                                self, line if self._binary else str(line, "utf-8").strip()
+                                                self, line if self._binary else str(line, 'utf-8').strip()
                                             )
                                         except Exception as iex:
                                             self._log_exception(
                                                 iex,
-                                                f"lib.network {self._id} receive in terminator mode calling data_received_callback {self._data_received_callback} failed: {iex}",
+                                                f'lib.network {self._id} receive in terminator mode calling data_received_callback {self._data_received_callback} failed: {iex}',
                                             )
                             # If not in terminator mode just forward what we received
                             else:
@@ -1008,7 +1008,7 @@ class Tcp_client(object):
                                     except Exception as iex:
                                         self._log_exception(
                                             iex,
-                                            f"lib.network {self._id} calling data_received_callback {self._data_received_callback} failed: {iex}",
+                                            f'lib.network {self._id} calling data_received_callback {self._data_received_callback} failed: {iex}',
                                         )
                         # If empty peer has closed the connection
                         else:
@@ -1021,10 +1021,10 @@ class Tcp_client(object):
                                     pass
                                 if timeout:
                                     # TimeoutError exception caught
-                                    self.logger.warning(f"{self._id} connection timed out, disconnecting.")
+                                    self.logger.warning(f'{self._id} connection timed out, disconnecting.')
                                 else:
                                     # default state, peer closed connection
-                                    self.logger.warning(f"{self._id} connection closed by peer")
+                                    self.logger.warning(f'{self._id} connection closed by peer')
                                 # alt
                                 # waitobj.unwatch(self._socket)
                                 # neu
@@ -1035,31 +1035,31 @@ class Tcp_client(object):
                                     except Exception as iex:
                                         self._log_exception(
                                             iex,
-                                            f"lib.network {self._id} calling disconnected_callback {self._disconnected_callback} failed: {iex}",
+                                            f'lib.network {self._id} calling disconnected_callback {self._disconnected_callback} failed: {iex}',
                                         )
                                 if self._autoreconnect:
-                                    self.logger.debug(f"{self._id} autoreconnect enabled")
+                                    self.logger.debug(f'{self._id} autoreconnect enabled')
                                     self.connect()
                                 if self._is_connected:
-                                    self.logger.debug(f"{self._id} set read watch on socket again")
+                                    self.logger.debug(f'{self._id} set read watch on socket again')
                                     selector.register(self._socket, selectors.EVENT_READ)
                             else:
                                 # socket shut down by self.close, no error
-                                self.logger.debug(f"{self._id} connection shut down by call to close method")
+                                self.logger.debug(f'{self._id} connection shut down by call to close method')
                                 self._is_receiving = False
                                 self._is_connected = False
                                 return
         except Exception as ex:
             if not self.__running:
-                self.logger.debug(f"{self._id} receive thread shutting down")
+                self.logger.debug(f'{self._id} receive thread shutting down')
             else:
                 self._log_exception(
-                    ex, f"lib.network {self._id} receive thread died with unexpected error: {ex}. Go tell..."
+                    ex, f'lib.network {self._id} receive thread died with unexpected error: {ex}. Go tell...'
                 )
         self._is_receiving = False
 
     def _log_exception(self, ex, msg):
-        self.logger.error(msg + " -- If stack trace is necessary, enable/check debug log")
+        self.logger.error(msg + ' -- If stack trace is necessary, enable/check debug log')
 
         if self.logger.isEnabledFor(logging.DEBUG):
             # Get current system exception
@@ -1073,12 +1073,12 @@ class Tcp_client(object):
 
             for trace in trace_back:
                 stack_trace.append(
-                    "File : %s , Line : %d, Func.Name : %s, Message : %s" % (trace[0], trace[1], trace[2], trace[3])
+                    'File : %s , Line : %d, Func.Name : %s, Message : %s' % (trace[0], trace[1], trace[2], trace[3])
                 )
 
-            self.logger.debug("Exception type : %s " % ex_type.__name__)
-            self.logger.debug("Exception message : %s" % ex_value)
-            self.logger.debug("Stack trace : %s" % stack_trace)
+            self.logger.debug('Exception type : %s ' % ex_type.__name__)
+            self.logger.debug('Exception message : %s' % ex_value)
+            self.logger.debug('Stack trace : %s' % stack_trace)
 
     def _sleep(self, time_lapse):
         """
@@ -1099,12 +1099,12 @@ class Tcp_client(object):
         Close the current client socket.
         """
         self.__running = False
-        self.logger.info(f"{self._id} closing connection")
+        self.logger.info(f'{self._id} closing connection')
         if self._is_connected:
             try:
                 self._socket.shutdown(socket.SHUT_RD)
             except Exception as e:
-                self.logger.info(f"socket no longer connected on disconnect, exception is {e}")
+                self.logger.info(f'socket no longer connected on disconnect, exception is {e}')
         if self.__connect_thread is not None and self.__connect_thread.is_alive():
             try:
                 self.__connect_thread.join()
@@ -1158,7 +1158,7 @@ class ConnectionClient(object):
         self.__server = server
         self.__socket = socket
 
-        self._id = f"({self.name if self.name else 'Connection'}_{self.ip}:{self.port})"
+        self._id = f'({self.name if self.name else "Connection"}_{self.ip}:{self.port})'
 
     @property
     def socket(self):
@@ -1196,15 +1196,15 @@ class ConnectionClient(object):
         """
         if not isinstance(message, (bytes, bytearray)):
             try:
-                message = message.encode("utf-8")
+                message = message.encode('utf-8')
             except Exception:
-                self.logger.warning(f"{self._id} error encoding data")
+                self.logger.warning(f'{self._id} error encoding data')
                 return False
         try:
             self.writer.write(message)
             asyncio.ensure_future(self.__drain_writer())
         except Exception as e:
-            self.logger.warning(f"{self._id} error sending data: {e}")
+            self.logger.warning(f'{self._id} error sending data: {e}')
             return False
         return True
 
@@ -1214,7 +1214,7 @@ class ConnectionClient(object):
         """
         command = bytearray([0xFF, 0xFB, 0x01])
         string = self._iac_to_string(command)
-        self.logger.debug(f"{self._id} sending IAC telnet command: {string}")
+        self.logger.debug(f'{self._id} sending IAC telnet command: {string}')
         self.send(command)
 
     def send_echo_on(self):
@@ -1223,7 +1223,7 @@ class ConnectionClient(object):
         """
         command = bytearray([0xFF, 0xFC, 0x01])
         string = self._iac_to_string(command)
-        self.logger.debug(f"{self._id} sending IAC telnet command: {string}")
+        self.logger.debug(f'{self._id} sending IAC telnet command: {string}')
         self.send(command)
 
     def _process_IAC(self, msg):
@@ -1234,7 +1234,7 @@ class ConnectionClient(object):
         """
         if len(msg) >= 3:
             string = self._iac_to_string(msg[:3])
-            self.logger.debug(f"{self._id} received IAC telnet command: {string}")
+            self.logger.debug(f'{self._id} received IAC telnet command: {string}')
             msg = msg[3:]
         return msg
 
@@ -1249,11 +1249,11 @@ class ConnectionClient(object):
         return True
 
     def _iac_to_string(self, msg):
-        iac = {1: "ECHO", 251: "WILL", 252: "WON'T", 253: "DO", 254: "DON'T", 255: "IAC"}
-        string = ""
+        iac = {1: 'ECHO', 251: 'WILL', 252: "WON'T", 253: 'DO', 254: "DON'T", 255: 'IAC'}
+        string = ''
         for char in msg:
             if char in iac:
-                string += iac[char] + " "
+                string += iac[char] + ' '
             else:
                 string += chr(char)
         return string.rstrip()
@@ -1289,7 +1289,7 @@ class Tcp_server(object):
     MODE_BINARY = 3
     MODE_FIXED_LENGTH = 4
 
-    def __init__(self, port, host="", name=None, mode=MODE_BINARY, terminator=None):
+    def __init__(self, port, host='', name=None, mode=MODE_BINARY, terminator=None):
         self.logger = logging.getLogger(__name__)
 
         # public properties
@@ -1318,12 +1318,12 @@ class Tcp_server(object):
         self.__running = True
 
         # Test if host is an ip address or a host name
-        self._id = f"({self.name if self.name else 'TCP_Server'}_{self._host}:{self._port})"
+        self._id = f'({self.name if self.name else "TCP_Server"}_{self._host}:{self._port})'
 
         (self._ipaddr, self._port, self._family) = Network.validate_inet_addr(host, port)
 
         if self._ipaddr is not None:
-            self._id = f"({self.name if self.name else 'TCP_Server'}_{self._ipaddr}:{self._port})"
+            self._id = f'({self.name if self.name else "TCP_Server"}_{self._ipaddr}:{self._port})'
             self.__our_socket = Network.ip_port_to_socket(self._ipaddr, self._port)
             if not self.name:
                 self.name = self.__our_socket
@@ -1354,19 +1354,19 @@ class Tcp_server(object):
         if self._is_listening:
             return False
         try:
-            self.logger.info(f"{self._id} starting up TCP server socket")
+            self.logger.info(f'{self._id} starting up TCP server socket')
             self.__loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.__loop)
             self.__coroutine = asyncio.start_server(self.__handle_connection, self._ipaddr, self._port)
             self.__server = self.__loop.run_until_complete(self.__coroutine)
 
             self.__listening_thread = threading.Thread(
-                target=self.__listening_thread_worker, name=f"TCPServer {self._id}"
+                target=self.__listening_thread_worker, name=f'TCPServer {self._id}'
             )
             self.__listening_thread.daemon = True
             self.__listening_thread.start()
         except Exception as e:
-            self.logger.error(f"{self._id} error starting server: {e}")
+            self.logger.error(f'{self._id} error starting server: {e}')
             return False
         return True
 
@@ -1379,7 +1379,7 @@ class Tcp_server(object):
         try:
             self.__loop.run_forever()
         except Exception:
-            self.logger.debug(f"{self._id} error in loop.run_forever()")
+            self.logger.debug(f'{self._id} error in loop.run_forever()')
         finally:
             for task in asyncio.all_tasks(self.__loop):
                 task.cancel()
@@ -1397,8 +1397,8 @@ class Tcp_server(object):
 
         Each client gets its own handler.
         """
-        peer = writer.get_extra_info("peername")
-        socket_object = writer.get_extra_info("socket")
+        peer = writer.get_extra_info('peername')
+        socket_object = writer.get_extra_info('socket')
         peer_socket = Network.ip_port_to_socket(peer[0], peer[1])
 
         client = ConnectionClient(server=self, socket=socket_object, ip=peer[0], port=peer[1])
@@ -1406,7 +1406,7 @@ class Tcp_server(object):
         client.name = Network.ip_port_to_socket(client.ip, client.port)
         client.writer = writer
 
-        self.logger.info(f"{self._id} incoming connection from {peer_socket}")
+        self.logger.info(f'{self._id} incoming connection from {peer_socket}')
         if self._incoming_connection_callback:
             self._incoming_connection_callback(self, client)
 
@@ -1424,7 +1424,7 @@ class Tcp_server(object):
                 data = client._process_IAC(data)
             if data:
                 try:
-                    string = str.rstrip(str(data, "utf-8"))
+                    string = str.rstrip(str(data, 'utf-8'))
                     self.logger.debug(f'{self._id} received "{string}" from {client.name}')
                     if self._data_received_callback:
                         self._data_received_callback(self, client, string)
@@ -1432,7 +1432,7 @@ class Tcp_server(object):
                         client._data_received_callback(self, client, string)
                 except Exception as e:
                     self.logger.debug(
-                        f"{self._id} received undecodable bytes from {client.name}: {data}, resulting in error: {e}"
+                        f'{self._id} received undecodable bytes from {client.name}: {data}, resulting in error: {e}'
                     )
             else:
                 try:
@@ -1449,7 +1449,7 @@ class Tcp_server(object):
         :param client: client object
         :type client: lib.network.ConnectionClient
         """
-        self.logger.info(f"{self._id} connection to client {client.name} closed")
+        self.logger.info(f'{self._id} connection to client {client.name} closed')
         if self._disconnected_callback:
             self._disconnected_callback(self, client)
         client.writer.close()
@@ -1493,14 +1493,14 @@ class Tcp_server(object):
         """
         Close running listening socket.
         """
-        self.logger.info(f"{self._id} shutting down listening socket")
+        self.logger.info(f'{self._id} shutting down listening socket')
         asyncio.set_event_loop(self.__loop)
         try:
             active_connections = len([task for task in asyncio.all_tasks(self.__loop) if not task.done()])
         except Exception:
             active_connections = 0
         if active_connections > 0:
-            self.logger.info(f"{self._id} still has {active_connections} active connection(s), cleaning up")
+            self.logger.info(f'{self._id} still has {active_connections} active connection(s), cleaning up')
         self.__running = False
         self.__loop.call_soon_threadsafe(self.__loop.stop)
         while self.__loop.is_running():
@@ -1535,7 +1535,7 @@ class Udp_server(object):
     :type name: str
     """
 
-    def __init__(self, port, host="", name=None):
+    def __init__(self, port, host='', name=None):
         self.logger = logging.getLogger(__name__)
 
         # Public properties
@@ -1564,13 +1564,13 @@ class Udp_server(object):
         self.__listening_thread = None
         self.__running = True
 
-        self._id = f"({self.name if self.name else 'UDP_Server'}_{self._host}:{self._port})"
+        self._id = f'({self.name if self.name else "UDP_Server"}_{self._host}:{self._port})'
 
         # create sensible ipaddr (resolve host, handle protocol family)
         (self._ipaddr, self._port, self._family) = Network.validate_inet_addr(host, port)
 
         if self._ipaddr is not None:
-            self._id = f"({self.name if self.name else 'UDP_Server'}_{self._ipaddr}:{self._port})"
+            self._id = f'({self.name if self.name else "UDP_Server"}_{self._ipaddr}:{self._port})'
             self.__our_socket = Network.ip_port_to_socket(self._ipaddr, self._port)
             if not self.name:
                 self.name = self.__our_socket
@@ -1585,23 +1585,23 @@ class Udp_server(object):
         :rtype: bool
         """
         if not self.__running:
-            self.logger.error(f"{self._id} UDP server not initialized, can not start.")
+            self.logger.error(f'{self._id} UDP server not initialized, can not start.')
             return False
         if self._is_listening:
-            self.logger.warning(f"{self._id} already listening, not starting again")
+            self.logger.warning(f'{self._id} already listening, not starting again')
             return False
         try:
-            self.logger.info(f"{self._id} starting up UDP server socket")
+            self.logger.info(f'{self._id} starting up UDP server socket')
             self.__coroutine = self.__start_server()
             self.__loop.run_until_complete(self.__coroutine)
 
             self.__listening_thread = threading.Thread(
-                target=self.__listening_thread_worker, name=f"UDP_Server {self._id}"
+                target=self.__listening_thread_worker, name=f'UDP_Server {self._id}'
             )
             self.__listening_thread.daemon = True
             self.__listening_thread.start()
         except Exception as e:
-            self.logger.error(f"{self._id} error {e} setting up udp server")
+            self.logger.error(f'{self._id} error {e} setting up udp server')
             return False
         return True
 
@@ -1628,7 +1628,7 @@ class Udp_server(object):
         """
         Close running listening socket.
         """
-        self.logger.info(f"{self._id} shutting down listening socket")
+        self.logger.info(f'{self._id} shutting down listening socket')
         asyncio.set_event_loop(self.__loop)
         self.__running = False
         self.__server.stop()
@@ -1666,12 +1666,12 @@ class Udp_server(object):
         Run the asyncio loop in a separate thread to not block the Udp_server.start() method.
         """
         self._is_listening = True
-        self.logger.debug("{self._id} listening thread set is_listening to True")
+        self.logger.debug('{self._id} listening thread set is_listening to True')
         asyncio.set_event_loop(self.__loop)
         try:
             self.__loop.run_forever()
         except Exception as e:
-            self.logger.debug(f"{self._id} error in loop.run_forever(): {e}")
+            self.logger.debug(f'{self._id} error in loop.run_forever(): {e}')
         finally:
             self.__server.stop()
             self.__loop.close()
@@ -1693,21 +1693,21 @@ class Udp_server(object):
             host, port = addr
         else:
             self.logger.debug(f'{self._id} address info {addr} not in format "(host, port)"')
-            host = "0.0.0.0"
+            host = '0.0.0.0'
             port = 0
 
-        self.logger.info(f"{self._id} incoming datagram from {host}:{port}")
+        self.logger.info(f'{self._id} incoming datagram from {host}:{port}')
 
         if data:
             try:
-                string = str.rstrip(str(data, "utf-8"))
+                string = str.rstrip(str(data, 'utf-8'))
                 self.logger.debug(f'{self._id} received "{string}" from {host}:{port}')
                 if self._data_received_callback:
                     self._data_received_callback(addr, string)
             except UnicodeError:
-                self.logger.debug(f"{self._id} received undecodable bytes from {host}:{port}")
+                self.logger.debug(f'{self._id} received undecodable bytes from {host}:{port}')
         else:
-            self.logger.debug(f"{self._id} received empty datagram from {host}:{port}")
+            self.logger.debug(f'{self._id} received empty datagram from {host}:{port}')
 
     def __str__(self):
         if self.name:

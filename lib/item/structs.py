@@ -61,11 +61,11 @@ class Structs:
         result = {}
         for struct in self._struct_definitions:
             try:
-                _, struct_name = struct.split(".")
+                _, struct_name = struct.split('.')
             except ValueError:
                 struct_name = struct
-            if struct_name.startswith("_"):
-                self.logger.info(f"return_struct_definitions: Internal struct {struct}")
+            if struct_name.startswith('_'):
+                self.logger.info(f'return_struct_definitions: Internal struct {struct}')
                 if all:
                     result[struct] = self._struct_definitions[struct]
             else:
@@ -83,13 +83,13 @@ class Structs:
         - structs are read in from ../etc/struct.yaml by this procedure
         - further structs are read in from ../etc/struct_<prefix>.yaml by this procedure
         """
-        self.load_struct_definitions_from_file(self._sh.get_config_dir(DIR_ETC), BASE_STRUCT + YAML_FILE, "")
+        self.load_struct_definitions_from_file(self._sh.get_config_dir(DIR_ETC), BASE_STRUCT + YAML_FILE, '')
 
         # look for further struct files
         file_list = os.listdir(self.etc_dir)
         for filename in file_list:
-            if filename.startswith(BASE_STRUCT + "_") and filename.endswith(YAML_FILE):
-                key_prefix = "my." + filename[len(BASE_STRUCT) : -len(YAML_FILE)]
+            if filename.startswith(BASE_STRUCT + '_') and filename.endswith(YAML_FILE):
+                key_prefix = 'my.' + filename[len(BASE_STRUCT) : -len(YAML_FILE)]
                 self.load_struct_definitions_from_file(self.etc_dir, filename, key_prefix)
         return
 
@@ -103,10 +103,10 @@ class Structs:
 
         if os.path.isfile(os.path.join(self.structs_dir, dest_fn)):
             self.logger.warning(
-                f"Cannot migrate structs definition file `{filename}` to structs directory. {dest_fn} already exists."
+                f'Cannot migrate structs definition file `{filename}` to structs directory. {dest_fn} already exists.'
             )
         else:
-            self.logger.notice(f"Migrating struct definition file from etc/{filename} to structs/{dest_fn}")
+            self.logger.notice(f'Migrating struct definition file from etc/{filename} to structs/{dest_fn}')
             shutil.move(os.path.join(self.etc_dir, filename), os.path.join(self.structs_dir, dest_fn))
 
     def migrate_to_structs_dir(self):
@@ -115,13 +115,13 @@ class Structs:
         """
         fl = os.listdir(self.etc_dir)
         for filename in fl:
-            if filename.startswith(BASE_STRUCT + "_") and filename.endswith(YAML_FILE):
+            if filename.startswith(BASE_STRUCT + '_') and filename.endswith(YAML_FILE):
                 dest_fn = filename[len(BASE_STRUCT) :]
                 self.migrate_one_file(filename, dest_fn)
 
         filename = BASE_STRUCT + YAML_FILE
         if os.path.isfile(os.path.join(self.etc_dir, filename)):
-            dest_fn = "global_structs.yaml"
+            dest_fn = 'global_structs.yaml'
             self.migrate_one_file(filename, dest_fn)
 
         return
@@ -132,19 +132,19 @@ class Structs:
 
         - structs are read in from ../structs/<name>.yaml by this procedure
         """
-        self.load_struct_definitions_from_file(self._sh.get_config_dir(DIR_ETC), BASE_STRUCT + YAML_FILE, "")
+        self.load_struct_definitions_from_file(self._sh.get_config_dir(DIR_ETC), BASE_STRUCT + YAML_FILE, '')
         if os.path.isdir(self.structs_dir):
             # look for struct files
             file_list = os.listdir(self.structs_dir)
             for filename in file_list:
-                if not (filename.startswith(".")) and filename.endswith(YAML_FILE):
-                    if filename == "global_structs.yaml":
-                        key_prefix = ""
+                if not (filename.startswith('.')) and filename.endswith(YAML_FILE):
+                    if filename == 'global_structs.yaml':
+                        key_prefix = ''
                     else:
-                        key_prefix = "my." + filename[: -len(YAML_FILE)]
+                        key_prefix = 'my.' + filename[: -len(YAML_FILE)]
                     self.load_struct_definitions_from_file(self.structs_dir, filename, key_prefix)
         else:
-            self.logger.notice("../" + DIR_STRUCTS + " does not exist")
+            self.logger.notice('../' + DIR_STRUCTS + ' does not exist')
         return
 
     def load_struct_definitions(self):
@@ -169,7 +169,7 @@ class Structs:
 
         end = time.perf_counter()
         duration = end - start
-        self.logger.dbghigh(f"load_struct_definitions: time load_struct_definitions_from_file(): Duration={duration}")
+        self.logger.dbghigh(f'load_struct_definitions: time load_struct_definitions_from_file(): Duration={duration}')
 
         # Now that all structs have been loaded,
         # resolve struct references in structs and fill in the content of the struct
@@ -179,7 +179,7 @@ class Structs:
         while do_resolve:
             do_resolve = False
             run += 1
-            self.logger.dbghigh(f"load_struct_definitions: {run}. run of struct resolve")
+            self.logger.dbghigh(f'load_struct_definitions: {run}. run of struct resolve')
 
             import time
 
@@ -196,7 +196,7 @@ class Structs:
 
             end = time.perf_counter()
             duration = end - start
-            self.logger.dbghigh(f"load_struct_definitions: time traverse all structs: Duration={duration}")
+            self.logger.dbghigh(f'load_struct_definitions: time traverse all structs: Duration={duration}')
 
         # for Testing: Save structure of joined item structs
         import time
@@ -204,16 +204,16 @@ class Structs:
         if self.save_joined_structs:
             start = time.perf_counter()
             self.logger.info(
-                f"load_itemdefinitions(): For testing the joined item structs are saved to {os.path.join(self.etc_dir, 'structs_joined.yaml')}"
+                f'load_itemdefinitions(): For testing the joined item structs are saved to {os.path.join(self.etc_dir, "structs_joined.yaml")}'
             )
-            shyaml.yaml_save(os.path.join(self.etc_dir, "structs_joined.yaml"), self._struct_definitions)
+            shyaml.yaml_save(os.path.join(self.etc_dir, 'structs_joined.yaml'), self._struct_definitions)
             end = time.perf_counter()
             duration = end - start
-            self.logger.dbghigh(f"load_struct_definitions: time yaml_save(): Duration={duration}")
+            self.logger.dbghigh(f'load_struct_definitions: time yaml_save(): Duration={duration}')
 
         totalend = time.perf_counter()
         duration = totalend - totalstart
-        self.logger.dbghigh(f"load_struct_definitions: time Total duration={duration}")
+        self.logger.dbghigh(f'load_struct_definitions: time Total duration={duration}')
 
         return
 
@@ -225,7 +225,7 @@ class Structs:
         :param filename: filename to load struct definition(s) from
         :param key_prefix: prefix to be used when adding struct(s) to loaded definitions
         """
-        if key_prefix == "":
+        if key_prefix == '':
             self.logger.info(f"Loading struct file '{filename}' without key-prefix")
         else:
             self.logger.info(f"Loading struct file '{filename}' with key-prefix '{key_prefix}'")
@@ -237,16 +237,16 @@ class Structs:
         if struct_definitions is not None:
             if isinstance(struct_definitions, collections.OrderedDict):
                 for key in struct_definitions:
-                    if key_prefix == "":
+                    if key_prefix == '':
                         struct_name = key
                     else:
-                        struct_name = key_prefix + "." + key
+                        struct_name = key_prefix + '.' + key
 
                     # cleanup struct data
                     struct = struct_definitions[key]
                     sanitize_items(struct, os.path.join(source_dir, filename))
 
-                    self.add_struct_definition("", struct_name, struct, source_dir)
+                    self.add_struct_definition('', struct_name, struct, source_dir)
             else:
                 self.logger.error(
                     f"load_itemdefinitions(): Invalid content in {filename}: struct_definitions = '{struct_definitions}'"
@@ -254,7 +254,7 @@ class Structs:
 
         return
 
-    def add_struct_definition(self, plugin_name, struct_name, struct, from_dir="", optional=False):
+    def add_struct_definition(self, plugin_name, struct_name, struct, from_dir='', optional=False):
         """
         Add a single struct definition
 
@@ -267,22 +267,22 @@ class Structs:
         :param optional: only add if not yet present
         :return:
         """
-        if plugin_name == "":
+        if plugin_name == '':
             name = struct_name
         else:
-            name = plugin_name + "." + struct_name
+            name = plugin_name + '.' + struct_name
 
         # self.logger.debug(f"add_struct_definition: struct '{name}' = {dict(struct)}")
         if self._struct_definitions.get(name, None) is None:
             self._struct_definitions[name] = struct
-            self._struct_definitions[name]["__struct_is_optional"] = optional
-        elif self._struct_definitions[name].get("__struct_is_optional", False) and not optional:
+            self._struct_definitions[name]['__struct_is_optional'] = optional
+        elif self._struct_definitions[name].get('__struct_is_optional', False) and not optional:
             # overwrite optional structs if current struct is not optional
             self._struct_definitions[name] = struct
-            self._struct_definitions[name]["__struct_is_optional"] = optional
-            self.logger.info(f"overwriting optional struct {name}")
+            self._struct_definitions[name]['__struct_is_optional'] = optional
+            self.logger.info(f'overwriting optional struct {name}')
         else:
-            if from_dir != "plugins":
+            if from_dir != 'plugins':
                 self.logger.error(
                     f"add_struct_definition: struct '{name}' already loaded - ignoring definition from {from_dir}"
                 )
@@ -302,29 +302,29 @@ class Structs:
         """
         struct = self._struct_definitions.get(struct_name, None)
         if struct is None:
-            self.logger.warning(f"traverse_struct: struct {struct_name} not found")
+            self.logger.warning(f'traverse_struct: struct {struct_name} not found')
             return
 
-        prefixes = struct_name.split(".")
-        if prefixes[0] == "my":
-            key_prefix = prefixes[0] + "." + prefixes[1]
+        prefixes = struct_name.split('.')
+        if prefixes[0] == 'my':
+            key_prefix = prefixes[0] + '.' + prefixes[1]
         else:
             # set plugin-name as key_prefix
             key_prefix = prefixes[0]
 
-        self.logger.dbghigh(f"traverse_struct: struct={struct_name}, prefixes={prefixes}, key_prefix={key_prefix}")
+        self.logger.dbghigh(f'traverse_struct: struct={struct_name}, prefixes={prefixes}, key_prefix={key_prefix}')
         new_struct = self.process_struct_node(struct, struct_name, key_prefix=key_prefix)
         if new_struct is not None:
             self.logger.dbghigh(f"traverse_struct: struct '{struct_name}' was updated")
-            self.logger.dbghigh(f"traverse_struct: new_struct {new_struct}")
+            self.logger.dbghigh(f'traverse_struct: new_struct {new_struct}')
             self._struct_definitions[struct_name] = new_struct
             return True
 
         return False
 
-    def process_struct_node(self, node, node_name="?", key_prefix="", level=0):
+    def process_struct_node(self, node, node_name='?', key_prefix='', level=0):
 
-        spaces = " " * level
+        spaces = ' ' * level
         structs_expanded = False
         for element in dict(node):
             if isinstance(node[element], dict):
@@ -335,7 +335,7 @@ class Structs:
                 if newnode is not None:
                     node[element] = newnode
                     structs_expanded = True
-            elif element == "struct":
+            elif element == 'struct':
                 self.logger.dbghigh(
                     f"process_struct_node: {spaces}{node_name}: 'struct' attribute found: {node[element]}"
                 )
@@ -346,7 +346,7 @@ class Structs:
                 node = self.resolve_structs(node, node_name, substruct_names, key_prefix)
                 structs_expanded = True
                 # self.logger.dbghigh(f"process_struct_node: {spaces}node   = {dict(node)}")
-                del node["struct"]
+                del node['struct']
                 self.logger.dbghigh(f"process_struct_node: Done, removed 'struct' attribute from struct '{node_name}'")
             else:
                 pass
@@ -379,7 +379,7 @@ class Structs:
                 new_struct[structentry] = copy.deepcopy(struct[structentry])
             else:
                 self.logger.dbghigh(f"resolve_structs: - key='{structentry}', value is ignored'")
-            if structentry == "struct":
+            if structentry == 'struct':
                 for substruct_name in substruct_names:
                     # for every substruct
                     self.merge_substruct_to_struct(new_struct, substruct_name, struct_name, key_prefix)
@@ -408,13 +408,13 @@ class Structs:
         :return:               3-tuple (sub_tree_or_None, matched_name_or_None, sub_path_or_None)
         :rtype:                tuple
         """
-        parts = substruct_name.split(".")
+        parts = substruct_name.split('.')
         for i in range(len(parts) - 1, 0, -1):
-            candidate_name = ".".join(parts[:i])
+            candidate_name = '.'.join(parts[:i])
             candidate = self._struct_definitions.get(candidate_name, None)
             if candidate is None:
                 continue
-            sub_path = ".".join(parts[i:])
+            sub_path = '.'.join(parts[i:])
             sub_tree = candidate
             for part in parts[i:]:
                 if not isinstance(sub_tree, dict):
@@ -426,7 +426,7 @@ class Structs:
             return (sub_tree if isinstance(sub_tree, dict) else None, candidate_name, sub_path)
         return None, None, None
 
-    def merge_substruct_to_struct(self, main_struct, substruct_name, main_struct_name="?", key_prefix=""):
+    def merge_substruct_to_struct(self, main_struct, substruct_name, main_struct_name='?', key_prefix=''):
         """
         Merge a referenced struct (or a partial sub-path of a struct) into *main_struct*.
 
@@ -464,7 +464,7 @@ class Structs:
         self.logger.dbgmed(
             f"merge_substruct_to_struct: substruct_name='{substruct_name}' -> main_struct='{main_struct_name}'"
         )
-        if substruct_name.startswith("."):
+        if substruct_name.startswith('.'):
             # referencing a struct from the same definition file
             substruct_name = key_prefix + substruct_name
 
@@ -483,7 +483,7 @@ class Structs:
                 # Struct found but sub-path missing or scalar
                 raw = self._struct_definitions.get(matched_name, {})
                 # navigate manually to get the raw value for the error message
-                for part in sub_path.split("."):
+                for part in sub_path.split('.'):
                     if isinstance(raw, dict):
                         raw = raw.get(part, None)
                     else:
@@ -497,7 +497,7 @@ class Structs:
                 else:
                     self.logger.error(
                         f"struct '{matched_name}' found but '{sub_path}' is a scalar value "
-                        f"({repr(raw)}), not a sub-item tree "
+                        f'({repr(raw)}), not a sub-item tree '
                         f"(used in struct '{main_struct_name}') - key_prefix={key_prefix}"
                     )
                 return
@@ -510,7 +510,7 @@ class Structs:
 
         # merge the sub-struct into the main struct key by key
         for key in substruct:
-            if key == "__struct_is_optional":
+            if key == '__struct_is_optional':
                 continue
             if main_struct.get(key, None) is None:
                 self.logger.dbglow(f" - add key='{key}', value='{substruct[key]}' -> new_struct='{dict(main_struct)}'")
@@ -519,7 +519,7 @@ class Structs:
                 self.logger.dbglow(
                     f" - merge key='{key}', value='{substruct[key]}' -> new_struct='{dict(main_struct)}'"
                 )
-                self.merge(substruct[key], main_struct[key], substruct_name + "." + key, main_struct_name + "." + key)
+                self.merge(substruct[key], main_struct[key], substruct_name + '.' + key, main_struct_name + '.' + key)
             elif isinstance(main_struct.get(key, None), list) or isinstance(substruct.get(key, None), list):
                 self.logger.dbglow(
                     f" - merge list(s) key='{key}', value='{substruct[key]}' -> new_struct='{dict(main_struct)}'"
@@ -530,7 +530,7 @@ class Structs:
 
         return
 
-    def merge_structlists(self, l1, l2, key=""):
+    def merge_structlists(self, l1, l2, key=''):
         # if not self.struct_merge_lists:
         #     self.logger.warning(f"merge_structlists: Not merging lists, key '{key}' value '{l2}' is ignored'")
         #     return l1       # First wins
@@ -541,7 +541,7 @@ class Structs:
             l2 = [l2]
         return l1 + l2
 
-    def merge(self, source, destination, source_name="", dest_name=""):
+    def merge(self, source, destination, source_name='', dest_name=''):
         """
         Merges an OrderedDict Tree into another one
 
@@ -565,12 +565,12 @@ class Structs:
         """
         # self.logger.warning("merge: source_name='{}', dest_name='{}'".format(source_name, dest_name))
         for key, value in source.items():
-            if key == "__struct_is_optional":
+            if key == '__struct_is_optional':
                 continue
             if isinstance(value, collections.OrderedDict):
                 # get node or create one
                 node = destination.setdefault(key, collections.OrderedDict())
-                if node == "None":
+                if node == 'None':
                     destination[key] = value
                 else:
                     self.merge(value, node, source_name, dest_name)
@@ -583,5 +583,5 @@ class Structs:
                 else:
                     # convert to string and remove newlines from multiline attributes
                     if destination.get(key, None) is None:
-                        destination[key] = str(value).replace("\n", "")
+                        destination[key] = str(value).replace('\n', '')
         return destination

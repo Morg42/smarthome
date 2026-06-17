@@ -60,7 +60,7 @@ from lib.constants import (
 
 from .helpers import split_duration_value_string
 
-logger = logging.getLogger("lib.item")
+logger = logging.getLogger('lib.item')
 
 
 # ---------------------------------------------------------------------------
@@ -79,12 +79,12 @@ def parse_eval_attribute(item, attribute_name, value):
     :param attribute_name: Attribute key (used for logging in path resolution).
     :param value:          Raw attribute value from item configuration.
     """
-    if value == "":
-        item._eval_unexpanded = ""
+    if value == '':
+        item._eval_unexpanded = ''
         item._eval = None
     else:
         item._eval_unexpanded = value
-        value = item.get_stringwithabsolutepathes(value, "sh.", "(", attribute_name)
+        value = item.get_stringwithabsolutepathes(value, 'sh.', '(', attribute_name)
         item._eval = value
 
 
@@ -152,12 +152,12 @@ def parse_hysteresis_xx_threshold_attribute(item, attr, value):
     :param value: Raw attribute value.
     """
     if value.find(ATTRIBUTE_SEPARATOR) == -1:
-        threshold = item.get_stringwithabsolutepathes(value, "sh.", "(", attr)
+        threshold = item.get_stringwithabsolutepathes(value, 'sh.', '(', attr)
         timer = None
     else:
         threshold_unex, __, timer_unex = value.rpartition(ATTRIBUTE_SEPARATOR)
-        threshold = item.get_stringwithabsolutepathes(threshold_unex.strip(), "sh.", "(", attr)
-        timer = item.get_stringwithabsolutepathes(timer_unex.strip(), "sh.", "(", attr)
+        threshold = item.get_stringwithabsolutepathes(threshold_unex.strip(), 'sh.', '(', attr)
+        timer = item.get_stringwithabsolutepathes(timer_unex.strip(), 'sh.', '(', attr)
 
     if attr == KEY_HYSTERESIS_UPPER_THRESHOLD:
         item._hysteresis_upper_threshold = threshold
@@ -195,7 +195,7 @@ def parse_on_xx_list_attribute(item, attr, value):
         # Separate destination item (if present: ``dest = expr`` syntax).
         dest_item, val = item._split_destitem_from_value(val)
         dest_item = dest_item.strip()
-        if dest_item.startswith("sh."):
+        if dest_item.startswith('sh.'):
             dest_item = dest_item[3:]
         dest_var_list_unexp.append(dest_item.strip())
 
@@ -203,14 +203,14 @@ def parse_on_xx_list_attribute(item, attr, value):
         dest_item = item.get_absolutepath(dest_item.strip()).strip()
 
         val_list_unexpanded.append(val)
-        val = item.get_stringwithabsolutepathes(val, "sh.", "(", KEY_ON_CHANGE)
+        val = item.get_stringwithabsolutepathes(val, 'sh.', '(', KEY_ON_CHANGE)
         val_list.append(val)
         dest_var_list.append(dest_item)
 
-    setattr(item, "_" + attr + "_unexpanded", val_list_unexpanded)
-    setattr(item, "_" + attr, val_list)
-    setattr(item, "_" + attr + "_dest_var", dest_var_list)
-    setattr(item, "_" + attr + "_dest_var_unexp", dest_var_list_unexp)
+    setattr(item, '_' + attr + '_unexpanded', val_list_unexpanded)
+    setattr(item, '_' + attr, val_list)
+    setattr(item, '_' + attr + '_dest_var', dest_var_list)
+    setattr(item, '_' + attr + '_dest_var_unexp', dest_var_list_unexp)
 
 
 # ---------------------------------------------------------------------------
@@ -218,7 +218,7 @@ def parse_on_xx_list_attribute(item, attr, value):
 # ---------------------------------------------------------------------------
 
 
-def parse_cycle_attribute(item, attr, value, compat_default=""):
+def parse_cycle_attribute(item, attr, value, compat_default=''):
     """
     Parse and store the ``cycle`` attribute on *item*.
 
@@ -237,8 +237,8 @@ def parse_cycle_attribute(item, attr, value, compat_default=""):
                            (passed by the delegate to avoid circular import).
     """
     cycle_time, cycle_value, _compat = split_duration_value_string(value, compat_default)
-    item._cycle_time = item.get_stringwithabsolutepathes(cycle_time, "sh.", "(", attr)
-    item._cycle_value = item.get_stringwithabsolutepathes(cycle_value, "sh.", "(", attr)
+    item._cycle_time = item.get_stringwithabsolutepathes(cycle_time, 'sh.', '(', attr)
+    item._cycle_value = item.get_stringwithabsolutepathes(cycle_value, 'sh.', '(', attr)
 
 
 # ---------------------------------------------------------------------------
@@ -246,7 +246,7 @@ def parse_cycle_attribute(item, attr, value, compat_default=""):
 # ---------------------------------------------------------------------------
 
 
-def parse_autotimer_attribute(item, attr, value, compat_default=""):
+def parse_autotimer_attribute(item, attr, value, compat_default=''):
     """
     Parse and store the ``autotimer`` attribute on *item*.
 
@@ -259,8 +259,8 @@ def parse_autotimer_attribute(item, attr, value, compat_default=""):
     :param compat_default: Current ``ATTRIB_COMPAT_DEFAULT`` from ``item.py``.
     """
     auto_time, auto_value, _compat = split_duration_value_string(value, compat_default)
-    item._autotimer_time = item.get_stringwithabsolutepathes(auto_time, "sh.", "(", attr)
-    item._autotimer_value = item.get_stringwithabsolutepathes(auto_value, "sh.", "(", attr)
+    item._autotimer_time = item.get_stringwithabsolutepathes(auto_time, 'sh.', '(', attr)
+    item._autotimer_value = item.get_stringwithabsolutepathes(auto_value, 'sh.', '(', attr)
 
 
 # ---------------------------------------------------------------------------
@@ -293,7 +293,7 @@ def build_trigger_condition_eval(item, trigger_condition):
     wrk_eval = []
     for or_cond in trigger_condition:
         for ckey in or_cond:
-            if ckey.lower() == "value":
+            if ckey.lower() == 'value':
                 # 'value' is handled separately at eval time — skip.
                 pass
             else:
@@ -304,37 +304,37 @@ def build_trigger_condition_eval(item, trigger_condition):
                     # Rewrite bare ``=`` to ``==``, but guard compound
                     # operators (``==``, ``<=``, ``>=``, ``=>``, ``=<``).
                     if (
-                        (wrk.find("=") != -1)
-                        and (wrk.find("==") == -1)
-                        and (wrk.find("<=") == -1)
-                        and (wrk.find(">=") == -1)
-                        and (wrk.find("=<") == -1)
-                        and (wrk.find("=>") == -1)
+                        (wrk.find('=') != -1)
+                        and (wrk.find('==') == -1)
+                        and (wrk.find('<=') == -1)
+                        and (wrk.find('>=') == -1)
+                        and (wrk.find('=<') == -1)
+                        and (wrk.find('=>') == -1)
                     ):
-                        wrk = wrk.replace("=", "==")
+                        wrk = wrk.replace('=', '==')
 
                     # Normalise ``true`` / ``false`` → Python booleans.
-                    p = wrk.lower().find("true")
+                    p = wrk.lower().find('true')
                     if p != -1:
-                        wrk = wrk[:p] + "True" + wrk[p + 4 :]
-                    p = wrk.lower().find("false")
+                        wrk = wrk[:p] + 'True' + wrk[p + 4 :]
+                    p = wrk.lower().find('false')
                     if p != -1:
-                        wrk = wrk[:p] + "False" + wrk[p + 5 :]
+                        wrk = wrk[:p] + 'False' + wrk[p + 5 :]
 
                     # Expand relative item paths.
-                    wrk = item.get_stringwithabsolutepathes(wrk, "sh.", "(", KEY_CONDITION)
+                    wrk = item.get_stringwithabsolutepathes(wrk, 'sh.', '(', KEY_CONDITION)
 
                     and_cond.append(wrk)
 
-                wrk = ") and (".join(and_cond)
+                wrk = ') and ('.join(and_cond)
                 if len(or_cond[ckey]) > 1:
-                    wrk = "(" + wrk + ")"
+                    wrk = '(' + wrk + ')'
                 wrk_eval.append(wrk)
 
-                result = ") or (".join(wrk_eval)
+                result = ') or ('.join(wrk_eval)
 
     if len(trigger_condition) > 1:
-        result = "(" + result + ")"
+        result = '(' + result + ')'
 
     return result
 
@@ -345,7 +345,7 @@ def build_trigger_condition_eval(item, trigger_condition):
 
 
 def get_attribute_value(
-    item, attr_ref: str, current_attr: str, default: str = "", ignore_current_item: bool = False
+    item, attr_ref: str, current_attr: str, default: str = '', ignore_current_item: bool = False
 ) -> str:
     """
     Resolve a relative attribute reference to its value.
@@ -371,16 +371,16 @@ def get_attribute_value(
     """
     value = attr_ref
     attr_ref = attr_ref.strip()
-    if ":" in attr_ref:
-        fromattr = attr_ref.split(":")[1]
-        if fromattr in ["", "."]:
+    if ':' in attr_ref:
+        fromattr = attr_ref.split(':')[1]
+        if fromattr in ['', '.']:
             fromattr = current_attr
 
-        fromitem = attr_ref.split(":")[0]
-        if fromitem == "." and ignore_current_item:
+        fromitem = attr_ref.split(':')[0]
+        if fromitem == '.' and ignore_current_item:
             return value
 
-        if all(x == "." for x in fromitem):
+        if all(x == '.' for x in fromitem):
             level = len(fromitem) - 1
             value = item.find_attribute(fromattr, default, level=level, strict=True)
     return value
@@ -411,13 +411,13 @@ def build_on_xx_list(on_dest_list, on_eval_list):
     if on_dest_list is not None:
         if isinstance(on_dest_list, list):
             for on_dest, on_eval in zip(on_dest_list, on_eval_list):
-                if on_dest != "":
-                    on_list.append(on_dest.strip() + " = " + on_eval)
+                if on_dest != '':
+                    on_list.append(on_dest.strip() + ' = ' + on_eval)
                 else:
                     on_list.append(on_eval)
         else:
-            if on_dest_list != "":
-                on_list.append(on_dest_list + " = " + on_eval_list)
+            if on_dest_list != '':
+                on_list.append(on_dest_list + ' = ' + on_eval_list)
             else:
                 on_list.append(on_eval_list)
     return on_list
@@ -464,19 +464,19 @@ def init_prerun(item):
             if triggered != item:
                 triggered._items_to_trigger.append(item)
         if item._eval:
-            items_expr = ["sh." + str(x.id()) + "()" for x in _items]
-            if item._eval == "and":
-                item._eval = " and ".join(items_expr)
-            elif item._eval == "or":
-                item._eval = " or ".join(items_expr)
-            elif item._eval == "sum":
-                item._eval = " + ".join(items_expr)
-            elif item._eval == "avg":
-                item._eval = "({0})/{1}".format(" + ".join(items_expr), len(items_expr))
-            elif item._eval == "max":
-                item._eval = "max({0})".format(",".join(items_expr))
-            elif item._eval == "min":
-                item._eval = "min({0})".format(",".join(items_expr))
+            items_expr = ['sh.' + str(x.id()) + '()' for x in _items]
+            if item._eval == 'and':
+                item._eval = ' and '.join(items_expr)
+            elif item._eval == 'or':
+                item._eval = ' or '.join(items_expr)
+            elif item._eval == 'sum':
+                item._eval = ' + '.join(items_expr)
+            elif item._eval == 'avg':
+                item._eval = '({0})/{1}'.format(' + '.join(items_expr), len(items_expr))
+            elif item._eval == 'max':
+                item._eval = 'max({0})'.format(','.join(items_expr))
+            elif item._eval == 'min':
+                item._eval = 'min({0})'.format(','.join(items_expr))
 
     if item._hysteresis_input:
         triggering_item = items_instance.return_item(item._hysteresis_input)
@@ -487,5 +487,5 @@ def init_prerun(item):
         else:
             if triggering_item != item:
                 if item._hysteresis_log:
-                    logger.notice(f"_init_prerun: Adding to triggering_item {item}")
+                    logger.notice(f'_init_prerun: Adding to triggering_item {item}')
                 triggering_item._hysteresis_items_to_trigger.append(item)

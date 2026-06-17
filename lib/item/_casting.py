@@ -64,7 +64,7 @@ from ._eval import _make_eval_env
 # COMPAT-SHIM: remove this import together with _eval_compat.py
 from ._eval_compat import _eval_with_legacy_fallback, _EVAL_FAILED
 
-logger = logging.getLogger("lib.item")
+logger = logging.getLogger('lib.item')
 
 # ---------------------------------------------------------------------------
 # Mapping from item-type name to the appropriate cast function.
@@ -72,15 +72,15 @@ logger = logging.getLogger("lib.item")
 # being explicit and independent of another module's global namespace.
 # ---------------------------------------------------------------------------
 _CAST_MAP: dict = {
-    "str": cast_str,
-    "list": cast_list,
-    "dict": cast_dict,
-    "bool": cast_bool,
-    "num": cast_num,
-    "foo": cast_foo,
-    "scene": cast_scene,
-    "timestamp": cast_timestamp,
-    "datetime": cast_datetime,
+    'str': cast_str,
+    'list': cast_list,
+    'dict': cast_dict,
+    'bool': cast_bool,
+    'num': cast_num,
+    'foo': cast_foo,
+    'scene': cast_scene,
+    'timestamp': cast_timestamp,
+    'datetime': cast_datetime,
 }
 
 
@@ -124,7 +124,7 @@ def castvalue_to_itemtype(item, value, compat=ATTRIB_COMPAT_LATEST):
                 elif isinstance(value, dict):
                     value = {}
                 else:
-                    value = mycast("")
+                    value = mycast('')
         else:
             logger.warning(f"Item {item._path}: Unable to cast '{str(value)}' to {item._type}")
     return value
@@ -160,7 +160,7 @@ def cast_duration(item, time, test=False):
                  references, or ``False`` on failure.
     """
     if isinstance(time, str):
-        if time.startswith("sh."):
+        if time.startswith('sh.'):
             # Item reference — pass through; scheduler resolves it.
             return time
 
@@ -191,7 +191,7 @@ def cast_duration(item, time, test=False):
 # ---------------------------------------------------------------------------
 
 
-def run_attribute_eval(item, eval_expression, result_type="num", result_error=""):
+def run_attribute_eval(item, eval_expression, result_type='num', result_error=''):
     """
     Evaluate an expression string used in item attributes such as
     ``autotimer``, ``cycle``, ``hysteresis_upper_threshold``, and
@@ -227,14 +227,14 @@ def run_attribute_eval(item, eval_expression, result_type="num", result_error=""
         # literal and re-evaluate.  This handles expressions such as
         # ``autotimer: high`` where ``high`` is meant as a plain string.
         err = str(_ne)
-        var = err[6:-16] if (err.startswith("name '") and err.endswith("' is not defined")) else ""
+        var = err[6:-16] if (err.startswith("name '") and err.endswith("' is not defined")) else ''
         eval_expression2 = eval_expression.replace(var, "'" + var + "'") if var else eval_expression
         try:
             result = eval('"' + eval_expression2 + '"', _ns)
         except Exception:
             # quoting-retry failed; try legacy namespace              # COMPAT-SHIM
             _fb = _eval_with_legacy_fallback(  # COMPAT-SHIM
-                eval_expression, _ns, item, "attribute_eval", _ne
+                eval_expression, _ns, item, 'attribute_eval', _ne
             )  # COMPAT-SHIM
             if _fb is _EVAL_FAILED:  # COMPAT-SHIM
                 logger.error(
@@ -247,7 +247,7 @@ def run_attribute_eval(item, eval_expression, result_type="num", result_error=""
     except Exception as _e:
         # COMPAT-SHIM: delete this try/except; restore the two lines below it
         _fb = _eval_with_legacy_fallback(  # COMPAT-SHIM
-            eval_expression, _ns, item, "attribute_eval", _e
+            eval_expression, _ns, item, 'attribute_eval', _e
         )  # COMPAT-SHIM
         if _fb is _EVAL_FAILED:  # COMPAT-SHIM
             logger.error(
@@ -258,7 +258,7 @@ def run_attribute_eval(item, eval_expression, result_type="num", result_error=""
         else:  # COMPAT-SHIM
             result = _fb  # COMPAT-SHIM
 
-    if result_type == "num":
+    if result_type == 'num':
         if not isinstance(result, (int, float)):
             logger.error(
                 f"Item '{item._path}': run_attribute_eval({eval_expression}): "

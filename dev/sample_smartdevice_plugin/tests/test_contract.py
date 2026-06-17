@@ -30,7 +30,7 @@ import os
 import sys
 
 # ensure shng root is on the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
 from tests.plugin_contract.base import BasePluginContractTest
 from tests.plugin_contract.with_yaml import YamlPluginContractTest
@@ -54,18 +54,13 @@ class TestSdpExample(BasePluginContractTest, YamlPluginContractTest, SdpPluginCo
     def test_pause_item_registered_via_parse_item(self):
         """SDP uses _suspend_item_path / _suspend_item, not _pause_item_path."""
         self.skipTest(
-            "SmartDevicePlugin uses the suspend mechanism (_suspend_item_path), "
-            "not the SmartPlugin pause mechanism (_pause_item_path). "
-            "Test the suspend item via plugin.yaml suspend_item parameter instead."
+            'SmartDevicePlugin uses the suspend mechanism (_suspend_item_path), '
+            'not the SmartPlugin pause mechanism (_pause_item_path). '
+            'Test the suspend item via plugin.yaml suspend_item parameter instead.'
         )
 
     # Command names in the model-specific format (Style 3) are referenced without
     # the 'ALL.' prefix — SDP flattens 'ALL.cmd1' to 'cmd1' when loading commands.
-    SDP_ITEM_ATTR_SETS = [
-        {"ex_command": "cmd1", "ex_read": True},
-        {"ex_command": "cmd1", "ex_write": True},
-    ]
+    SDP_ITEM_ATTR_SETS = [{'ex_command': 'cmd1', 'ex_read': True}, {'ex_command': 'cmd1', 'ex_write': True}]
     # Same sets used by YamlPluginContractTest for the item-attribute wiring check
-    ITEM_ATTR_SETS = [
-        {"ex_command": "cmd1", "ex_read": True},
-    ]
+    ITEM_ATTR_SETS = [{'ex_command': 'cmd1', 'ex_read': True}]

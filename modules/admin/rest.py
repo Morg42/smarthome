@@ -226,14 +226,14 @@ class RESTResource:
 
     """
 
-    REST_dispatch_execute_warnlevel = "WARNING"
+    REST_dispatch_execute_warnlevel = 'WARNING'
 
     # default method mapping. ie, if a GET request is made for
     # the resource's url, it will try to call an index() method (if it exists);
     # if a PUT request is made, it will try to call an update() method.
     # if you prefer other method names, just override these values in your
     # controller with REST_map
-    REST_defaults = {"DELETE": "delete", "GET": "read", "POST": "add", "PUT": "update", "OPTIONS": "options"}
+    REST_defaults = {'DELETE': 'delete', 'GET': 'read', 'POST': 'add', 'PUT': 'update', 'OPTIONS': 'options'}
     REST_map = {}
 
     # if the resource has children resources, list them here. format is
@@ -242,32 +242,32 @@ class RESTResource:
     # REST_children = {'posts' : PostController()}
     REST_children = {}
 
-    logger = logging.getLogger("REST")
-    jwt_secret = "SmartHomeNG$0815"
+    logger = logging.getLogger('REST')
+    jwt_secret = 'SmartHomeNG$0815'
 
-    def set_response_headers(self, vpath=""):
+    def set_response_headers(self, vpath=''):
         """
         Set http response headers for CORS support
         """
         #        if vpath != 'status':
         #            self.logger.notice(f"set_response_headers ({vpath=}): request headers: {cherrypy.request.headers}")
-        cherrypy.response.headers["Access-Control-Allow-Headers"] = "*"
+        cherrypy.response.headers['Access-Control-Allow-Headers'] = '*'
         # cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
-        origin = cherrypy.request.headers.get("Origin", "*")
-        cherrypy.response.headers["Access-Control-Allow-Origin"] = origin
-        cherrypy.response.headers["Access-Control-Allow-Credentials"] = "true"
+        origin = cherrypy.request.headers.get('Origin', '*')
+        cherrypy.response.headers['Access-Control-Allow-Origin'] = origin
+        cherrypy.response.headers['Access-Control-Allow-Credentials'] = 'true'
 
     #        if vpath != 'status':
     #            self.logger.notice(f"set_response_headers: response headers for: {cherrypy.response.headers}")
 
     @cherrypy.expose
     def index(self, *vpath, **params):
-        self.logger.info(f"RESTResource.index for class {self.__class__.__name__} - *vpath={vpath}, **params={params}")
+        self.logger.info(f'RESTResource.index for class {self.__class__.__name__} - *vpath={vpath}, **params={params}')
         self.set_response_headers()
         return self.default(*vpath, **params)
 
     def index2(self):
-        self.logger.info("RESTResource index2 (nicht überschrieben){}".format(self.__class__.__name__))
+        self.logger.info('RESTResource index2 (nicht überschrieben){}'.format(self.__class__.__name__))
         # Methode muss überschrieben werden
         return
 
@@ -278,22 +278,22 @@ class RESTResource:
         :return: tuple
         """
         # self.logger.debug("REST_get_jwt_token(): cherrypy.request.headers = {}".format(cherrypy.request.headers))
-        token = cherrypy.request.headers.get("Authorization", "")
+        token = cherrypy.request.headers.get('Authorization', '')
         decoded = {}
         # self.logger.debug("REST_test_jwt_token(): raw token = {}".format(token))
-        if token != "":
-            if token.startswith("Bearer "):
-                token = token[len("Bearer ") :]
+        if token != '':
+            if token.startswith('Bearer '):
+                token = token[len('Bearer ') :]
 
         # self.logger.debug("REST_test_jwt_token(): jwt token = {}".format(token))
         if self.jwt_secret and (len(token) > 0):
             try:
-                decoded = jwt.decode(token, self.jwt_secret, verify=True, algorithms="HS256")
+                decoded = jwt.decode(token, self.jwt_secret, verify=True, algorithms='HS256')
             except Exception as e:
-                self.logger.debug("REST_test_jwt_token(): Exception = {}".format(e))
-                token = ""
+                self.logger.debug('REST_test_jwt_token(): Exception = {}'.format(e))
+                token = ''
                 decoded = {}
-        self.logger.debug("REST_test_jwt_token(): decoded jwt token = {}".format(decoded))
+        self.logger.debug('REST_test_jwt_token(): decoded jwt token = {}'.format(decoded))
 
         if len(token) == 0:
             decoded = {}
@@ -305,7 +305,7 @@ class RESTResource:
 
         :return: tuple
         """
-        error_text = "Unauthorized"
+        error_text = 'Unauthorized'
         # self.logger.debug("REST_test_jwt_token(): cherrypy.request.headers = {}".format(cherrypy.request.headers))
         # token = cherrypy.request.headers.get('Authorization', '')
         # decoded = {}
@@ -331,27 +331,27 @@ class RESTResource:
         if decoded == {}:
             return (False, error_text)
 
-        return (True, "")
+        return (True, '')
 
     def REST_dispatch_execute(self, m, method, root, resource, **params):
-        if m and getattr(m, "expose_resource", False):
+        if m and getattr(m, 'expose_resource', False):
             public_root = False
             if root:
-                public_root = getattr(m, "public_root", False)
+                public_root = getattr(m, 'public_root', False)
                 self.logger.info(f"REST_dispatch_execute(): public_root = '{public_root}'")
             if not public_root:
-                auth_needed = getattr(m, "authentication_needed", False)
+                auth_needed = getattr(m, 'authentication_needed', False)
                 self.logger.info(
-                    f"REST_dispatch_execute(): {('' if auth_needed else 'No ')}Authentication needed for {method} ({str(m).split()[2]})"
+                    f'REST_dispatch_execute(): {("" if auth_needed else "No ")}Authentication needed for {method} ({str(m).split()[2]})'
                 )
                 if auth_needed:
                     # self.logger.info("REST_dispatch: Authentication needed for {} ({})".format(method, str(m).split()[2]))
                     token_valid, error_text = self.REST_test_jwt_token()
                     if not token_valid:
                         self.logger.info(
-                            "REST_dispatch_execute(): Authentication failed for {method} ({str(m).split()[2]})"
+                            'REST_dispatch_execute(): Authentication failed for {method} ({str(m).split()[2]})'
                         )
-                        response = {"result": "error", "description": error_text}
+                        response = {'result': 'error', 'description': error_text}
                         return json.dumps(response)
 
             try:
@@ -359,12 +359,12 @@ class RESTResource:
             except Exception as e:
                 if self.module.rest_dispatch_force_exception:
                     self.logger.notice(
-                        "The following exception is thrown, due to the configuration in etc/module.yaml:"
+                        'The following exception is thrown, due to the configuration in etc/module.yaml:'
                     )
-                    self.logger.exception(f"REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}")
+                    self.logger.exception(f'REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}')
                 else:
-                    self.logger.warning(f"REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}")
-                response = {"result": "error", "description": f"{e.__class__.__name__} {e}"}
+                    self.logger.warning(f'REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}')
+                response = {'result': 'error', 'description': f'{e.__class__.__name__} {e}'}
                 return json.dumps(response)
         return None
 
@@ -405,11 +405,11 @@ class RESTResource:
 
     @cherrypy.expose
     def default(self, *vpath, **params):
-        self.logger.info(f"RESTResource.default: *vpath={vpath}, **params={params} {type(vpath)=}")
+        self.logger.info(f'RESTResource.default: *vpath={vpath}, **params={params} {type(vpath)=}')
         try:
             self.set_response_headers(*vpath)
         except Exception as ex:
-            self.logger.error(f"reas.py default: Exception {ex} - parameters: {vpath}")
+            self.logger.error(f'reas.py default: Exception {ex} - parameters: {vpath}')
         if not vpath:
             resource = None
             # self.logger.info("RESTResource.default: vpath = '{}',  params = '{}'".format(list(vpath), dict(**params)))
@@ -424,7 +424,7 @@ class RESTResource:
         # Coerce the ID to the correct db type
         resource = self.REST_instantiate(atom)
         if resource is None:
-            if cherrypy.request.method == "PUT":
+            if cherrypy.request.method == 'PUT':
                 # PUT is special since it can be used to create
                 # a resource
                 resource = self.REST_create(atom)
@@ -441,7 +441,7 @@ class RESTResource:
                 return c.default(*vpath, **params)
             method = getattr(self, a, None)
             # self.logger.notice(f"dir(method): {dir(method)}")
-            if method and getattr(method, "expose_resource", False):
+            if method and getattr(method, 'expose_resource', False):
                 return method(resource, *vpath, **params)
             else:
                 # path component was specified but doesn't
@@ -482,7 +482,7 @@ class RESTResource:
         """
         Handle OPTIONS requests
         """
-        self.logger.notice("RESTResource.options for class {self.__class__.__name__}")
+        self.logger.notice('RESTResource.options for class {self.__class__.__name__}')
 
         return json.dumps(False)
 

@@ -27,7 +27,7 @@
 import json
 
 # default / reference datatypes
-datatypes = ("int", "num", "str", "dict", "list", "tuple", "bytes", "bytearray", "json")
+datatypes = ('int', 'num', 'str', 'dict', 'list', 'tuple', 'bytes', 'bytearray', 'json')
 
 
 class Datatype(object):
@@ -106,7 +106,7 @@ class Datatype(object):
         if type is None or type not in datatypes:
             return data
 
-        if type == "int":
+        if type == 'int':
             try:
                 return int(data)
             except ValueError:
@@ -115,7 +115,7 @@ class Datatype(object):
                 else:
                     raise
 
-        if type == "num":
+        if type == 'num':
             try:
                 return float(data)
             except ValueError:
@@ -124,10 +124,10 @@ class Datatype(object):
                 else:
                     raise
 
-        if type == "str":
+        if type == 'str':
             return str(data)
 
-        if type == "dict":
+        if type == 'dict':
             try:
                 return dict(data)
             except ValueError:
@@ -136,7 +136,7 @@ class Datatype(object):
                 else:
                     raise
 
-        if type == "list":
+        if type == 'list':
             try:
                 return list(data)
             except ValueError:
@@ -145,7 +145,7 @@ class Datatype(object):
                 else:
                     raise
 
-        if type == "tuple":
+        if type == 'tuple':
             try:
                 return tuple(data)
             except ValueError:
@@ -154,25 +154,25 @@ class Datatype(object):
                 else:
                     raise
 
-        if type == "bytes":
+        if type == 'bytes':
             try:
-                return bytes(str(data), "utf-8")
+                return bytes(str(data), 'utf-8')
             except ValueError:
                 if self._silent:
-                    return b""
+                    return b''
                 else:
                     raise
 
-        if type == "bytearray":
+        if type == 'bytearray':
             try:
-                return bytearray(str(data), "utf-8")
+                return bytearray(str(data), 'utf-8')
             except ValueError:
                 if self._silent:
-                    return bytearray(b"")
+                    return bytearray(b'')
                 else:
                     raise
 
-        if type == "json":
+        if type == 'json':
             try:
                 return json.dumps(data)
             except ValueError:
@@ -246,7 +246,7 @@ class DT_str(Datatype):
     def get_shng_data(self, data, type=None, **kwargs):
         if type is None:
             if isinstance(data, (bytes, bytearray)):
-                return data.decode("utf-8")
+                return data.decode('utf-8')
             else:
                 return str(data)
         return super().get_shng_data(data, type)
@@ -327,6 +327,6 @@ class DT_webservices(Datatype):
     def get_shng_data(self, data, type=None, **kwargs):
         if type is None:
             js = json.loads(data)
-            arg = js.get("value", None)
+            arg = js.get('value', None)
             return arg
         return super().get_shng_data(data, type)

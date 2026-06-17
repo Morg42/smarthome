@@ -44,29 +44,29 @@ class SmartPlugin(SmartObject, Utils):
 
     """
 
-    PLUGIN_VERSION = ""
+    PLUGIN_VERSION = ''
     ALLOW_MULTIINSTANCE = None
     STOP_ON_ITEM_CHANGE = True  # Plugin needs to be stopped on/before item changes
     # needed by self.remove_item(), don't change unless you know how and why
 
     # these variables are initialized by the plugin loader for each plugin
 
-    __instance = ""  #: Name of this instance of the plugin
+    __instance = ''  #: Name of this instance of the plugin
     _sh = None  #: Variable containing a pointer to the main SmartHomeNG object; is initialized during loading of the plugin; :Warning: Don't change it
     _configfilename = (
-        ""  #: Configfilename of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
+        ''  #: Configfilename of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
     )
     _configname = (
-        ""  #: Configname of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
+        ''  #: Configname of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
     )
-    _shortname = ""  #: Shortname of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
-    _classname = ""  #: Classname of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
+    _shortname = ''  #: Shortname of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
+    _classname = ''  #: Classname of the plugin; is initialized during loading of the plugin; :Warning: Don't change it
     shtime = None  #: Variable containing a pointer to the SmartHomeNG time handling object; is initialized during loading of the plugin; :Warning: Don't change it
 
     _parameters = {}  # Dict for storing the configuration parameters read from /etc/plugin.yaml
     _hide_parameters = {}  # Dict for storing parameters to hide from AdminUI
 
-    _pluginname_prefix = "plugins."
+    _pluginname_prefix = 'plugins.'
 
     # these variables _should_ be instance members (not class members) ...
     # BUT if a plugin fails to call the parent class' __init__(), these are
@@ -86,10 +86,10 @@ class SmartPlugin(SmartObject, Utils):
     _add_translation = None
 
     _pause_item = None  # pause item
-    _pause_item_path = ""  # path of pause item
+    _pause_item_path = ''  # path of pause item
 
     _asyncio_loop = None  # eventloop of the plugin
-    _asyncio_state = "unused"  # stored state of the asyncio use of the plugin
+    _asyncio_state = 'unused'  # stored state of the asyncio use of the plugin
     _used_plugin_coro = (
         None  # plugin coro used when calling start_asyncio (to be able to used by a generic 'restart asyncio' method
     )
@@ -140,10 +140,10 @@ class SmartPlugin(SmartObject, Utils):
         self._add_translation = None
 
         self._pause_item = None  # pause item
-        self._pause_item_path = ""  # pause item path
+        self._pause_item_path = ''  # pause item path
 
         self._asyncio_loop = None  # eventloop of the plugin
-        self._asyncio_state = "unused"  # stored state of the asyncio use of the plugin
+        self._asyncio_state = 'unused'  # stored state of the asyncio use of the plugin
         self._used_plugin_coro = None  # plugin coro used when calling start_asyncio (to be able to used by a generic 'restart asyncio' method
         self._run_queue = None  # queue to send commends to the main-coro/plugin-coro
 
@@ -170,7 +170,7 @@ class SmartPlugin(SmartObject, Utils):
         # check for pause item
         if item is self._pause_item:
             if caller != self.get_shortname():
-                self.logger.debug(f"pause item changed to {item()}")
+                self.logger.debug(f'pause item changed to {item()}')
                 if item() and self.alive:
                     self.stop()
                 elif not item() and not self.alive:
@@ -179,7 +179,7 @@ class SmartPlugin(SmartObject, Utils):
 
         if not self.alive:
             self.logger.warning(
-                f"Received item update for item {item.property.path}, but plugin is not running. Ignoring..."
+                f'Received item update for item {item.property.path}, but plugin is not running. Ignoring...'
             )
             return
 
@@ -193,7 +193,7 @@ class SmartPlugin(SmartObject, Utils):
         """
         # check for pause item
         if item.property.path == self._pause_item_path:
-            self.logger.debug(f"pause item {item.property.path} registered")
+            self.logger.debug(f'pause item {item.property.path} registered')
             self._pause_item = item
             self.add_item(item, updating=True)
             return self.update_item
@@ -291,20 +291,20 @@ class SmartPlugin(SmartObject, Utils):
             # update "is_updating" key...
             if updating:
                 self.logger.debug(
-                    f"add_item called with existing item {item.property.path}, updating stored data: is_updating enabled"
+                    f'add_item called with existing item {item.property.path}, updating stored data: is_updating enabled'
                 )
                 self.register_updating(item)
                 return True
 
             # otherwise return error
-            self.logger.warning(f"Trying to add an existing item: {item.property.path}")
+            self.logger.warning(f'Trying to add an existing item: {item.property.path}')
             return False
 
         self._plg_item_dict[item.property.path] = {
-            "item": item,
-            "is_updating": updating,
-            "mapping": mapping,
-            "config_data": dict(config_data_dict),
+            'item': item,
+            'is_updating': updating,
+            'mapping': mapping,
+            'config_data': dict(config_data_dict),
         }
 
         if mapping:
@@ -326,28 +326,28 @@ class SmartPlugin(SmartObject, Utils):
         """
         if item.property.path not in self._plg_item_dict:
             # There is no information stored for that item
-            self.logger.debug(f"item {item.property.path} not associated to this plugin, doing nothing")
+            self.logger.debug(f'item {item.property.path} not associated to this plugin, doing nothing')
             return False
 
         # check if plugin is running
         if self.alive:
             if self.STOP_ON_ITEM_CHANGE:
-                self.logger.debug(f"stopping plugin for removal of item {item.property.path}")
+                self.logger.debug(f'stopping plugin for removal of item {item.property.path}')
                 self.stop()
             else:
-                self.logger.debug(f"not stopping plugin for removal of item {item.property.path}")
+                self.logger.debug(f'not stopping plugin for removal of item {item.property.path}')
 
         if item.property.path == self._pause_item_path:
-            self.logger.warning(f"trying to remove pause item {item}. Disabling pause item function")
+            self.logger.warning(f'trying to remove pause item {item}. Disabling pause item function')
             self._pause_item = None
-            self._pause_item_path = ""
+            self._pause_item_path = ''
 
         # remove data from item_dict early in case of concurrent actions
         data = self._plg_item_dict[item.property.path]
         del self._plg_item_dict[item.property.path]
 
         # remove item from self._item_lookup_dict if present
-        mapping = data.get("mapping")
+        mapping = data.get('mapping')
         if mapping:
             # if a mapping was given for the item, the item is being removed from the list of the mapping
             if item in self._item_lookup_dict[mapping]:
@@ -363,7 +363,7 @@ class SmartPlugin(SmartObject, Utils):
         if source is None:
             return caller
         else:
-            return caller + ":" + source
+            return caller + ':' + source
 
     def register_updating(self, item) -> None:
         """
@@ -381,7 +381,7 @@ class SmartPlugin(SmartObject, Utils):
         """
         if item.property.path not in self._plg_item_dict:
             self.add_item(item)
-        self._plg_item_dict[item.property.path]["is_updating"] = True
+        self._plg_item_dict[item.property.path]['is_updating'] = True
 
     def get_item_config(self, item) -> dict:
         """
@@ -397,7 +397,7 @@ class SmartPlugin(SmartObject, Utils):
             item_path = item
         else:
             item_path = item.property.path
-        return self._plg_item_dict[item_path].get("config_data")
+        return self._plg_item_dict[item_path].get('config_data')
 
     def get_item_mapping(self, item) -> str:
         """
@@ -415,7 +415,7 @@ class SmartPlugin(SmartObject, Utils):
             item_path = item
         else:
             item_path = item.property.path
-        return self._plg_item_dict[item_path].get("mapping")
+        return self._plg_item_dict[item_path].get('mapping')
 
     def get_item_mapping_list(self) -> list:
         """
@@ -431,10 +431,10 @@ class SmartPlugin(SmartObject, Utils):
         """
         result = []
         for item_path in list(self._plg_item_dict.keys()):
-            result.append([item_path, self._plg_item_dict[item_path].get("mapping")])
+            result.append([item_path, self._plg_item_dict[item_path].get('mapping')])
         return result
 
-    def _string_compare(self, s1: str, s2: str, mode: str = "") -> bool:
+    def _string_compare(self, s1: str, s2: str, mode: str = '') -> bool:
         """
         Compare strings of different length
 
@@ -448,12 +448,12 @@ class SmartPlugin(SmartObject, Utils):
         :return: True if strings match, False otherwise
         :rtype: bool
         """
-        if mode == "end":
+        if mode == 'end':
             if len(s1) > len(s2):
                 return s1.endswith(s2)
             else:
                 return s2.endswith(s1)
-        elif mode == "start":
+        elif mode == 'start':
             if len(s1) > len(s2):
                 return s1.startswith(s2)
             else:
@@ -461,7 +461,7 @@ class SmartPlugin(SmartObject, Utils):
         else:
             return s1 == s2
 
-    def get_item_path_list(self, filter_key: str = "", filter_value: str = "", mode: str = "") -> list:
+    def get_item_path_list(self, filter_key: str = '', filter_value: str = '', mode: str = '') -> list:
         """
         Return list of stored item paths used by this plugin
 
@@ -474,25 +474,25 @@ class SmartPlugin(SmartObject, Utils):
 
         :return: List of item pathes
         """
-        if filter_key == "" or filter_value == "":
+        if filter_key == '' or filter_value == '':
             return self._plg_item_dict.keys()
 
-        if mode == "":
+        if mode == '':
             return [
                 item_path
                 for item_path in list(self._plg_item_dict.keys())
-                if self._plg_item_dict[item_path]["config_data"].get(filter_key, None) == filter_value
+                if self._plg_item_dict[item_path]['config_data'].get(filter_key, None) == filter_value
             ]
 
         return [
             item_path
             for item_path in list(self._plg_item_dict.keys())
             if self._string_compare(
-                self._plg_item_dict[item_path]["config_data"].get(filter_key, None), filter_value, mode
+                self._plg_item_dict[item_path]['config_data'].get(filter_key, None), filter_value, mode
             )
         ]
 
-    def get_item_list(self, filter_key: str = "", filter_value: str = "", mode: str = "") -> list:
+    def get_item_list(self, filter_key: str = '', filter_value: str = '', mode: str = '') -> list:
         """
         Return list of stored items used by this plugin
 
@@ -505,21 +505,21 @@ class SmartPlugin(SmartObject, Utils):
 
         :return: List of item objects
         """
-        if filter_key == "" or filter_value == "":
-            return [self._plg_item_dict[item_path]["item"] for item_path in list(self._plg_item_dict.keys())]
+        if filter_key == '' or filter_value == '':
+            return [self._plg_item_dict[item_path]['item'] for item_path in list(self._plg_item_dict.keys())]
 
-        if mode == "":
+        if mode == '':
             return [
-                self._plg_item_dict[item_path]["item"]
+                self._plg_item_dict[item_path]['item']
                 for item_path in list(self._plg_item_dict.keys())
-                if self._plg_item_dict[item_path]["config_data"].get(filter_key, None) == filter_value
+                if self._plg_item_dict[item_path]['config_data'].get(filter_key, None) == filter_value
             ]
 
         return [
-            self._plg_item_dict[item_path]["item"]
+            self._plg_item_dict[item_path]['item']
             for item_path in list(self._plg_item_dict.keys())
             if self._string_compare(
-                self._plg_item_dict[item_path]["config_data"].get(filter_key, None), filter_value, mode
+                self._plg_item_dict[item_path]['config_data'].get(filter_key, None), filter_value, mode
             )
         ]
 
@@ -530,9 +530,9 @@ class SmartPlugin(SmartObject, Utils):
         Only available in SmartHomeNG versions **v1.9.4 and up**.
         """
         return [
-            self._plg_item_dict[item_path]["item"]
+            self._plg_item_dict[item_path]['item']
             for item_path in self._plg_item_dict
-            if self._plg_item_dict[item_path]["is_updating"]
+            if self._plg_item_dict[item_path]['is_updating']
         ]
 
     def get_items_for_mapping(self, mapping: str) -> list:
@@ -631,9 +631,9 @@ class SmartPlugin(SmartObject, Utils):
         :param instance: Name of this instance of the plugin
         :type instance: str
         """
-        if hasattr(self, "ALLOW_MULTIINSTANCE") and self.ALLOW_MULTIINSTANCE:
+        if hasattr(self, 'ALLOW_MULTIINSTANCE') and self.ALLOW_MULTIINSTANCE:
             self.__instance = instance
-        elif hasattr(self, "ALLOW_MULTIINSTANCE") and not self.ALLOW_MULTIINSTANCE:
+        elif hasattr(self, 'ALLOW_MULTIINSTANCE') and not self.ALLOW_MULTIINSTANCE:
             self.logger.warning(
                 f"Plugin '{self.get_shortname()}': Only multi-instance capable plugins allow setting a name for an instance"
             )
@@ -645,10 +645,10 @@ class SmartPlugin(SmartObject, Utils):
         :return: full name of the plugin
         :rtype: str
         """
-        if self.get_instance_name() == "":
+        if self.get_instance_name() == '':
             return self.get_shortname()
         else:
-            return self.get_shortname() + "_" + self.get_instance_name()
+            return self.get_shortname() + '_' + self.get_instance_name()
 
     def get_classname(self) -> str:
         """
@@ -680,8 +680,8 @@ class SmartPlugin(SmartObject, Utils):
         :return: plugin version
         :rtype: str
         """
-        if extended and ("_pv_" in self._plugin_dir):
-            return self.PLUGIN_VERSION + " (pv)"
+        if extended and ('_pv_' in self._plugin_dir):
+            return self.PLUGIN_VERSION + ' (pv)'
         else:
             return self.PLUGIN_VERSION
 
@@ -695,7 +695,7 @@ class SmartPlugin(SmartObject, Utils):
         :return: True, if success or ALLOW_MULTIINSTANCE == mi
         :rtype: bool
         """
-        if hasattr(self, "ALLOW_MULTIINSTANCE") and (self.ALLOW_MULTIINSTANCE is not None):
+        if hasattr(self, 'ALLOW_MULTIINSTANCE') and (self.ALLOW_MULTIINSTANCE is not None):
             return self.ALLOW_MULTIINSTANCE == mi
         else:
             self.ALLOW_MULTIINSTANCE = mi
@@ -708,7 +708,7 @@ class SmartPlugin(SmartObject, Utils):
         :return: True: If multiinstance capable
         :rtype: bool
         """
-        if not hasattr(self, "ALLOW_MULTIINSTANCE") or self.ALLOW_MULTIINSTANCE is None:
+        if not hasattr(self, 'ALLOW_MULTIINSTANCE') or self.ALLOW_MULTIINSTANCE is None:
             return False
         return self.ALLOW_MULTIINSTANCE
 
@@ -770,10 +770,10 @@ class SmartPlugin(SmartObject, Utils):
         :rtype: depends on the type of the parameter definition
         """
         param = self._parameters.get(parameter_name, None)
-        if param == "" or param is None:
-            return ""
+        if param == '' or param is None:
+            return ''
         if self._hide_parameters.get(parameter_name, False):
-            return "******"
+            return '******'
         else:
             return param
 
@@ -789,7 +789,7 @@ class SmartPlugin(SmartObject, Utils):
         self.logger.debug(
             f"update_config_section: Beginning to update section '{self._configname}' of ../etc/plugin.yaml"
         )
-        self.logger.debug(f"update_config_section: valid parameter names to update = {param_names}")
+        self.logger.debug(f'update_config_section: valid parameter names to update = {param_names}')
         self.logger.info(f"update_config_section: Config file = '{self._configfilename}', update data = {param_dict}")
 
         # read plugin.yaml
@@ -804,14 +804,14 @@ class SmartPlugin(SmartObject, Utils):
         parameters_changed = False
         for param in param_dict:
             if param in param_names:
-                if self.metadata.parameters[param]["type"] == "num":
-                    if param_dict[param] == "":
-                        this_param = ""
+                if self.metadata.parameters[param]['type'] == 'num':
+                    if param_dict[param] == '':
+                        this_param = ''
                     else:
                         this_param = float(param_dict[param])
-                elif self.metadata.parameters[param]["type"] == "int":
-                    if param_dict[param] == "":
-                        this_param = ""
+                elif self.metadata.parameters[param]['type'] == 'int':
+                    if param_dict[param] == '':
+                        this_param = ''
                     else:
                         try:
                             this_param = int(float(param_dict[param]))
@@ -824,7 +824,7 @@ class SmartPlugin(SmartObject, Utils):
                 self.logger.info(
                     f"update_config_section: Changing Parameter '{param}' -> type = '{self.metadata.parameters[param]['type']}' from '{sect.get(param, None)}' to '{this_param}'"
                 )
-                if param_dict[param] == "" or param_dict[param] == {} or param_dict[param] == []:
+                if param_dict[param] == '' or param_dict[param] == {} or param_dict[param] == []:
                     try:
                         del sect[param]
                     except KeyError:
@@ -859,10 +859,10 @@ class SmartPlugin(SmartObject, Utils):
         :return: instance name for logstring
         :rtype: str
         """
-        if self.__instance == "":
-            return ""
+        if self.__instance == '':
+            return ''
         else:
-            return self.__instance + "@: "
+            return self.__instance + '@: '
 
     def __get_iattr(self, attr: str) -> str:
         """
@@ -875,10 +875,10 @@ class SmartPlugin(SmartObject, Utils):
         :return: attributr
         :rtype: str
         """
-        if self.__instance == "":
+        if self.__instance == '':
             return attr
         else:
-            return f"{attr}@{self.__instance}"
+            return f'{attr}@{self.__instance}'
 
     def __get_iattr_conf(self, conf: str, attr: str) -> Any:
         """
@@ -896,8 +896,8 @@ class SmartPlugin(SmartObject, Utils):
         __attr = self.__get_iattr(attr)
         if __attr in conf:
             return __attr
-        elif f"{attr}@*" in conf:
-            return f"{attr}@*"
+        elif f'{attr}@*' in conf:
+            return f'{attr}@*'
         return None
 
     def has_iattr(self, conf: str, attr: str) -> bool:
@@ -948,7 +948,7 @@ class SmartPlugin(SmartObject, Utils):
 
         It tests, if PLUGIN_VERSION is defined.
         """
-        if not hasattr(cls, "PLUGIN_VERSION"):
+        if not hasattr(cls, 'PLUGIN_VERSION'):
             raise NotImplementedError("'Plugin' subclasses should have a 'PLUGIN_VERSION' attribute")
         return SmartObject.__new__(cls, *args, **kargs)
 
@@ -1004,10 +1004,10 @@ class SmartPlugin(SmartObject, Utils):
         return self.shtime.now()
 
     def scheduler_return_next(self, name: str) -> Any:
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._pluginname_prefix + self.get_fullname() + name
-        self.logger.debug(f"scheduler_return_next: name = {name}")
+        self.logger.debug(f'scheduler_return_next: name = {name}')
         return self._sh.scheduler.return_next(name, from_smartplugin=True)
 
     def scheduler_trigger(self, name, obj=None, by=None, source=None, value=None, dest=None, prio=3, dt=None) -> None:
@@ -1018,13 +1018,13 @@ class SmartPlugin(SmartObject, Utils):
 
         The parameters are identical to the scheduler.trigger method from lib.scheduler
         """
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._pluginname_prefix + self.get_fullname() + name
         if by is None:
-            by = f"Plugin {name}"
-        parameters = ", ".join([f"{k}={v!r}" for k, v in locals().items() if v and k not in ["name", "self", "obj"]])
-        self.logger.debug(f"scheduler_trigger: name = {name}, parameters: {parameters}")
+            by = f'Plugin {name}'
+        parameters = ', '.join([f'{k}={v!r}' for k, v in locals().items() if v and k not in ['name', 'self', 'obj']])
+        self.logger.debug(f'scheduler_trigger: name = {name}, parameters: {parameters}')
         self._sh.scheduler.trigger(name, obj, by, source, value, dest, prio, dt, from_smartplugin=True)
 
     def scheduler_add(
@@ -1038,11 +1038,11 @@ class SmartPlugin(SmartObject, Utils):
         The parameters are identical to the scheduler.add method from lib.scheduler
         """
         self._schedulers.append(name)
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._pluginname_prefix + self.get_fullname() + name
-        parameters = ", ".join([f"{k}={v!r}" for k, v in locals().items() if v and k not in ["name", "self", "obj"]])
-        self.logger.debug(f"scheduler_add: name = {name}, parameters: {parameters}")
+        parameters = ', '.join([f'{k}={v!r}' for k, v in locals().items() if v and k not in ['name', 'self', 'obj']])
+        self.logger.debug(f'scheduler_add: name = {name}, parameters: {parameters}')
         self._sh.scheduler.add(name, obj, prio, cron, cycle, value, offset, next, from_smartplugin=True)
 
     def scheduler_change(self, name: str, **kwargs) -> None:
@@ -1053,12 +1053,12 @@ class SmartPlugin(SmartObject, Utils):
 
         The parameters are identical to the scheduler.change method from lib.scheduler
         """
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._pluginname_prefix + self.get_fullname() + name
-        kwargs["from_smartplugin"] = True
-        parameters = ", ".join([f"{k}={v!r}" for k, v in kwargs.items()])
-        self.logger.debug(f"scheduler_change: name = {name}, parameters: {parameters}")
+        kwargs['from_smartplugin'] = True
+        parameters = ', '.join([f'{k}={v!r}' for k, v in kwargs.items()])
+        self.logger.debug(f'scheduler_change: name = {name}, parameters: {parameters}')
         self._sh.scheduler.change(name, **kwargs)
 
     def scheduler_remove(self, name: str) -> None:
@@ -1073,10 +1073,10 @@ class SmartPlugin(SmartObject, Utils):
             self._schedulers.remove(name)
         except ValueError:
             pass
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._pluginname_prefix + self.get_fullname() + name
-        self.logger.debug(f"scheduler_remove: name = {name}")
+        self.logger.debug(f'scheduler_remove: name = {name}')
         self._sh.scheduler.remove(name, from_smartplugin=True)
 
     def scheduler_get(self, name: str) -> dict:
@@ -1087,10 +1087,10 @@ class SmartPlugin(SmartObject, Utils):
 
         The parameters are identical to the scheduler.get method from lib.scheduler
         """
-        if name != "":
-            name = "." + name
+        if name != '':
+            name = '.' + name
         name = self._pluginname_prefix + self.get_fullname() + name
-        self.logger.debug(f"scheduler_get: name = {name}")
+        self.logger.debug(f'scheduler_get: name = {name}')
         return self._sh.scheduler.get(name, from_smartplugin=True)
 
     def scheduler_get_all(self):
@@ -1145,15 +1145,15 @@ class SmartPlugin(SmartObject, Utils):
             self.logger.error("Called '_start_known_asyncio_coro()' without known plugin_coro")
             return
 
-        threadname = "plugins." + self.get_fullname() + ".asyncio"
+        threadname = 'plugins.' + self.get_fullname() + '.asyncio'
         try:
             self.pluginThread = threading.Thread(
                 target=self._asyncio_loop_thread,
                 name=threadname,
                 daemon=False,
-                kwargs={"plugin_coro": self._used_plugin_coro},
+                kwargs={'plugin_coro': self._used_plugin_coro},
             )
-            self.logger.info(f"Starting thread {threadname} for asyncio loop...")
+            self.logger.info(f'Starting thread {threadname} for asyncio loop...')
             self.pluginThread.start()
         except Exception as e:
             self.logger.error(f"Cannot start thread '{threadname}' - Error: {e}")
@@ -1165,17 +1165,17 @@ class SmartPlugin(SmartObject, Utils):
         This routine is to be called from the plugin's stop() method.
 
         """
-        self.logger.info("Shutting down asyncio loop and thread...")
+        self.logger.info('Shutting down asyncio loop and thread...')
 
-        self.put_command_to_run_queue("STOP")
+        self.put_command_to_run_queue('STOP')
         time.sleep(3)
         try:
             self.pluginThread.join()
-            self.logger.debug("_asyncio_loop_thread of plugin stopped")
+            self.logger.debug('_asyncio_loop_thread of plugin stopped')
         except Exception as err:
-            self.logger.notice(f"Error stopping _asyncio_loop_thread: {err}")
+            self.logger.notice(f'Error stopping _asyncio_loop_thread: {err}')
             pass
-        self._asyncio_state = "stopped"
+        self._asyncio_state = 'stopped'
 
     def _asyncio_loop_thread(self, plugin_coro: Coroutine) -> None:
         """
@@ -1185,7 +1185,7 @@ class SmartPlugin(SmartObject, Utils):
 
         :param plugin_coro: Coroutine that should be started in the eventloop of the asyncio-thread
         """
-        self.logger.debug("_asyncio_loop_thread of plugin started")
+        self.logger.debug('_asyncio_loop_thread of plugin started')
 
         asyncio.run(self._asyncio_main(plugin_coro))
 
@@ -1195,24 +1195,24 @@ class SmartPlugin(SmartObject, Utils):
 
         :param plugin_coro: Coroutine that should be started in the eventloop of the asyncio-thread
         """
-        self.logger.debug("_asyncio main task of plugin started")
+        self.logger.debug('_asyncio main task of plugin started')
         self._asyncio_loop = asyncio.get_event_loop()
         task = asyncio.current_task()
-        task.set_name("MainTask")
+        task.set_name('MainTask')
         # Create queue to send termination command to plugin_coro when the plugin should be stopped
         self._run_queue = asyncio.Queue()
 
         # Create the main task of the plugin and await it
-        self.task = asyncio.create_task(plugin_coro, name="PluginTask")
-        self._asyncio_state = "running"
+        self.task = asyncio.create_task(plugin_coro, name='PluginTask')
+        self._asyncio_state = 'running'
         try:
             await self.task
         except Exception as ex:
-            self.logger.exception(f"Exception raised in PluginTask: {ex}")
+            self.logger.exception(f'Exception raised in PluginTask: {ex}')
 
-        self._asyncio_state = "stopped"
+        self._asyncio_state = 'stopped'
         self._asyncio_loop = None
-        self.logger.debug("_asyncio main task of plugin finished")
+        self.logger.debug('_asyncio main task of plugin finished')
 
     def run_asyncio_coro(self, coro: Coroutine, timeout=60, return_exeption: bool = False) -> Any:
         """
@@ -1262,10 +1262,10 @@ class SmartPlugin(SmartObject, Utils):
 
         When the plugin should be stopped, a string 'STOP' is written into the queue
         """
-        queue_command = ""
-        while queue_command != "STOP":
+        queue_command = ''
+        while queue_command != 'STOP':
             queue_command = await self._run_queue.get()
-            if queue_command != "STOP":
+            if queue_command != 'STOP':
                 # put command back to queue?
                 await asyncio.sleep(0.1)
 
@@ -1309,12 +1309,12 @@ class SmartPlugin(SmartObject, Utils):
         The intention of this method is to support the plugin development/debugging. It can be called
         from the executor plugin or from the eval-syntax-checker of the admin gui
         """
-        self.logger.notice("list_asyncio_tasks: Task list")
+        self.logger.notice('list_asyncio_tasks: Task list')
         tasks = asyncio.all_tasks()
         for task in tasks:
-            if task.get_coro().__name__ == "list_asyncio_tasks":
-                task.set_name("ListTasks")
-            self.logger.notice(f" - {task}")
+            if task.get_coro().__name__ == 'list_asyncio_tasks':
+                task.set_name('ListTasks')
+            self.logger.notice(f' - {task}')
 
     def translate(self, txt, vars=None, block=None):
         """
@@ -1326,11 +1326,11 @@ class SmartPlugin(SmartObject, Utils):
 
         if self._add_translation is None:
             # test initially, if plugin has additional translations
-            translation_fn = os.path.join(self._plugin_dir, "locale.yaml")
+            translation_fn = os.path.join(self._plugin_dir, 'locale.yaml')
             self._add_translation = os.path.isfile(translation_fn)
 
         if self._add_translation:
-            return lib_translate(txt, vars, plugin_translations="plugin/" + self.get_shortname())
+            return lib_translate(txt, vars, plugin_translations='plugin/' + self.get_shortname())
         else:
             return lib_translate(txt, vars)
 
@@ -1345,7 +1345,7 @@ class SmartPlugin(SmartObject, Utils):
 
         try:
             # try/except to handle running in a core version that does not support modules
-            self.mod_http = Modules.get_instance().get_module("http")
+            self.mod_http = Modules.get_instance().get_module('http')
         except Exception:
             self.mod_http = None
         if self.mod_http is None:
@@ -1353,12 +1353,10 @@ class SmartPlugin(SmartObject, Utils):
             return False
 
         # set application configuration for cherrypy
-        webif_dir = self.path_join(self.get_plugin_dir(), "webif")
+        webif_dir = self.path_join(self.get_plugin_dir(), 'webif')
         config = {
-            "/": {
-                "tools.staticdir.root": webif_dir,
-            },
-            "/static": {"tools.staticdir.on": True, "tools.staticdir.dir": "static"},
+            '/': {'tools.staticdir.root': webif_dir},
+            '/static': {'tools.staticdir.on': True, 'tools.staticdir.dir': 'static'},
         }
 
         # Register the web interface as a cherrypy app
@@ -1368,7 +1366,7 @@ class SmartPlugin(SmartObject, Utils):
             config,
             self.get_classname(),
             self.get_instance_name(),
-            description="",
+            description='',
         )
 
         return True
@@ -1378,11 +1376,11 @@ class SmartPlugin(SmartObject, Utils):
     #
 
     def _get_itemlist(self):
-        self._sh._deprecated_warning("SmartPlugin.get_items()")
+        self._sh._deprecated_warning('SmartPlugin.get_items()')
         return self.get_items()
 
     def _append_to_itemlist(self, item):
-        self._sh._deprecated_warning("SmartPlugin.add_item()")
+        self._sh._deprecated_warning('SmartPlugin.add_item()')
         self.add_item(item)
 
 
@@ -1405,13 +1403,13 @@ class SmartPluginWebIf:
         except Exception:
             pass
 
-        mytemplates = self.plugin.path_join(self.webif_dir, "templates")
+        mytemplates = self.plugin.path_join(self.webif_dir, 'templates')
         globaltemplates = self.plugin.mod_http.gtemplates_dir
         tplenv = Environment(loader=FileSystemLoader([mytemplates, globaltemplates]))
 
-        tplenv.globals["isfile"] = self.is_staticfile
-        tplenv.globals["_"] = self.translate  # use translate method of webinterface class
-        tplenv.globals["len"] = len
+        tplenv.globals['isfile'] = self.is_staticfile
+        tplenv.globals['_'] = self.translate  # use translate method of webinterface class
+        tplenv.globals['len'] = len
         return tplenv
 
     def is_staticfile(self, path):
@@ -1427,8 +1425,8 @@ class SmartPluginWebIf:
         :return: True if the file exists
         :rtype: bool
         """
-        if path.startswith("/gstatic/"):
-            complete_path = self.plugin.path_join(self.plugin.mod_http.gstatic_dir, path[len("/gstatic/") :])
+        if path.startswith('/gstatic/'):
+            complete_path = self.plugin.path_join(self.plugin.mod_http.gstatic_dir, path[len('/gstatic/') :])
         else:
             complete_path = self.plugin.path_join(self.webif_dir, path)
         from os.path import isfile as isfile
@@ -1445,15 +1443,15 @@ class SmartPluginWebIf:
 
         if self.plugin._add_translation is None:
             # test initially, if plugin has additional translations
-            translation_fn = os.path.join(self.plugin._plugin_dir, "locale.yaml")
+            translation_fn = os.path.join(self.plugin._plugin_dir, 'locale.yaml')
             self.plugin._add_translation = os.path.isfile(translation_fn)
 
         if self.plugin._add_translation:
             return lib_translate(
                 txt,
                 vars,
-                plugin_translations="plugin/" + self.plugin.get_shortname(),
-                module_translations="module/http",
+                plugin_translations='plugin/' + self.plugin.get_shortname(),
+                module_translations='module/http',
             )
         else:
-            return lib_translate(txt, vars, module_translations="module/http")
+            return lib_translate(txt, vars, module_translations='module/http')
