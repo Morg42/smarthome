@@ -30,7 +30,7 @@ from .rest import RESTResource
 import bin.shngversion
 import lib.daemon
 import lib.backup as backup
-from lib.constants import (DIR_ETC, DIR_MODULES)
+from lib.constants import DIR_ETC, DIR_MODULES
 from lib.shpypi import Shpypi
 
 
@@ -54,13 +54,13 @@ def get_process_info(command, wait=True, append_error=False):
     # Interact with process: Send data to stdin. Read data from stdout and stderr, until end-of-file is reached.
     # Wait for process to terminate. The optional input argument should be a string to be sent to the child process, or None, if no data should be sent to the child.
     (result, err) = p.communicate()
-#    logger.warning("get_process_info: command='{}', result='{}', err='{}'".format(command, result, err))
+    #    logger.warning("get_process_info: command='{}', result='{}', err='{}'".format(command, result, err))
 
     if wait:
         ## Wait for date to terminate. Get return returncode ##
         p.wait()
 
-    return str(result, encoding='utf-8', errors='strict')
+    return str(result, encoding="utf-8", errors="strict")
 
 
 # ======================================================================
@@ -75,11 +75,12 @@ class ServerController(RESTResource):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
         self.modules_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
-
 
     # ======================================================================
     #  /api/server
@@ -90,24 +91,23 @@ class ServerController(RESTResource):
 
         Note: the root of the REST API is not protected by authentication
         """
-        client_ip = cherrypy.request.wsgi_environ.get('REMOTE_ADDR')
+        client_ip = cherrypy.request.wsgi_environ.get("REMOTE_ADDR")
 
         response = {}
-        response['default_language'] = self._sh.get_defaultlanguage()
-        response['client_ip'] = client_ip
+        response["default_language"] = self._sh.get_defaultlanguage()
+        response["client_ip"] = client_ip
         http_user_dict = self.module.mod_http.get_user_dict()
-        pw_hash = http_user_dict.get('admin', {}).get('password_hash') or ''
-        response['login_required'] = pw_hash != ''
+        pw_hash = http_user_dict.get("admin", {}).get("password_hash") or ""
+        response["login_required"] = pw_hash != ""
         # Include websocket connection info so the frontend can set wsPort/wsHost
         # during APP_INITIALIZER (getServerBasicinfo) rather than waiting for the
         # later getServerinfo() call from TopNavigationComponent.  Without these
         # fields the frontend starts routing with wsPort='' and WebSocket-dependent
         # components (e.g. resource graphs) skip their connection on first load.
-        response['websocket_port'] = self.module.websocket_port
-        response['websocket_host'] = self.module.websocket_host
+        response["websocket_port"] = self.module.websocket_port
+        response["websocket_host"] = self.module.websocket_host
 
         return json.dumps(response)
-
 
     # ======================================================================
     #  /api/server/info
@@ -118,51 +118,50 @@ class ServerController(RESTResource):
 
         Note: the root of the REST API is not protected by authentication
         """
-        client_ip = cherrypy.request.wsgi_environ.get('REMOTE_ADDR')
+        client_ip = cherrypy.request.wsgi_environ.get("REMOTE_ADDR")
 
         response = {}
-        response['default_language'] = self._sh.get_defaultlanguage()
-        def_lang = response['default_language'].lower()
-        if def_lang == 'de':
-            response['locale'] = 'de-DE'
-        elif def_lang == 'en':
-            response['locale'] = 'en-GB'
-        elif def_lang == 'fr':
-            response['locale'] = 'fr-FR'
-        elif def_lang == 'es':
-            response['locale'] = 'es-ES'
+        response["default_language"] = self._sh.get_defaultlanguage()
+        def_lang = response["default_language"].lower()
+        if def_lang == "de":
+            response["locale"] = "de-DE"
+        elif def_lang == "en":
+            response["locale"] = "en-GB"
+        elif def_lang == "fr":
+            response["locale"] = "fr-FR"
+        elif def_lang == "es":
+            response["locale"] = "es-ES"
         else:
-            response['locale'] = ''
-        response['fallback_language_order'] = self._sh._fallback_language_order
-        response['client_ip'] = client_ip
-        response['itemtree_fullpath'] = self.module.itemtree_fullpath
-        response['itemtree_searchstart'] = self.module.itemtree_searchstart
-        response['tz'] = self.module.shtime.tz()
-        response['tzname'] = str(self.module.shtime.tzname())
-        response['tznameST'] = str(self.module.shtime.tznameST())
-        response['tznameDST'] = str(self.module.shtime.tznameDST())
-        response['core_branch'] = bin.shngversion.get_shng_branch()
-        response['plugins_branch'] = bin.shngversion.get_plugins_branch()
-        response['websocket_host'] = self.module.websocket_host
-        response['websocket_port'] = self.module.websocket_port
-        response['log_chunksize'] = self.module.log_chunksize
-        response['developer_mode'] = self.module.developer_mode
-        response['click_dropdown_header'] = self.module.click_dropdown_header
+            response["locale"] = ""
+        response["fallback_language_order"] = self._sh._fallback_language_order
+        response["client_ip"] = client_ip
+        response["itemtree_fullpath"] = self.module.itemtree_fullpath
+        response["itemtree_searchstart"] = self.module.itemtree_searchstart
+        response["tz"] = self.module.shtime.tz()
+        response["tzname"] = str(self.module.shtime.tzname())
+        response["tznameST"] = str(self.module.shtime.tznameST())
+        response["tznameDST"] = str(self.module.shtime.tznameDST())
+        response["core_branch"] = bin.shngversion.get_shng_branch()
+        response["plugins_branch"] = bin.shngversion.get_plugins_branch()
+        response["websocket_host"] = self.module.websocket_host
+        response["websocket_port"] = self.module.websocket_port
+        response["log_chunksize"] = self.module.log_chunksize
+        response["developer_mode"] = self.module.developer_mode
+        response["click_dropdown_header"] = self.module.click_dropdown_header
 
-        response['daemon_knx'] = self.get_knx_daemon()
-        response['daemon_ow'] = self.get_1wire_daemon()
-        response['daemon_mqtt'] = self.get_mqtt_daemon()
-        response['daemon_node_red'] = self.get_node_red_daemon()
-        response['backup_stem'] = ''
+        response["daemon_knx"] = self.get_knx_daemon()
+        response["daemon_ow"] = self.get_1wire_daemon()
+        response["daemon_mqtt"] = self.get_mqtt_daemon()
+        response["daemon_node_red"] = self.get_node_red_daemon()
+        response["backup_stem"] = ""
         try:
-            response['backup_stem'] = self._sh._backup_name_stem
+            response["backup_stem"] = self._sh._backup_name_stem
         except Exception:
             pass
-        response['last_backup'] = backup.get_lastbackuptime()
+        response["last_backup"] = backup.get_lastbackuptime()
         # response['pid'] = str(lib.daemon.read_pidfile(self._sh._pidfile))
         self.logger.info("ServerController.info(): response = {}".format(response))
         return json.dumps(response)
-
 
     def get_knx_daemon(self):
         """
@@ -172,72 +171,68 @@ class ServerController(RESTResource):
         # smarthome_service = get_process_info("systemctl status smarthome.service")
         # knxd_socket = get_process_info("systemctl status knxd.socket")
 
-        daemon = 'SERVICES.INACTIVE'
-        if os.name != 'nt':
-            if get_process_info("ps cax|grep eibd") != '':
-                daemon = 'eibd'
-            if get_process_info("ps cax|grep knxd") != '':
-                if daemon != 'SERVICES.INACTIVE':
-                    daemon += ' and knxd'
+        daemon = "SERVICES.INACTIVE"
+        if os.name != "nt":
+            if get_process_info("ps cax|grep eibd") != "":
+                daemon = "eibd"
+            if get_process_info("ps cax|grep knxd") != "":
+                if daemon != "SERVICES.INACTIVE":
+                    daemon += " and knxd"
                 else:
-                    daemon = 'knxd'
+                    daemon = "knxd"
                     # get version of installed knx daemon (knxd v0.14.30 outputs version to stderr instead of stdout)
                     wrk = get_process_info("knxd -l?V|grep knxd", append_error=True)
                     wrk = wrk.split()
-                    wrk = wrk[1].split(':')
+                    wrk = wrk[1].split(":")
                     if wrk != []:
-                        daemon += ' v' + wrk[0]
+                        daemon += " v" + wrk[0]
         return daemon
-
 
     def get_1wire_daemon(self):
         """
         Tests it 1wire are running
         """
-        daemon = 'SERVICES.INACTIVE'
-        if os.name != 'nt':
-            if get_process_info("ps cax|grep owserver") != '':
-                daemon = 'owserver'
+        daemon = "SERVICES.INACTIVE"
+        if os.name != "nt":
+            if get_process_info("ps cax|grep owserver") != "":
+                daemon = "owserver"
                 # get version of installed owserver
                 wrk = get_process_info("owserver -V|grep 'owserver version'", append_error=True)
                 wrk = wrk.split()
                 if wrk != []:
-                    daemon += ' v' + wrk[2]
+                    daemon += " v" + wrk[2]
         return daemon
-
 
     def get_mqtt_daemon(self):
         """
         Tests it 1wire are running
         """
-        daemon = 'SERVICES.INACTIVE'
-        if os.name != 'nt':
+        daemon = "SERVICES.INACTIVE"
+        if os.name != "nt":
             # test id mqtt broker is running
-            if get_process_info("ps cax|grep mosquitto") != '':
-                daemon = 'mosquitto'
+            if get_process_info("ps cax|grep mosquitto") != "":
+                daemon = "mosquitto"
                 # get version of installed mosquitto broker
                 wrk = get_process_info("/usr/sbin/mosquitto -h|grep version")
                 wrk = wrk.split()
                 if wrk != []:
-                    daemon += ' v' + wrk[2]
+                    daemon += " v" + wrk[2]
         return daemon
-
 
     def get_node_red_daemon(self):
         """
         Tests it 1wire are running
         """
-        daemon = 'SERVICES.INACTIVE'
-        if os.name != 'nt':
-            if get_process_info("ps cax|grep node-red") != '':
-                daemon = 'node-red'
+        daemon = "SERVICES.INACTIVE"
+        if os.name != "nt":
+            if get_process_info("ps cax|grep node-red") != "":
+                daemon = "node-red"
                 # get version of installed node-red
                 wrk = get_process_info("node-red --help|grep Node-RED")
                 wrk = wrk.split()
                 if wrk != []:
-                    daemon += ' ' + wrk[1]
+                    daemon += " " + wrk[1]
         return daemon
-
 
     # ======================================================================
     #  /api/server/status
@@ -251,11 +246,10 @@ class ServerController(RESTResource):
         try:
             response = self._sh.shng_status
         except AttributeError:
-            response = {'code': -1, 'text': 'unknown'}
+            response = {"code": -1, "text": "unknown"}
 
         # self.logger.debug("ServerController.index(): /{} - response '{}'".format(id, response))
         return json.dumps(response)
-
 
     # ======================================================================
     #  /api/server/restart
@@ -269,15 +263,14 @@ class ServerController(RESTResource):
         self.logger.info("ServerController.restart()")
 
         status = self._sh.shng_status
-        if status['code'] == 20:
-            self._sh.restart('admin interface')
-            response = {'result': 'ok'}
+        if status["code"] == 20:
+            self._sh.restart("admin interface")
+            response = {"result": "ok"}
         else:
-            response = {'result': 'error', 'text': "SmartHomeNG is not in state 'running'"}
+            response = {"result": "error", "text": "SmartHomeNG is not in state 'running'"}
 
         self.logger.info("ServerController.update(): /{} - response '{}'".format(id, response))
         return json.dumps(response)
-
 
     # ======================================================================
     #  /api/server/pypi
@@ -295,14 +288,13 @@ class ServerController(RESTResource):
             source = shpypi.package_list
         else:
             source = shpypi.get_packagelist()
-        sorted_list = sorted(source, key=lambda k: k['sort'], reverse=False)
+        sorted_list = sorted(source, key=lambda k: k["sort"], reverse=False)
         return json.dumps(sorted_list)
-
 
     # ======================================================================
     #  GET /api/server/
     #
-    def read(self, id=''):
+    def read(self, id=""):
         """
         Handle GET requests for server API
         """
@@ -310,11 +302,11 @@ class ServerController(RESTResource):
 
         if id is None:
             return self.root()
-        elif id == 'status':
+        elif id == "status":
             return self.status()
-        elif id == 'info':
+        elif id == "info":
             return self.info()
-        elif id == 'pypi':
+        elif id == "pypi":
             return self.pypi()
 
         return None
@@ -323,18 +315,16 @@ class ServerController(RESTResource):
     read.authentication_needed = True
     read.public_root = True
 
-
-    def update(self, id='', level=None):
+    def update(self, id="", level=None):
         """
         Handle PUT requests for server API
         """
         self.logger.info(f"ServerController.update('{id}'), level='{level}'")
 
-        if id == 'restart':
+        if id == "restart":
             return self.restart()
 
         return None
 
     update.expose_resource = True
     update.authentication_needed = True
-

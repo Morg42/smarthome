@@ -28,7 +28,7 @@ import cherrypy
 
 from lib.module import Modules
 import lib.shyaml as shyaml
-from lib.constants import (DIR_ETC, DIR_MODULES, BASE_SH, BASE_HOLIDAY, BASE_MODULE)
+from lib.constants import DIR_ETC, DIR_MODULES, BASE_SH, BASE_HOLIDAY, BASE_MODULE
 
 from .rest import RESTResource
 
@@ -42,25 +42,26 @@ class ConfigController(RESTResource):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)
         self.modules_dir = self._sh.get_config_dir(DIR_MODULES)
 
-        self.core_conf = shyaml.yaml_load(os.path.join(self.modules_dir, 'core', 'module.yaml'))
-        self.http_conf = shyaml.yaml_load(os.path.join(self.modules_dir, 'http', 'module.yaml'))
-        self.websocket_conf = shyaml.yaml_load(os.path.join(self.modules_dir, 'websocket', 'module.yaml'))
-        self.admin_conf = shyaml.yaml_load(os.path.join(self.modules_dir, 'admin', 'module.yaml'))
-        self.mqtt_conf = shyaml.yaml_load(os.path.join(self.modules_dir, 'mqtt', 'module.yaml'))
+        self.core_conf = shyaml.yaml_load(os.path.join(self.modules_dir, "core", "module.yaml"))
+        self.http_conf = shyaml.yaml_load(os.path.join(self.modules_dir, "http", "module.yaml"))
+        self.websocket_conf = shyaml.yaml_load(os.path.join(self.modules_dir, "websocket", "module.yaml"))
+        self.admin_conf = shyaml.yaml_load(os.path.join(self.modules_dir, "admin", "module.yaml"))
+        self.mqtt_conf = shyaml.yaml_load(os.path.join(self.modules_dir, "mqtt", "module.yaml"))
 
         return
 
-
-    def update_configdict(self, config_dict, data, section='unknown'):
+    def update_configdict(self, config_dict, data, section="unknown"):
         """
         Update loaded config dict from data received from the admin frontend
         """
-        update_data = data.get(section, {}).get('data', {})
+        update_data = data.get(section, {}).get("data", {})
         for key in update_data:
             # self.logger.info("  - update: {}: {} = {}".format(section, key, update_data[key]))
             if update_data[key] is None:
@@ -69,29 +70,27 @@ class ConfigController(RESTResource):
                 config_dict[key] = update_data[key]
         return
 
-
     # ======================================================================
     #  Read holidays
     #
     def read_holidays(self):
         self.holidays_confdata = shyaml.yaml_load(self._sh.get_config_file(BASE_HOLIDAY))
-        if self.holidays_confdata.get('location', None) is not None:
-            self.core_confdata['holidays_country'] = self.holidays_confdata['location'].get('country', '')
-            self.core_confdata['holidays_province'] = self.holidays_confdata['location'].get('province', '')
-            self.core_confdata['holidays_state'] = self.holidays_confdata['location'].get('state', '')
+        if self.holidays_confdata.get("location", None) is not None:
+            self.core_confdata["holidays_country"] = self.holidays_confdata["location"].get("country", "")
+            self.core_confdata["holidays_province"] = self.holidays_confdata["location"].get("province", "")
+            self.core_confdata["holidays_state"] = self.holidays_confdata["location"].get("state", "")
 
-        for i in range(1,6):
-            self.core_confdata['holidays_custom'+str(i)] = ''
+        for i in range(1, 6):
+            self.core_confdata["holidays_custom" + str(i)] = ""
         try:
             for i in range(1, 6):
-                if isinstance(self.holidays_confdata['custom'][i-1], dict):
-                    self.core_confdata['holidays_custom'+str(i)] = json.dumps(self.holidays_confdata['custom'][i-1])
+                if isinstance(self.holidays_confdata["custom"][i - 1], dict):
+                    self.core_confdata["holidays_custom" + str(i)] = json.dumps(self.holidays_confdata["custom"][i - 1])
                 else:
-                    self.core_confdata['holidays_custom' + str(i)] = self.holidays_confdata['custom'][i - 1]
+                    self.core_confdata["holidays_custom" + str(i)] = self.holidays_confdata["custom"][i - 1]
         except Exception:
             pass
         return
-
 
     # ======================================================================
     #  Update holidays
@@ -100,50 +99,49 @@ class ConfigController(RESTResource):
         filename = self._sh.get_config_file(BASE_HOLIDAY)
         self.holidays_confdata = shyaml.yaml_load_roundtrip(filename)
         self.logger.info("update_holidays: self.holidays_confdata = '{}'".format(self.holidays_confdata))
-        self.logger.info("update_holidays: data['common']['data'] = '{}'".format(data['common']['data']))
+        self.logger.info("update_holidays: data['common']['data'] = '{}'".format(data["common"]["data"]))
 
-        if self.holidays_confdata.get('location', None) is None:
-            self.holidays_confdata['location'] = {}
+        if self.holidays_confdata.get("location", None) is None:
+            self.holidays_confdata["location"] = {}
 
-        self.holidays_confdata['location']['country'] = data['common']['data']['holidays_country']
-        self.holidays_confdata['location']['province'] = data['common']['data']['holidays_province']
-        self.holidays_confdata['location']['state'] = data['common']['data']['holidays_state']
-        del data['common']['data']['holidays_country']
-        del data['common']['data']['holidays_province']
-        del data['common']['data']['holidays_state']
+        self.holidays_confdata["location"]["country"] = data["common"]["data"]["holidays_country"]
+        self.holidays_confdata["location"]["province"] = data["common"]["data"]["holidays_province"]
+        self.holidays_confdata["location"]["state"] = data["common"]["data"]["holidays_state"]
+        del data["common"]["data"]["holidays_country"]
+        del data["common"]["data"]["holidays_province"]
+        del data["common"]["data"]["holidays_state"]
 
-        if self.holidays_confdata.get('custom', None) is None:
-            self.holidays_confdata['custom'] = []
+        if self.holidays_confdata.get("custom", None) is None:
+            self.holidays_confdata["custom"] = []
 
         try:
-            if len(self.holidays_confdata['custom']) > 5:
+            if len(self.holidays_confdata["custom"]) > 5:
                 for i in range(1, 6):
-                    custom = data['common']['data']['holidays_custom' + str(i)]
-                    if custom is not None and custom != '':
-                        self.holidays_confdata['custom'][i-1] = custom
+                    custom = data["common"]["data"]["holidays_custom" + str(i)]
+                    if custom is not None and custom != "":
+                        self.holidays_confdata["custom"][i - 1] = custom
             else:
-                self.holidays_confdata['custom'] = []
+                self.holidays_confdata["custom"] = []
                 for i in range(1, 6):
-                    custom = data['common']['data']['holidays_custom' + str(i)]
-                    if custom is not None and custom != '':
-                        self.holidays_confdata['custom'].append(custom)
+                    custom = data["common"]["data"]["holidays_custom" + str(i)]
+                    if custom is not None and custom != "":
+                        self.holidays_confdata["custom"].append(custom)
 
             for i in range(1, 6):
-                del data['common']['data']['holidays_custom' + str(i)]
+                del data["common"]["data"]["holidays_custom" + str(i)]
         except Exception as e:
             self.logger.critical("update_holidays: Exception {}".format(e))
 
-        if self.holidays_confdata['custom'] == []:
-            #self.holidays_confdata['custom'] = None
-            del self.holidays_confdata['custom']
+        if self.holidays_confdata["custom"] == []:
+            # self.holidays_confdata['custom'] = None
+            del self.holidays_confdata["custom"]
 
-        if self.holidays_confdata['location']['state'] is None:
-            del self.holidays_confdata['location']['state']
+        if self.holidays_confdata["location"]["state"] is None:
+            del self.holidays_confdata["location"]["state"]
 
         self.logger.info("update_holidays: self.holidays_confdata = '{}'".format(self.holidays_confdata))
         shyaml.yaml_save_roundtrip(filename, self.holidays_confdata, create_backup=True)
         return
-
 
     # ======================================================================
     #  Handling of http REST requests
@@ -160,62 +158,62 @@ class ConfigController(RESTResource):
         self.module_confdata = shyaml.yaml_load(self._sh.get_config_file(BASE_MODULE))
 
         result = {}
-        if (not id) or id == 'core':
-            result['common'] = {}
-            result['common']['data'] = self.core_confdata
-            result['common']['meta'] = self.core_conf
-            result['http'] = {}
-            result['http']['data'] = self.module_confdata.get('http', {})
-            result['http']['meta'] = self.http_conf
-            result['websocket'] = {}
-            result['websocket']['data'] = self.module_confdata.get('websocket', {})
-            result['websocket']['meta'] = self.websocket_conf
-            if result['websocket']['data'].get('enabled', None) is None:
-                result['websocket']['data']['enabled'] = True
-            result['admin'] = {}
-            result['admin']['data'] = self.module_confdata.get('admin', {})
-            result['admin']['meta'] = self.admin_conf
-            result['mqtt'] = {}
-            result['mqtt']['data'] = self.module_confdata.get('mqtt', {})
-            if result['mqtt']['data'].get('enabled', None) is None:
-                result['mqtt']['data']['enabled'] = True
-            result['mqtt']['meta'] = self.mqtt_conf
+        if (not id) or id == "core":
+            result["common"] = {}
+            result["common"]["data"] = self.core_confdata
+            result["common"]["meta"] = self.core_conf
+            result["http"] = {}
+            result["http"]["data"] = self.module_confdata.get("http", {})
+            result["http"]["meta"] = self.http_conf
+            result["websocket"] = {}
+            result["websocket"]["data"] = self.module_confdata.get("websocket", {})
+            result["websocket"]["meta"] = self.websocket_conf
+            if result["websocket"]["data"].get("enabled", None) is None:
+                result["websocket"]["data"]["enabled"] = True
+            result["admin"] = {}
+            result["admin"]["data"] = self.module_confdata.get("admin", {})
+            result["admin"]["meta"] = self.admin_conf
+            result["mqtt"] = {}
+            result["mqtt"]["data"] = self.module_confdata.get("mqtt", {})
+            if result["mqtt"]["data"].get("enabled", None) is None:
+                result["mqtt"]["data"]["enabled"] = True
+            result["mqtt"]["meta"] = self.mqtt_conf
             self.logger.info("  - index: core = {}".format(result))
             return json.dumps(result)
 
-        if id == 'common':
-            result['data'] = self.core_confdata
-            result['meta'] = self.core_conf
+        if id == "common":
+            result["data"] = self.core_confdata
+            result["meta"] = self.core_conf
             self.logger.info("  - index: common = {}".format(result))
             return json.dumps(result)
 
-        if id == 'http':
-            result['data'] = self.module_confdata.get('http', {})
-            result['meta'] = self.http_conf
+        if id == "http":
+            result["data"] = self.module_confdata.get("http", {})
+            result["meta"] = self.http_conf
             self.logger.info("  - index: http = {}".format(result))
             return json.dumps(result)
 
-        if id == 'websocket':
-            result['data'] = self.module_confdata.get('websocket', {})
-            result['meta'] = self.websocket_conf
+        if id == "websocket":
+            result["data"] = self.module_confdata.get("websocket", {})
+            result["meta"] = self.websocket_conf
             self.logger.info("  - index: http = {}".format(result))
             return json.dumps(result)
 
-        if id == 'admin':
-            result['data'] = self.module_confdata.get('admin', {})
-            result['meta'] = self.admin_conf
+        if id == "admin":
+            result["data"] = self.module_confdata.get("admin", {})
+            result["meta"] = self.admin_conf
             self.logger.info("  - index: admin = {}".format(result))
             return json.dumps(result)
 
-        if id == 'mqtt':
-            result['data'] = self.module_confdata.get('mqtt', {})
-            if result['mqtt']['data'].get('enabled', None) is None:
-                result['mqtt']['data']['enabled'] = True
-            result['meta'] = self.mqtt_conf
+        if id == "mqtt":
+            result["data"] = self.module_confdata.get("mqtt", {})
+            if result["mqtt"]["data"].get("enabled", None) is None:
+                result["mqtt"]["data"]["enabled"] = True
+            result["meta"] = self.mqtt_conf
             self.logger.info("  - index: admin = {}".format(result))
             return json.dumps(result)
 
-        if id == 'check_config_etc':
+        if id == "check_config_etc":
             return self.check_config_etc()
 
         raise cherrypy.NotFound
@@ -223,24 +221,22 @@ class ConfigController(RESTResource):
     read.expose_resource = True
     read.authentication_needed = True
 
-
     @cherrypy.expose
     def update(self, id=None):
         """
         Handle PUT requests
         """
         self.logger.info("ConfigController() update: config {}".format(id))
-        if id == 'enable_config_etc':
+        if id == "enable_config_etc":
             return self.enable_config_etc()
 
-        if id in ['common', 'http', 'admin', 'mqtt', 'core']:
-
+        if id in ["common", "http", "admin", "mqtt", "core"]:
             # get http headers
-            cl = cherrypy.request.headers.get('Content-Length', 0)
+            cl = cherrypy.request.headers.get("Content-Length", 0)
             if cl == 0:
                 raise cherrypy.HTTPError(status=411)
             rawbody = cherrypy.request.body.read(int(cl))
-            data = json.loads(rawbody.decode('utf-8'))
+            data = json.loads(rawbody.decode("utf-8"))
             self.logger.info("  - update: data = {}".format(data))
 
             # update holidays and remove keys from self.core_confdata
@@ -248,42 +244,42 @@ class ConfigController(RESTResource):
 
             # update etc/smarthome.yaml with data from admin frontend
             self.core_confdata = shyaml.yaml_load_roundtrip(self._sh.get_config_file(BASE_SH))
-            self.update_configdict(self.core_confdata, data, 'common')
+            self.update_configdict(self.core_confdata, data, "common")
             shyaml.yaml_save_roundtrip(self._sh.get_config_file(BASE_SH), self.core_confdata, create_backup=True)
 
             # update etc/module.yaml with data from admin frontend
             self.module_confdata = shyaml.yaml_load_roundtrip(self._sh.get_config_file(BASE_MODULE))
-            self.update_configdict(self.module_confdata['http'], data, 'http')
-            self.mod_http = Modules.get_instance().get_module('http')
-            hashed_password = data.get('http', {}).get('data', {}).get('hashed_password', '')
+            self.update_configdict(self.module_confdata["http"], data, "http")
+            self.mod_http = Modules.get_instance().get_module("http")
+            hashed_password = data.get("http", {}).get("data", {}).get("hashed_password", "")
             if hashed_password is None:
-                hashed_password = ''
+                hashed_password = ""
             self.mod_http._hashed_password = hashed_password
-            self.update_configdict(self.module_confdata['admin'], data, 'admin')
+            self.update_configdict(self.module_confdata["admin"], data, "admin")
 
-            if self.module_confdata.get('websocket', None) is None:
-                self.module_confdata['websocket'] = {}
-                self.module_confdata['websocket']['module_name'] = 'websocket'
-            self.update_configdict(self.module_confdata['websocket'], data, 'websocket')
+            if self.module_confdata.get("websocket", None) is None:
+                self.module_confdata["websocket"] = {}
+                self.module_confdata["websocket"]["module_name"] = "websocket"
+            self.update_configdict(self.module_confdata["websocket"], data, "websocket")
             self.logger.info("Update: self.websocket_conf = {}".format(self.websocket_conf))
-            if self.module_confdata['websocket'].get('enabled', None) is None:
-                self.module_confdata['websocket']['enabled'] = True
-            if self.module_confdata['websocket']['enabled']:
-                self.module_confdata['websocket'].pop('enabled', None)
-            #self.logger.warning("Update: ['websocket'] = {}".format(self.module_confdata['websocket']))
-            #self.logger.warning("Update: - enabled = {}".format(self.module_confdata['websocket'].get('enabled', None)))
+            if self.module_confdata["websocket"].get("enabled", None) is None:
+                self.module_confdata["websocket"]["enabled"] = True
+            if self.module_confdata["websocket"]["enabled"]:
+                self.module_confdata["websocket"].pop("enabled", None)
+            # self.logger.warning("Update: ['websocket'] = {}".format(self.module_confdata['websocket']))
+            # self.logger.warning("Update: - enabled = {}".format(self.module_confdata['websocket'].get('enabled', None)))
 
-            if self.module_confdata.get('mqtt', None) is None:
-                self.module_confdata['mqtt'] = {}
-                self.module_confdata['mqtt']['module_name'] = 'mqtt'
-            self.update_configdict(self.module_confdata['mqtt'], data, 'mqtt')
+            if self.module_confdata.get("mqtt", None) is None:
+                self.module_confdata["mqtt"] = {}
+                self.module_confdata["mqtt"]["module_name"] = "mqtt"
+            self.update_configdict(self.module_confdata["mqtt"], data, "mqtt")
             self.logger.info("Update: self.mqtt_conf = {}".format(self.mqtt_conf))
-            if self.module_confdata['mqtt'].get('enabled', None) is None:
-                self.module_confdata['mqtt']['enabled'] = False
-            if self.module_confdata['mqtt']['enabled']:
-                self.module_confdata['mqtt'].pop('enabled', None)
-            self.logger.info("Update: ['mqtt'] = {}".format(self.module_confdata['mqtt']))
-            self.logger.info("Update: - enabled = {}".format(self.module_confdata['mqtt'].get('enabled', None)))
+            if self.module_confdata["mqtt"].get("enabled", None) is None:
+                self.module_confdata["mqtt"]["enabled"] = False
+            if self.module_confdata["mqtt"]["enabled"]:
+                self.module_confdata["mqtt"].pop("enabled", None)
+            self.logger.info("Update: ['mqtt'] = {}".format(self.module_confdata["mqtt"]))
+            self.logger.info("Update: - enabled = {}".format(self.module_confdata["mqtt"].get("enabled", None)))
             shyaml.yaml_save_roundtrip(self._sh.get_config_file(BASE_MODULE), self.module_confdata, create_backup=True)
 
             result = {"result": "ok"}
@@ -294,7 +290,6 @@ class ConfigController(RESTResource):
 
     update.expose_resource = True
     update.authentication_needed = True
-
 
     # ======================================================================
     #  config_etc migration check
@@ -309,9 +304,9 @@ class ConfigController(RESTResource):
         etc = pathlib.Path(self.etc_dir)
 
         core_conf = shyaml.yaml_load(self._sh.get_config_file(BASE_SH))
-        already_enabled = bool(core_conf.get('config_etc', False))
+        already_enabled = bool(core_conf.get("config_etc", False))
 
-        dirnames = ['items', 'logics', 'structs', 'scenes', 'functions']
+        dirnames = ["items", "logics", "structs", "scenes", "functions"]
         conflicts = {}
         to_migrate = {}
         already_done = []
@@ -328,7 +323,7 @@ class ConfigController(RESTResource):
                 continue
             dir_conflicts = []
             dir_to_migrate = []
-            for entry in old_dir.glob('*'):
+            for entry in old_dir.glob("*"):
                 target = new_dir / entry.name
                 if target.exists():
                     dir_conflicts.append(entry.name)
@@ -339,15 +334,17 @@ class ConfigController(RESTResource):
             if dir_to_migrate:
                 to_migrate[dirname] = dir_to_migrate
 
-        return json.dumps({
-            'result': 'ok',
-            'already_enabled': already_enabled,
-            'safe': len(conflicts) == 0,
-            'conflicts': conflicts,
-            'to_migrate': to_migrate,
-            'already_done': already_done,
-            'not_present': not_present,
-        })
+        return json.dumps(
+            {
+                "result": "ok",
+                "already_enabled": already_enabled,
+                "safe": len(conflicts) == 0,
+                "conflicts": conflicts,
+                "to_migrate": to_migrate,
+                "already_done": already_done,
+                "not_present": not_present,
+            }
+        )
 
     # ======================================================================
     #  Enable config_etc in smarthome.yaml
@@ -361,15 +358,15 @@ class ConfigController(RESTResource):
             conf = shyaml.yaml_load_roundtrip(conf_file)
             if conf is None:
                 conf = {}
-            conf['config_etc'] = True
+            conf["config_etc"] = True
             shyaml.yaml_save_roundtrip(conf_file, conf, create_backup=True)
             self.logger.info("enable_config_etc: config_etc set to True in smarthome.yaml")
-            return json.dumps({'result': 'ok'})
+            return json.dumps({"result": "ok"})
         except Exception as e:
-            self.logger.error(f'enable_config_etc: {e}')
-            return json.dumps({'result': 'error', 'description': str(e)})
+            self.logger.error(f"enable_config_etc: {e}")
+            return json.dumps({"result": "error", "description": str(e)})
 
-    def REST_instantiate(self,param):
+    def REST_instantiate(self, param):
         """
         instantiate a REST resource based on the id
 
@@ -382,4 +379,3 @@ class ConfigController(RESTResource):
         REST_create() will be called so you can actually create the resource.
         """
         return param
-

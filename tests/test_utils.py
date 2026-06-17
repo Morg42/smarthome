@@ -24,9 +24,10 @@
 from . import common
 import unittest
 from lib.utils import Utils
-#from wakeonlan import WakeOnLan
-class LibUtilsTest(unittest.TestCase):
 
+
+# from wakeonlan import WakeOnLan
+class LibUtilsTest(unittest.TestCase):
     def test_is_knx_groupaddress(self):
         self.assertFalse(Utils.is_knx_groupaddress("1/2"))
         self.assertTrue(Utils.is_knx_groupaddress("1/2/3"))
@@ -39,7 +40,6 @@ class LibUtilsTest(unittest.TestCase):
         self.assertFalse(Utils.is_knx_groupaddress("a/2/3"))
         self.assertFalse(Utils.is_knx_groupaddress("1/a/3"))
         self.assertFalse(Utils.is_knx_groupaddress("1/2/a"))
-
 
     def test_is_mac(self):
         self.assertTrue(True)
@@ -84,8 +84,8 @@ class LibUtilsTest(unittest.TestCase):
         self.assertTrue(Utils.is_ipv6("FF02:0:0:0:0:0:0:2"))
         self.assertTrue(Utils.is_ipv6("F::1"))
         self.assertFalse(Utils.is_ipv6("G::1"))
-        self.assertFalse(Utils.is_ipv6("AB:02:3008:8CFD:AB:02:3008:8CFD:02")) # tpp long
-        self.assertFalse(Utils.is_ipv6("AB:02:3008:8CFD::02::8CFD")) # can't have two ::
+        self.assertFalse(Utils.is_ipv6("AB:02:3008:8CFD:AB:02:3008:8CFD:02"))  # tpp long
+        self.assertFalse(Utils.is_ipv6("AB:02:3008:8CFD::02::8CFD"))  # can't have two ::
 
     def test_is_timeframe(self):
         self.assertFalse(Utils.is_timeframe(""))
@@ -147,9 +147,9 @@ class LibUtilsTest(unittest.TestCase):
     def test_to_bool(self):
         with self.assertRaises(Exception):
             Utils.to_bool("161.256.256")
-        
-       # with self.assertRaises(Exception):
-       #     Utils.to_bool(self)
+
+        # with self.assertRaises(Exception):
+        #     Utils.to_bool(self)
         self.assertFalse(Utils.to_bool(None))
         self.assertFalse(Utils.to_bool(False))
         self.assertFalse(Utils.to_bool("No"))
@@ -177,42 +177,123 @@ class LibUtilsTest(unittest.TestCase):
     def test_create_hash(self):
         with self.assertRaises(Exception):
             Utils.create_hash(None)
-        self.assertEqual(Utils.create_hash(''), 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e')
-        self.assertEqual(Utils.create_hash('42'), '39ca7ce9ecc69f696bf7d20bb23dd1521b641f806cc7a6b724aaa6cdbffb3a023ff98ae73225156b2c6c9ceddbfc16f5453e8fa49fc10e5d96a3885546a46ef4')
-        self.assertEqual(Utils.create_hash('very_secure_password'), '1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d')
-        self.assertEqual(Utils.create_hash('1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d'), '00faf4a142f087e55edf6e91ea333d9a4bcd9b2d6bba8fab42869c6e00e28a3acba6d5fe3495f037221d633e01b3c7baa6e915028407548f77b5b9710899bfbe')
+        self.assertEqual(
+            Utils.create_hash(""),
+            "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+        )
+        self.assertEqual(
+            Utils.create_hash("42"),
+            "39ca7ce9ecc69f696bf7d20bb23dd1521b641f806cc7a6b724aaa6cdbffb3a023ff98ae73225156b2c6c9ceddbfc16f5453e8fa49fc10e5d96a3885546a46ef4",
+        )
+        self.assertEqual(
+            Utils.create_hash("very_secure_password"),
+            "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d",
+        )
+        self.assertEqual(
+            Utils.create_hash(
+                "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d"
+            ),
+            "00faf4a142f087e55edf6e91ea333d9a4bcd9b2d6bba8fab42869c6e00e28a3acba6d5fe3495f037221d633e01b3c7baa6e915028407548f77b5b9710899bfbe",
+        )
 
     def test_is_hash(self):
-        self.assertTrue(Utils.is_hash('cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e'))
-        self.assertTrue(Utils.is_hash('39ca7ce9ecc69f696bf7d20bb23dd1521b641f806cc7a6b724aaa6cdbffb3a023ff98ae73225156b2c6c9ceddbfc16f5453e8fa49fc10e5d96a3885546a46ef4'))
-        self.assertTrue(Utils.is_hash('1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d'))
-        self.assertTrue(Utils.is_hash('00faf4a142f087e55edf6e91ea333d9a4bcd9b2d6bba8fab42869c6e00e28a3acba6d5fe3495f037221d633e01b3c7baa6e915028407548f77b5b9710899bfbe'))
-        self.assertTrue(Utils.is_hash('1245A9633EDF47B7091F37C4D294B5BE5A9936C81C5359B16D1C4833729965663F1943EF240959C53803FEDEF7AC19BD59C66AD7E7092D7DBF155CE45884607D'))
+        self.assertTrue(
+            Utils.is_hash(
+                "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+            )
+        )
+        self.assertTrue(
+            Utils.is_hash(
+                "39ca7ce9ecc69f696bf7d20bb23dd1521b641f806cc7a6b724aaa6cdbffb3a023ff98ae73225156b2c6c9ceddbfc16f5453e8fa49fc10e5d96a3885546a46ef4"
+            )
+        )
+        self.assertTrue(
+            Utils.is_hash(
+                "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d"
+            )
+        )
+        self.assertTrue(
+            Utils.is_hash(
+                "00faf4a142f087e55edf6e91ea333d9a4bcd9b2d6bba8fab42869c6e00e28a3acba6d5fe3495f037221d633e01b3c7baa6e915028407548f77b5b9710899bfbe"
+            )
+        )
+        self.assertTrue(
+            Utils.is_hash(
+                "1245A9633EDF47B7091F37C4D294B5BE5A9936C81C5359B16D1C4833729965663F1943EF240959C53803FEDEF7AC19BD59C66AD7E7092D7DBF155CE45884607D"
+            )
+        )
 
-        self.assertFalse(Utils.is_hash('1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c483372965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d'))
-        self.assertFalse(Utils.is_hash('1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c48337299965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d'))
-        self.assertFalse(Utils.is_hash('1245a9633edf47b7091f37c4d294b5be5a9936c8ic5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d'))
+        self.assertFalse(
+            Utils.is_hash(
+                "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c483372965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d"
+            )
+        )
+        self.assertFalse(
+            Utils.is_hash(
+                "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c48337299965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d"
+            )
+        )
+        self.assertFalse(
+            Utils.is_hash(
+                "1245a9633edf47b7091f37c4d294b5be5a9936c8ic5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d"
+            )
+        )
         self.assertFalse(Utils.is_hash(None))
         self.assertFalse(Utils.is_hash(12648430))
         self.assertFalse(Utils.is_hash(57005.48815))
-        self.assertFalse(Utils.is_hash('The Problem with Popplers'))
+        self.assertFalse(Utils.is_hash("The Problem with Popplers"))
 
     def test_check_hashed_password(self):
         # None or empty password should always be rejected
-        self.assertFalse(Utils.check_hashed_password(None, 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e'))
-        self.assertFalse(Utils.check_hashed_password('', 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e'))
+        self.assertFalse(
+            Utils.check_hashed_password(
+                None,
+                "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+            )
+        )
+        self.assertFalse(
+            Utils.check_hashed_password(
+                "",
+                "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+            )
+        )
 
         # Check some passwords
-        self.assertTrue(Utils.check_hashed_password('42', '39ca7ce9ecc69f696bf7d20bb23dd1521b641f806cc7a6b724aaa6cdbffb3a023ff98ae73225156b2c6c9ceddbfc16f5453e8fa49fc10e5d96a3885546a46ef4'))
-        self.assertTrue(Utils.check_hashed_password('very_secure_password', '1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d'))
-        self.assertTrue(Utils.check_hashed_password('1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d', '00faf4a142f087e55edf6e91ea333d9a4bcd9b2d6bba8fab42869c6e00e28a3acba6d5fe3495f037221d633e01b3c7baa6e915028407548f77b5b9710899bfbe'))
+        self.assertTrue(
+            Utils.check_hashed_password(
+                "42",
+                "39ca7ce9ecc69f696bf7d20bb23dd1521b641f806cc7a6b724aaa6cdbffb3a023ff98ae73225156b2c6c9ceddbfc16f5453e8fa49fc10e5d96a3885546a46ef4",
+            )
+        )
+        self.assertTrue(
+            Utils.check_hashed_password(
+                "very_secure_password",
+                "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d",
+            )
+        )
+        self.assertTrue(
+            Utils.check_hashed_password(
+                "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d",
+                "00faf4a142f087e55edf6e91ea333d9a4bcd9b2d6bba8fab42869c6e00e28a3acba6d5fe3495f037221d633e01b3c7baa6e915028407548f77b5b9710899bfbe",
+            )
+        )
 
         # Capital letters in hashed_password must not cause the password to be rejected
-        self.assertTrue(Utils.check_hashed_password('very_secure_password', '1245A9633EDF47B7091F37C4D294B5BE5A9936C81C5359B16D1C4833729965663F1943EF240959C53803FEDEF7AC19BD59C66AD7E7092D7DBF155CE45884607D'))
+        self.assertTrue(
+            Utils.check_hashed_password(
+                "very_secure_password",
+                "1245A9633EDF47B7091F37C4D294B5BE5A9936C81C5359B16D1C4833729965663F1943EF240959C53803FEDEF7AC19BD59C66AD7E7092D7DBF155CE45884607D",
+            )
+        )
 
         # Changing case in password must cause the password to be rejected
-        self.assertFalse(Utils.check_hashed_password('Very_Secure_Password', '1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d'))
+        self.assertFalse(
+            Utils.check_hashed_password(
+                "Very_Secure_Password",
+                "1245a9633edf47b7091f37c4d294b5be5a9936c81c5359b16d1c4833729965663f1943ef240959c53803fedef7ac19bd59c66ad7e7092d7dbf155ce45884607d",
+            )
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main(verbosity=2)

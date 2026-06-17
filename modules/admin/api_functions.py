@@ -31,17 +31,17 @@ from .rest import RESTResource
 
 
 class FunctionsController(RESTResource):
-
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+        )
 
         self.items = Items.get_instance()
 
         return
-
 
     # ======================================================================
     #  /api/scenes
@@ -90,7 +90,6 @@ class FunctionsController(RESTResource):
     #         supported = False
     #     return json.dumps(disp_scene_list)
 
-
     # ======================================================================
     #  GET /api/functions
     #
@@ -116,27 +115,27 @@ class FunctionsController(RESTResource):
             disp_scene_list = []
             for scene in scene_list:
                 scene_dict = {}
-                scene_dict['path'] = scene
+                scene_dict["path"] = scene
                 #                scene_dict['name'] = str(self._sh.return_item(scene))
-                scene_dict['name'] = str(self.items.return_item(scene))
+                scene_dict["name"] = str(self.items.return_item(scene))
 
                 action_list = self.scenes.get_scene_actions(scene)
-                scene_dict['value_list'] = action_list
+                scene_dict["value_list"] = action_list
                 #                scene_dict[scene] = action_list
 
                 disp_action_list = []
                 for value in action_list:
                     action_dict = {}
-                    action_dict['action'] = value
-                    action_dict['action_name'] = self.scenes.get_scene_action_name(scene, value)
+                    action_dict["action"] = value
+                    action_dict["action_name"] = self.scenes.get_scene_action_name(scene, value)
                     action_list = self.scenes.return_scene_value_actions(scene, value)
                     for action in action_list:
                         if not isinstance(action[0], str):
                             action[0] = action[0].id()
-                    action_dict['action_list'] = action_list
+                    action_dict["action_list"] = action_list
 
                     disp_action_list.append(action_dict)
-                scene_dict['values'] = disp_action_list
+                scene_dict["values"] = disp_action_list
                 self.logger.debug("scenes_html: disp_action_list for scene {} = {}".format(scene, disp_action_list))
 
                 disp_scene_list.append(scene_dict)
@@ -147,7 +146,6 @@ class FunctionsController(RESTResource):
 
 
 class FunctionsReloadController(RESTResource):
-
     def __init__(self, module):
 
         self._sh = module._sh
@@ -159,7 +157,6 @@ class FunctionsReloadController(RESTResource):
 
         return
 
-
     # ======================================================================
     #  /api/functions/reload
     #
@@ -170,13 +167,14 @@ class FunctionsReloadController(RESTResource):
         Handle PUT requests for scenes/reload API
         """
         from lib.scene import Scenes
+
         self.scenes = Scenes.get_instance()
 
         from lib.userfunctions import reload
         from lib.userfunctions import reload_all
 
-        if id == 'all':
-            #result = self.scenes.reload_scenes()
+        if id == "all":
+            # result = self.scenes.reload_scenes()
             result = reload_all()
             return json.dumps(result)
         else:

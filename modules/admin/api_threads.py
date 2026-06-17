@@ -30,16 +30,15 @@ from .rest import RESTResource
 
 
 class ThreadsController(RESTResource):
-
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
-
+        self.logger = logging.getLogger(
+            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+        )
 
     def get_thread_list(self):
-
         """
         get a list of all threads
         """
@@ -61,24 +60,28 @@ class ThreadsController(RESTResource):
         threads = []
         for t in threading.enumerate():
             # create thread list for admin gui
-            if t.name.find("CP Server") != 0 and t.name.find("HTTPServer") != 0 and \
-               t.name.find("ThreadPoolExecutor") != 0 and t.name.find("idle") != 0:
+            if (
+                t.name.find("CP Server") != 0
+                and t.name.find("HTTPServer") != 0
+                and t.name.find("ThreadPoolExecutor") != 0
+                and t.name.find("idle") != 0
+            ):
                 thread = dict()
-                thread['name'] = t.name
-                thread['sort'] = str(t.name).lower()
-                thread['id'] = t.ident
+                thread["name"] = t.name
+                thread["sort"] = str(t.name).lower()
+                thread["id"] = t.ident
                 try:
                     # get_native_id() is supported for Python 3.8 and newer
-                    thread['native_id'] = t.native_id
+                    thread["native_id"] = t.native_id
                 except AttributeError:
-                    thread['native_id'] = ''
+                    thread["native_id"] = ""
                 try:
                     if t.is_alive():
-                        thread['alive'] = 'True'
+                        thread["alive"] = "True"
                     else:
-                        thread['alive'] = 'False'
+                        thread["alive"] = "False"
                 except AssertionError:
-                    thread['alive'] = 'AssertionError'
+                    thread["alive"] = "AssertionError"
 
                 # self.logger.warning("get_thread_list: {}".format(thread))
                 threads.append(thread)
@@ -97,20 +100,18 @@ class ThreadsController(RESTResource):
             threads.append(self.thread_sum("idle", idle_threads))
             threads_count += idle_threads
 
-        threads_sorted = sorted(threads, key=lambda k: k['sort'])
+        threads_sorted = sorted(threads, key=lambda k: k["sort"])
         return json.dumps([threads_count, threads_sorted])
-
 
     def thread_sum(self, name, count):
         thread = dict()
         if count > 0:
-            thread['name'] = name
-            thread['sort'] = str(thread['name']).lower()
-            thread['id'] = "(" + str(count) + " threads" + ")"
-            thread['native_id'] = ''
-            thread['alive'] = 'True'
+            thread["name"] = name
+            thread["sort"] = str(thread["name"]).lower()
+            thread["id"] = "(" + str(count) + " threads" + ")"
+            thread["native_id"] = ""
+            thread["alive"] = "True"
         return thread
-
 
     # ======================================================================
     #  GET /api/threads
@@ -125,4 +126,3 @@ class ThreadsController(RESTResource):
 
     read.expose_resource = True
     read.authentication_needed = True
-

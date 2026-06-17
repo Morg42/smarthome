@@ -32,18 +32,18 @@ from .rest import RESTResource
 
 
 class LoggersController(RESTResource):
-
     logging_config = None
 
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+        )
         self.etc_dir = self._sh._etc_dir
 
         return
-
 
     def get_active_loggers(self):
 
@@ -65,12 +65,12 @@ class LoggersController(RESTResource):
                         h = []
                     if len(h) > 0:
                         # handlers do exist
-                        if (len(h) > 1) or (len(h) == 1 and str(h[0]) != '<NullHandler (NOTSET)>'):
+                        if (len(h) > 1) or (len(h) == 1 and str(h[0]) != "<NullHandler (NOTSET)>"):
                             loggerlist.append(name)
                             # self.logger.info("ld Handler = {} h = {} -> {}".format(l, h, lg))
                         else:
                             pass
-                            #self.logger.info(f"get_active_loggers: {l} - Not len(h) > 1) or (len(h) == 1 and str(h[0])")
+                            # self.logger.info(f"get_active_loggers: {l} - Not len(h) > 1) or (len(h) == 1 and str(h[0])")
                     else:
                         # no handlers exist
                         try:
@@ -83,12 +83,11 @@ class LoggersController(RESTResource):
                         else:
                             pass
                             loggerlist.append(name)
-                            #self.logger.info(f"get_active_loggers: {l} - {lv=} - {wrk_loggerDict[l]}")
+                            # self.logger.info(f"get_active_loggers: {l} - {lv=} - {wrk_loggerDict[l]}")
         except Exception as e:
             self.logger.exception("Logger Exception: {}".format(e))
 
         return sorted(loggerlist)
-
 
     def set_active_logger_level(self, logger, level):
 
@@ -102,16 +101,15 @@ class LoggersController(RESTResource):
 
             logging_config = self._sh.logs.load_logging_config_for_edit()
             try:
-                oldlevel = logging_config['loggers'][logger]['level']
+                oldlevel = logging_config["loggers"][logger]["level"]
             except KeyError:
                 oldlevel = None
             if oldlevel is not None:
-                logging_config['loggers'][logger]['level'] = level
+                logging_config["loggers"][logger]["level"] = level
                 self._sh.logs.save_logging_config(logging_config)
-                #self.logger.info("Saved changed logger configuration to ../etc/logging.yaml}")
+                # self.logger.info("Saved changed logger configuration to ../etc/logging.yaml}")
                 return True
         return False
-
 
     def get_active_logger_handler_names(self, logger_name):
 
@@ -122,10 +120,9 @@ class LoggersController(RESTResource):
             handler_names.append(h.name)
         return handler_names
 
-
     def set_handlers(self, logger_name, handler_names):
 
-        handlerlist = handler_names.split(',')
+        handlerlist = handler_names.split(",")
 
         logger = logging.getLogger(logger_name)
         self.logger.info(f"set_handlers: logger='{logger_name}', new handlers={handlerlist})")
@@ -151,14 +148,12 @@ class LoggersController(RESTResource):
 
         # Change configuration of logger in logging.yaml
         logging_config = self._sh.logs.load_logging_config_for_edit()
-        logging_config['loggers'][logger_name]['handlers'] = new_handler_names
+        logging_config["loggers"][logger_name]["handlers"] = new_handler_names
         self._sh.logs.save_logging_config(logging_config)
 
         return True
 
-
     # -----------------------------------------------------------------------------------
-
 
     def get_parent_handler_names(self, logger, handlernames):
 
@@ -168,24 +163,27 @@ class LoggersController(RESTResource):
                 try:
                     hl.append(h.name)
                 except Exception as e:
-                    self.logger.notice(f"get_logger_active_configuration: Exception {h=} - {h.__class__.__name__=} - {e}")
+                    self.logger.notice(
+                        f"get_logger_active_configuration: Exception {h=} - {h.__class__.__name__=} - {e}"
+                    )
         except (AttributeError, TypeError):
             return handlernames
 
         return list(set(handlernames + hl))
 
-
     def get_logger_active_configuration(self, loggername=None):
 
         active = {}
         active_logger = logging.getLogger(loggername)
-        active['disabled'] = active_logger.disabled
-        active['level'] = self._sh.logs.get_shng_logging_levels().get(active_logger.level, 'UNKNOWN_'+str(active_logger.level))
+        active["disabled"] = active_logger.disabled
+        active["level"] = self._sh.logs.get_shng_logging_levels().get(
+            active_logger.level, "UNKNOWN_" + str(active_logger.level)
+        )
         filters = list(active_logger.filters)
-        active['filters'] = []
+        active["filters"] = []
         for filter in filters:
-            active['filters'].append(str(filter))
-        active['parent_handlers_names'] = []
+            active["filters"].append(str(filter))
+        active["parent_handlers_names"] = []
 
         hl = []
         bl = []
@@ -194,18 +192,21 @@ class LoggersController(RESTResource):
             try:
                 bl.append(h.baseFilename)
             except AttributeError:
-                bl.append('')
+                bl.append("")
 
-        active['handlers'] = hl
-        active['logfiles'] = bl
+        active["handlers"] = hl
+        active["logfiles"] = bl
 
         if loggername is not None:
-            active['parent_handlers_names'] = self.get_parent_handler_names(active_logger, [] )
-            active['parent_handlers_names'] = self.get_parent_handler_names(active_logger.parent, active['parent_handlers_names'])
-            active['parent_handlers_names'] = self.get_parent_handler_names(active_logger.parent.parent, active['parent_handlers_names'])
+            active["parent_handlers_names"] = self.get_parent_handler_names(active_logger, [])
+            active["parent_handlers_names"] = self.get_parent_handler_names(
+                active_logger.parent, active["parent_handlers_names"]
+            )
+            active["parent_handlers_names"] = self.get_parent_handler_names(
+                active_logger.parent.parent, active["parent_handlers_names"]
+            )
 
         return active
-
 
     # ======================================================================
     #  GET /api/loggers
@@ -217,11 +218,11 @@ class LoggersController(RESTResource):
         self.logger.info(f"LoggersController.read('{id}')")
 
         config = self._sh.logs.load_logging_config()
-        loggers = config['loggers']
-        loggers['root'] = config['root']
-        loggers['root']['active'] = self.get_logger_active_configuration()
-        loggers['root']['logger_name'] = 'root'
-        handlers = config['handlers']
+        loggers = config["loggers"]
+        loggers["root"] = config["root"]
+        loggers["root"]["active"] = self.get_logger_active_configuration()
+        loggers["root"]["logger_name"] = "root"
+        handlers = config["handlers"]
 
         loggerlist = self.get_active_loggers()
         self.logger.info("loggerlist = {}".format(loggerlist))
@@ -230,25 +231,24 @@ class LoggersController(RESTResource):
             if loggers.get(logger, None) is None:
                 # self.logger.info("active but not configured logger = {}".format(logger))
                 loggers[logger] = {}
-                loggers[logger]['logger_name'] = logger
-                loggers[logger]['not_conf'] = True
+                loggers[logger]["logger_name"] = logger
+                loggers[logger]["not_conf"] = True
 
-            loggers[logger]['active'] = self.get_logger_active_configuration(logger)
+            loggers[logger]["active"] = self.get_logger_active_configuration(logger)
 
         self.logger.info("read: logger = {} -> {}".format(logger, loggers[logger]))
 
         self.logger.info("read: loggers = {}".format(loggers))
 
         response = {}
-        response['loggers'] = loggers
-        response['active_plugins'] = self._sh.plugins.get_loaded_plugins()
-        response['active_logics'] = self._sh.logics.get_loaded_logics()
-        response['defined_handlers'] = handlers
+        response["loggers"] = loggers
+        response["active_plugins"] = self._sh.plugins.get_loaded_plugins()
+        response["active_logics"] = self._sh.logics.get_loaded_logics()
+        response["defined_handlers"] = handlers
         return json.dumps(response)
 
     read.expose_resource = True
     read.authentication_needed = False
-
 
     def update(self, id=None, level=None, handlers=None):
         """
@@ -258,21 +258,20 @@ class LoggersController(RESTResource):
 
         if level is not None:
             if self.set_active_logger_level(id, level):
-                response = {'result': 'ok'}
+                response = {"result": "ok"}
             else:
-                response = {'result': 'error', 'description': 'unable to set logger level'}
+                response = {"result": "error", "description": "unable to set logger level"}
 
         if handlers is not None:
             if self.set_handlers(id, handlers):
-                response = {'result': 'ok'}
+                response = {"result": "ok"}
             else:
-                response = {'result': 'error', 'description': 'unable to set handlers for logger'}
+                response = {"result": "error", "description": "unable to set handlers for logger"}
 
         return json.dumps(response)
 
     update.expose_resource = True
     update.authentication_needed = True
-
 
     def add(self, id=None, level=None):
         """
@@ -280,7 +279,7 @@ class LoggersController(RESTResource):
         """
         self.logger.info(f"LoggersController.add('{id}', level='{level}'")
 
-        response = {'result': 'ok', 'description': ''}
+        response = {"result": "ok", "description": ""}
         # add logger to active loggers
         lg = logging.getLogger(id)
         default_level = logging.getLevelName(lg.parent.level)
@@ -288,7 +287,7 @@ class LoggersController(RESTResource):
 
         # add logger definition to logging.yaml
         logging_config = self._sh.logs.load_logging_config_for_edit()
-        logging_config['loggers'][id] = {'level': default_level}
+        logging_config["loggers"][id] = {"level": default_level}
         self._sh.logs.save_logging_config(logging_config)
 
         self.logger.notice(f"Logger '{id}' added")
@@ -298,18 +297,17 @@ class LoggersController(RESTResource):
     add.expose_resource = True
     add.authentication_needed = True
 
-
     def delete(self, id=None, level=None):
         """
         Handle DELETE requests for loggers API
         """
         self.logger.info("LoggersController.delete('{}', level='{}'".format(id, level))
 
-        response = {'result': 'ok', 'description': ''}
+        response = {"result": "ok", "description": ""}
         # delete active logger
         active_logger = logging.root.manager.loggerDict.get(id, None)
         if active_logger is None:
-             response = {'result': 'error', 'description': 'active logger not found'}
+            response = {"result": "error", "description": "active logger not found"}
         else:
             active_logger.setLevel(active_logger.parent.level)
             for hdlr in active_logger.handlers:
@@ -317,7 +315,7 @@ class LoggersController(RESTResource):
 
         # delete logger definition from logging.yaml
         logging_config = self._sh.logs.load_logging_config_for_edit()
-        del logging_config['loggers'][id]
+        del logging_config["loggers"][id]
         self._sh.logs.save_logging_config(logging_config)
 
         self.logger.notice(f"Logger '{id}' removed")
@@ -326,4 +324,3 @@ class LoggersController(RESTResource):
 
     delete.expose_resource = True
     delete.authentication_needed = True
-

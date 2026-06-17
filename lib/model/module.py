@@ -37,10 +37,9 @@ class Module(SmartObject, Utils):
     In adition the methods implemented in lib.utils.Utils are inhereted.
     """
 
-    _shortname = ''     #: Short name of the module; is initialized during loading of the module; :Warning: Don't change it
-    _instance = ''      #: Instance name (not used for modules, since they are not multi-instance capable
-    _longname = ''      #: Long name of the module; is initialized during loading of the module
-
+    _shortname = ""  #: Short name of the module; is initialized during loading of the module; :Warning: Don't change it
+    _instance = ""  #: Instance name (not used for modules, since they are not multi-instance capable
+    _longname = ""  #: Long name of the module; is initialized during loading of the module
 
     def get_parameter_value(self, parameter_name):
         """
@@ -56,7 +55,6 @@ class Module(SmartObject, Utils):
         """
         return self._parameters.get(parameter_name, None)
 
-
     def get_shortname(self):
         """
         return the shortname of the module (name of it's directory)
@@ -68,7 +66,6 @@ class Module(SmartObject, Utils):
         """
         return self._shortname
 
-
     def get_instance_name(self):
         """
         Returns the name of this instance of the module
@@ -77,7 +74,6 @@ class Module(SmartObject, Utils):
         :rtype: str
         """
         return self._instance
-
 
     def get_fullname(self):
         """
@@ -88,12 +84,11 @@ class Module(SmartObject, Utils):
         :return: full name of the module
         :rtype: str
         """
-        if self.get_instance_name() == '':
+        if self.get_instance_name() == "":
             return self.get_shortname()
         else:
             #            return self.get_instance_name() + '@' + self.get_shortname()
-            return self.get_shortname() + '_' + self.get_instance_name()
-
+            return self.get_shortname() + "_" + self.get_instance_name()
 
     def translate(self, txt, vars=None):
         """
@@ -101,6 +96,4 @@ class Module(SmartObject, Utils):
         """
         txt = str(txt)
 
-        return lib_translate(txt, vars, module_translations='module/'+self._shortname)
-
-
+        return lib_translate(txt, vars, module_translations="module/" + self._shortname)

@@ -14,6 +14,7 @@ import argparse
 
 # for tarfile fix, maybe not necessary as os is already imported...
 from os.path import abspath, realpath, dirname, join as joinpath
+
 # also for tarfile fix. As no logging is defined, this skips files instead of halting...
 import sys
 
@@ -22,19 +23,19 @@ class BackupAndRestore:
     def __init__(self):
         self.files = []
         self.workdir = os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2])
-        self.workdir_len = len(self.workdir.split(os.path.sep))-1
-        self.backupdirs = ['etc','items','scenes']
-        self.exclude_files = ('.default','.gitignore')
-        self.verbose=False
-        self.overwrite=False
+        self.workdir_len = len(self.workdir.split(os.path.sep)) - 1
+        self.backupdirs = ["etc", "items", "scenes"]
+        self.exclude_files = (".default", ".gitignore")
+        self.verbose = False
+        self.overwrite = False
 
     def backup(self, outfile, include=None, exclude=None):
         if os.path.isfile(outfile) and not self.overwrite:
-            raise ValueError("Outputfile exists "+ outfile)
+            raise ValueError("Outputfile exists " + outfile)
         if exclude is not None:
             self.backupdirs = set(self.backupdirs) - set(exclude)
         if include is not None:
-            self.backupdirs = self.backupdirs+include
+            self.backupdirs = self.backupdirs + include
         if self.verbose:
             print(self.backupdirs)
         for path in self.backupdirs:
@@ -46,7 +47,7 @@ class BackupAndRestore:
             tar.add(name, filter=self.change_fileinfo)
         tar.close()
 
-    def get_files(self,apath):
+    def get_files(self, apath):
         if not os.path.exists(apath):
             raise ValueError(" Directory not found! '" + apath + "'")
 
@@ -55,10 +56,10 @@ class BackupAndRestore:
                 if not filename.lower().endswith(self.exclude_files):
                     self.files.append(os.path.join(root, filename))
 
-    def change_fileinfo(self,tarinfo):
+    def change_fileinfo(self, tarinfo):
         tarinfo.uid = tarinfo.gid = 0
         tarinfo.uname = tarinfo.gname = "root"
-        newname = os.path.sep.join(tarinfo.name.split(os.path.sep)[self.workdir_len:])
+        newname = os.path.sep.join(tarinfo.name.split(os.path.sep)[self.workdir_len :])
         if self.verbose:
             print(newname)
         tarinfo.name = newname
@@ -84,56 +85,69 @@ class BackupAndRestore:
 
             for finfo in members:
                 if badpath(finfo.name, base):
-                    print(f'{finfo.name} is blocked (illegal path)', file=sys.stderr)
+                    print(f"{finfo.name} is blocked (illegal path)", file=sys.stderr)
                 elif finfo.issym() and badlink(finfo, base):
-                    print(f'{finfo.name} is blocked: hard link to {finfo.linkname}', file=sys.stderr)
+                    print(f"{finfo.name} is blocked: hard link to {finfo.linkname}", file=sys.stderr)
                 elif finfo.islnk() and badlink(finfo, base):
-                    print(f'{finfo.name} is blocked: symlink to {finfo.linkname}', file=sys.stderr)
+                    print(f"{finfo.name} is blocked: symlink to {finfo.linkname}", file=sys.stderr)
                 else:
                     yield finfo
 
         readmode = None
         extractor = None
         afilelow = afile.lower()
-        if (afilelow.endswith("tar.gz") or afilelow.endswith("tgz")):
+        if afilelow.endswith("tar.gz") or afilelow.endswith("tgz"):
             extractor = tarfile.open
             readmode = "r:gz"
-        elif (afilelow.endswith("tar")):
+        elif afilelow.endswith("tar"):
             extractor = tarfile.open
             readmode = "r:"
-        elif (afilelow.endswith("zip")):
+        elif afilelow.endswith("zip"):
             extractor = zipfile.ZipFile
             readmode = "r"
-        elif (afilelow.endswith("bz2") or afilelow.endswith("tbz")):
+        elif afilelow.endswith("bz2") or afilelow.endswith("tbz"):
             extractor = tarfile.open
             readmode = "r:bz2"
         if extractor is not None:
             tar = extractor(afile, readmode)
             try:
                 tar.extractall(path=outdir)
-            finally: 
-                tar.close() 
+            finally:
+                tar.close()
         else:
             raise ValueError("Unsupported file type: " + afile)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     bar = BackupAndRestore()
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-b', '--backup', action='store_true', help='create a config backup')
-    group.add_argument('-r', '--restore',  action='store', help='restore a backup',metavar='dir')
-    parser.add_argument('--backupfile', action='store', help='name for outputfile (default: backup.tar.gz)',metavar='file', default='backup.tar.gz')
-    parser.add_argument('--include', nargs='+', action='store', help='include directory to backup',metavar='dir')
-    parser.add_argument('--exclude', nargs='+', action='store', help='exclude directory from backup (only for etc,items,scenes)',metavar='dir')
-    parser.add_argument('-v','--verbose', action='store_true', help='generate more output', default=False)
-    parser.add_argument('--overwrite', action='store_true', help='allways overwrite existing files', default=False)
+    group.add_argument("-b", "--backup", action="store_true", help="create a config backup")
+    group.add_argument("-r", "--restore", action="store", help="restore a backup", metavar="dir")
+    parser.add_argument(
+        "--backupfile",
+        action="store",
+        help="name for outputfile (default: backup.tar.gz)",
+        metavar="file",
+        default="backup.tar.gz",
+    )
+    parser.add_argument("--include", nargs="+", action="store", help="include directory to backup", metavar="dir")
+    parser.add_argument(
+        "--exclude",
+        nargs="+",
+        action="store",
+        help="exclude directory from backup (only for etc,items,scenes)",
+        metavar="dir",
+    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="generate more output", default=False)
+    parser.add_argument("--overwrite", action="store_true", help="allways overwrite existing files", default=False)
     args = parser.parse_args()
     try:
         if args.verbose:
-            print (args)
-            bar.verbose=True
+            print(args)
+            bar.verbose = True
         if args.overwrite:
-            bar.overwrite=True
+            bar.overwrite = True
         if args.backup:
             bar.backup(outfile=args.backupfile, include=args.include, exclude=args.exclude)
         if args.restore is not None:
@@ -143,4 +157,4 @@ if __name__ == '__main__':
         print(e)
         print("")
         parser.print_help()
-        exit(1)   
+        exit(1)

@@ -42,15 +42,15 @@ import os
 
 import inspect
 
-from lib.constants import (YAML_FILE)
+from lib.constants import YAML_FILE
 import lib.shyaml as shyaml
 
 logger = logging.getLogger(__name__)
 
-_base_dir = ''
-_default_language = ''
+_base_dir = ""
+_default_language = ""
 
-_fallback_language_order = ''
+_fallback_language_order = ""
 _global_translations = {}
 _translations = {}
 _translation_files = {}
@@ -71,7 +71,7 @@ def initialize_translations(base_dir, default_language, fallback_language_order)
 
     set_default_language(default_language)
     set_fallback_language_order(fallback_language_order)
-    load_translations('global', from_dir='bin', translation_id='global')
+    load_translations("global", from_dir="bin", translation_id="global")
     return
 
 
@@ -100,12 +100,12 @@ def set_fallback_language_order(language_order):
     """
     global _fallback_language_order
 
-    _fallback_language_order = language_order.lower().split(',')
+    _fallback_language_order = language_order.lower().split(",")
     logger.debug("Fallback language order set to '{}'".format(_fallback_language_order))
     return
 
 
-def load_translations(translation_type='global', from_dir='bin', translation_id='global'):
+def load_translations(translation_type="global", from_dir="bin", translation_id="global"):
     """
     Load global or plugin-specific translations from a locale.yaml file
 
@@ -117,36 +117,38 @@ def load_translations(translation_type='global', from_dir='bin', translation_id=
     global _translations
 
     trans = {}
-    relative_filename = os.path.join(from_dir, 'locale' + YAML_FILE)
+    relative_filename = os.path.join(from_dir, "locale" + YAML_FILE)
     filename = os.path.join(_base_dir, relative_filename)
     trans_dict = shyaml.yaml_load(filename, ordered=False, ignore_notfound=True)
 
     if trans_dict is not None:
         logger.info(f"load_translations: translation_id={translation_id} from {relative_filename}")
-        if translation_type == 'global':
+        if translation_type == "global":
             for translation_section in trans_dict.keys():
-                if translation_section.endswith('_translations'):
-                    trans_id = translation_section.split('_')[0].replace('.', '/')
+                if translation_section.endswith("_translations"):
+                    trans_id = translation_section.split("_")[0].replace(".", "/")
                     trans = trans_dict.get(translation_section, {})
                     _translations[trans_id] = trans
-                    #if translation_id == 'global':
+                    # if translation_id == 'global':
                     #    _translations[trans_id] = trans
-                    #else:
+                    # else:
                     #    _translations[trans_id].update(trans)
                     logger.info(f"Loading {translation_type} translations (id={trans_id}) from {relative_filename}")
                     logger.debug(" - translations = {}".format(trans))
         else:
-            trans = trans_dict.get(translation_type+'_translations', {})
-            #logger.info(f"Loading {relative_filename} translations (id={translation_id}) from {relative_filename}")
+            trans = trans_dict.get(translation_type + "_translations", {})
+            # logger.info(f"Loading {relative_filename} translations (id={translation_id}) from {relative_filename}")
             if _translations.get(translation_id, None) is not None:
-                logger.dbghigh(f"Duplicate identifier '{translation_id}' used for translation_type '{translation_type}' to load from '{from_dir}' - translations not loaded")
+                logger.dbghigh(
+                    f"Duplicate identifier '{translation_id}' used for translation_type '{translation_type}' to load from '{from_dir}' - translations not loaded"
+                )
                 return trans
             _translations[translation_id] = trans
             logger.debug(" - translations = {}".format(trans))
 
         _translation_files[translation_id] = {}
-        _translation_files[translation_id]['type'] = translation_type
-        _translation_files[translation_id]['filename'] = filename
+        _translation_files[translation_id]["type"] = translation_type
+        _translation_files[translation_id]["filename"] = filename
     return trans
 
 
@@ -156,25 +158,32 @@ def reload_translations():
     """
     logger.notice("Reloading translations")
     for id in _translation_files:
-        translation_type = _translation_files[id]['type']
-        filename = _translation_files[id]['filename']
+        translation_type = _translation_files[id]["type"]
+        filename = _translation_files[id]["filename"]
         trans_dict = shyaml.yaml_load(filename, ordered=False, ignore_notfound=True)
         if trans_dict is not None:
-            if translation_type == 'global':
+            if translation_type == "global":
                 for translation_section in trans_dict.keys():
-                    if translation_section.endswith('_translations'):
-                        id = translation_section.split('_')[0].replace('.', '/')
+                    if translation_section.endswith("_translations"):
+                        id = translation_section.split("_")[0].replace(".", "/")
                         trans = trans_dict.get(translation_section, {})
                         logger.info(f"Reloading {translation_type} translations (id={id}) from {filename}")
                         _translations[id] = trans
             else:
-                trans = trans_dict.get(translation_type+'_translations', {})
+                trans = trans_dict.get(translation_type + "_translations", {})
                 logger.info(f"Reloading {translation_type} translations (id={id}) from {filename}")
                 _translations[id] = trans
     return True
 
 
-def _get_translation(translation_lang, txt, plugin_translations=None, module_translations=None, additional_translations=None, log_missing=False):
+def _get_translation(
+    translation_lang,
+    txt,
+    plugin_translations=None,
+    module_translations=None,
+    additional_translations=None,
+    log_missing=False,
+):
     """
     Returns translated text from for a specified language from plugin_translations or global_translations
 
@@ -189,7 +198,9 @@ def _get_translation(translation_lang, txt, plugin_translations=None, module_tra
         if plugin_translations in _translations.keys():
             translations = _translations[plugin_translations].get(txt, {})
         else:
-            logger.warning(f"Trying to use undefined plugin_translations '{plugin_translations}'  (plugin has no locale.yaml)")
+            logger.warning(
+                f"Trying to use undefined plugin_translations '{plugin_translations}'  (plugin has no locale.yaml)"
+            )
 
     if translations == {} and additional_translations is not None:
         if additional_translations in _translations.keys():
@@ -201,14 +212,18 @@ def _get_translation(translation_lang, txt, plugin_translations=None, module_tra
         if module_translations in _translations.keys():
             translations = _translations[module_translations].get(txt, {})
         else:
-            logger.info(f"Trying to use undefined module_translations '{module_translations}' (module has no locale.yaml)")
+            logger.info(
+                f"Trying to use undefined module_translations '{module_translations}' (module has no locale.yaml)"
+            )
 
     if translations == {}:
-        if 'global' in _translations.keys():
-            translations = _translations['global'].get(txt, {})
+        if "global" in _translations.keys():
+            translations = _translations["global"].get(txt, {})
             if translations == {}:
-                if log_missing and txt != '':
-                    logger.info(f"No translation for '{txt}' found in global (bin), plugin ({plugin_translations}), module ({module_translations}), additional ({additional_translations})")
+                if log_missing and txt != "":
+                    logger.info(
+                        f"No translation for '{txt}' found in global (bin), plugin ({plugin_translations}), module ({module_translations}), additional ({additional_translations})"
+                    )
         else:
             logger.error("Global translations not loaded")
     else:
@@ -231,12 +246,27 @@ def translate(txt, vars=None, plugin_translations=None, module_translations=None
     global _fallback_language_order
     txt = str(txt)
 
-    translated_txt = _get_translation(_default_language, txt, plugin_translations=plugin_translations, module_translations=module_translations, additional_translations=additional_translations, log_missing=True)
+    translated_txt = _get_translation(
+        _default_language,
+        txt,
+        plugin_translations=plugin_translations,
+        module_translations=module_translations,
+        additional_translations=additional_translations,
+        log_missing=True,
+    )
     if translated_txt is None:
-        logger.dbghigh(f"Translation of '{txt}' to language '{_default_language}' not found -> using fallback languages")
+        logger.dbghigh(
+            f"Translation of '{txt}' to language '{_default_language}' not found -> using fallback languages"
+        )
         if len(_fallback_language_order) > 0:
             for fallback_language in _fallback_language_order:
-                translated_txt = _get_translation(fallback_language, txt, plugin_translations=plugin_translations, module_translations=module_translations, additional_translations=additional_translations)
+                translated_txt = _get_translation(
+                    fallback_language,
+                    txt,
+                    plugin_translations=plugin_translations,
+                    module_translations=module_translations,
+                    additional_translations=additional_translations,
+                )
                 if translated_txt is None:
                     logger.debug(" - No translation found for fallback_language '{}'".format(fallback_language))
                 else:
@@ -244,10 +274,10 @@ def translate(txt, vars=None, plugin_translations=None, module_translations=None
 
         if translated_txt is None:
             translated_txt = txt
-            if txt != '':
+            if txt != "":
                 logger.dbghigh(f" - No translation found for '{txt}' -> using original text")
 
-    if translated_txt == '=':
+    if translated_txt == "=":
         translated_txt = txt
     logger.debug("Translation '{}' to '{}' -> '{}'".format(txt, _default_language, translated_txt))
 
@@ -260,6 +290,8 @@ def translate(txt, vars=None, plugin_translations=None, module_translations=None
             except Exception as e:
                 logger.error(f"translate: Could not fill in variables {vars}. Exception: {e}")
         else:
-            logger.error(f"translate: Invalid vars for string {txt} -> vars must be a dict, not {type(vars)} '{vars}' (for text '{txt}')")
+            logger.error(
+                f"translate: Invalid vars for string {txt} -> vars must be a dict, not {type(vars)} '{vars}' (for text '{txt}')"
+            )
 
     return translated_txt

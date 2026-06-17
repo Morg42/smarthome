@@ -40,8 +40,7 @@ class Shelly(MqttPlugin):
     the update functions for the items
     """
 
-    PLUGIN_VERSION = '1.0.0'
-
+    PLUGIN_VERSION = "1.0.0"
 
     def __init__(self, sh):
         """
@@ -65,13 +64,12 @@ class Shelly(MqttPlugin):
         # self.param1 = self.get_parameter_value('param1')
 
         # Initialization code goes here
-        self.shelly_items = []              # to hold item information for web interface
+        self.shelly_items = []  # to hold item information for web interface
 
         # if plugin should start even without web interface
         self.init_webinterface(WebInterface)
 
         return
-
 
     def run(self):
         """
@@ -85,7 +83,6 @@ class Shelly(MqttPlugin):
 
         return
 
-
     def stop(self):
         """
         Stop method for the plugin
@@ -97,7 +94,6 @@ class Shelly(MqttPlugin):
         self.stop_subscriptions()
 
         return
-
 
     def parse_item(self, item):
         """
@@ -112,34 +108,32 @@ class Shelly(MqttPlugin):
                         with the item, caller, source and dest as arguments and in case of the knx plugin the value
                         can be sent to the knx with a knx write function within the knx plugin.
         """
-        if self.has_iattr(item.conf, 'shelly_id'):
+        if self.has_iattr(item.conf, "shelly_id"):
             self.logger.debug(f"parsing item: {item}")
 
-            shelly_id = self.get_iattr_value(item.conf, 'shelly_id').upper()
-            shelly_type = self.get_iattr_value(item.conf, 'shelly_type').lower()
-            shelly_relay = self.get_iattr_value(item.conf, 'shelly_relay')
+            shelly_id = self.get_iattr_value(item.conf, "shelly_id").upper()
+            shelly_type = self.get_iattr_value(item.conf, "shelly_type").lower()
+            shelly_relay = self.get_iattr_value(item.conf, "shelly_relay")
             if not shelly_relay:
-                shelly_relay = '0'
+                shelly_relay = "0"
             # append to list used for web interface
             self.shelly_items.append(item)
 
             # subscribe to topic for relay state
-            topic = 'shellies/' + shelly_type + '-' + shelly_id + '/relay/' + shelly_relay
+            topic = "shellies/" + shelly_type + "-" + shelly_id + "/relay/" + shelly_relay
             payload_type = item.property.type
-            bool_values = ['off', 'on']
+            bool_values = ["off", "on"]
             self.add_subscription(topic, payload_type, bool_values, item=item)
 
             return self.update_item
-
 
     def parse_logic(self, logic):
         """
         Default plugin parse_logic method
         """
-        if 'xxx' in logic.conf:
+        if "xxx" in logic.conf:
             # self.function(logic['name'])
             pass
-
 
     def update_item(self, item, caller=None, source=None, dest=None):
         """
@@ -162,10 +156,10 @@ class Shelly(MqttPlugin):
             self.logger.info(f"update_item: {item}, item has been changed outside this plugin")
 
             # publish topic with new relay state
-            shelly_id = self.get_iattr_value(item.conf, 'shelly_id').upper()
-            shelly_type = self.get_iattr_value(item.conf, 'shelly_type').lower()
-            shelly_relay = self.get_iattr_value(item.conf, 'shelly_relay')
+            shelly_id = self.get_iattr_value(item.conf, "shelly_id").upper()
+            shelly_type = self.get_iattr_value(item.conf, "shelly_type").lower()
+            shelly_relay = self.get_iattr_value(item.conf, "shelly_relay")
             if not shelly_relay:
-                shelly_relay = '0'
-            topic = 'shellies/' + shelly_type + '-' + shelly_id + '/relay/' + shelly_relay + '/command'
-            self.publish_topic(topic, item(), item, bool_values=['off', 'on'])
+                shelly_relay = "0"
+            topic = "shellies/" + shelly_type + "-" + shelly_id + "/relay/" + shelly_relay + "/command"
+            self.publish_topic(topic, item(), item, bool_values=["off", "on"])

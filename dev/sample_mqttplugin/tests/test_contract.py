@@ -21,11 +21,11 @@ import os
 import sys
 
 # ensure shng root is on the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from tests.plugin_contract.base      import BasePluginContractTest
+from tests.plugin_contract.base import BasePluginContractTest
 from tests.plugin_contract.with_yaml import YamlPluginContractTest
-from tests.plugin_contract.mqtt      import MqttPluginContractTest
+from tests.plugin_contract.mqtt import MqttPluginContractTest
 from dev.sample_mqttplugin import SampleMqttPlugin
 
 
@@ -42,5 +42,5 @@ class TestSampleMqttPlugin(BasePluginContractTest, YamlPluginContractTest, MqttP
     # foo_itemid is the item attribute declared in plugin.yaml.
     # An item carrying this attribute should be registered by parse_item().
     ITEM_ATTR_SETS = [
-        {'foo_itemid': 'SHELLYPLUGS-AA1122'},
+        {"foo_itemid": "SHELLYPLUGS-AA1122"},
     ]

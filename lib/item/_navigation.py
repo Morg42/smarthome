@@ -55,6 +55,7 @@ def is_top_of_item_tree(item):
     :rtype:      bool
     """
     from lib.item.items import Items
+
     items_instance = Items.get_instance()
     return item._parent is None or item._parent is items_instance
 

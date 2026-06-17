@@ -27,35 +27,37 @@ import cherrypy
 
 import lib.shyaml as shyaml
 from lib.utils import Utils
-from lib.constants import (DIR_ETC, BASE_LOG)
+from lib.constants import DIR_ETC, BASE_LOG
 import jwt
 from .rest import RESTResource
 
 
 class LogsController(RESTResource):
-
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)
-        self.log_dir = os.path.join(self.base_dir, 'var', 'log')
+        self.log_dir = os.path.join(self.base_dir, "var", "log")
 
         self.logging_conf = shyaml.yaml_load(self._sh.get_config_file(BASE_LOG))
 
         self.chunksize = self.module.log_chunksize
 
         try:
-            roothandler = self.logging_conf['root']['handlers'][0]
-            self.root_logname = os.path.splitext(os.path.basename(self.logging_conf['handlers'][roothandler]['filename']))[0]
+            roothandler = self.logging_conf["root"]["handlers"][0]
+            self.root_logname = os.path.splitext(
+                os.path.basename(self.logging_conf["handlers"][roothandler]["filename"])
+            )[0]
         except (KeyError, IndexError):
-            self.root_logname = ''
+            self.root_logname = ""
         self.logger.info("logging_conf: self.root_logname = {}".format(self.root_logname))
 
         return
-
 
     def get_logs(self):
         """
@@ -66,11 +68,10 @@ class LogsController(RESTResource):
         """
         logs = []
         for fn in self.files:
-            if os.path.splitext(fn)[1] == '.log':
+            if os.path.splitext(fn)[1] == ".log":
                 log_name = os.path.splitext(fn)[0]
                 logs.append(log_name)
         return logs
-
 
     def get_logs_with_files(self):
         """
@@ -81,15 +82,14 @@ class LogsController(RESTResource):
         """
         logs = {}
         for fn in self.files:
-            fnl = fn.split('.')
-            if (len(fnl) == 2) and (fnl[1] == 'log'):
+            fnl = fn.split(".")
+            if (len(fnl) == 2) and (fnl[1] == "log"):
                 log_name = fnl[0]
 
                 logfiles = self.get_files_of_log(log_name)
                 logs[log_name] = sorted(logfiles)
 
         return logs
-
 
     def get_files_of_log(self, log_name):
         """
@@ -102,17 +102,16 @@ class LogsController(RESTResource):
         """
         logfiles = []
         for fn in self.files:
-            #if fn.startswith(log_name+'.log'):
-            if (fn.startswith(log_name+'.') and fn.endswith('.log')) or fn.startswith(log_name+'.log'):
+            # if fn.startswith(log_name+'.log'):
+            if (fn.startswith(log_name + ".") and fn.endswith(".log")) or fn.startswith(log_name + ".log"):
                 size = round(os.path.getsize(os.path.join(self.log_dir, fn)) / 1024, 1)
-                logfiles.append([fn,size])
+                logfiles.append([fn, size])
         return logfiles
-
 
     # ======================================================================
     #  GET /api/logs
     #
-    def read(self, id=None, chunk='1'):
+    def read(self, id=None, chunk="1"):
         """
         Handle GET requests for logs API
         """
@@ -127,7 +126,7 @@ class LogsController(RESTResource):
         wrkl = sorted(os.listdir(self.log_dir))
         self.files = []
         for fn in wrkl:
-            if not(fn.startswith('.')):
+            if not (fn.startswith(".")):
                 if os.path.isfile(os.path.join(self.log_dir, fn)):
                     self.files.append(fn)
         # get names of logs (from filenames enting with '.log')
@@ -135,7 +134,7 @@ class LogsController(RESTResource):
         if id is None:
             # get list of existing logs and name of default log
             logs = self.get_logs_with_files()
-            return json.dumps({'logs':logs, 'default': self.root_logname})
+            return json.dumps({"logs": logs, "default": self.root_logname})
 
         if id in logs:
             # get filenames available for the specified log (if log is specified without extension)
@@ -146,14 +145,14 @@ class LogsController(RESTResource):
             # return content of the logfile specified in id, if file is found
             chunk_read = 0
             if chunk > 0:
-                chunk_read = chunk-1
-            skiplines = self.chunksize * (chunk-1)
+                chunk_read = chunk - 1
+            skiplines = self.chunksize * (chunk - 1)
             if skiplines < 0:
                 skiplines = 0
             skipcount = 0
 
             # read logfile
-            with open(os.path.join(self.log_dir, id), 'r', encoding='UTF-8') as lfile:
+            with open(os.path.join(self.log_dir, id), "r", encoding="UTF-8") as lfile:
                 append_to_previous_line = False
                 loglines = []
                 lastchunk = True
@@ -164,12 +163,12 @@ class LogsController(RESTResource):
                         skipcount += 1
                     else:
                         if len(loglines) < self.chunksize:
-                            if line.startswith('Traceback'):
+                            if line.startswith("Traceback"):
                                 append_to_previous_line = True
                             if append_to_previous_line:
                                 # append to previous log line
-                                loglines[len(loglines)-1] += '> ' + line.replace(" ", chr(160))
-                                if (not line.startswith('Traceback')) and (not line.startswith('  ')):
+                                loglines[len(loglines) - 1] += "> " + line.replace(" ", chr(160))
+                                if (not line.startswith("Traceback")) and (not line.startswith("  ")):
                                     # last line of multiline traceback reached
                                     append_to_previous_line = False
                             else:
@@ -190,19 +189,18 @@ class LogsController(RESTResource):
 
                 chunk_read += 1
             # return content
-            first_chunk_line = (chunk_read-1)*self.chunksize   # zero based
+            first_chunk_line = (chunk_read - 1) * self.chunksize  # zero based
             result = {}
-            result['file'] = id
-            result['filesize'] = round(os.path.getsize(os.path.join(self.log_dir, id)) / 1024, 1)
-            result['chunk'] = chunk_read
-            result['chunksize'] = self.chunksize
-            result['lastchunk'] = lastchunk
-            result['lines'] = [first_chunk_line + 1, first_chunk_line + len(loglines)]
-            result['loglines'] = loglines
+            result["file"] = id
+            result["filesize"] = round(os.path.getsize(os.path.join(self.log_dir, id)) / 1024, 1)
+            result["chunk"] = chunk_read
+            result["chunksize"] = self.chunksize
+            result["lastchunk"] = lastchunk
+            result["lines"] = [first_chunk_line + 1, first_chunk_line + len(loglines)]
+            result["loglines"] = loglines
             return json.dumps(result)
 
         raise cherrypy.NotFound
 
     read.expose_resource = True
     read.authentication_needed = True
-

@@ -29,5 +29,4 @@ This library implements items in SmartHomeNG.
 from .items import Items
 
 
-#_items_instance = None    # Pointer to the initialized instance of the Items class (for use by static methods)
-
+# _items_instance = None    # Pointer to the initialized instance of the Items class (for use by static methods)

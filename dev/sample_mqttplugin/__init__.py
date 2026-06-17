@@ -41,7 +41,7 @@ class SampleMqttPlugin(MqttPlugin):
     the update functions for the items
     """
 
-    PLUGIN_VERSION = '1.0.0'    # must match the version in plugin.yaml; use '1.0.0' for initial release
+    PLUGIN_VERSION = "1.0.0"  # must match the version in plugin.yaml; use '1.0.0' for initial release
     ALLOW_MULTIINSTANCE = False  # set to True if the plugin can run as multiple instances simultaneously
 
     def __init__(self, sh=None, **kwargs):
@@ -62,7 +62,7 @@ class SampleMqttPlugin(MqttPlugin):
 
         # if you want to use an item to toggle plugin execution, enable the
         # definition in plugin.yaml and uncomment the following line
-        #self._pause_item_path = self.get_parameter_value('pause_item')
+        # self._pause_item_path = self.get_parameter_value('pause_item')
 
         # Initialization code goes here
 
@@ -79,7 +79,7 @@ class SampleMqttPlugin(MqttPlugin):
         """
         Run method for the plugin
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'run()'}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "run()"}))
 
         self.alive = True
 
@@ -94,7 +94,7 @@ class SampleMqttPlugin(MqttPlugin):
         """
         Stop method for the plugin
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'stop()'}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "stop()"}))
         self.alive = False
 
         # let the plugin change the state of pause_item
@@ -102,7 +102,7 @@ class SampleMqttPlugin(MqttPlugin):
             self._pause_item(True, self.get_fullname())
 
         # if you use schedulers, this stops all schedulers the plugin has started.
-        #self.scheduler_remove_all()
+        # self.scheduler_remove_all()
 
         # stop subscription to all topics
         self.stop_subscriptions()
@@ -122,19 +122,19 @@ class SampleMqttPlugin(MqttPlugin):
         """
         # check for pause item
         if item.property.path == self._pause_item_path:
-            self.logger.debug(f'pause item {item.property.path} registered')
+            self.logger.debug(f"pause item {item.property.path} registered")
             self._pause_item = item
             self.add_item(item, updating=True)
             return self.update_item
 
-        if self.has_iattr(item.conf, 'foo_itemid'):
+        if self.has_iattr(item.conf, "foo_itemid"):
             self.logger.debug(f"parse item: {item.property.path}")
 
             # Compose the MQTT topic from the device ID attribute.
-            mqtt_id = self.get_iattr_value(item.conf, 'foo_itemid').upper()
+            mqtt_id = self.get_iattr_value(item.conf, "foo_itemid").upper()
             payload_type = item.property.type
-            topic = 'shellies/shellyplug-' + mqtt_id + '/relay/0'
-            bool_values = ['off', 'on']
+            topic = "shellies/shellyplug-" + mqtt_id + "/relay/0"
+            bool_values = ["off", "on"]
             # Subscribe so the item value is updated when the device publishes.
             self.add_subscription(topic, payload_type, bool_values, item=item)
 
@@ -143,12 +143,11 @@ class SampleMqttPlugin(MqttPlugin):
             self.add_item(item, updating=True)
             return self.update_item
 
-
     def parse_logic(self, logic):
         """
         Default plugin parse_logic method
         """
-        if 'xxx' in logic.conf:
+        if "xxx" in logic.conf:
             # self.function(logic['name'])
             pass
 
@@ -168,7 +167,7 @@ class SampleMqttPlugin(MqttPlugin):
         # check for pause item
         if item is self._pause_item:
             if caller != self.get_shortname():
-                self.logger.debug(f'pause item changed to {item()}')
+                self.logger.debug(f"pause item changed to {item()}")
                 if item() and self.alive:
                     self.stop()
                 elif not item() and not self.alive:
@@ -180,8 +179,8 @@ class SampleMqttPlugin(MqttPlugin):
             # and only, if the item has not been changed by this this plugin:
             self.logger.info(f"Update item: {item.property.path}, item has been changed outside this plugin")
 
-            if self.has_iattr(item.conf, 'foo_itemid'):
+            if self.has_iattr(item.conf, "foo_itemid"):
                 self.logger.debug(
-                    f"update_item: item {item.property.path} "
-                    f"from caller {caller}, source {source}, dest {dest}")
+                    f"update_item: item {item.property.path} from caller {caller}, source {source}, dest {dest}"
+                )
             pass

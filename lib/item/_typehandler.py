@@ -43,37 +43,37 @@ class TypeHandler:
     ``self._item.__call__()`` so the full item-update pipeline fires.
     """
 
-    _type = ''
+    _type = ""
     item_functions = []
 
     def __init__(self, item):
         if item is None:
-            raise ValueError(f'{self.__class__.__name__}: no item given')
+            raise ValueError(f"{self.__class__.__name__}: no item given")
         if item._type != self._type:
-            raise ValueError(f'{self.__class__.__name__}: item not of type {self._type}')
+            raise ValueError(f"{self.__class__.__name__}: item not of type {self._type}")
         self._item = item
 
 
 class ListHandler(TypeHandler):
     """Handle list-type items — mirrors Python list mutation methods."""
 
-    _type = 'list'
-    item_functions = ['append', 'prepend', 'insert', 'pop', 'extend', 'clear', 'delete', 'remove']
+    _type = "list"
+    item_functions = ["append", "prepend", "insert", "pop", "extend", "clear", "delete", "remove"]
 
     # All methods route through item.__call__() to ensure item-update pipeline fires.
 
-    def append(self, value, caller='Logic', source=None, dest=None):
-        self._item.__call__(value, caller, source, dest, index='append')
+    def append(self, value, caller="Logic", source=None, dest=None):
+        self._item.__call__(value, caller, source, dest, index="append")
 
-    def prepend(self, value, caller='Logic', source=None, dest=None):
-        self._item.__call__(value, caller, source, dest, index='prepend')
+    def prepend(self, value, caller="Logic", source=None, dest=None):
+        self._item.__call__(value, caller, source, dest, index="prepend")
 
-    def insert(self, index, value, caller='Logic', source=None, dest=None):
+    def insert(self, index, value, caller="Logic", source=None, dest=None):
         tmplist = copy.deepcopy(self._item._value)
         tmplist.insert(index, value)
         self._item.__call__(tmplist, caller, source, dest)
 
-    def pop(self, index=None, caller='Logic', source=None, dest=None):
+    def pop(self, index=None, caller="Logic", source=None, dest=None):
         tmplist = copy.deepcopy(self._item._value)
         if index is None:
             ret = tmplist.pop()
@@ -82,33 +82,33 @@ class ListHandler(TypeHandler):
         self._item.__call__(tmplist, caller, source, dest)
         return ret
 
-    def extend(self, value, caller='Logic', source=None, dest=None):
+    def extend(self, value, caller="Logic", source=None, dest=None):
         tmplist = copy.deepcopy(self._item._value)
         tmplist.extend(value)
         self._item.__call__(tmplist, caller, source, dest)
 
-    def clear(self, caller='Logic', source=None, dest=None):
+    def clear(self, caller="Logic", source=None, dest=None):
         self._item.__call__([], caller, source, dest)
 
-    def delete(self, value, caller='Logic', source=None, dest=None):
+    def delete(self, value, caller="Logic", source=None, dest=None):
         """
         Mimic ``del list[x:y]`` — supply ``"x:y"`` as *value*.
         Named *delete* rather than *del* for syntax reasons.
         """
-        splits = str(value).count(':')
+        splits = str(value).count(":")
         tmplist = copy.deepcopy(self._item._value)
         if splits == 0:
             x = int(value)
             del tmplist[x]
         if splits == 1:
-            x, y = [int(i) for i in value.split(':')]
+            x, y = [int(i) for i in value.split(":")]
             del tmplist[x:y]
         elif splits == 2:
-            x, y, z = [int(i) for i in value.split(':')]
+            x, y, z = [int(i) for i in value.split(":")]
             del tmplist[x:y:z]
         self._item.__call__(tmplist, caller, source, dest)
 
-    def remove(self, value, caller='Logic', source=None, dest=None):
+    def remove(self, value, caller="Logic", source=None, dest=None):
         tmplist = copy.deepcopy(self._item._value)
         tmplist.remove(value)
         self._item.__call__(tmplist, caller, source, dest)
@@ -117,34 +117,34 @@ class ListHandler(TypeHandler):
 class DictHandler(TypeHandler):
     """Handle dict-type items — mirrors Python dict mutation methods."""
 
-    _type = 'dict'
-    item_functions = ['get', 'delete', 'clear', 'pop', 'popitem', 'update']
+    _type = "dict"
+    item_functions = ["get", "delete", "clear", "pop", "popitem", "update"]
 
     def get(self, key, default=None):
         return self._item().get(key, default)
 
-    def delete(self, key, caller='Logic', source=None, dest=None):
+    def delete(self, key, caller="Logic", source=None, dest=None):
         """Named *delete* rather than *del* for syntax reasons."""
         tmpdict = copy.deepcopy(self._item._value)
         del tmpdict[key]
         self._item.__call__(tmpdict, caller, source, dest)
 
-    def clear(self, caller='Logic', source=None, dest=None):
+    def clear(self, caller="Logic", source=None, dest=None):
         self._item.__call__({}, caller, source, dest)
 
-    def pop(self, key, caller='Logic', source=None, dest=None, default=None):
+    def pop(self, key, caller="Logic", source=None, dest=None, default=None):
         tmpdict = copy.deepcopy(self._item._value)
         ret = tmpdict.pop(key, default)
         self._item.__call__(tmpdict, caller, source, dest)
         return ret
 
-    def popitem(self, caller='Logic', source=None, dest=None):
+    def popitem(self, caller="Logic", source=None, dest=None):
         tmpdict = copy.deepcopy(self._item._value)
         ret = tmpdict.popitem()
         self._item.__call__(tmpdict, caller, source, dest)
         return ret
 
-    def update(self, value, caller='Logic', source=None, dest=None):
+    def update(self, value, caller="Logic", source=None, dest=None):
         tmpdict = copy.deepcopy(self._item._value)
         tmpdict.update(value)
         self._item.__call__(tmpdict, caller, source, dest)
@@ -152,6 +152,6 @@ class DictHandler(TypeHandler):
 
 # Map from item type string to handler class — used by Item.__init__
 HANDLER_MAP = {
-    'list': ListHandler,
-    'dict': DictHandler,
+    "list": ListHandler,
+    "dict": DictHandler,
 }

@@ -33,7 +33,7 @@ import portalocker
 logger = logging.getLogger(__name__)
 
 
-def daemonize(pidfile,stdin='/dev/null', stdout='/dev/null', stderr=None):
+def daemonize(pidfile, stdin="/dev/null", stdout="/dev/null", stderr=None):
     """
     This method daemonizes the sh.py process and redirects standard file descriptors.
 
@@ -46,11 +46,11 @@ def daemonize(pidfile,stdin='/dev/null', stdout='/dev/null', stderr=None):
     :type stdout: string
     :type stderr: string
     """
-    if os.name == 'nt':
+    if os.name == "nt":
         return
 
     # use stdout file if stderr is none
-    if (not stderr):
+    if not stderr:
         stderr = stdout
 
     # do the UNIX double-fork magic, see Stevens' "Advanced
@@ -60,8 +60,8 @@ def daemonize(pidfile,stdin='/dev/null', stdout='/dev/null', stderr=None):
         if pid > 0:
             # exit first parent
             sys.exit(0)
-    except OSError as  e:
-        print("fork #1 failed: %d (%s)" % (e.errno, e.strerror) , file=sys.stderr)
+    except OSError as e:
+        print("fork #1 failed: %d (%s)" % (e.errno, e.strerror), file=sys.stderr)
         sys.exit(1)
 
     # decouple from parent environment
@@ -73,19 +73,19 @@ def daemonize(pidfile,stdin='/dev/null', stdout='/dev/null', stderr=None):
         pid = os.fork()
         if pid > 0:
             # exit from second parent, print eventual PID before
-            print ("Daemon PID %d" % pid )
+            print("Daemon PID %d" % pid)
             sys.exit(0)
         else:
             write_pidfile(os.getpid(), pidfile)
 
-    except OSError as  e:
-        print("fork #2 failed: %d (%s)" % (e.errno, e.strerror) , file=sys.stderr)
+    except OSError as e:
+        print("fork #2 failed: %d (%s)" % (e.errno, e.strerror), file=sys.stderr)
         sys.exit(1)
 
     # Redirect standard file descriptors.
-    si = open(stdin, 'r')
-    so = open(stdout, 'a+')
-    se = open(stderr, 'a+')
+    si = open(stdin, "r")
+    so = open(stdout, "a+")
+    se = open(stderr, "a+")
     os.close(sys.stdin.fileno())
     os.close(sys.stdout.fileno())
     os.close(sys.stderr.fileno())
@@ -115,26 +115,26 @@ def write_pidfile(pid, pidfile):
     :type pid: int
     :type pidfile: str
     """
-    if os.name == 'nt':
+    if os.name == "nt":
         return
 
     # make dirs if not already present, e.g. in smarthome -d
     if not os.path.isdir(os.path.dirname(pidfile)):
         os.makedirs(os.path.dirname(pidfile))
 
-    with open(pidfile, 'w+') as fh:
+    with open(pidfile, "w+") as fh:
         fh.write("%s" % pid)
 
     global _pidfile_handle
     try:
-        _pidfile_handle = open(pidfile, 'r')
-        #print(f"_pidfile_handle = '{_pidfile_handle}'")
+        _pidfile_handle = open(pidfile, "r")
+        # print(f"_pidfile_handle = '{_pidfile_handle}'")
         # LOCK_EX - acquire an exclusive lock
         # LOCK_NB - non blocking
         portalocker.lock(_pidfile_handle, portalocker.LOCK_EX | portalocker.LOCK_NB)
     # don't close _pidfile_handle or lock is gone!!!
     except portalocker.AlreadyLocked as e:
-        print("Could not lock pid file: %d (%s)" % (e.errno, e.strerror) , file=sys.stderr)
+        print("Could not lock pid file: %d (%s)" % (e.errno, e.strerror), file=sys.stderr)
 
 
 def read_pidfile(pidfile):
@@ -150,12 +150,14 @@ def read_pidfile(pidfile):
 
     try:
         if os.path.isfile(pidfile):
-            fd = open(pidfile,'r')
+            fd = open(pidfile, "r")
             line = fd.readline()
             pid = int(line)
             return pid
     except ValueError:
-        logger.warning("PID could not be read, maybe a false write or a corrupt filesystem? Please check the file system ASAP!")
+        logger.warning(
+            "PID could not be read, maybe a false write or a corrupt filesystem? Please check the file system ASAP!"
+        )
     return 0
 
 
@@ -171,12 +173,12 @@ def check_sh_is_running(pidfile):
     """
 
     pid = read_pidfile(pidfile)
-    #print("daemon.check_sh_is_running: pidfile={}, pid={}, psutil.pid_exists(pid)={}".format(pidfile, pid, psutil.pid_exists(pid)))
+    # print("daemon.check_sh_is_running: pidfile={}, pid={}, psutil.pid_exists(pid)={}".format(pidfile, pid, psutil.pid_exists(pid)))
     isRunning = False
     if pid > 0 and psutil.pid_exists(pid):
-        #print("daemon.check_sh_is_running: pid={}, psutil.pid_exists(pid)={}".format(pid, psutil.pid_exists(pid)))
+        # print("daemon.check_sh_is_running: pid={}, psutil.pid_exists(pid)={}".format(pid, psutil.pid_exists(pid)))
         try:
-            fh = open(pidfile, 'r')
+            fh = open(pidfile, "r")
             # LOCK_EX - acquire an exclusive lock
             # LOCK_NB - non blocking
             portalocker.lock(fh, portalocker.LOCK_EX | portalocker.LOCK_NB)
@@ -202,7 +204,9 @@ def kill(pidfile, waittime=15, pid0_warning=True):
 
     pid = read_pidfile(pidfile)
     if pid == 0 and pid0_warning:
-        logger.error("SmartHomeNG cannot run with a process ID of 0, probably no instance of SmartHomeNG running otherwise kill SmartHomeNG manually")
+        logger.error(
+            "SmartHomeNG cannot run with a process ID of 0, probably no instance of SmartHomeNG running otherwise kill SmartHomeNG manually"
+        )
         return
     if psutil.pid_exists(pid):
         logger.warning("Stopping SmartHomeNG, please wait...")

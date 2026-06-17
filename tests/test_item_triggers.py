@@ -39,9 +39,10 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import tests.common as common
+
 common.register_shng_log_levels()
 
 import lib.item.item
@@ -68,8 +69,8 @@ def _make_sh():
     return MockSmartHome()
 
 
-def _item(sh, path, itype='num', **conf):
-    c = {'type': itype}
+def _item(sh, path, itype="num", **conf):
+    c = {"type": itype}
     c.update(conf)
     i = lib.item.item.Item(sh, sh.items, path, c)
     sh.items.add_item(path, i)
@@ -77,7 +78,7 @@ def _item(sh, path, itype='num', **conf):
 
 
 def _load_items(sh, filename):
-    path = os.path.join(common.BASE, 'tests', 'resources', filename + '.yaml')
+    path = os.path.join(common.BASE, "tests", "resources", filename + ".yaml")
     conf = lib.config.parse(path, None)
     for attr, value in conf.items():
         if isinstance(value, dict):
@@ -99,31 +100,34 @@ class _Base(unittest.TestCase):
 # Logic triggers
 # ===========================================================================
 
-class TestLogicTriggers(_Base):
 
-    def _make_logic(self, name='test_logic'):
+class TestLogicTriggers(_Base):
+    def _make_logic(self, name="test_logic"):
         """Minimal logic-like object."""
+
         class _Logic:
             triggered = []
+
             def trigger(self, by, source, value):
                 _Logic.triggered.append((by, source, value))
+
         logic = _Logic()
         logic.name = name
         return logic
 
     def test_fresh_item_has_empty_logic_trigger_list(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertEqual(item.get_logic_triggers(), [])
 
     def test_add_single_logic_trigger(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         logic = self._make_logic()
         item.add_logic_trigger(logic)
         self.assertIn(logic, item.get_logic_triggers())
 
     def test_add_multiple_logic_triggers(self):
-        item = _item(self.sh, 'a')
-        l1, l2, l3 = self._make_logic('l1'), self._make_logic('l2'), self._make_logic('l3')
+        item = _item(self.sh, "a")
+        l1, l2, l3 = self._make_logic("l1"), self._make_logic("l2"), self._make_logic("l3")
         item.add_logic_trigger(l1)
         item.add_logic_trigger(l2)
         item.add_logic_trigger(l3)
@@ -134,15 +138,15 @@ class TestLogicTriggers(_Base):
         self.assertEqual(len(triggers), 3)
 
     def test_remove_logic_trigger(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         logic = self._make_logic()
         item.add_logic_trigger(logic)
         item.remove_logic_trigger(logic)
         self.assertNotIn(logic, item.get_logic_triggers())
 
     def test_remove_one_of_several_logic_triggers(self):
-        item = _item(self.sh, 'a')
-        l1, l2 = self._make_logic('l1'), self._make_logic('l2')
+        item = _item(self.sh, "a")
+        l1, l2 = self._make_logic("l1"), self._make_logic("l2")
         item.add_logic_trigger(l1)
         item.add_logic_trigger(l2)
         item.remove_logic_trigger(l1)
@@ -150,26 +154,26 @@ class TestLogicTriggers(_Base):
         self.assertIn(l2, item.get_logic_triggers())
 
     def test_remove_nonexistent_logic_raises_valueerror(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         logic = self._make_logic()
         with self.assertRaises(ValueError):
             item.remove_logic_trigger(logic)
 
     def test_get_logic_triggers_returns_list(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertIsInstance(item.get_logic_triggers(), list)
 
     def test_add_same_logic_twice_stores_twice(self):
         # list.append has no uniqueness check
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         logic = self._make_logic()
         item.add_logic_trigger(logic)
         item.add_logic_trigger(logic)
         self.assertEqual(item.get_logic_triggers().count(logic), 2)
 
     def test_logic_triggers_are_independent_per_item(self):
-        a = _item(self.sh, 'a')
-        b = _item(self.sh, 'b')
+        a = _item(self.sh, "a")
+        b = _item(self.sh, "b")
         logic = self._make_logic()
         a.add_logic_trigger(logic)
         self.assertNotIn(logic, b.get_logic_triggers())
@@ -177,7 +181,7 @@ class TestLogicTriggers(_Base):
     def test_logic_triggered_on_value_change(self):
         """Logic in trigger list fires when item value changes."""
         fired = []
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
 
         class _Logic:
             def trigger(self, by, source, value):
@@ -189,7 +193,7 @@ class TestLogicTriggers(_Base):
 
     def test_logic_not_triggered_after_removal(self):
         fired = []
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
 
         class _Logic:
             def trigger(self, by, source, value):
@@ -206,27 +210,29 @@ class TestLogicTriggers(_Base):
 # Method triggers
 # ===========================================================================
 
-class TestMethodTriggers(_Base):
 
+class TestMethodTriggers(_Base):
     def _make_method(self):
         calls = []
+
         def method(item, caller, source, dest):
             calls.append((caller, source))
+
         method.calls = calls
         return method
 
     def test_fresh_item_has_empty_method_trigger_list(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertEqual(item.get_method_triggers(), [])
 
     def test_add_single_method_trigger(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         m = self._make_method()
         item.add_method_trigger(m)
         self.assertIn(m, item.get_method_triggers())
 
     def test_add_multiple_method_triggers(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         m1, m2 = self._make_method(), self._make_method()
         item.add_method_trigger(m1)
         item.add_method_trigger(m2)
@@ -235,14 +241,14 @@ class TestMethodTriggers(_Base):
         self.assertIn(m2, triggers)
 
     def test_remove_method_trigger(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         m = self._make_method()
         item.add_method_trigger(m)
         item.remove_method_trigger(m)
         self.assertNotIn(m, item.get_method_triggers())
 
     def test_remove_one_of_several_method_triggers(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         m1, m2 = self._make_method(), self._make_method()
         item.add_method_trigger(m1)
         item.add_method_trigger(m2)
@@ -251,34 +257,36 @@ class TestMethodTriggers(_Base):
         self.assertIn(m2, item.get_method_triggers())
 
     def test_remove_nonexistent_method_raises_valueerror(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         m = self._make_method()
         with self.assertRaises(ValueError):
             item.remove_method_trigger(m)
 
     def test_get_method_triggers_returns_list(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertIsInstance(item.get_method_triggers(), list)
 
     def test_method_triggers_are_independent_per_item(self):
-        a = _item(self.sh, 'a')
-        b = _item(self.sh, 'b')
+        a = _item(self.sh, "a")
+        b = _item(self.sh, "b")
         m = self._make_method()
         a.add_method_trigger(m)
         self.assertNotIn(m, b.get_method_triggers())
 
     def test_method_called_on_value_change(self):
         called = []
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         item.add_method_trigger(lambda i, c, s, d: called.append(c))
-        item(99, 'TestCaller')
-        self.assertIn('TestCaller', called)
+        item(99, "TestCaller")
+        self.assertIn("TestCaller", called)
 
     def test_method_not_called_after_removal(self):
         called = []
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
+
         def m(i, c, s, d):
             called.append(1)
+
         item.add_method_trigger(m)
         item.remove_method_trigger(m)
         item(99)
@@ -286,16 +294,16 @@ class TestMethodTriggers(_Base):
 
     def test_method_receives_correct_caller_and_source(self):
         received = []
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         item.add_method_trigger(lambda i, c, s, d: received.append((c, s)))
-        item(1, 'MyPlugin', 'my_source')
-        self.assertEqual(received, [('MyPlugin', 'my_source')])
+        item(1, "MyPlugin", "my_source")
+        self.assertEqual(received, [("MyPlugin", "my_source")])
 
     def test_method_exception_does_not_crash_item(self):
         """A failing method trigger must not prevent the item value from being set."""
-        item = _item(self.sh, 'a')
-        item.add_method_trigger(lambda i, c, s, d: 1/0)
-        item(42)   # should not raise
+        item = _item(self.sh, "a")
+        item.add_method_trigger(lambda i, c, s, d: 1 / 0)
+        item(42)  # should not raise
         self.assertEqual(item(), 42)
 
 
@@ -303,14 +311,14 @@ class TestMethodTriggers(_Base):
 # get_item_triggers  (eval_trigger wiring)
 # ===========================================================================
 
-class TestGetItemTriggers(_Base):
 
+class TestGetItemTriggers(_Base):
     def test_fresh_item_has_empty_item_trigger_list(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertEqual(item.get_item_triggers(), [])
 
     def test_get_item_triggers_returns_list(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertIsInstance(item.get_item_triggers(), list)
 
     def test_item_triggers_populated_after_init_prerun(self):
@@ -319,8 +327,8 @@ class TestGetItemTriggers(_Base):
         source is appended to target._items_to_trigger ("when target changes,
         trigger source's eval").  So target.get_item_triggers() contains source.
         """
-        target = _item(self.sh, 'target', eval='1')
-        source = _item(self.sh, 'source', eval='sh.target()', eval_trigger='target')
+        target = _item(self.sh, "target", eval="1")
+        source = _item(self.sh, "source", eval="sh.target()", eval_trigger="target")
 
         target._init_prerun()
         source._init_prerun()
@@ -330,15 +338,15 @@ class TestGetItemTriggers(_Base):
 
     def test_item_not_in_own_triggers(self):
         """An item with self-trigger is excluded (prevents infinite loop)."""
-        item = _item(self.sh, 'a', eval='1', eval_trigger='a')
+        item = _item(self.sh, "a", eval="1", eval_trigger="a")
         item._init_prerun()
         self.assertNotIn(item, item.get_item_triggers())
 
     def test_two_sources_watching_same_target(self):
         """Two items with eval_trigger on the same target both appear in target's list."""
-        target = _item(self.sh, 'target')
-        src1   = _item(self.sh, 'src1', eval='sh.target()', eval_trigger='target')
-        src2   = _item(self.sh, 'src2', eval='sh.target()', eval_trigger='target')
+        target = _item(self.sh, "target")
+        src1 = _item(self.sh, "src1", eval="sh.target()", eval_trigger="target")
+        src2 = _item(self.sh, "src2", eval="sh.target()", eval_trigger="target")
         target._init_prerun()
         src1._init_prerun()
         src2._init_prerun()
@@ -350,14 +358,14 @@ class TestGetItemTriggers(_Base):
 # get_hysteresis_item_triggers
 # ===========================================================================
 
-class TestGetHysteresisItemTriggers(_Base):
 
+class TestGetHysteresisItemTriggers(_Base):
     def test_fresh_item_has_empty_hysteresis_triggers(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertEqual(item.get_hysteresis_item_triggers(), [])
 
     def test_get_hysteresis_item_triggers_returns_list(self):
-        item = _item(self.sh, 'a')
+        item = _item(self.sh, "a")
         self.assertIsInstance(item.get_hysteresis_item_triggers(), list)
 
     def test_hysteresis_trigger_wired_after_init_prerun(self):
@@ -365,23 +373,27 @@ class TestGetHysteresisItemTriggers(_Base):
         After _init_prerun(), the sensor item should appear in the output
         item's _hysteresis_items_to_trigger.
         """
-        sensor = _item(self.sh, 'sensor', 'num')
-        output = _item(self.sh, 'output', 'bool',
-                       hysteresis_input='sensor',
-                       hysteresis_upper_threshold='22',
-                       hysteresis_lower_threshold='18')
+        sensor = _item(self.sh, "sensor", "num")
+        output = _item(
+            self.sh,
+            "output",
+            "bool",
+            hysteresis_input="sensor",
+            hysteresis_upper_threshold="22",
+            hysteresis_lower_threshold="18",
+        )
         sensor._init_prerun()
         output._init_prerun()
 
         self.assertIn(output, sensor.get_hysteresis_item_triggers())
 
     def test_non_hysteresis_item_not_in_triggers(self):
-        sensor = _item(self.sh, 'sensor', 'num')
-        plain  = _item(self.sh, 'plain', 'num')
+        sensor = _item(self.sh, "sensor", "num")
+        plain = _item(self.sh, "plain", "num")
         sensor._init_prerun()
         plain._init_prerun()
         self.assertNotIn(plain, sensor.get_hysteresis_item_triggers())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

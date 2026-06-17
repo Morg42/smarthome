@@ -34,12 +34,32 @@ from typing import Any
 
 import lib.model.sdp.datatypes as DT
 from lib.model.sdp.globals import (
-    update, CommandsError, CMD_ATTR_CMD_SETTINGS, CMD_ATTR_DEV_TYPE,
-    CMD_ATTR_ITEM_ATTRS, CMD_ATTR_ITEM_TYPE, CMD_ATTR_LOOKUP, CMD_ATTR_OPCODE, CMD_STR_PARAM,
-    CMD_ATTR_READ, CMD_ATTR_READ_CMD, CMD_ATTR_REPLY_PATTERN, CMD_ATTR_WRITE,
-    CMD_ATTR_WRITE_CMD, CMD_ATTR_ORG_PARAMS, COMMAND_PARAMS, COMMAND_SEP, INDEX_GENERIC,
-    PATTERN_LOOKUP, PATTERN_VALID_LIST, PATTERN_VALID_LIST_CI, PATTERN_VALID_LIST_RE,
-    PATTERN_CUSTOM_PATTERN, PLUGIN_PATH, CUSTOM_SEP)
+    update,
+    CommandsError,
+    CMD_ATTR_CMD_SETTINGS,
+    CMD_ATTR_DEV_TYPE,
+    CMD_ATTR_ITEM_ATTRS,
+    CMD_ATTR_ITEM_TYPE,
+    CMD_ATTR_LOOKUP,
+    CMD_ATTR_OPCODE,
+    CMD_STR_PARAM,
+    CMD_ATTR_READ,
+    CMD_ATTR_READ_CMD,
+    CMD_ATTR_REPLY_PATTERN,
+    CMD_ATTR_WRITE,
+    CMD_ATTR_WRITE_CMD,
+    CMD_ATTR_ORG_PARAMS,
+    COMMAND_PARAMS,
+    COMMAND_SEP,
+    INDEX_GENERIC,
+    PATTERN_LOOKUP,
+    PATTERN_VALID_LIST,
+    PATTERN_VALID_LIST_CI,
+    PATTERN_VALID_LIST_RE,
+    PATTERN_CUSTOM_PATTERN,
+    PLUGIN_PATH,
+    CUSTOM_SEP,
+)
 from lib.model.sdp.command import SDPCommand
 
 
@@ -49,8 +69,9 @@ from lib.model.sdp.command import SDPCommand
 #
 #############################################################################################################################################################################################################################################
 
+
 class SDPCommands(object):
-    """ SDPCommands class for managing commands support
+    """SDPCommands class for managing commands support
 
     This class represents a command list to save some error handling code on
     every access (in comparison to using a dict). Not much more functionality
@@ -59,13 +80,14 @@ class SDPCommands(object):
 
     Furthermore, this could be overwritten if so needed for special extensions.
     """
+
     def __init__(self, command_obj_class: type[SDPCommand] = SDPCommand, **kwargs):
 
         self.logger = logging.getLogger(__name__)
 
-        self.logger.debug(f'commands initializing from {command_obj_class.__name__}')
-        self._commands = {}         # { 'cmd_x': SDPCommand(params), ... }
-        self._lookups = {}          # { 'name_x': {'fwd': {'K1': 'V1', ...}, 'rev': {'V1': 'K1', ...}, 'rci': {'v1': 'K1', ...}}}
+        self.logger.debug(f"commands initializing from {command_obj_class.__name__}")
+        self._commands = {}  # { 'cmd_x': SDPCommand(params), ... }
+        self._lookups = {}  # { 'name_x': {'fwd': {'K1': 'V1', ...}, 'rev': {'V1': 'K1', ...}, 'rci': {'v1': 'K1', ...}}}
         self._lookup_tables = []
         self._dev_structs = []
         self._cmd_class = command_obj_class
@@ -73,7 +95,7 @@ class SDPCommands(object):
         self._params.update(kwargs)
         self._parsed_commands = {}
 
-        self._model: str | None = self._params.get('model', None)
+        self._model: str | None = self._params.get("model", None)
 
         self._dt = {}
         self._cust_dt = {}
@@ -85,9 +107,9 @@ class SDPCommands(object):
             return
 
         if self._commands is not None:
-            self.logger.debug(f'{len(self._commands)} commands initialized')
+            self.logger.debug(f"{len(self._commands)} commands initialized")
         elif not SDP_standalone:  # noqa  # type: ignore
-            self.logger.error('commands could not be initialized')
+            self.logger.error("commands could not be initialized")
 
     def is_valid_command(self, command: str, read: bool | None = None) -> bool:
         if command not in self._commands:
@@ -106,7 +128,7 @@ class SDPCommands(object):
                 data = self._lookup(data, lu, rev=True)
             return self._commands[command].get_send_data(data, **kwargs)
 
-        raise Exception(f'command {command} not found in commands')
+        raise Exception(f"command {command} not found in commands")
 
     def get_shng_data(self, command: str, data: Any, **kwargs) -> Any:
         if command in self._commands:
@@ -116,11 +138,11 @@ class SDPCommands(object):
                 try:
                     result = self._lookup(result, lu)
                 except ValueError as e:
-                    self.logger.warning(f'while parsing reply to {command}, the lookup of {lu} failed: {e}')
+                    self.logger.warning(f"while parsing reply to {command}, the lookup of {lu} failed: {e}")
                     return
             return result
 
-        raise Exception(f'command {command} not found in commands')
+        raise Exception(f"command {command} not found in commands")
 
     def custom_is_enabled_for(self, command: str) -> bool:
         """
@@ -140,16 +162,16 @@ class SDPCommands(object):
                 return self.custom_is_enabled_for(cmd)
             except (AttributeError, ValueError):
                 pass
-            self.logger.warning(f'command {command} not found while checking for custom handling')
+            self.logger.warning(f"command {command} not found while checking for custom handling")
             return True
 
     def get_commands_from_reply(self, data: Any) -> list:
-        """ return list of commands for received data """
+        """return list of commands for received data"""
         if data is None:
             return []
 
         if type(data) in (bytes, bytearray):
-            data = str(data.decode('utf-8'))
+            data = str(data.decode("utf-8"))
 
         commands = []
 
@@ -163,31 +185,35 @@ class SDPCommands(object):
                         try:
                             regex = re.compile(pattern)
                             if regex.search(data) is not None:
-                                self.logger.debug(f'matched reply_pattern {pattern} as regex against data {data}, found command {command}')
+                                self.logger.debug(
+                                    f"matched reply_pattern {pattern} as regex against data {data}, found command {command}"
+                                )
                                 commands.append(command)
                         except Exception as e:
-                            self.logger.warning(f'parsing or matching reply_pattern {pattern} from command {command} as regex failed. Error was: {e}. Ignoring')
+                            self.logger.warning(
+                                f"parsing or matching reply_pattern {pattern} from command {command} as regex failed. Error was: {e}. Ignoring"
+                            )
 
         return commands
 
-    def get_lookup(self, lookup: str, type: str = 'fwd') -> dict | list | None:
-        """ returns the contents of the lookup table named <lookup>, None on error """
-        if lookup in self._lookups and type in ('fwd', 'rev', 'rci'):
+    def get_lookup(self, lookup: str, type: str = "fwd") -> dict | list | None:
+        """returns the contents of the lookup table named <lookup>, None on error"""
+        if lookup in self._lookups and type in ("fwd", "rev", "rci"):
             return self._lookups[lookup][type]
-        elif lookup in self._lookups and type == 'list':
-            return list(self._lookups[lookup]['rev'].keys())
+        elif lookup in self._lookups and type == "list":
+            return list(self._lookups[lookup]["rev"].keys())
         else:
             return None
 
-    def get_commandlist(self, cmd: str = '') -> dict:
-        """ return list of (or single given) commands with command config for use eg. in webif """
+    def get_commandlist(self, cmd: str = "") -> dict:
+        """return list of (or single given) commands with command config for use eg. in webif"""
         if cmd:
             return self._parsed_commands.get(cmd, {})
         else:
             return self._parsed_commands
 
     def get_dtlist(self, custom: bool = True) -> list:
-        """ return list of DT class names """
+        """return list of DT class names"""
         if custom:
             return list(self._cust_dt.keys())
         else:
@@ -207,7 +233,7 @@ class SDPCommands(object):
         be able to access those.
         """
         if not isinstance(table, dict):
-            self.logger.warning(f'lookup table {name} not in dict format, aborting')
+            self.logger.warning(f"lookup table {name} not in dict format, aborting")
             return
 
         if not self._create_lookup_tables(name, table):
@@ -215,24 +241,24 @@ class SDPCommands(object):
 
         for cmd in self._commands:
             cmd_dict = self._commands[cmd]._cmd_params[CMD_ATTR_ORG_PARAMS]
-            if any('{LOOKUP}' in pat for pat in cmd_dict.get(CMD_ATTR_REPLY_PATTERN, [])):
+            if any("{LOOKUP}" in pat for pat in cmd_dict.get(CMD_ATTR_REPLY_PATTERN, [])):
                 patterns = self._parse_command_reply_patterns(cmd_dict[CMD_ATTR_REPLY_PATTERN], cmd_dict)
                 setattr(self._commands[cmd], CMD_ATTR_REPLY_PATTERN, patterns)
 
     def get_valid_list(self, command: str) -> tuple[list, bool, bool]:
-        """ return valid_list parameter and type (ci / re) """
+        """return valid_list parameter and type (ci / re)"""
         if command in self._commands:
             return self._commands[command].get_valid_list()
 
-        raise Exception(f'command {command} not found in commands')
+        raise Exception(f"command {command} not found in commands")
 
     def set_valid_list(self, command: str, vl: list, ci: bool = False, re: bool = False):
-        """ set/change valid_list[_ci|_re] values """
+        """set/change valid_list[_ci|_re] values"""
         if command not in self._commands:
-            raise RuntimeError(f'command {command} not found in commands')
+            raise RuntimeError(f"command {command} not found in commands")
         if not self._commands[command].set_valid_list(vl, ci, re):
             # valid_list of a different type already set -> only allow one list
-            raise RuntimeError(f'command {command} already has other type of valid_list, new list not set')
+            raise RuntimeError(f"command {command} already has other type of valid_list, new list not set")
 
         self.update_reply_patterns(command)
 
@@ -240,7 +266,7 @@ class SDPCommands(object):
         if isinstance(command, str):
             """ update reply_patterns for selected command(s) or all commands """
             if command not in self._commands:
-                raise RuntimeError(f'command {command} not found in commands')
+                raise RuntimeError(f"command {command} not found in commands")
 
             cmds = [command]
         elif not command:
@@ -281,13 +307,13 @@ class SDPCommands(object):
         if data is None or isinstance(data, (list, tuple, set, dict)):
             return None
 
-        mode = 'fwd'
+        mode = "fwd"
         if rev:
-            mode = 'rci' if ci else 'rev'
+            mode = "rci" if ci else "rev"
 
         lu = self.get_lookup(table, mode)
         if lu is None:
-            raise ValueError(f'Lookup table {table} not found.')
+            raise ValueError(f"Lookup table {table} not found.")
 
         orig_data = data
         if rev and ci and isinstance(data, str):
@@ -300,17 +326,17 @@ class SDPCommands(object):
         if rev:
             lu = self.get_lookup(table)
             if not lu:
-                raise ValueError(f'Lookup table {table} not found.')
+                raise ValueError(f"Lookup table {table} not found.")
             if orig_data in lu:
                 return orig_data
-        raise ValueError(f'Lookup of value {data} in table {table} failed, entry not found.')
+        raise ValueError(f"Lookup of value {data} in table {table} failed, entry not found.")
 
     def _get_cmd_lookup(self, command: str) -> str | None:
-        """ returns lookup name for command or None """
+        """returns lookup name for command or None"""
         if command in self._commands:
             return self._commands[command].get_lookup()
 
-        raise Exception(f'command {command} not found in commands')
+        raise Exception(f"command {command} not found in commands")
 
     def _read_dt_classes(self):
         """
@@ -320,20 +346,21 @@ class SDPCommands(object):
         Integrating custom classes into the DT module would change this for all
         loaded devices and name collisions could not be resolved.
         """
+
         def _enum_dt_cls(mod, custom=False):
-            classes = [cls for cls in dir(mod) if cls[:3] == 'DT_']
+            classes = [cls for cls in dir(mod) if cls[:3] == "DT_"]
             for cls in classes:
                 self._dt[cls] = getattr(mod, cls)
                 if custom:
                     self._cust_dt[cls] = getattr(mod, cls)
 
-        self._dt['Datatype'] = DT.Datatype
+        self._dt["Datatype"] = DT.Datatype
 
         # enumerate 'DT_*' classes from DT
         _enum_dt_cls(DT)
 
         # try to load datatypes.py from device directory
-        mod_str = self._params[PLUGIN_PATH] + '.datatypes'
+        mod_str = self._params[PLUGIN_PATH] + ".datatypes"
         cust_mod = locate(mod_str)
         if cust_mod:
             _enum_dt_cls(cust_mod, True)
@@ -361,9 +388,9 @@ class SDPCommands(object):
                 del parent[node_name]
 
         # flatten cmds
-        walk(cmds, '', None, move_items)
+        walk(cmds, "", None, move_items)
         # remove empty dicts (old 'level names')
-        walk(cmds, '', None, remove_empty_items)
+        walk(cmds, "", None, remove_empty_items)
 
     @staticmethod
     def _get_cmdlist(cmds: dict, cmdlist: list | None) -> list:
@@ -375,7 +402,9 @@ class SDPCommands(object):
         # e.g. cmdlist = ['generic'] -> get all commands starting with generic + COMMAND_SEP
         new_cmdlist = []
         for cmd in cmds:
-            if any(cmdspec + COMMAND_SEP == cmd[:len(cmdspec) + len(COMMAND_SEP)] or cmdspec == cmd for cmdspec in cmdlist):
+            if any(
+                cmdspec + COMMAND_SEP == cmd[: len(cmdspec) + len(COMMAND_SEP)] or cmdspec == cmd for cmdspec in cmdlist
+            ):
                 new_cmdlist.append(cmd)
 
         return new_cmdlist
@@ -389,120 +418,140 @@ class SDPCommands(object):
 
         # did we get a device type?
         # try to load commands.py from device directory
-        mod_str = self._params[PLUGIN_PATH] + '.commands'
+        mod_str = self._params[PLUGIN_PATH] + ".commands"
 
         try:
             # get module
             cmd_module = locate(mod_str)
         except ImportError:
-            raise CommandsError('importing external module commands.py failed')
+            raise CommandsError("importing external module commands.py failed")
         except Exception as e:
             raise CommandsError(f'importing commands from external module commands.py failed. Error was: "{e}"')
 
         # param is read by yaml parser which converts None to "None"...
-        if self._model == 'None':
+        if self._model == "None":
             self._model = None
 
         if self._model == INDEX_GENERIC:
-            self.logger.warning('configured model is identical to generic identifier, loading all commands.')
+            self.logger.warning("configured model is identical to generic identifier, loading all commands.")
             self._model = None
 
         if self._model:
-            if hasattr(cmd_module, 'models'):
+            if hasattr(cmd_module, "models"):
                 if isinstance(cmd_module.models, dict):  # type: ignore (loaded dynamically)
                     if self._model in cmd_module.models:  # type: ignore
-                        self.logger.info(f'model {self._model} identified')
+                        self.logger.info(f"model {self._model} identified")
                     else:
-                        raise CommandsError(f'configured model {self._model} not found in commands.py models {cmd_module.models.keys()}')  # type: ignore
+                        raise CommandsError(
+                            f"configured model {self._model} not found in commands.py models {cmd_module.models.keys()}"
+                        )  # type: ignore
                 else:
                     raise CommandsError('model configuration invalid, "models" is not a dict')
-        if hasattr(cmd_module, 'commands') and isinstance(cmd_module.commands, dict) and not SDP_standalone:  # noqa  # type: ignore
+        if hasattr(cmd_module, "commands") and isinstance(cmd_module.commands, dict) and not SDP_standalone:  # noqa  # type: ignore
             cmds = cmd_module.commands  # type: ignore
             cmdlist = None
             if INDEX_GENERIC in cmds:
-
                 # if INDEX_GENERIC is present, take all generic commands.from commands dict..
                 cmds = cmd_module.commands[INDEX_GENERIC]  # type: ignore
                 # and add model-specific, if present
                 cmds.update(cmd_module.commands.get(self._model, {}))  # type: ignore
 
             elif self._model:
-
                 # otherwise, take list of generic and specific commands from models dict
                 cmdlist = cmd_module.models.get(INDEX_GENERIC, []) + cmd_module.models.get(self._model, [])  # type: ignore
-                self.logger.debug(f'found {len(cmd_module.models.get(INDEX_GENERIC, []))} generic commands')  # type: ignore
+                self.logger.debug(f"found {len(cmd_module.models.get(INDEX_GENERIC, []))} generic commands")  # type: ignore
                 if self._model:
-                    self.logger.debug(f'found {len(cmd_module.models.get(self._model, []))} commands for model {self._model}')  # type: ignore
+                    self.logger.debug(
+                        f"found {len(cmd_module.models.get(self._model, []))} commands for model {self._model}"
+                    )  # type: ignore
             self._flatten_cmds(cmds)
 
             # do this before importing commands, because reply_patterns might need lookups
-            if hasattr(cmd_module, 'lookups') and isinstance(cmd_module.lookups, dict):  # type: ignore
+            if hasattr(cmd_module, "lookups") and isinstance(cmd_module.lookups, dict):  # type: ignore
                 self._parse_lookups(cmd_module.lookups)  # type: ignore
             else:
-                self.logger.debug('no lookups found')
+                self.logger.debug("no lookups found")
 
             # actually import commands
             self._parse_commands(cmds, self._get_cmdlist(cmds, cmdlist))
         else:
             if not SDP_standalone:  # noqa  # type: ignore
-                self.logger.warning('no command definitions found. This device probably will not work...')
+                self.logger.warning("no command definitions found. This device probably will not work...")
 
-        if hasattr(cmd_module, 'structs') and isinstance(cmd_module.structs, dict):  # type: ignore
+        if hasattr(cmd_module, "structs") and isinstance(cmd_module.structs, dict):  # type: ignore
             self._dev_structs = cmd_module.structs.get(INDEX_GENERIC, [])  # type: ignore
-            self.logger.debug(f'found {len(self._dev_structs)} generic structs')
+            self.logger.debug(f"found {len(self._dev_structs)} generic structs")
             if self._model:
                 self._dev_structs += cmd_module.structs.get(self._model, [])  # type: ignore
-                self.logger.debug(f'found {len(cmd_module.structs.get(self._model, []))} model-specific structs')  # type: ignore
+                self.logger.debug(f"found {len(cmd_module.structs.get(self._model, []))} model-specific structs")  # type: ignore
 
         return True
 
     def _parse_command_reply_patterns(self, reply_patterns: list, cmd_dict: dict) -> list:
-        """ parse command's reply patterns and return parsed patterns as list """
+        """parse command's reply patterns and return parsed patterns as list"""
+
         def get_param(matchobj):
             returnvalue = self._params.get(matchobj.group(2))
             if returnvalue is None:
-                self.logger.warning(f'Parameter {matchobj.group(2)} does not exist.')
-                returnvalue = ''
+                self.logger.warning(f"Parameter {matchobj.group(2)} does not exist.")
+                returnvalue = ""
             return str(returnvalue)
 
-        custom_patterns = self._params.get('custom_patterns')
+        custom_patterns = self._params.get("custom_patterns")
 
         processed_patterns = []
 
         for pattern in reply_patterns:
-
-            if pattern == '*':
-                pattern = cmd_dict.get(CMD_ATTR_READ_CMD, cmd_dict.get(CMD_ATTR_OPCODE, ''))
+            if pattern == "*":
+                pattern = cmd_dict.get(CMD_ATTR_READ_CMD, cmd_dict.get(CMD_ATTR_OPCODE, ""))
 
             if custom_patterns and PATTERN_CUSTOM_PATTERN in pattern:
                 for index in (1, 2, 3):
-                    pattern = pattern.replace('{' + PATTERN_CUSTOM_PATTERN + str(index) + '}', custom_patterns[index])
+                    pattern = pattern.replace("{" + PATTERN_CUSTOM_PATTERN + str(index) + "}", custom_patterns[index])
 
             if CMD_STR_PARAM in pattern:
                 # TODO: fix regex, missing closing parenthesis
-                regex = r'(\{' + CMD_STR_PARAM + r'([^}]+)\})'
+                regex = r"(\{" + CMD_STR_PARAM + r"([^}]+)\})"
                 while re.search(regex, pattern):
                     pattern = re.sub(regex, get_param, pattern)
 
-            if cmd_dict.get(CMD_ATTR_LOOKUP) and '{' + PATTERN_LOOKUP + '}' in pattern:
+            if cmd_dict.get(CMD_ATTR_LOOKUP) and "{" + PATTERN_LOOKUP + "}" in pattern:
+                lu_pattern = (
+                    "("
+                    + "|".join(re.escape(key) for key in self._lookups[cmd_dict[CMD_ATTR_LOOKUP]]["fwd"].keys())
+                    + ")"
+                )
+                pattern = pattern.replace("{" + PATTERN_LOOKUP + "}", lu_pattern)
 
-                lu_pattern = '(' + '|'.join(re.escape(key) for key in self._lookups[cmd_dict[CMD_ATTR_LOOKUP]]['fwd'].keys()) + ')'
-                pattern = pattern.replace('{' + PATTERN_LOOKUP + '}', lu_pattern)
+            if (
+                cmd_dict.get(CMD_ATTR_CMD_SETTINGS)
+                and "valid_list" in cmd_dict[CMD_ATTR_CMD_SETTINGS]
+                and "{" + PATTERN_VALID_LIST + "}" in pattern
+            ):
+                vl_pattern = (
+                    "(" + "|".join(re.escape(key) for key in cmd_dict[CMD_ATTR_CMD_SETTINGS]["valid_list"]) + ")"
+                )
+                pattern = pattern.replace("{" + PATTERN_VALID_LIST + "}", vl_pattern)
 
-            if cmd_dict.get(CMD_ATTR_CMD_SETTINGS) and 'valid_list' in cmd_dict[CMD_ATTR_CMD_SETTINGS] and '{' + PATTERN_VALID_LIST + '}' in pattern:
+            if (
+                cmd_dict.get(CMD_ATTR_CMD_SETTINGS)
+                and "valid_list_ci" in cmd_dict[CMD_ATTR_CMD_SETTINGS]
+                and "{" + PATTERN_VALID_LIST_CI + "}" in pattern
+            ):
+                vl_pattern = (
+                    "((?i:"
+                    + "|".join(re.escape(key) for key in cmd_dict[CMD_ATTR_CMD_SETTINGS]["valid_list_ci"])
+                    + "))"
+                )
+                pattern = pattern.replace("{" + PATTERN_VALID_LIST_CI + "}", vl_pattern)
 
-                vl_pattern = '(' + '|'.join(re.escape(key) for key in cmd_dict[CMD_ATTR_CMD_SETTINGS]['valid_list']) + ')'
-                pattern = pattern.replace('{' + PATTERN_VALID_LIST + '}', vl_pattern)
-
-            if cmd_dict.get(CMD_ATTR_CMD_SETTINGS) and 'valid_list_ci' in cmd_dict[CMD_ATTR_CMD_SETTINGS] and '{' + PATTERN_VALID_LIST_CI + '}' in pattern:
-
-                vl_pattern = '((?i:' + '|'.join(re.escape(key) for key in cmd_dict[CMD_ATTR_CMD_SETTINGS]['valid_list_ci']) + '))'
-                pattern = pattern.replace('{' + PATTERN_VALID_LIST_CI + '}', vl_pattern)
-
-            if cmd_dict.get(CMD_ATTR_CMD_SETTINGS) and 'valid_list_re' in cmd_dict[CMD_ATTR_CMD_SETTINGS] and '{' + PATTERN_VALID_LIST_RE + '}' in pattern:
-
-                vl_pattern = '(' + '|'.join(cmd_dict[CMD_ATTR_CMD_SETTINGS]['valid_list_re']) + ')'
-                pattern = pattern.replace('{' + PATTERN_VALID_LIST_RE + '}', vl_pattern)
+            if (
+                cmd_dict.get(CMD_ATTR_CMD_SETTINGS)
+                and "valid_list_re" in cmd_dict[CMD_ATTR_CMD_SETTINGS]
+                and "{" + PATTERN_VALID_LIST_RE + "}" in pattern
+            ):
+                vl_pattern = "(" + "|".join(cmd_dict[CMD_ATTR_CMD_SETTINGS]["valid_list_re"]) + ")"
+                pattern = pattern.replace("{" + PATTERN_VALID_LIST_RE + "}", vl_pattern)
 
             processed_patterns.append(pattern)
 
@@ -535,7 +584,13 @@ class SDPCommands(object):
             cmd_dict = commands[cmd]
 
             # preset default values
-            cmd_params = {CMD_ATTR_READ: True, CMD_ATTR_WRITE: False, CMD_ATTR_OPCODE: '', CMD_ATTR_ITEM_TYPE: 'bool', CMD_ATTR_DEV_TYPE: 'raw'}
+            cmd_params = {
+                CMD_ATTR_READ: True,
+                CMD_ATTR_WRITE: False,
+                CMD_ATTR_OPCODE: "",
+                CMD_ATTR_ITEM_TYPE: "bool",
+                CMD_ATTR_DEV_TYPE: "raw",
+            }
 
             # sanitize patterns if not stored as list
             if CMD_ATTR_REPLY_PATTERN in cmd_dict and not isinstance(cmd_dict[CMD_ATTR_REPLY_PATTERN], list):
@@ -550,60 +605,79 @@ class SDPCommands(object):
             cmd_params[CMD_ATTR_ORG_PARAMS] = deepcopy(cmd_dict)
 
             # if valid_list_ci is present in settings, convert all str elements to lowercase only once
-            if CMD_ATTR_CMD_SETTINGS in cmd_params and 'valid_list_ci' in cmd_params[CMD_ATTR_CMD_SETTINGS]:
-                cmd_params[CMD_ATTR_CMD_SETTINGS]['valid_list_ci'] = [entry.lower() if isinstance(entry, str) else entry for entry in cmd_params[CMD_ATTR_CMD_SETTINGS]['valid_list_ci']]
+            if CMD_ATTR_CMD_SETTINGS in cmd_params and "valid_list_ci" in cmd_params[CMD_ATTR_CMD_SETTINGS]:
+                cmd_params[CMD_ATTR_CMD_SETTINGS]["valid_list_ci"] = [
+                    entry.lower() if isinstance(entry, str) else entry
+                    for entry in cmd_params[CMD_ATTR_CMD_SETTINGS]["valid_list_ci"]
+                ]
 
             # if valid_list_re is present in settings, compile all patterns for later reuse
-            if CMD_ATTR_CMD_SETTINGS in cmd_params and 'valid_list_re' in cmd_params[CMD_ATTR_CMD_SETTINGS]:
-                cmd_params[CMD_ATTR_CMD_SETTINGS]['valid_list_re_compiled'] = [re.compile(entry) for entry in cmd_params[CMD_ATTR_CMD_SETTINGS]['valid_list_re']]
+            if CMD_ATTR_CMD_SETTINGS in cmd_params and "valid_list_re" in cmd_params[CMD_ATTR_CMD_SETTINGS]:
+                cmd_params[CMD_ATTR_CMD_SETTINGS]["valid_list_re_compiled"] = [
+                    re.compile(entry) for entry in cmd_params[CMD_ATTR_CMD_SETTINGS]["valid_list_re"]
+                ]
 
             dt_class = None
-            dev_datatype = cmd_params.get(CMD_ATTR_DEV_TYPE, '')
+            dev_datatype = cmd_params.get(CMD_ATTR_DEV_TYPE, "")
             if dev_datatype:
-                class_name = '' if dev_datatype[:2] == 'DT_' else 'DT_' + dev_datatype
+                class_name = "" if dev_datatype[:2] == "DT_" else "DT_" + dev_datatype
                 dt_class = self._dt.get(class_name)
 
             # process pattern substitution
             if CMD_ATTR_REPLY_PATTERN in cmd_params:
-
                 # store processed reply patterns
-                cmd_params[CMD_ATTR_REPLY_PATTERN] = self._parse_command_reply_patterns(cmd_params[CMD_ATTR_REPLY_PATTERN], cmd_dict)
+                cmd_params[CMD_ATTR_REPLY_PATTERN] = self._parse_command_reply_patterns(
+                    cmd_params[CMD_ATTR_REPLY_PATTERN], cmd_dict
+                )
 
-            if cmd_params.get(CMD_ATTR_READ, False) and cmd_params.get(CMD_ATTR_OPCODE, '') == '' and cmd_params.get(CMD_ATTR_READ_CMD, '') == '':
-                self.logger.info(f'command {cmd} will not create a command for reading values. Check commands.py configuration...')
-            if cmd_params.get(CMD_ATTR_WRITE, False) and cmd_params.get(CMD_ATTR_OPCODE, '') == '' and cmd_params.get(CMD_ATTR_WRITE_CMD, '') == '':
-                self.logger.info(f'command {cmd} will not create a command for writing values. Check commands.py configuration...')
+            if (
+                cmd_params.get(CMD_ATTR_READ, False)
+                and cmd_params.get(CMD_ATTR_OPCODE, "") == ""
+                and cmd_params.get(CMD_ATTR_READ_CMD, "") == ""
+            ):
+                self.logger.info(
+                    f"command {cmd} will not create a command for reading values. Check commands.py configuration..."
+                )
+            if (
+                cmd_params.get(CMD_ATTR_WRITE, False)
+                and cmd_params.get(CMD_ATTR_OPCODE, "") == ""
+                and cmd_params.get(CMD_ATTR_WRITE_CMD, "") == ""
+            ):
+                self.logger.info(
+                    f"command {cmd} will not create a command for writing values. Check commands.py configuration..."
+                )
             if not dt_class:
-                self.logger.error(f'importing command {cmd} found invalid datatype "{dev_datatype}", replacing with DT_raw. Check function of device')
+                self.logger.error(
+                    f'importing command {cmd} found invalid datatype "{dev_datatype}", replacing with DT_raw. Check function of device'
+                )
                 dt_class = DT.DT_raw
-            self._commands[cmd] = self._cmd_class(cmd, dt_class, **{'cmd': cmd_params, 'plugin': self._params})
+            self._commands[cmd] = self._cmd_class(cmd, dt_class, **{"cmd": cmd_params, "plugin": self._params})
 
             # store in self.parsed_commands for access by webif
             # skip sections only including section settings
-            if not cmd.endswith('.' + CMD_ATTR_ITEM_ATTRS):
+            if not cmd.endswith("." + CMD_ATTR_ITEM_ATTRS):
                 self._parsed_commands[cmd] = cmd_params
 
     def _create_lookup_tables(self, name: str, table: Any) -> bool:
-        """ create and store all partial lookup tables for the given one """
+        """create and store all partial lookup tables for the given one"""
         if isinstance(table, dict):
-
             try:
                 self._lookups[name] = {
                     # original dict
-                    'fwd': table,
+                    "fwd": table,
                     # reversed dict
-                    'rev': {v: k for (k, v) in table.items()},
+                    "rev": {v: k for (k, v) in table.items()},
                     # reversed dict, keys are lowercase for case insensitive lookup
-                    'rci': {v.lower() if isinstance(v, str) else v: k for (k, v) in table.items()}
+                    "rci": {v.lower() if isinstance(v, str) else v: k for (k, v) in table.items()},
                 }
             except Exception as e:
-                self.logger.warning(f'error while converting lookup table {name}: {e}')
+                self.logger.warning(f"error while converting lookup table {name}: {e}")
                 return False
 
-            self.logger.debug(f'imported lookup table {name} with {len(table)} items')
+            self.logger.debug(f"imported lookup table {name} with {len(table)} items")
             return True
         else:
-            self.logger.warning(f'key {name} in lookups not in dict format, ignoring')
+            self.logger.warning(f"key {name} in lookups not in dict format, ignoring")
             return False
 
     def _parse_lookups(self, lookups: dict):
@@ -615,11 +689,13 @@ class SDPCommands(object):
         """
         if INDEX_GENERIC in lookups:
             lu = lookups[INDEX_GENERIC]
-            self.logger.debug(f'found {len(lu)} generic lookup table{"" if len(lu) == 1 else "s"}')
+            self.logger.debug(f"found {len(lu)} generic lookup table{'' if len(lu) == 1 else 's'}")
 
             if self._model and self._model in lookups:
                 update(lu, lookups[self._model])
-                self.logger.debug(f'found {len(lookups[self._model])} lookup table{"" if len(lookups[self._model]) == 1 else "s"} for model {self._model}')
+                self.logger.debug(
+                    f"found {len(lookups[self._model])} lookup table{'' if len(lookups[self._model]) == 1 else 's'} for model {self._model}"
+                )
         else:
             lu = lookups
 
@@ -632,4 +708,4 @@ class SDPCommands(object):
                     self._lookup_tables.remove(table)
 
         except Exception as e:
-            self.logger.error(f'importing lookup tables not possible, check syntax. Error was: {e}')
+            self.logger.error(f"importing lookup tables not possible, check syntax. Error was: {e}")

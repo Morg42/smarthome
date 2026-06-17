@@ -33,15 +33,14 @@ import json
 =
 """
 
-class Protocol():
 
-    version = '1.0.0'
+class Protocol:
+    version = "1.0.0"
 
-    protocol_id = 'ex'
-    protocol_name = 'sync_example'
-    protocol_path = '/sync'
+    protocol_id = "ex"
+    protocol_name = "sync_example"
+    protocol_path = "/sync"
     protocol_enabled = True
-
 
     def __init__(self, ws_server, logger_name):
 
@@ -52,7 +51,6 @@ class Protocol():
 
         return
 
-
     def start_global_tasks(self, loop):
 
         self.loop = loop
@@ -60,20 +58,17 @@ class Protocol():
         self.logger.dbghigh("start_global_tasks: Nothing to start")
         return
 
-
     async def handle_protocol(self, websocket):
 
         await self.counter_sync(websocket)
         return
-
 
     async def cleanup_connection(self, websocket):
 
         # Nothing to clean up for this protocol
         return
 
-
-#--------------
+    # --------------
 
     STATE = {"value": 0}
 
@@ -102,7 +97,7 @@ class Protocol():
                     name = task.get_name()
                     exception = task.exception()
                     if isinstance(exception, Exception):
-                        if not str(exception).startswith('received 1000'):
+                        if not str(exception).startswith("received 1000"):
                             self.logger.info(f"notify_users: Finished task {name} threw {exception}")
 
                 for task in pending:
@@ -120,13 +115,13 @@ class Protocol():
         try:
             async for message in websocket:
                 data = json.loads(message)
-                if data.get("cmd", ''):
+                if data.get("cmd", ""):
                     self.logger.info(f"CMD: {data}")
-                elif data.get("action", '') == "minus":
+                elif data.get("action", "") == "minus":
                     self.STATE["value"] -= 1
                     self.logger.info(f"Decremented value to {self.STATE['value']}")
                     await self.notify_state()
-                elif data.get("action", '') == "plus":
+                elif data.get("action", "") == "plus":
                     self.STATE["value"] += 1
                     self.logger.info(f"Incremented value to {self.STATE['value']}")
                     await self.notify_state()
@@ -136,15 +131,15 @@ class Protocol():
             await self.notify_users()
 
         except Exception as e:
-            #logmsg = f"counter_sync error: Client {self.build_log_info(client_addr)} - {e}"
+            # logmsg = f"counter_sync error: Client {self.build_log_info(client_addr)} - {e}"
             logmsg = f"counter_sync error: Client {self.client_address(websocket)} - {e}"
-            if str(e).startswith(('no close frame received or sent', 'received 1005')):
+            if str(e).startswith(("no close frame received or sent", "received 1005")):
                 self.logger.info(logmsg)
-            elif str(e).startswith(('code = 1005', 'code = 1006')) or str(e).endswith('keepalive ping timeout; no close frame received'):
+            elif str(e).startswith(("code = 1005", "code = 1006")) or str(e).endswith(
+                "keepalive ping timeout; no close frame received"
+            ):
                 self.logger.warning(logmsg)
             else:
                 self.logger.error(logmsg)
 
         return
-
-

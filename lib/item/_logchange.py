@@ -46,6 +46,7 @@ logger = logging.getLogger(__name__)
 # Public entry point (replaces Item._log_on_change)
 # ---------------------------------------------------------------------------
 
+
 def log_on_change(item, value, caller, source=None, dest=None):
     """
     Write an entry to the item's log_change logger, applying all configured
@@ -62,29 +63,29 @@ def log_on_change(item, value, caller, source=None, dest=None):
 
     issue_list = []
 
-    low_limit  = get_rule(item, 'lowlimit')
-    high_limit = get_rule(item, 'highlimit')
+    low_limit = get_rule(item, "lowlimit")
+    high_limit = get_rule(item, "highlimit")
 
     if isinstance(low_limit, dict):
-        issue_list.append(low_limit.get('issue'))
+        issue_list.append(low_limit.get("issue"))
         low_limit = None
     if isinstance(high_limit, dict):
-        issue_list.append(high_limit.get('issue'))
+        issue_list.append(high_limit.get("issue"))
         high_limit = None
 
-    if item._type != 'num' and low_limit:
+    if item._type != "num" and low_limit:
         issue_list.append(f"Low limit {low_limit} given, however item is not num type - ignoring")
         low_limit = None
-    if item._type != 'num' and high_limit:
+    if item._type != "num" and high_limit:
         issue_list.append(f"High limit {high_limit} given, however item is not num type - ignoring")
         high_limit = None
     if low_limit is not None and high_limit is not None and low_limit >= high_limit:
         issue_list.append(f"Low limit {low_limit} >= High limit {high_limit} - ignoring high limit")
         high_limit = None
 
-    filter_list = get_rule(item, 'filter')
+    filter_list = get_rule(item, "filter")
     if isinstance(filter_list, dict):
-        issue_list.append(filter_list.get('issue'))
+        issue_list.append(filter_list.get("issue"))
         filter_list = []
     f_list = []
     for f in filter_list:
@@ -94,9 +95,9 @@ def log_on_change(item, value, caller, source=None, dest=None):
             f_list.append(f)
     filter_list = f_list
 
-    exclude_list = get_rule(item, 'exclude')
+    exclude_list = get_rule(item, "exclude")
     if isinstance(exclude_list, dict):
-        issue_list.append(exclude_list.get('issue'))
+        issue_list.append(exclude_list.get("issue"))
         exclude_list = []
     e_list = []
     for e in exclude_list:
@@ -110,7 +111,7 @@ def log_on_change(item, value, caller, source=None, dest=None):
         issue_list.append("Defining filter AND exclude does not work - ignoring exclude list")
         exclude_list = []
 
-    if issue_list and item._log_rules_cache.get('issues') != issue_list:
+    if issue_list and item._log_rules_cache.get("issues") != issue_list:
         logger.warning(
             f"Item {item._path} log_rules has issues: {', '.join(issue_list)}. "
             f"Cleaned log_rules: lowlimit = {low_limit}, highlimit = {high_limit}, "
@@ -118,14 +119,14 @@ def log_on_change(item, value, caller, source=None, dest=None):
         )
 
     item._log_rules_cache = {
-        'issues': issue_list,
-        'filter': filter_list,
-        'exclude': exclude_list,
-        'lowlimit': low_limit,
-        'highlimit': high_limit,
+        "issues": issue_list,
+        "filter": filter_list,
+        "exclude": exclude_list,
+        "lowlimit": low_limit,
+        "highlimit": high_limit,
     }
 
-    if item._type == 'num':
+    if item._type == "num":
         if low_limit is not None and low_limit > float(value):
             return
         if high_limit is not None and high_limit <= float(value):
@@ -158,16 +159,16 @@ def log_on_change(item, value, caller, source=None, dest=None):
     if Utils.is_int(level):
         level = int(level)
         level_name = logging.getLevelName(level)
-    if logging.getLevelName(level) == 'Level ' + str(level):
+    if logging.getLevelName(level) == "Level " + str(level):
         logger.warning(
             f"Item {item._path}: Invalid loglevel '{log_level}' defined in log_level attribute "
             f"- Level 'INFO' will be used instead"
         )
-        item._log_level_name = 'INFO'
-        item._log_level      = logging.getLevelName('INFO')
+        item._log_level_name = "INFO"
+        item._log_level = logging.getLevelName("INFO")
     else:
         item._log_level_name = level_name
-        item._log_level      = logging.getLevelName(level_name)
+        item._log_level = logging.getLevelName(level_name)
 
     item._log_change_logger.log(item._log_level, txt)
 
@@ -176,19 +177,21 @@ def log_on_change(item, value, caller, source=None, dest=None):
 # Rule lookup (replaces Item._get_rule)
 # ---------------------------------------------------------------------------
 
+
 def get_rule(item, rule_entry):
     """
     Retrieve and normalise a single rule entry from item._log_rules.
 
     Returns the rule value or a dict with an 'issue' key on invalid input.
     """
+
     def convert_entry(entry, to):
         returnvalue = entry
         if isinstance(returnvalue, str) and to != "str":
             try:
                 from lib.item.items import Items
-                rule_item_path = item.get_absolutepath(
-                    entry.strip().replace("sh.", ""), KEY_LOG_CHANGE)
+
+                rule_item_path = item.get_absolutepath(entry.strip().replace("sh.", ""), KEY_LOG_CHANGE)
                 returnvalue = Items.get_instance().return_item(rule_item_path).property.value
             except Exception:
                 if to == "list":
@@ -206,13 +209,13 @@ def get_rule(item, rule_entry):
             returnvalue = str(returnvalue)
         if returnvalue is None:
             returnvalue = {
-                'value': None,
-                'issue': f"Given log_rules entry '{entry}' for {rule_entry} is invalid",
+                "value": None,
+                "issue": f"Given log_rules entry '{entry}' for {rule_entry} is invalid",
             }
         return returnvalue
 
-    defaults = {'filter': [], 'exclude': [], 'lowlimit': None, 'highlimit': None}
-    types    = {'filter': 'list', 'exclude': 'list', 'lowlimit': 'num', 'highlimit': 'num'}
+    defaults = {"filter": [], "exclude": [], "lowlimit": None, "highlimit": None}
+    types = {"filter": "list", "exclude": "list", "lowlimit": "num", "highlimit": "num"}
     entry = item._log_rules.get(rule_entry, defaults.get(rule_entry))
     if entry is not None and entry != []:
         entry = convert_entry(entry, types.get(rule_entry) or item._type)
@@ -223,65 +226,66 @@ def get_rule(item, rule_entry):
 # Text builders (replace Item._log_build_standardtext / _log_build_text)
 # ---------------------------------------------------------------------------
 
+
 def build_standardtext(item, value, caller, source=None, dest=None):
     """Build the default log text (no custom log_text template)."""
     if item._sh.get_defaultlogtext() is not None:
         item._log_text = item._sh.get_defaultlogtext().replace("'", '"')
         return build_text(item, value, caller, source, dest)
-    log_src = f' ({source})' if source is not None else ''
-    log_dst = f', dest: {dest}' if dest is not None else ''
+    log_src = f" ({source})" if source is not None else ""
+    log_dst = f", dest: {dest}" if dest is not None else ""
     return f"Item Change: {item._path} = {value}  -  caller: {caller}{log_src}{log_dst}"
 
 
 def build_text(item, value, caller, source=None, dest=None):
     """Build log text using item._log_text as an f-string template."""
     # Variables available to the template
-    lvalue  = item.property.last_value                     # noqa: F841
-    mlvalue = item._log_mapping.get(lvalue, lvalue)        # noqa: F841
-    name    = item._name                                   # noqa: F841
-    age     = round(item._get_last_change_age(), 2)        # noqa: F841
-    id      = item._path                                   # noqa: F841
+    lvalue = item.property.last_value  # noqa: F841
+    mlvalue = item._log_mapping.get(lvalue, lvalue)  # noqa: F841
+    name = item._name  # noqa: F841
+    age = round(item._get_last_change_age(), 2)  # noqa: F841
+    id = item._path  # noqa: F841
 
     if item._is_top_of_item_tree():
-        pname = None                                       # noqa: F841
-        pid   = None                                       # noqa: F841
+        pname = None  # noqa: F841
+        pid = None  # noqa: F841
     else:
         _parent = item.return_parent()
-        pname   = _parent._name                            # noqa: F841
-        pid     = _parent._path                            # noqa: F841
+        pname = _parent._name  # noqa: F841
+        pid = _parent._path  # noqa: F841
 
-    mvalue    = item._log_mapping.get(value, value)        # noqa: F841
-    lowlimit  = item._log_rules_cache.get('lowlimit')      # noqa: F841
-    highlimit = item._log_rules_cache.get('highlimit')     # noqa: F841
-    filter    = item._log_rules_cache.get('filter')        # noqa: F841
-    exclude   = item._log_rules_cache.get('exclude')       # noqa: F841
-    sh        = item._sh                                   # noqa: F841
-    shtime    = item.shtime
-    time      = shtime.now().strftime("%H:%M:%S")          # noqa: F841
-    date      = shtime.now().strftime("%d.%m.%Y")          # noqa: F841
-    stamp     = shtime.now().timestamp()                   # noqa: F841
-    now       = str(shtime.now())                          # noqa: F841
+    mvalue = item._log_mapping.get(value, value)  # noqa: F841
+    lowlimit = item._log_rules_cache.get("lowlimit")  # noqa: F841
+    highlimit = item._log_rules_cache.get("highlimit")  # noqa: F841
+    filter = item._log_rules_cache.get("filter")  # noqa: F841
+    exclude = item._log_rules_cache.get("exclude")  # noqa: F841
+    sh = item._sh  # noqa: F841
+    shtime = item.shtime
+    time = shtime.now().strftime("%H:%M:%S")  # noqa: F841
+    date = shtime.now().strftime("%d.%m.%Y")  # noqa: F841
+    stamp = shtime.now().timestamp()  # noqa: F841
+    now = str(shtime.now())  # noqa: F841
 
     from lib.item.items import Items
-    items = Items.get_instance()                           # noqa: F841
 
-    import math                                            # noqa: F401, F841
-    env = lib.env                                          # noqa: F841
+    items = Items.get_instance()  # noqa: F841
+
+    import math  # noqa: F401, F841
+
+    env = lib.env  # noqa: F841
 
     try:
-        log_rules_item = item._log_rules.get('itemvalue', None)
+        log_rules_item = item._log_rules.get("itemvalue", None)
         if log_rules_item is not None:
-            rule_path = item.get_absolutepath(
-                log_rules_item.strip().replace("sh.", ""), KEY_LOG_CHANGE)
+            rule_path = item.get_absolutepath(log_rules_item.strip().replace("sh.", ""), KEY_LOG_CHANGE)
             itemvalue = str(items.return_item(rule_path).property.value)  # noqa: F841
         else:
-            itemvalue = None                               # noqa: F841
+            itemvalue = None  # noqa: F841
     except Exception as e:
         logger.error(
-            f"{id}: Invalid item in log_text '{item._log_text}'"
-            f" or log_rules '{item._log_rules}' - Exception: {e}"
+            f"{id}: Invalid item in log_text '{item._log_text}' or log_rules '{item._log_rules}' - Exception: {e}"
         )
-        itemvalue = "INVALID"                              # noqa: F841
+        itemvalue = "INVALID"  # noqa: F841
 
     item._log_text = item._log_text.replace("'", '"')
     try:

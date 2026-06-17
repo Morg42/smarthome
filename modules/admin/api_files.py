@@ -35,7 +35,18 @@ import bin.shngversion
 from lib.item_conversion import convert_yaml as convert_yaml
 from lib.item_conversion import parse_for_convert as parse_for_convert
 from lib.shtime import Shtime
-from lib.constants import (DIR_ETC, DIR_ITEMS, DIR_STRUCTS, DIR_UF, DIR_SCENES, DIR_LOGICS, DIR_TPL, DIR_MODULES, BASE_LOG, BASE_STRUCT)
+from lib.constants import (
+    DIR_ETC,
+    DIR_ITEMS,
+    DIR_STRUCTS,
+    DIR_UF,
+    DIR_SCENES,
+    DIR_LOGICS,
+    DIR_TPL,
+    DIR_MODULES,
+    BASE_LOG,
+    BASE_STRUCT,
+)
 
 
 # ======================================================================
@@ -50,7 +61,9 @@ class FilesController(RESTResource):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split(".")[0] + "." + __name__.split(".")[1] + "." + __name__.split(".")[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)
         self.structs_dir = self._sh.get_structsdir()
@@ -68,7 +81,7 @@ class FilesController(RESTResource):
 
         :return:
         """
-        cl = cherrypy.request.headers.get('Content-Length', 0)
+        cl = cherrypy.request.headers.get("Content-Length", 0)
         if cl == 0:
             # cherrypy.reponse.headers["Status"] = "400"
             # return 'Bad request'
@@ -77,23 +90,22 @@ class FilesController(RESTResource):
         self.logger.debug("ServicesController(): get_body(): rawbody = {}".format(rawbody))
         try:
             if binary:
-                wrk = rawbody.decode('ascii').split(',')
-                datatype = wrk[0].split(';')
-                if datatype[1] == 'base64':
+                wrk = rawbody.decode("ascii").split(",")
+                datatype = wrk[0].split(";")
+                if datatype[1] == "base64":
                     params = base64.b64decode(wrk[1])
                 else:
                     self.logger.error("ServicesController(): get_body(): cannot decode: rawbody = {}".format(rawbody))
                     params = wrk[1]
             else:
                 if text:
-                    params = rawbody.decode('utf-8')
+                    params = rawbody.decode("utf-8")
                 else:
-                    params = json.loads(rawbody.decode('utf-8'))
+                    params = json.loads(rawbody.decode("utf-8"))
         except Exception as e:
             self.logger.warning("ServicesController(): get_body(): Exception {}".format(e))
             return None
         return params
-
 
     # def strip_empty_lines(self, txt):
     #     """
@@ -106,7 +118,6 @@ class FilesController(RESTResource):
     #     #        self.logger.warning("strip_empty_lines: txt = {}".format(txt))
     #     return txt
 
-
     # ======================================================================
     #  /api/files/logging
     #
@@ -114,9 +125,7 @@ class FilesController(RESTResource):
 
         self.logger.info("FilesController.get_logging_config()")
         filename = self._sh.get_config_file(BASE_LOG)
-        return cherrypy.lib.static.serve_file(filename, 'application/x-download',
-                                 'attachment', 'logging.yaml')
-
+        return cherrypy.lib.static.serve_file(filename, "application/x-download", "attachment", "logging.yaml")
 
     def save_logging_config(self):
         """
@@ -134,21 +143,21 @@ class FilesController(RESTResource):
         self.logger.debug("FilesController.save_logging_config(): '{}'".format(params))
 
         filename = self._sh.get_config_file(BASE_LOG)
-        bak_filename = filename + '.bak'
+        bak_filename = filename + ".bak"
 
         # Read current config before overwriting so we can restore it on failure
         old_content = None
         try:
-            with open(filename, 'r', encoding='UTF-8') as f:
+            with open(filename, "r", encoding="UTF-8") as f:
                 old_content = f.read()
-            with open(bak_filename, 'w', encoding='UTF-8') as f:
+            with open(bak_filename, "w", encoding="UTF-8") as f:
                 f.write(old_content)
             self.logger.info("FilesController.save_logging_config(): backup written to {}".format(bak_filename))
         except Exception as e:
             self.logger.warning("FilesController.save_logging_config(): could not create backup: {}".format(e))
 
         # Write new config
-        with open(filename, 'w', encoding='UTF-8') as f:
+        with open(filename, "w", encoding="UTF-8") as f:
             f.write(params)
 
         # Apply new config at runtime
@@ -160,19 +169,32 @@ class FilesController(RESTResource):
             # New config is invalid — restore previous config automatically
             if old_content is not None:
                 try:
-                    with open(filename, 'w', encoding='UTF-8') as f:
+                    with open(filename, "w", encoding="UTF-8") as f:
                         f.write(old_content)
                     self._sh.logs.reload_logging_config()
-                    self.logger.warning("FilesController.save_logging_config(): invalid config rejected, previous config restored from backup")
-                    result = {"result": "error", "description": "Invalid logging configuration — previous config has been restored. The backup is saved as logging.yaml.bak.", "config_restored": True}
+                    self.logger.warning(
+                        "FilesController.save_logging_config(): invalid config rejected, previous config restored from backup"
+                    )
+                    result = {
+                        "result": "error",
+                        "description": "Invalid logging configuration — previous config has been restored. The backup is saved as logging.yaml.bak.",
+                        "config_restored": True,
+                    }
                 except Exception as e:
                     self.logger.error("FilesController.save_logging_config(): failed to restore backup: {}".format(e))
-                    result = {"result": "error", "description": "Invalid logging configuration and backup restore failed: {}".format(e), "config_restored": False}
+                    result = {
+                        "result": "error",
+                        "description": "Invalid logging configuration and backup restore failed: {}".format(e),
+                        "config_restored": False,
+                    }
             else:
-                result = {"result": "error", "description": "Invalid logging configuration — no backup was available to restore.", "config_restored": False}
+                result = {
+                    "result": "error",
+                    "description": "Invalid logging configuration — no backup was available to restore.",
+                    "config_restored": False,
+                }
 
         return json.dumps(result)
-
 
     # ======================================================================
     #  /api/files/structs
@@ -181,14 +203,10 @@ class FilesController(RESTResource):
         """Return sorted list of .yaml files in the structs directory, plus the
         relative display path so the frontend can show the correct location
         regardless of whether --config-etc is active."""
-        filelist = sorted(
-            fn for fn in os.listdir(self.structs_dir)
-            if fn.endswith('.yaml')
-        )
-        rel_dir = './' + os.path.relpath(self.structs_dir, self.base_dir)
+        filelist = sorted(fn for fn in os.listdir(self.structs_dir) if fn.endswith(".yaml"))
+        rel_dir = "./" + os.path.relpath(self.structs_dir, self.base_dir)
         self.logger.info("FilesController.get_structs_filelist(): dir={} files={}".format(rel_dir, filelist))
         return json.dumps({"dir": rel_dir, "files": filelist})
-
 
     def get_struct_config(self, fn):
         """Serve a single struct file by base-name (without extension).
@@ -198,14 +216,12 @@ class FilesController(RESTResource):
         of etc/struct.yaml → structs/global_structs.yaml with a spurious warning.
         """
         self.logger.info("FilesController.get_struct_config({})".format(fn))
-        filepath = os.path.join(self.structs_dir, fn + '.yaml')
+        filepath = os.path.join(self.structs_dir, fn + ".yaml")
         if not os.path.isfile(filepath):
-            cherrypy.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
-            cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{fn}.yaml"'
-            return b''
-        return cherrypy.lib.static.serve_file(filepath, 'application/x-download',
-                                              'attachment', fn + '.yaml')
-
+            cherrypy.response.headers["Content-Type"] = "text/plain; charset=utf-8"
+            cherrypy.response.headers["Content-Disposition"] = f'attachment; filename="{fn}.yaml"'
+            return b""
+        return cherrypy.lib.static.serve_file(filepath, "application/x-download", "attachment", fn + ".yaml")
 
     def save_struct_config(self, filename):
         """
@@ -219,12 +235,11 @@ class FilesController(RESTResource):
             raise cherrypy.HTTPError(status=411)
         self.logger.debug("FilesController.save_struct_config({}): '{}'".format(filename, params))
 
-        filepath = os.path.join(self.structs_dir, filename + '.yaml')
-        with open(filepath, 'w', encoding='UTF-8') as f:
+        filepath = os.path.join(self.structs_dir, filename + ".yaml")
+        with open(filepath, "w", encoding="UTF-8") as f:
             f.write(params)
 
         return json.dumps({"result": "ok"})
-
 
     def create_struct_config(self, filename):
         """
@@ -236,16 +251,15 @@ class FilesController(RESTResource):
             self.logger.warning("FilesController.create_struct_config(): Bad request")
             raise cherrypy.HTTPError(status=411)
 
-        filepath = os.path.join(self.structs_dir, filename + '.yaml')
+        filepath = os.path.join(self.structs_dir, filename + ".yaml")
         if os.path.exists(filepath):
             self.logger.warning("FilesController.create_struct_config(): file already exists: {}".format(filepath))
-            raise cherrypy.HTTPError(status=409, message='File already exists')
+            raise cherrypy.HTTPError(status=409, message="File already exists")
 
-        with open(filepath, 'w', encoding='UTF-8') as f:
+        with open(filepath, "w", encoding="UTF-8") as f:
             f.write(params)
         self.logger.info("FilesController.create_struct_config(): created '{}'".format(filepath))
         return json.dumps({"result": "ok"})
-
 
     def delete_struct_config(self, filename):
         """
@@ -254,36 +268,32 @@ class FilesController(RESTResource):
         :return: status dict
         """
         self.logger.debug("FilesController.delete_struct_config(): '{}'".format(filename))
-        filepath = os.path.join(self.structs_dir, filename + '.yaml')
+        filepath = os.path.join(self.structs_dir, filename + ".yaml")
         os.remove(filepath)
         return json.dumps({"result": "ok"})
-
 
     # ======================================================================
     #  /api/files/items
     #
     def get_items_filelist(self):
 
-        list = os.listdir( self.items_dir )
+        list = os.listdir(self.items_dir)
         filelist = []
         for filename in list:
-            if filename.endswith('.yaml'):
+            if filename.endswith(".yaml"):
                 filelist.append(filename)
-            if filename.endswith('.conf'):
+            if filename.endswith(".conf"):
                 filelist.append(filename)
 
         self.logger.info("filelist = {}".format(filelist))
         self.logger.info("filelist.sort() = {}".format(filelist.sort()))
         return json.dumps(sorted(filelist))
 
-
     def get_items_config(self, fn):
 
         self.logger.info("FilesController.get_items_config({})".format(fn))
-        filename = os.path.join(self.items_dir, fn + '.yaml')
-        return cherrypy.lib.static.serve_file(filename, 'application/x-download',
-                                 'attachment', fn + '.yaml')
-
+        filename = os.path.join(self.items_dir, fn + ".yaml")
+        return cherrypy.lib.static.serve_file(filename, "application/x-download", "attachment", fn + ".yaml")
 
     def save_items_config(self, filename):
         """
@@ -298,14 +308,12 @@ class FilesController(RESTResource):
             raise cherrypy.HTTPError(status=411)
         self.logger.debug("FilesController(): save_items_config(): '{}'".format(params))
 
-
-        filename = os.path.join(self.items_dir, filename + '.yaml')
-        with open(filename, 'w', encoding='UTF-8') as f:
+        filename = os.path.join(self.items_dir, filename + ".yaml")
+        with open(filename, "w", encoding="UTF-8") as f:
             f.write(params)
 
         result = {"result": "ok"}
         return json.dumps(result)
-
 
     def delete_items_config(self, filename):
         """
@@ -315,38 +323,34 @@ class FilesController(RESTResource):
         """
         self.logger.debug("FilesController(): delete_items_config(): '{}'".format(filename))
 
-        filename = os.path.join(self.items_dir, filename + '.yaml')
+        filename = os.path.join(self.items_dir, filename + ".yaml")
         os.remove(filename)
 
         result = {"result": "ok"}
         return json.dumps(result)
-
 
     # ======================================================================
     #  /api/files/scenes
     #
     def get_scenes_filelist(self):
 
-        list = os.listdir( self.scenes_dir )
+        list = os.listdir(self.scenes_dir)
         filelist = []
         for filename in list:
-            if filename.endswith('.yaml'):
+            if filename.endswith(".yaml"):
                 filelist.append(filename)
-            if filename.endswith('.conf'):
+            if filename.endswith(".conf"):
                 filelist.append(filename)
 
         self.logger.info("filelist = {}".format(filelist))
         self.logger.info("filelist.sort() = {}".format(filelist.sort()))
         return json.dumps(sorted(filelist))
 
-
     def get_scenes_config(self, fn):
 
         self.logger.info("FilesController.get_scenes_config({})".format(fn))
-        filename = os.path.join(self.scenes_dir, fn + '.yaml')
-        return cherrypy.lib.static.serve_file(filename, 'application/x-download',
-                                 'attachment', fn + '.yaml')
-
+        filename = os.path.join(self.scenes_dir, fn + ".yaml")
+        return cherrypy.lib.static.serve_file(filename, "application/x-download", "attachment", fn + ".yaml")
 
     def save_scenes_config(self, filename):
         """
@@ -361,14 +365,12 @@ class FilesController(RESTResource):
             raise cherrypy.HTTPError(status=411)
         self.logger.debug("FilesController.save_scenes_config(): '{}'".format(params))
 
-
-        filename = os.path.join(self.scenes_dir, filename + '.yaml')
-        with open(filename, 'w', encoding='UTF-8') as f:
+        filename = os.path.join(self.scenes_dir, filename + ".yaml")
+        with open(filename, "w", encoding="UTF-8") as f:
             f.write(params)
 
         result = {"result": "ok"}
         return json.dumps(result)
-
 
     def delete_scenes_config(self, filename):
         """
@@ -378,22 +380,21 @@ class FilesController(RESTResource):
         """
         self.logger.debug("FilesController.delete_scenes_config(): '{}'".format(filename))
 
-        filename = os.path.join(self.scenes_dir, filename + '.yaml')
+        filename = os.path.join(self.scenes_dir, filename + ".yaml")
         os.remove(filename)
 
         result = {"result": "ok"}
         return json.dumps(result)
-
 
     # ======================================================================
     #  /api/files/functions
     #
     def get_functions_filelist(self):
 
-        list = os.listdir( self.functions_dir )
+        list = os.listdir(self.functions_dir)
         filelist = []
         for filename in list:
-            if filename.endswith('.py'):
+            if filename.endswith(".py"):
                 filelist.append(filename)
 
         self.logger.info("filelist = {}".format(filelist))
@@ -403,13 +404,11 @@ class FilesController(RESTResource):
     def get_functions_config(self, fn):
 
         self.logger.info("FilesController.get_functions_config({})".format(fn))
-        if fn.endswith('.tpl'):
+        if fn.endswith(".tpl"):
             filename = os.path.join(self.template_dir, fn)
         else:
-            filename = os.path.join(self.functions_dir, fn + '.py')
-        return cherrypy.lib.static.serve_file(filename, 'application/x-download',
-                                 'attachment', fn + '.py')
-
+            filename = os.path.join(self.functions_dir, fn + ".py")
+        return cherrypy.lib.static.serve_file(filename, "application/x-download", "attachment", fn + ".py")
 
     def save_functions_config(self, filename):
         """
@@ -424,14 +423,12 @@ class FilesController(RESTResource):
             raise cherrypy.HTTPError(status=411)
         self.logger.debug("FilesController.save_functions_config(): '{}'".format(params))
 
-
-        filename = os.path.join(self.functions_dir, filename + '.py')
-        with open(filename, 'w', encoding='UTF-8') as f:
+        filename = os.path.join(self.functions_dir, filename + ".py")
+        with open(filename, "w", encoding="UTF-8") as f:
             f.write(params)
 
         result = {"result": "ok"}
         return json.dumps(result)
-
 
     def delete_functions_config(self, filename):
         """
@@ -441,12 +438,11 @@ class FilesController(RESTResource):
         """
         self.logger.debug("FilesController.delete_functions_config(): '{}'".format(filename))
 
-        filename = os.path.join(self.functions_dir, filename + '.py')
+        filename = os.path.join(self.functions_dir, filename + ".py")
         os.remove(filename)
 
         result = {"result": "ok"}
         return json.dumps(result)
-
 
     # ======================================================================
     #  Create (POST) methods - refuse to overwrite existing files
@@ -461,16 +457,15 @@ class FilesController(RESTResource):
             self.logger.warning("FilesController.create_items_config(): Bad request")
             raise cherrypy.HTTPError(status=411)
 
-        filepath = os.path.join(self.items_dir, filename + '.yaml')
+        filepath = os.path.join(self.items_dir, filename + ".yaml")
         if os.path.exists(filepath):
             self.logger.warning("FilesController.create_items_config(): file already exists: {}".format(filepath))
-            raise cherrypy.HTTPError(status=409, message='File already exists')
+            raise cherrypy.HTTPError(status=409, message="File already exists")
 
-        with open(filepath, 'w', encoding='UTF-8') as f:
+        with open(filepath, "w", encoding="UTF-8") as f:
             f.write(params)
         self.logger.info("FilesController.create_items_config(): created '{}'".format(filepath))
         return json.dumps({"result": "ok"})
-
 
     def create_scenes_config(self, filename):
         """
@@ -482,16 +477,15 @@ class FilesController(RESTResource):
             self.logger.warning("FilesController.create_scenes_config(): Bad request")
             raise cherrypy.HTTPError(status=411)
 
-        filepath = os.path.join(self.scenes_dir, filename + '.yaml')
+        filepath = os.path.join(self.scenes_dir, filename + ".yaml")
         if os.path.exists(filepath):
             self.logger.warning("FilesController.create_scenes_config(): file already exists: {}".format(filepath))
-            raise cherrypy.HTTPError(status=409, message='File already exists')
+            raise cherrypy.HTTPError(status=409, message="File already exists")
 
-        with open(filepath, 'w', encoding='UTF-8') as f:
+        with open(filepath, "w", encoding="UTF-8") as f:
             f.write(params)
         self.logger.info("FilesController.create_scenes_config(): created '{}'".format(filepath))
         return json.dumps({"result": "ok"})
-
 
     def create_functions_config(self, filename):
         """
@@ -503,40 +497,36 @@ class FilesController(RESTResource):
             self.logger.warning("FilesController.create_functions_config(): Bad request")
             raise cherrypy.HTTPError(status=411)
 
-        filepath = os.path.join(self.functions_dir, filename + '.py')
+        filepath = os.path.join(self.functions_dir, filename + ".py")
         if os.path.exists(filepath):
             self.logger.warning("FilesController.create_functions_config(): file already exists: {}".format(filepath))
-            raise cherrypy.HTTPError(status=409, message='File already exists')
+            raise cherrypy.HTTPError(status=409, message="File already exists")
 
-        with open(filepath, 'w', encoding='UTF-8') as f:
+        with open(filepath, "w", encoding="UTF-8") as f:
             f.write(params)
         self.logger.info("FilesController.create_functions_config(): created '{}'".format(filepath))
         return json.dumps({"result": "ok"})
-
 
     # ======================================================================
     #  /api/files/logics
     #
     def get_logics_filelist(self):
 
-        list = os.listdir( self.logics_dir )
+        list = os.listdir(self.logics_dir)
         filelist = []
         for filename in list:
-            if filename.endswith('.py'):
+            if filename.endswith(".py"):
                 filelist.append(filename)
 
         self.logger.info("filelist = {}".format(filelist))
         self.logger.info("filelist.sort() = {}".format(filelist.sort()))
         return json.dumps(sorted(filelist))
 
-
     def get_logics_config(self, fn):
 
         self.logger.info("FilesController.get_logics_config({})".format(fn))
         filename = os.path.join(self.logics_dir, fn)
-        return cherrypy.lib.static.serve_file(filename, 'application/x-download',
-                                 'attachment', fn)
-
+        return cherrypy.lib.static.serve_file(filename, "application/x-download", "attachment", fn)
 
     def save_logics_config(self, filename):
         """
@@ -551,14 +541,12 @@ class FilesController(RESTResource):
             raise cherrypy.HTTPError(status=411)
         self.logger.debug("FilesController.save_logics_config(): '{}'".format(params))
 
-
         filename = os.path.join(self.logics_dir, filename)
-        with open(filename, 'w', encoding='UTF-8') as f:
+        with open(filename, "w", encoding="UTF-8") as f:
             f.write(params)
 
         result = {"result": "ok"}
         return json.dumps(result)
-
 
     # ======================================================================
     #  /api/files/...
@@ -569,9 +557,9 @@ class FilesController(RESTResource):
         """
         unused_cache_files = []
 
-        if self._sh.shng_status['code'] == 20:
+        if self._sh.shng_status["code"] == 20:
             # {'code': 20, 'text': 'Running'}
-            cache_path = os.path.join(self.base_dir, 'var', 'cache')
+            cache_path = os.path.join(self.base_dir, "var", "cache")
             onlyfiles = [f for f in os.listdir(cache_path) if os.path.isfile(os.path.join(cache_path, f))]
 
             for file in onlyfiles:
@@ -588,14 +576,14 @@ class FilesController(RESTResource):
 
                     if no_cache_file:
                         file_data = {}
-                        file_data['last_modified'] = datetime.datetime.fromtimestamp(
+                        file_data["last_modified"] = datetime.datetime.fromtimestamp(
                             int(os.path.getmtime(os.path.join(cache_path, file)))
-                        ).strftime('%Y-%m-%d %H:%M:%S')
-                        file_data['created'] = datetime.datetime.fromtimestamp(
+                        ).strftime("%Y-%m-%d %H:%M:%S")
+                        file_data["created"] = datetime.datetime.fromtimestamp(
                             int(os.path.getctime(os.path.join(cache_path, file)))
-                        ).strftime('%Y-%m-%d %H:%M:%S')
-                        file_data['filename'] = file
-                        file_data['filename'] = file
+                        ).strftime("%Y-%m-%d %H:%M:%S")
+                        file_data["filename"] = file
+                        file_data["filename"] = file
                         unused_cache_files.append(file_data)
 
         return json.dumps(unused_cache_files)
@@ -608,19 +596,17 @@ class FilesController(RESTResource):
         # self.logger.warning("FilesController.get_config_backup(): filename = '{}'".format(filename))
 
         read_data = None
-        with open(filename, 'rb') as f:
+        with open(filename, "rb") as f:
             read_data = f.read()
 
         return read_data
-
 
     def get_config_backup2(self):
 
         filename = lib.backup.create_backup(self.extern_conf_dir, self.base_dir)
         # self.logger.warning("FilesController.get_config_backup2(): filename = '{}'".format(filename))
-        cherrypy.lib.static.serve_file(filename, 'application/zip', 'attachment', 'shng_config_backup.zip')
+        cherrypy.lib.static.serve_file(filename, "application/zip", "attachment", "shng_config_backup.zip")
         return json.dumps({"result": "ok"})
-
 
     def restore_config(self, filename):
         """
@@ -632,13 +618,13 @@ class FilesController(RESTResource):
         self.logger.info("FilesController.restore_config(filename='{}')".format(filename))
 
         old_shng_status = self._sh.shng_status
-        if old_shng_status['code'] != 20:
+        if old_shng_status["code"] != 20:
             return
 
-        self._sh.shng_status = {'code': 101, 'text': 'Restore: Uploading'}
+        self._sh.shng_status = {"code": 101, "text": "Restore: Uploading"}
 
         # create restore directory, if it does not exist
-        restore_dir = os.path.join(self.base_dir, 'var', 'restore')
+        restore_dir = os.path.join(self.base_dir, "var", "restore")
         if not os.path.isdir(restore_dir):
             try:
                 os.makedirs(restore_dir)
@@ -648,7 +634,6 @@ class FilesController(RESTResource):
                 self.shng_status = old_shng_status
                 return result
             self.logger.info("FilesController.restore_config(): Directory '{}' created".format(restore_dir))
-
 
         params = None
         params = self.get_body(binary=True)
@@ -663,95 +648,92 @@ class FilesController(RESTResource):
         # !!! make restore-directory empty !!!
 
         fn = os.path.join(restore_dir, filename)
-        with open(fn, 'w+b') as f:
+        with open(fn, "w+b") as f:
             f.write(params)
         self.logger.info("FilesController.restore_config(): Configuration '{}' uploaded".format(filename))
 
-        self._sh.shng_status = {'code': 102, 'text': 'Restore: Restoring'}
+        self._sh.shng_status = {"code": 102, "text": "Restore: Restoring"}
         fn = lib.backup.restore_backup(self.extern_conf_dir, self.base_dir)
         if fn is None:
             self.shng_status = old_shng_status
             result = {"result": "error"}
         else:
             self.logger.info("FilesController.restore_config(): Configuration '{}' restored".format(filename))
-            self._sh.shng_status = {'code': 103, 'text': 'Restart clicked'}
+            self._sh.shng_status = {"code": 103, "text": "Restart clicked"}
 
-            self._sh.restart('Restore Config')
+            self._sh.restart("Restore Config")
             result = {"result": "ok"}
 
         return json.dumps(result)
 
-
-
     # ======================================================================
     #  GET /api/services/
     #
-    def read(self, id='', filename=''):
+    def read(self, id="", filename=""):
         """
         Handle GET requests for server API
         """
         self.logger.info("FilesController.read(id='{}', filename='{}')".format(id, filename))
 
-        if id == 'logging':
-            cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
+        if id == "logging":
+            cherrypy.response.headers["Cache-Control"] = "no-cache, max-age=0, must-revalidate, no-store"
             return self.get_logging_config()
-        elif (id == 'structs' and filename == ''):
+        elif id == "structs" and filename == "":
             return self.get_structs_filelist()
-        elif id == 'structs':
-            cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
+        elif id == "structs":
+            cherrypy.response.headers["Cache-Control"] = "no-cache, max-age=0, must-revalidate, no-store"
             return self.get_struct_config(filename)
 
-        elif (id == 'items' and filename == ''):
+        elif id == "items" and filename == "":
             return self.get_items_filelist()
-        elif id == 'items':
-            cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
+        elif id == "items":
+            cherrypy.response.headers["Cache-Control"] = "no-cache, max-age=0, must-revalidate, no-store"
             return self.get_items_config(filename)
 
-        elif (id == 'scenes' and filename == ''):
+        elif id == "scenes" and filename == "":
             return self.get_scenes_filelist()
-        elif id == 'scenes':
-            cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
+        elif id == "scenes":
+            cherrypy.response.headers["Cache-Control"] = "no-cache, max-age=0, must-revalidate, no-store"
             return self.get_scenes_config(filename)
 
-        elif (id == 'functions' and filename == ''):
+        elif id == "functions" and filename == "":
             return self.get_functions_filelist()
-        elif id == 'functions':
-            cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
+        elif id == "functions":
+            cherrypy.response.headers["Cache-Control"] = "no-cache, max-age=0, must-revalidate, no-store"
             return self.get_functions_config(filename)
 
-        elif (id == 'logics' and filename == ''):
+        elif id == "logics" and filename == "":
             return self.get_logics_filelist()
-        elif id == 'logics':
-            cherrypy.response.headers['Cache-Control'] = 'no-cache, max-age=0, must-revalidate, no-store'
+        elif id == "logics":
+            cherrypy.response.headers["Cache-Control"] = "no-cache, max-age=0, must-revalidate, no-store"
             return self.get_logics_config(filename)
 
-        elif id == 'backup':
+        elif id == "backup":
             return self.get_config_backup()
         return None
 
     read.expose_resource = True
     read.authentication_needed = True
 
-
-    def update(self, id='', filename=''):
+    def update(self, id="", filename=""):
         """
         Handle PUT requests for server API
         """
         self.logger.info("FilesController.update(id='{}', filename='{}')".format(id, filename))
 
-        if id == 'logging':
+        if id == "logging":
             return self.save_logging_config()
-        elif (id == 'structs' and filename != ''):
+        elif id == "structs" and filename != "":
             return self.save_struct_config(filename)
-        elif (id == 'items' and filename != ''):
+        elif id == "items" and filename != "":
             return self.save_items_config(filename)
-        elif (id == 'scenes' and filename != ''):
+        elif id == "scenes" and filename != "":
             return self.save_scenes_config(filename)
-        elif (id == 'functions' and filename != ''):
+        elif id == "functions" and filename != "":
             return self.save_functions_config(filename)
-        elif (id == 'logics' and filename != ''):
+        elif id == "logics" and filename != "":
             return self.save_logics_config(filename)
-        elif (id == 'restore' and filename != ''):
+        elif id == "restore" and filename != "":
             return self.restore_config(filename)
 
         return None
@@ -759,20 +741,19 @@ class FilesController(RESTResource):
     update.expose_resource = True
     update.authentication_needed = True
 
-
-    def add(self, id='', filename=''):
+    def add(self, id="", filename=""):
         """
         Handle POST requests for server API (create new files, refuse to overwrite)
         """
         self.logger.info("FilesController.add(id='{}', filename='{}')".format(id, filename))
 
-        if (id == 'structs' and filename != ''):
+        if id == "structs" and filename != "":
             return self.create_struct_config(filename)
-        elif (id == 'items' and filename != ''):
+        elif id == "items" and filename != "":
             return self.create_items_config(filename)
-        elif (id == 'scenes' and filename != ''):
+        elif id == "scenes" and filename != "":
             return self.create_scenes_config(filename)
-        elif (id == 'functions' and filename != ''):
+        elif id == "functions" and filename != "":
             return self.create_functions_config(filename)
 
         return None
@@ -780,24 +761,22 @@ class FilesController(RESTResource):
     add.expose_resource = True
     add.authentication_needed = True
 
-
-    def delete(self, id='', filename=''):
+    def delete(self, id="", filename=""):
         """
         Handle DELETE requests for server API
         """
         self.logger.info("FilesController.delete(id='{}', filename='{}')".format(id, filename))
 
-        if (id == 'structs' and filename != ''):
+        if id == "structs" and filename != "":
             return self.delete_struct_config(filename)
-        if (id == 'items' and filename != ''):
+        if id == "items" and filename != "":
             return self.delete_items_config(filename)
-        if (id == 'scenes' and filename != ''):
+        if id == "scenes" and filename != "":
             return self.delete_scenes_config(filename)
-        if (id == 'functions' and filename != ''):
+        if id == "functions" and filename != "":
             return self.delete_functions_config(filename)
 
         return None
 
     delete.expose_resource = True
     delete.authentication_needed = True
-

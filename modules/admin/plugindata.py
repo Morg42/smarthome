@@ -30,81 +30,78 @@ import lib.config
 from lib.plugin import Plugins
 from lib.metadata import Metadata
 from lib.model.smartplugin import SmartPlugin
-from lib.constants import (KEY_CLASS_PATH, YAML_FILE)
+from lib.constants import KEY_CLASS_PATH, YAML_FILE
 
 
 class PluginData:
-
     def __init__(self):
 
         self.plugins = Plugins.get_instance()
 
         return
 
-
     # -----------------------------------------------------------------------------------
     #    PLUGINS  -  Interface methods (for admin frontend)
     # -----------------------------------------------------------------------------------
 
     @cherrypy.expose
-    def plugin_set_config_html(self, plugin_section='', config=''):
+    def plugin_set_config_html(self, plugin_section="", config=""):
         """
         Is called by items.html when an item value has been changed
 
         plugin_set_config.html?plugin_section=' + pluginsection + '&config=' + configstr;
         """
-        if config == '':
+        if config == "":
             self.logger.error("plugin_set_config_html: 'config' not specified")
-            return 'false'
-        if plugin_section == '':
+            return "false"
+        if plugin_section == "":
             self.logger.error("plugin_set_config_html: 'plugin_section' not specified")
-            return 'false'
+            return "false"
 
         self.logger.warning("plugin_set_config_html: pluginconfig '{}' set to '{}'".format(plugin_section, config))
 
         # to do:
         # - load etc/plugin.yaml for round-trip
         config_filename = self.plugins._get_plugin_conf_filename()
-        self.logger.warning('Loading config_filename: {}'.format(config_filename))
+        self.logger.warning("Loading config_filename: {}".format(config_filename))
         plugin_yaml = shyaml.yaml_load_roundtrip(config_filename)
-        self.logger.warning('plugin_yaml: {}'.format(plugin_yaml))
+        self.logger.warning("plugin_yaml: {}".format(plugin_yaml))
 
         # - remove all entries of the section that don't start with plugin_ (all beside plugin_name)
-        self.logger.warning('1: plugin_yaml[{}]: {}'.format(plugin_section, dict(plugin_yaml[plugin_section])))
+        self.logger.warning("1: plugin_yaml[{}]: {}".format(plugin_section, dict(plugin_yaml[plugin_section])))
         key_list = list(plugin_yaml[plugin_section].keys())
         for key in key_list:
-            if key != 'plugin_name':
+            if key != "plugin_name":
                 del plugin_yaml[plugin_section][key]
-        self.logger.warning('2: plugin_yaml[{}]: {}'.format(plugin_section, dict(plugin_yaml[plugin_section])))
+        self.logger.warning("2: plugin_yaml[{}]: {}".format(plugin_section, dict(plugin_yaml[plugin_section])))
 
         # - add all entries to the section which just were received from the admin backend
-        self.logger.warning('- {}:'.format(plugin_section))
+        self.logger.warning("- {}:".format(plugin_section))
         config_dict = json.loads(config)
 
         # change class_path to plugin_name
-        if 'class_path' in config_dict.keys():
-            if config_dict['class_path'].startswith('plugins.'):
-                plugin_yaml[plugin_section]['plugin_name'] = config_dict['class_path'][8:]
-                del config_dict['class_path']
+        if "class_path" in config_dict.keys():
+            if config_dict["class_path"].startswith("plugins."):
+                plugin_yaml[plugin_section]["plugin_name"] = config_dict["class_path"][8:]
+                del config_dict["class_path"]
 
         # handle plugin_enabled
-        if 'plugin_enabled' in config_dict.keys():
-            if str(config_dict['plugin_enabled']).lower() == 'false':
-                plugin_yaml[plugin_section]['plugin_enabled'] = False
+        if "plugin_enabled" in config_dict.keys():
+            if str(config_dict["plugin_enabled"]).lower() == "false":
+                plugin_yaml[plugin_section]["plugin_enabled"] = False
             else:
-                del config_dict['plugin_enabled']
+                del config_dict["plugin_enabled"]
 
         # save the rest of the parameters to plugin.yaml
         for key in config_dict:
-            self.logger.warning('-     {}: {}'.format(key, config_dict[key]))
+            self.logger.warning("-     {}: {}".format(key, config_dict[key]))
             plugin_yaml[plugin_section][key] = config_dict[key]
-        self.logger.warning('3: plugin_yaml[{}]: {}'.format(plugin_section, dict(plugin_yaml[plugin_section])))
+        self.logger.warning("3: plugin_yaml[{}]: {}".format(plugin_section, dict(plugin_yaml[plugin_section])))
 
         # - save etc/plugin.yaml
-        self.logger.warning('Saving config_filename: {}'.format(config_filename))
+        self.logger.warning("Saving config_filename: {}".format(config_filename))
         shyaml.yaml_save_roundtrip(config_filename, plugin_yaml, create_backup=True)
         # self.logger.warning("Config-Information not saved to etc/plugin.yaml")
-
 
         # item_data = []
         # item = self.items.return_item(item_path)
@@ -116,4 +113,3 @@ class PluginData:
         # item(value, caller='admin')
 
         return '{"result": "true"}'
-

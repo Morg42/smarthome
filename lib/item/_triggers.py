@@ -59,6 +59,7 @@ The single-underscore attributes ``_items_to_trigger`` and
 # Logic triggers
 # ---------------------------------------------------------------------------
 
+
 def add_logic_trigger(item, logic):
     """
     Append *logic* to the list of logics that are triggered when *item*
@@ -94,6 +95,7 @@ def get_logic_triggers(item):
 # ---------------------------------------------------------------------------
 # Method triggers
 # ---------------------------------------------------------------------------
+
 
 def add_method_trigger(item, method):
     """
@@ -131,6 +133,7 @@ def get_method_triggers(item):
 # ---------------------------------------------------------------------------
 # Item triggers
 # ---------------------------------------------------------------------------
+
 
 def get_item_triggers(item):
     """

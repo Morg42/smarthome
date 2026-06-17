@@ -36,7 +36,7 @@ import logging
 
 from lib.constants import PLUGIN_REMOVE_ITEM
 
-logger = logging.getLogger('lib.item')
+logger = logging.getLogger("lib.item")
 
 
 def remove(item):
@@ -60,17 +60,13 @@ def remove(item):
             try:
                 plugin.remove_item(item)
             except Exception as e:
-                logger.warning(
-                    f"while removing item {item} from plugin {plugin}, "
-                    f"the following error occurred: {e}"
-                )
+                logger.warning(f"while removing item {item} from plugin {plugin}, the following error occurred: {e}")
         else:
             incompatible.append(plugin.get_shortname())
 
     if incompatible:
         logger.warning(
-            f"while removing item {item}, the following plugins were "
-            f"incompatible: {', '.join(incompatible)}"
+            f"while removing item {item}, the following plugins were incompatible: {', '.join(incompatible)}"
         )
         return False
 
