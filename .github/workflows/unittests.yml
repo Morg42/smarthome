@@ -97,21 +97,12 @@ jobs:
       # ---  up to here, the workflow is identical for CORE and PLUGINS  ---
 
       # --- Linting ---
-      # Phase 1: non-blocking (continue-on-error: true). Violations are visible in
-      # the workflow log but do not fail the build. Remove continue-on-error once
-      # all Phase 1 violations are resolved and the step should act as a hard gate.
       - name: Lint with ruff
-        continue-on-error: true   # REMOVE THIS LINE to make linting a hard gate
         run: |
           pip install "ruff>=0.4.0"
           ruff check . --output-format=github
         # --output-format=github annotates violations inline on the PR diff.
-        #
-        # When ready to enforce (Phase 1 gate active, move toward Phase 2):
-        #   1. Remove continue-on-error above.
-        #   2. Update [tool.ruff.lint] select in pyproject.toml to add "B".
-        #   3. Run locally: ruff check . --fix  then  ruff check . --select B
-        #      to assess and clean up bugbear violations before enabling in CI.
+        # plugins/ is excluded via [tool.ruff] exclude in pyproject.toml.
 
       # --- Unit Tests ---
       - name: '>>> Run Python Unittests for CORE <<<'

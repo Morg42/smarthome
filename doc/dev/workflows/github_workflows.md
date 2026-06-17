@@ -200,11 +200,10 @@ and generates the specific `requirements/base.txt` for the current setup. The ba
 requirements must be installed because some modules import them at runtime even in
 tests.
 
-#### Step 11 — Lint with ruff (non-blocking)
+#### Step 11 — Lint with ruff
 
 ```yaml
 - name: Lint with ruff
-  continue-on-error: true   # REMOVE THIS LINE to make linting a hard gate
   run: |
     pip install "ruff>=0.4.0"
     ruff check . --output-format=github
@@ -212,15 +211,13 @@ tests.
 
 [Ruff](https://docs.astral.sh/ruff/) is a fast Python linter. The `--output-format=github`
 flag causes violations to appear as **inline annotations** on the PR's "Files changed"
-tab, directly beside the offending line. This is useful for PR authors because they
-can see exactly which lines have issues without reading a separate log.
+tab, directly beside the offending line.
 
-`continue-on-error: true` means ruff violations never cause the CI check to go red.
-This is a **phase 1 approach**: introduce linting visibility without blocking anyone.
-Once all existing violations are resolved (the project is currently clean), this line
-should be removed to turn ruff into a hard gate that rejects new violations.
-
-The linting configuration lives in `pyproject.toml` in the repo root.
+This step is a **hard gate**: any ruff violation fails the CI check and blocks merging.
+The `plugins/` directory is excluded here via `[tool.ruff] exclude` in `pyproject.toml` —
+plugins have their own `pyproject.toml` and are linted by a matching step in the plugins
+repository's `unittests.yml`. The linting rules in both `pyproject.toml` files are kept
+in sync (see the SYNC NOTE at the top of each file).
 
 #### Step 12 — Run pytest
 
@@ -525,16 +522,16 @@ and should be removed once `master` requirements are updated to include `attrs`.
 
 ## Maintenance notes
 
-### Turning ruff into a hard gate
+### Progressing to ruff Phase 2 (bugbear rules)
 
-Once the codebase is clean of all ruff violations (it currently is), remove the
-`continue-on-error: true` line from `unittests.yml`. After that, any PR introducing
-a violation will immediately fail CI with a clear message and inline annotation.
+Ruff is currently configured with `select = ["E", "F"]` (pycodestyle + pyflakes).
+The next phase adds `B` (flake8-bugbear — catches real bugs like mutable default
+arguments and bare `except`):
 
-To then progress to ruff Phase 2 (bugbear rules):
-1. Remove `continue-on-error`.
-2. Edit `pyproject.toml`: change `select = ["E", "F"]` to `select = ["E", "F", "B"]`.
-3. Run `ruff check . --select B` locally to assess the new violations before enabling.
+1. Edit `pyproject.toml` in the shng root: change `select = ["E", "F"]` to `select = ["E", "F", "B"]`.
+2. Mirror the change in `plugins/pyproject.toml` (see SYNC NOTE in both files).
+3. Run `ruff check . --select B` locally to review the new violations before committing.
+4. Fix or suppress violations, then commit both `pyproject.toml` files.
 
 ### Adding a new Python version to the test matrix
 
