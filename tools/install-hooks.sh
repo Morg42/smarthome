@@ -154,6 +154,8 @@ PYTEST="${PYTEST_BIN}"
 
 echo ""
 echo "── pre-push gate (plugins) ─────────────────────────────────────"
+echo "  running tests ..."
+echo ""
 
 if ! "\$PYTEST" --tb=short -q; then
     echo ""

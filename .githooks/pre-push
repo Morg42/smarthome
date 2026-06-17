@@ -10,6 +10,8 @@ PYTEST="${SHNG_DIR}/venvs/shng/bin/pytest"
 
 echo ""
 echo "── pre-push gate (shng) ────────────────────────────────────────"
+echo "  running tests/ ..."
+echo ""
 
 if ! "$PYTEST" tests/ --tb=short -q; then
     echo ""
