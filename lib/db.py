@@ -33,7 +33,7 @@ from typing import OrderedDict
 from lib.shtime import Shtime
 
 
-class Database():
+class Database:
     """A database abstraction layer based on DB-API2 specification.
 
     It provides basic functionality to access databases using Python driver
@@ -74,7 +74,7 @@ class Database():
     """
 
     # Supported formatting styles
-    _styles = ('qmark', 'format', 'numeric', 'named', 'pyformat')
+    _styles = ("qmark", "format", "numeric", "named", "pyformat")
 
     # Supported formatting translations:
     # - input_token: The token in source query to replace with output token
@@ -85,51 +85,60 @@ class Database():
     # - {0}: Number of parameter (counting from 1 for first parameter)
     # - {1}: First match of input_token regex (use 2 for second, 3 for third, etc)
     _translations = {
-      'qmark' : {
-        'qmark'    : {},
-        'format'   : {'input_token' : '?', 'output_token' : '%s'},
-        'numeric'  : {'input_token' : '?', 'output_token' : ':{0}'},
-        'named'    : {'input_token' : '?', 'output_token' : ':arg{0}', 'output_name' : 'arg{0}'},
-        'pyformat' : {'input_token' : '?', 'output_token' : '%(arg{0})s', 'output_name' : 'arg{0}'}
-      },
-      'format' : {
-        'qmark'    : {'input_token' : re.compile(r'%\w+'), 'output_token' : '?'},
-        'format'   : {},
-        'numeric'  : {'input_token' : re.compile(r'%\w+'), 'output_token' : ':{0}'},
-        'named'    : {'input_token' : re.compile(r'%\w+'), 'output_token' : ':arg{0}', 'output_name' : 'arg{0}'},
-        'pyformat' : {'input_token' : re.compile(r'%\w+'), 'output_token' : '%(arg{0})s', 'output_name' : 'arg{0}'}
-      },
-      'numeric' : {
-        'qmark'    : {'input_token' : re.compile(r':(\d+)'), 'output_token' : '?', 'input_name' : '{1}'},
-        'format'   : {'input_token' : re.compile(r':(\d+)'), 'output_token' : '%s', 'input_name' : '{1}'},
-        'numeric'  : {},
-        'named'    : {'input_token' : re.compile(r':(\d+)'), 'output_token' : ':arg{1}', 'input_name' : '{1}', 'output_name' : 'arg{1}'},
-        'pyformat' : {'input_token' : re.compile(r':(\d+)'), 'output_token' : '%(arg{1})s', 'output_name' : 'arg{1}'}
-      },
-      'named' : {
-        'qmark'    : {'input_token' : re.compile(r':(\w+)'), 'output_token' : '?', 'input_name' : '{1}'},
-        'format'   : {'input_token' : re.compile(r':(\w+)'), 'output_token' : '%s', 'input_name' : '{1}'},
-        'numeric'  : {'input_token' : re.compile(r':(\w+)'), 'output_token' : ':{0}', 'input_name' : '{1}'},
-        'named'    : {},
-        'pyformat' : {'input_token' : re.compile(r':(\w+)'), 'output_token' : '%({1})s', 'input_name' : '{1}', 'output_name' : '{1}'}
-      },
-      'pyformat' : {
-        'qmark'    : {'input_token' : re.compile(r'%\((\w+)\)\w+'), 'output_token' : '?', 'input_name' : '{1}'},
-        'format'   : {'input_token' : re.compile(r'%\((\w+)\)\w+'), 'output_token' : '%s', 'input_name' : '{1}'},
-        'numeric'  : {'input_token' : re.compile(r'%\((\w+)\)\w+'), 'output_token' : ':{0}', 'input_name' : '{1}'},
-        'named'    : {'input_token' : re.compile(r'%\((\w+)\)\w+'), 'output_token' : ':{1}', 'input_name' : '{1}', 'output_name' : '{1}'},
-        'pyformat' : {}
-      },
+        "qmark": {
+            "qmark": {},
+            "format": {"input_token": "?", "output_token": "%s"},
+            "numeric": {"input_token": "?", "output_token": ":{0}"},
+            "named": {"input_token": "?", "output_token": ":arg{0}", "output_name": "arg{0}"},
+            "pyformat": {"input_token": "?", "output_token": "%(arg{0})s", "output_name": "arg{0}"},
+        },
+        "format": {
+            "qmark": {"input_token": re.compile(r"%\w+"), "output_token": "?"},
+            "format": {},
+            "numeric": {"input_token": re.compile(r"%\w+"), "output_token": ":{0}"},
+            "named": {"input_token": re.compile(r"%\w+"), "output_token": ":arg{0}", "output_name": "arg{0}"},
+            "pyformat": {"input_token": re.compile(r"%\w+"), "output_token": "%(arg{0})s", "output_name": "arg{0}"},
+        },
+        "numeric": {
+            "qmark": {"input_token": re.compile(r":(\d+)"), "output_token": "?", "input_name": "{1}"},
+            "format": {"input_token": re.compile(r":(\d+)"), "output_token": "%s", "input_name": "{1}"},
+            "numeric": {},
+            "named": {
+                "input_token": re.compile(r":(\d+)"),
+                "output_token": ":arg{1}",
+                "input_name": "{1}",
+                "output_name": "arg{1}",
+            },
+            "pyformat": {"input_token": re.compile(r":(\d+)"), "output_token": "%(arg{1})s", "output_name": "arg{1}"},
+        },
+        "named": {
+            "qmark": {"input_token": re.compile(r":(\w+)"), "output_token": "?", "input_name": "{1}"},
+            "format": {"input_token": re.compile(r":(\w+)"), "output_token": "%s", "input_name": "{1}"},
+            "numeric": {"input_token": re.compile(r":(\w+)"), "output_token": ":{0}", "input_name": "{1}"},
+            "named": {},
+            "pyformat": {
+                "input_token": re.compile(r":(\w+)"),
+                "output_token": "%({1})s",
+                "input_name": "{1}",
+                "output_name": "{1}",
+            },
+        },
+        "pyformat": {
+            "qmark": {"input_token": re.compile(r"%\((\w+)\)\w+"), "output_token": "?", "input_name": "{1}"},
+            "format": {"input_token": re.compile(r"%\((\w+)\)\w+"), "output_token": "%s", "input_name": "{1}"},
+            "numeric": {"input_token": re.compile(r"%\((\w+)\)\w+"), "output_token": ":{0}", "input_name": "{1}"},
+            "named": {
+                "input_token": re.compile(r"%\((\w+)\)\w+"),
+                "output_token": ":{1}",
+                "input_name": "{1}",
+                "output_name": "{1}",
+            },
+            "pyformat": {},
+        },
     }
-    _translation_param_types = {
-      'qmark'    : list,
-      'format'   : list,
-      'numeric'  : list,
-      'named'    : dict,
-      'pyformat' : dict
-    }
+    _translation_param_types = {"qmark": list, "format": list, "numeric": list, "named": dict, "pyformat": dict}
 
-    def __init__(self, name, dbapi, connect, formatting='named'):
+    def __init__(self, name, dbapi, connect, formatting="named"):
         """Create a new database instance
 
         The 'name' parameter identifies the name for the database access .
@@ -168,25 +177,29 @@ class Database():
             try:
                 self._dbapi = __import__(dbapi)
             except ImportError as e:
-                self.logger.error("DB-API import failed for \"{}\": {} - module installed?".format(dbapi, e))
+                self.logger.error('DB-API import failed for "{}": {} - module installed?'.format(dbapi, e))
                 return
 
         if self._format_input not in self._styles:
-            self.logger.error("Database [{}]: SQL format style {} not supported (only {})".format(self._name, self._format_input, self._styles))
+            self.logger.error(
+                "Database [{}]: SQL format style {} not supported (only {})".format(
+                    self._name, self._format_input, self._styles
+                )
+            )
             return
 
         self._params = {}
 
         # Deprecated, remove with 1.7 or 1.8
         if type(connect) is str:
-            connect = [p.strip() for p in connect.split('|')]
+            connect = [p.strip() for p in connect.split("|")]
 
         # Deprecated, remove with 1.7 or 1.8
         # -> but keep list of ordered dict as "default" returned by yaml parser!
         if type(connect) is list:
             if isinstance(connect[0], str):
                 for arg in connect:
-                    key, sep, value = arg.partition(':')
+                    key, sep, value = arg.partition(":")
                     for t in int, float, str:
                         try:
                             v = t(value)
@@ -202,7 +215,11 @@ class Database():
 
         self._format_output = self._dbapi.paramstyle
         if self._format_output not in self._styles:
-            self.logger.error("Database [{}]: DB-API driver format style {} not supported (only {})".format(self._name, self._format_output, self._styles))
+            self.logger.error(
+                "Database [{}]: DB-API driver format style {} not supported (only {})".format(
+                    self._name, self._format_output, self._styles
+                )
+            )
             return
 
         self._translation = self._translations[self._format_input][self._format_output]
@@ -219,12 +236,18 @@ class Database():
         try:
             self._conn = self._dbapi.connect(**self._params)
         except Exception as e:
-            self.logger.error("Database [{}]: Could not connect to the database using '{}': {}".format(self._name, self._dbapi_name, e))
+            self.logger.error(
+                "Database [{}]: Could not connect to the database using '{}': {}".format(
+                    self._name, self._dbapi_name, e
+                )
+            )
             raise
         finally:
             self.release()
         self._connected = True
-        self.logger.info("Database [{}]: Connected with {} using \"{}\" style".format(self._name, self._conn, self._format_output))
+        self.logger.info(
+            'Database [{}]: Connected with {} using "{}" style'.format(self._name, self._conn, self._format_output)
+        )
 
     def close(self):
         """Closes the database connection"""
@@ -263,14 +286,17 @@ class Database():
         """
         self.lock()
         cur = self.cursor()
-        version_table = re.sub('[^a-z0-9_]', '', self._name.lower()) + "_version"
+        version_table = re.sub("[^a-z0-9_]", "", self._name.lower()) + "_version"
         try:
-            version, = self.fetchone("SELECT MAX(version) FROM " + version_table + ";", cur=cur)
+            (version,) = self.fetchone("SELECT MAX(version) FROM " + version_table + ";", cur=cur)
             if version is None:
-               version = 0
+                version = 0
         except Exception:
             self.logger.info("Missing table " + version_table + " error can be ignored, will be created now!")
-            self.execute("CREATE TABLE " + version_table + "(version NUMERIC, updated BIGINT, rollout TEXT, rollback TEXT)", cur=cur)
+            self.execute(
+                "CREATE TABLE " + version_table + "(version NUMERIC, updated BIGINT, rollout TEXT, rollback TEXT)",
+                cur=cur,
+            )
             version = 0
         self.logger.info("Database [{}]: Version {} found".format(self._name, version))
         for v in sorted(queries.keys()):
@@ -280,7 +306,12 @@ class Database():
 
                 dt = self.shtime.utcnow()  # type: ignore (shtime is set dynamically)
                 ts = int(time.mktime(dt.timetuple()) * 1000 + dt.microsecond / 1000)
-                self.execute("INSERT INTO " + version_table + "(version, updated, rollout, rollback) VALUES(?, ?, ?, ?);", (v, ts, queries[v][0], queries[v][1]), formatting='qmark', cur=cur)
+                self.execute(
+                    "INSERT INTO " + version_table + "(version, updated, rollout, rollback) VALUES(?, ?, ?, ?);",
+                    (v, ts, queries[v][0], queries[v][1]),
+                    formatting="qmark",
+                    cur=cur,
+                )
 
         self.commit()
         cur.close()
@@ -345,7 +376,7 @@ class Database():
                 result = cur.execute(stmt, args)
             return result
         except Exception as e:
-            if str(e).find('no such table: database_version') == -1:
+            if str(e).find("no such table: database_version") == -1:
                 # log error only, if query not executed on a new and empty database
                 self.logger.error(f"Can not execute query: {stmt} (args {args}): {e}")
                 raise
@@ -404,7 +435,7 @@ class Database():
             c = self.cursor()
             if c is None:
                 self.logger.warning(f"fetchone: No cursor defined for stmt {stmt} with params {params}")
-                result = ''
+                result = ""
             else:
                 self.execute(stmt, params, formatting=formatting, cur=c)
                 result = c.fetchone()
@@ -441,7 +472,7 @@ class Database():
         else:
             param_dict = collections.OrderedDict()
             for key, value in enumerate(params):
-                param_dict[str(key+1)] = value
+                param_dict[str(key + 1)] = value
 
         if formatting is None:
             translation = self._translation
@@ -455,7 +486,7 @@ class Database():
         elif self._translation_param_type is dict:
             return (stmt_result, param_result)
 
-    def _translate(self, stmt, params, input_token=None, output_token=None, input_name='{0}', output_name='{0}'):
+    def _translate(self, stmt, params, input_token=None, output_token=None, input_name="{0}", output_name="{0}"):
         """Internal helper method to convert the statement from input format to output format"""
 
         if input_token is None or output_token is None:
@@ -477,5 +508,4 @@ class Database():
                 param_result[output_name.format(*args)] = params[input_name.format(*args)]
                 cnt = cnt + 1
 
-        return (stmt,  param_result)
-
+        return (stmt, param_result)

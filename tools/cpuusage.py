@@ -4,42 +4,48 @@ import time
 import os
 import json
 
+
 def clear():
     if os.name == "nt":
         _ = os.system("cls")
     else:
         _ = os.system("clear")
 
+
 def get_threads_cpu_percent(p, interval=0.1):
-   total_percent = p.cpu_percent(interval)
-   total_time = sum(p.cpu_times())
-   return [[total_percent * ((t.system_time + t.user_time)/total_time), t.id, psutil.Process(t.id).name()] for t in p.threads()]
+    total_percent = p.cpu_percent(interval)
+    total_time = sum(p.cpu_times())
+    return [
+        [total_percent * ((t.system_time + t.user_time) / total_time), t.id, psutil.Process(t.id).name()]
+        for t in p.threads()
+    ]
 
 
 def get_basedir():
     cwd = os.getcwd()
-    path_split = cwd.split('/')
-    if path_split[-1] == 'tools' or path_split[-1] == 'priv_tools':
+    path_split = cwd.split("/")
+    if path_split[-1] == "tools" or path_split[-1] == "priv_tools":
         del path_split[-1]
-    return '/'.join(path_split)
+    return "/".join(path_split)
 
 
 def get_pid():
-    file = os.path.join(base_dir, 'var', 'run', 'smarthome.pid')
+    file = os.path.join(base_dir, "var", "run", "smarthome.pid")
 
     # if shng is not yet (or not anymore) running, we need to wait for it
     waiting = False
     while not os.path.exists(file):
         if not waiting:
-            print('Waiting for shng PID file..', end='', flush=True)
+            print("Waiting for shng PID file..", end="", flush=True)
             waiting = True
-        print('.', end='', flush=True)
+        print(".", end="", flush=True)
         time.sleep(1)
     print()
 
     with open(file) as f:
         pid = f.read()
     return pid
+
 
 def get_threadinfo():
     global print_info
@@ -48,14 +54,15 @@ def get_threadinfo():
     threadinfo = {}
     threadinfo_list = []
     try:
-        with open(os.path.join(base_dir, 'var', 'run', 'threadinfo.json')) as f:
-            threadinfo_list = json.load(f )
+        with open(os.path.join(base_dir, "var", "run", "threadinfo.json")) as f:
+            threadinfo_list = json.load(f)
     except (OSError, ValueError):
         print_info = True
 
     for ti in threadinfo_list:
-        threadinfo[ti['native_id']] = ti
+        threadinfo[ti["native_id"]] = ti
     return threadinfo
+
 
 base_dir = get_basedir()
 shng_pid = get_pid()
@@ -86,22 +93,22 @@ while True:
             print()
             print("   Percent   PID     Thread Id      Thread Name")
             for line in threads:
-                thread = threadinfo.get(int(line[1]), {'id': '?', 'name':line[2]})
+                thread = threadinfo.get(int(line[1]), {"id": "?", "name": line[2]})
                 if thread is not None:
-                    thread_name = thread['name']
-                    thread_id = thread['id']
+                    thread_name = thread["name"]
+                    thread_id = thread["id"]
                 elif int(line[1]) == int(shng_pid):
-                    thread_name = 'SmartHomeNG'
-                    thread_id = '   __Main__    '
+                    thread_name = "SmartHomeNG"
+                    thread_id = "   __Main__    "
                 else:
-                    thread_name = '?'
-                    thread_id = '       ?       '
+                    thread_name = "?"
+                    thread_id = "       ?       "
                 percent = float(line[0])
                 pid = int(line[1])
-                if not (thread_name.startswith( ('CP Server','HTTPServer', 'ThreadPoolExecutor') ) and percent <= 0.08):
+                if not (thread_name.startswith(("CP Server", "HTTPServer", "ThreadPoolExecutor")) and percent <= 0.08):
                     if percent >= 0.0:
                         print("{p:10.6f}%{pid:6} {id} - {t:15}".format(p=percent, pid=pid, id=thread_id, t=thread_name))
-                if thread_name.lower().startswith('python'):
+                if thread_name.lower().startswith("python"):
                     print_info = True
 
         initial_loop = False
@@ -110,7 +117,9 @@ while True:
     except KeyboardInterrupt:
         if print_info:
             print()
-            print("ATTENTION: To get thread names listed,\n           enable 'threadinfo_export' in ../etc/smarthome.yaml")
+            print(
+                "ATTENTION: To get thread names listed,\n           enable 'threadinfo_export' in ../etc/smarthome.yaml"
+            )
         print()
         exit(0)
     except Exception as e:
@@ -118,10 +127,11 @@ while True:
         shng_pid = get_pid()
         proc = psutil.Process(int(shng_pid))
         time.sleep(2)
-    #exit()
+    # exit()
 
 #
 #
+
 
 def get_procfs_path():
-    return sys.modules['psutil'].PROCFS_PATH
+    return sys.modules["psutil"].PROCFS_PATH

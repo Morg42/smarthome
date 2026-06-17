@@ -42,9 +42,10 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import tests.common as common
+
 common.register_shng_log_levels()
 
 import lib.item.item
@@ -72,7 +73,7 @@ def _make_sh():
 
 
 def _load_items(sh, filename):
-    path = os.path.join(common.BASE, 'tests', 'resources', filename + '.yaml')
+    path = os.path.join(common.BASE, "tests", "resources", filename + ".yaml")
     conf = lib.config.parse(path, None)
     for attr, value in conf.items():
         if isinstance(value, dict):
@@ -82,8 +83,8 @@ def _load_items(sh, filename):
     return conf
 
 
-def _item(sh, path, itype='num', **conf):
-    c = {'type': itype}
+def _item(sh, path, itype="num", **conf):
+    c = {"type": itype}
     c.update(conf)
     i = lib.item.item.Item(sh, sh, path, c)
     sh.items.add_item(path, i)
@@ -94,6 +95,7 @@ def _item(sh, path, itype='num', **conf):
 class _Base(unittest.TestCase):
     def setUp(self):
         self.sh = _make_sh()
+
     def tearDown(self):
         _reset()
 
@@ -101,26 +103,26 @@ class _Base(unittest.TestCase):
 class _EvalBase(_Base):
     def setUp(self):
         super().setUp()
-        _load_items(self.sh, 'item_eval')
+        _load_items(self.sh, "item_eval")
 
 
 # ===========================================================================
 # Config parsing: _parse_eval_attribute
 # ===========================================================================
 
-class TestEvalConfigParsing(_EvalBase):
 
+class TestEvalConfigParsing(_EvalBase):
     def test_eval_string_stored_in_eval(self):
-        item = self.sh.items.return_item('eval_constant')
-        self.assertEqual(item._eval, '42')
+        item = self.sh.items.return_item("eval_constant")
+        self.assertEqual(item._eval, "42")
 
     def test_eval_reference_item_stored(self):
-        item = self.sh.items.return_item('target_eval')
+        item = self.sh.items.return_item("target_eval")
         # eval = 'sh.source_num()' — stored after path expansion
-        self.assertIn('source_num', item._eval)
+        self.assertIn("source_num", item._eval)
 
     def test_no_eval_leaves_eval_none(self):
-        item = self.sh.items.return_item('source_num')
+        item = self.sh.items.return_item("source_num")
         self.assertIsNone(item._eval)
 
 
@@ -128,23 +130,23 @@ class TestEvalConfigParsing(_EvalBase):
 # Config parsing: _parse_eval_trigger_list_attribute
 # ===========================================================================
 
-class TestEvalTriggerConfigParsing(_EvalBase):
 
+class TestEvalTriggerConfigParsing(_EvalBase):
     def test_single_trigger_stored(self):
-        item = self.sh.items.return_item('target_eval')
+        item = self.sh.items.return_item("target_eval")
         self.assertIsNotNone(item._trigger)
         self.assertGreater(len(item._trigger), 0)
 
     def test_trigger_contains_source_path(self):
-        item = self.sh.items.return_item('target_eval')
-        self.assertTrue(any('source_num' in t for t in item._trigger))
+        item = self.sh.items.return_item("target_eval")
+        self.assertTrue(any("source_num" in t for t in item._trigger))
 
     def test_multiple_triggers_stored(self):
-        item = self.sh.items.return_item('combined_and')
+        item = self.sh.items.return_item("combined_and")
         self.assertGreaterEqual(len(item._trigger), 2)
 
     def test_no_trigger_is_false_or_empty(self):
-        item = self.sh.items.return_item('source_num')
+        item = self.sh.items.return_item("source_num")
         self.assertFalse(item._trigger)
 
 
@@ -152,24 +154,24 @@ class TestEvalTriggerConfigParsing(_EvalBase):
 # Config parsing: _parse_on_xx_list_attribute
 # ===========================================================================
 
-class TestOnXxConfigParsing(_EvalBase):
 
+class TestOnXxConfigParsing(_EvalBase):
     def test_on_change_dest_stored(self):
-        item = self.sh.items.return_item('on_change_source')
+        item = self.sh.items.return_item("on_change_source")
         self.assertIsNotNone(item._on_change_dest_var)
-        self.assertIn('on_change_target', item._on_change_dest_var)
+        self.assertIn("on_change_target", item._on_change_dest_var)
 
     def test_on_change_eval_stored(self):
-        item = self.sh.items.return_item('on_change_source')
+        item = self.sh.items.return_item("on_change_source")
         self.assertIsNotNone(item._on_change)
-        self.assertIn('value', item._on_change)
+        self.assertIn("value", item._on_change)
 
     def test_on_update_dest_stored(self):
-        item = self.sh.items.return_item('on_update_source')
-        self.assertIn('on_update_target', item._on_update_dest_var)
+        item = self.sh.items.return_item("on_update_source")
+        self.assertIn("on_update_target", item._on_update_dest_var)
 
     def test_no_on_change_leaves_attr_none_or_empty(self):
-        item = self.sh.items.return_item('source_num')
+        item = self.sh.items.return_item("source_num")
         self.assertFalse(item._on_change)
 
 
@@ -177,45 +179,45 @@ class TestOnXxConfigParsing(_EvalBase):
 # _init_prerun: trigger wiring
 # ===========================================================================
 
-class TestInitPrerun(_EvalBase):
 
+class TestInitPrerun(_EvalBase):
     def test_trigger_wires_source_to_target(self):
-        source = self.sh.items.return_item('source_num')
-        target = self.sh.items.return_item('target_eval')
+        source = self.sh.items.return_item("source_num")
+        target = self.sh.items.return_item("target_eval")
         # Wire triggers
         target._init_prerun()
         self.assertIn(target, source._items_to_trigger)
 
     def test_self_trigger_not_added(self):
-        source = self.sh.items.return_item('source_num')
+        source = self.sh.items.return_item("source_num")
         source._init_prerun()
         self.assertNotIn(source, source._items_to_trigger)
 
     def test_eval_and_keyword_expanded(self):
-        item = self.sh.items.return_item('combined_and')
+        item = self.sh.items.return_item("combined_and")
         item._init_prerun()
-        self.assertIn(' and ', item._eval)
+        self.assertIn(" and ", item._eval)
 
     def test_eval_sum_keyword_expanded(self):
-        item = self.sh.items.return_item('combined_sum')
+        item = self.sh.items.return_item("combined_sum")
         item._init_prerun()
-        self.assertIn('+', item._eval)
+        self.assertIn("+", item._eval)
 
     def test_eval_avg_keyword_has_division(self):
-        item = self.sh.items.return_item('combined_avg')
+        item = self.sh.items.return_item("combined_avg")
         item._init_prerun()
-        self.assertIn('/', item._eval)
+        self.assertIn("/", item._eval)
 
     def test_unknown_trigger_item_no_crash(self):
         # Item with trigger pointing to non-existent path — should log warning, not crash
-        bad = _item(self.sh, 'bad_trigger', eval='sh.nonexistent()',
-                    eval_trigger='nonexistent.item.path')
-        bad._init_prerun()   # must not raise
+        bad = _item(self.sh, "bad_trigger", eval="sh.nonexistent()", eval_trigger="nonexistent.item.path")
+        bad._init_prerun()  # must not raise
 
 
 # ===========================================================================
 # _init_run: initial eval execution
 # ===========================================================================
+
 
 class TestInitRun(_EvalBase):
     """
@@ -225,30 +227,30 @@ class TestInitRun(_EvalBase):
     """
 
     def test_returns_true_for_trigger_and_eval(self):
-        target = self.sh.items.return_item('target_eval')
+        target = self.sh.items.return_item("target_eval")
         result = target._init_run()
         self.assertTrue(result)
 
     def test_returns_false_for_eval_without_trigger(self):
         # eval_constant has eval but no eval_trigger
-        item = self.sh.items.return_item('eval_constant')
+        item = self.sh.items.return_item("eval_constant")
         result = item._init_run()
         self.assertFalse(result)
 
     def test_returns_false_for_no_trigger_no_eval(self):
-        item = self.sh.items.return_item('source_num')
+        item = self.sh.items.return_item("source_num")
         result = item._init_run()
         self.assertFalse(result)
 
     def test_value_unchanged_after_init_run_via_mock(self):
         # MockSmartHome.trigger() does not execute the callback, so value stays 0
-        target = self.sh.items.return_item('target_eval')
+        target = self.sh.items.return_item("target_eval")
         target._init_run()
         self.assertEqual(target._value, 0)  # unchanged — callback not executed
 
     def test_eval_runs_when_called_directly(self):
         # Direct __run_eval works independently of _init_run
-        item = self.sh.items.return_item('eval_constant')
+        item = self.sh.items.return_item("eval_constant")
         item._Item__run_eval()
         self.assertEqual(item._value, 42)
 
@@ -257,17 +259,17 @@ class TestInitRun(_EvalBase):
 # __run_eval
 # ===========================================================================
 
-class TestRunEvalDirect(_Base):
 
+class TestRunEvalDirect(_Base):
     def test_constant_sets_value(self):
-        item = _item(self.sh, 'ev', eval='2 + 3')
+        item = _item(self.sh, "ev", eval="2 + 3")
         item._Item__run_eval()
         self.assertEqual(item._value, 5)
 
     def test_reference_to_other_item(self):
-        source = _item(self.sh, 'src')
+        source = _item(self.sh, "src")
         source(42)
-        target = _item(self.sh, 'tgt', eval='sh.src()')
+        target = _item(self.sh, "tgt", eval="sh.src()")
         target._Item__run_eval()
         self.assertEqual(target._value, 42)
 
@@ -275,31 +277,31 @@ class TestRunEvalDirect(_Base):
         # item(value) on an eval item schedules the eval, not a direct set.
         # Use item.set() to establish the value, then verify __run_eval with
         # a None-returning expression leaves the value unchanged.
-        item = _item(self.sh, 'ev_none', eval='None')
-        item.set(99)                # direct set, bypasses eval path
-        item._Item__run_eval()     # eval returns None → __update not called
-        self.assertEqual(item._value, 99)   # still 99
+        item = _item(self.sh, "ev_none", eval="None")
+        item.set(99)  # direct set, bypasses eval path
+        item._Item__run_eval()  # eval returns None → __update not called
+        self.assertEqual(item._value, 99)  # still 99
 
     def test_exception_in_expression_no_crash(self):
-        item = _item(self.sh, 'ev_bad', eval='undefined_name_xyz')
-        item._Item__run_eval()   # must not raise
+        item = _item(self.sh, "ev_bad", eval="undefined_name_xyz")
+        item._Item__run_eval()  # must not raise
 
     def test_eval_caller_reflected_in_changed_by(self):
-        item = _item(self.sh, 'ev_caller', eval='7')
+        item = _item(self.sh, "ev_caller", eval="7")
         item._Item__run_eval()
-        self.assertIn('Eval', item.changed_by())
+        self.assertIn("Eval", item.changed_by())
 
 
 # ===========================================================================
 # on_change execution
 # ===========================================================================
 
-class TestOnChangeExecution(_Base):
 
+class TestOnChangeExecution(_Base):
     def setUp(self):
         super().setUp()
-        self.target = _item(self.sh, 'tgt')
-        self.source = _item(self.sh, 'src', on_change='tgt = value')
+        self.target = _item(self.sh, "tgt")
+        self.source = _item(self.sh, "src", on_change="tgt = value")
 
     def test_value_change_fires_on_change(self):
         self.source(42)
@@ -312,8 +314,8 @@ class TestOnChangeExecution(_Base):
 
     def test_same_value_does_not_fire_on_change(self):
         self.source(5)
-        self.target(0)   # reset target
-        self.source(5)   # same value — on_change must NOT fire
+        self.target(0)  # reset target
+        self.source(5)  # same value — on_change must NOT fire
         self.assertEqual(self.target._value, 0)
 
     def test_on_change_dest_gets_item_value(self):
@@ -322,27 +324,27 @@ class TestOnChangeExecution(_Base):
 
     def test_on_change_none_result_does_not_update_target(self):
         # on_change evaluates to None → target not touched
-        src2 = _item(self.sh, 'src2', on_change='tgt = None')
+        src2 = _item(self.sh, "src2", on_change="tgt = None")
         self.target(77)
         src2(1)
         self.assertEqual(self.target._value, 77)
 
     def test_on_change_missing_dest_item_no_crash(self):
         # Dest item path doesn't exist → error logged, no exception
-        src3 = _item(self.sh, 'src3', on_change='does.not.exist = value')
-        src3(1)   # must not raise
+        src3 = _item(self.sh, "src3", on_change="does.not.exist = value")
+        src3(1)  # must not raise
 
 
 # ===========================================================================
 # on_update execution
 # ===========================================================================
 
-class TestOnUpdateExecution(_Base):
 
+class TestOnUpdateExecution(_Base):
     def setUp(self):
         super().setUp()
-        self.target = _item(self.sh, 'upd_tgt')
-        self.source = _item(self.sh, 'upd_src', on_update='upd_tgt = value')
+        self.target = _item(self.sh, "upd_tgt")
+        self.source = _item(self.sh, "upd_src", on_update="upd_tgt = value")
 
     def test_value_change_fires_on_update(self):
         self.source(42)
@@ -350,8 +352,8 @@ class TestOnUpdateExecution(_Base):
 
     def test_same_value_also_fires_on_update(self):
         self.source(5)
-        self.target(0)   # reset
-        self.source(5)   # same value — on_update STILL fires
+        self.target(0)  # reset
+        self.source(5)  # same value — on_update STILL fires
         self.assertEqual(self.target._value, 5)
 
     def test_on_update_fires_twice_on_two_writes(self):
@@ -372,5 +374,5 @@ class TestOnUpdateExecution(_Base):
         self.assertEqual(self.target._value, 77)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

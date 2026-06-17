@@ -56,12 +56,12 @@ def jsonvars(item):
     :rtype:      dict
     """
     return {
-        "id":         item._path,
-        "name":       item._name,
-        "value":      item._value,
-        "type":       item._type,
+        "id": item._path,
+        "name": item._name,
+        "value": item._value,
+        "type": item._type,
         "attributes": item.conf,
-        "children":   item.get_children_path(),
+        "children": item.get_children_path(),
     }
 
 

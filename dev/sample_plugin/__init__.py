@@ -47,7 +47,7 @@ class SamplePlugin(SmartPlugin):
     are already available!
     """
 
-    PLUGIN_VERSION = '1.0.0'    # must match the version in plugin.yaml; use '1.0.0' for initial release
+    PLUGIN_VERSION = "1.0.0"  # must match the version in plugin.yaml; use '1.0.0' for initial release
     ALLOW_MULTIINSTANCE = False  # set to True if the plugin can run as multiple instances simultaneously
 
     def __init__(self, sh=None, **kwargs):
@@ -94,12 +94,12 @@ class SamplePlugin(SmartPlugin):
         """
         Run method for the plugin
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'run()'}))
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "run()"}))
 
         # connect to network / web / serial device
         # (enable the following lines if you want to open a connection
         #  don't forget to implement a connect (and disconnect) method.. :) )
-        # 
+        #
         # self.connect()
 
         # setup scheduler for device poll loop
@@ -114,7 +114,7 @@ class SamplePlugin(SmartPlugin):
         #
         # self.start_asyncio(self.plugin_coro())
 
-        self.alive = True     # if using asyncio, do not set self.alive here. Set it in the session coroutine
+        self.alive = True  # if using asyncio, do not set self.alive here. Set it in the session coroutine
 
         # let the plugin change the state of pause_item
         if self._pause_item:
@@ -130,8 +130,8 @@ class SamplePlugin(SmartPlugin):
         """
         Stop method for the plugin
         """
-        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'stop()'}))
-        self.alive = False     # if using asyncio, do not set self.alive here. Set it in the session coroutine
+        self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {"method": "stop()"}))
+        self.alive = False  # if using asyncio, do not set self.alive here. Set it in the session coroutine
 
         # let the plugin change the state of pause_item
         if self._pause_item:
@@ -169,12 +169,12 @@ class SamplePlugin(SmartPlugin):
         """
         # check for pause item
         if item.property.path == self._pause_item_path:
-            self.logger.debug(f'pause item {item.property.path} registered')
+            self.logger.debug(f"pause item {item.property.path} registered")
             self._pause_item = item
             self.add_item(item, updating=True)
             return self.update_item
 
-        if self.has_iattr(item.conf, 'foo_itemtag'):
+        if self.has_iattr(item.conf, "foo_itemtag"):
             self.logger.debug(f"parse item: {item}")
             # Register the item so update_item() is called when the item changes.
             # updating=True means the item is also tracked in get_trigger_items().
@@ -185,7 +185,7 @@ class SamplePlugin(SmartPlugin):
         """
         Default plugin parse_logic method
         """
-        if 'xxx' in logic.conf:
+        if "xxx" in logic.conf:
             # self.function(logic['name'])
             pass
 
@@ -209,7 +209,7 @@ class SamplePlugin(SmartPlugin):
         # check for pause item
         if item is self._pause_item:
             if caller != self.get_shortname():
-                self.logger.debug(f'pause item changed to {item()}')
+                self.logger.debug(f"pause item changed to {item()}")
                 if item() and self.alive:
                     self.stop()
                 elif not item() and not self.alive:

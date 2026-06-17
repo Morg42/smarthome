@@ -19,9 +19,9 @@ import os
 import sys
 
 # ensure shng root is on the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from tests.plugin_contract.base      import BasePluginContractTest
+from tests.plugin_contract.base import BasePluginContractTest
 from tests.plugin_contract.with_yaml import YamlPluginContractTest
 from dev.sample_plugin import SamplePlugin
 
@@ -36,11 +36,11 @@ class TestSamplePlugin(BasePluginContractTest, YamlPluginContractTest):
 
     PLUGIN_CLASS = SamplePlugin
     PLUGIN_INIT_PARAMS = {
-        'param3': 'required_test_value',
+        "param3": "required_test_value",
     }
     # foo_itemtag is the single item attribute declared in plugin.yaml.
     # Providing it here allows test_item_attr_sets_register_items to verify
     # that parse_item() actually registers a matching item.
     ITEM_ATTR_SETS = [
-        {'foo_itemtag': 'demo'},
+        {"foo_itemtag": "demo"},
     ]

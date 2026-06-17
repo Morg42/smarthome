@@ -769,8 +769,80 @@ Vor dem ersten Commit ins Plugin-Repository alle Punkte abhaken:
 ```bash
 tools/install-hooks.sh
 ```
-Danach werden ruff und pytest nach jedem Commit automatisch ausgeführt,
-und ein Push wird abgelehnt, wenn einer der Checks fehlschlägt.
+Das Skript fragt, ob die Hooks für **core**, **plugins** oder **beide** Repos eingerichtet werden sollen.
+Details zu den einzelnen Checks und zur Bypass-Option: → Abschnitt 12.
+
+---
+
+## 12. Code-Qualitäts-Gates: Hooks und CI
+
+SmartHomeNG setzt auf ein zweistufiges Sicherheitsnetz aus lokalen Git-Hooks und GitHub Actions CI.
+
+| Zeitpunkt      | Hook / CI              | Was passiert                                                        |
+|----------------|------------------------|---------------------------------------------------------------------|
+| `git commit`   | pre-commit             | Staged `.py`-Dateien werden mit `ruff format` formatiert (auto) und mit `ruff check` geprüft (Hard Gate) |
+| `git push`     | pre-push               | `pytest` läuft vollständig (Hard Gate)                              |
+| Pull Request   | GitHub Actions         | ruff + pytest in CI — Ergebnis ist verpflichtend                    |
+
+### Was die Hooks konkret tun
+
+**pre-commit**
+
+Nur **gestaged** Dateien (`.py`) werden verarbeitet. Ablauf:
+
+1. `ruff format` formatiert die Dateien automatisch und legt die Änderungen nach.
+   Kein manuelles `git add` nötig — das übernimmt der Hook.
+2. `ruff check` prüft dieselben Dateien. Gibt es Lint-Fehler, wird der Commit abgebrochen
+   und die betroffenen Stellen werden aufgelistet.
+
+**pre-push** (shng core)
+
+`pytest tests/` läuft vollständig. Ein fehlschlagender Test blockiert den Push.
+
+**pre-push** (plugins, opt-in)
+
+`pytest` läuft aus dem Plugin-Verzeichnis. Ein fehlschlagender Test blockiert den Push.
+
+### Hooks installieren
+
+```bash
+tools/install-hooks.sh
+```
+
+Das Skript fragt interaktiv:
+
+```
+Install hooks for:
+  c) shng core only
+  p) plugins only
+  b) both (default)
+```
+
+Für den **core** wird `git config core.hooksPath .githooks` gesetzt — die Hooks liegen
+versioniert im Repo unter `.githooks/`.
+
+Für **plugins** werden die Hooks direkt in `.git/hooks/` des Plugin-Repos geschrieben.
+Das Plugin-Repo versioniert keine Hooks; sie sind vollständig **opt-in**.
+
+### Bypass (nur im Notfall)
+
+```bash
+git commit --no-verify    # überspringt pre-commit (Format + Lint)
+git push --no-verify      # überspringt pre-push (Tests)
+```
+
+**Achtung:** Die CI-Checks in GitHub Actions laufen immer — auch wenn die Hooks lokal
+übersprungen wurden. Lint-Fehler oder fehlschlagende Tests blockieren den Merge des PR.
+
+### Plugins: opt-in und CI
+
+Im Plugins-Repo sind Hooks optional. Wer ohne Hooks arbeiten möchte, kann das tun —
+die CI-Prüfung ist trotzdem verbindlich. Wer die Hooks installieren möchte:
+
+```bash
+# Im shng-Verzeichnis:
+tools/install-hooks.sh
+```
 
 ---
 

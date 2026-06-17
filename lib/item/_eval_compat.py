@@ -64,7 +64,7 @@ the second line of the fallback warning today).
 
 import logging
 
-logger = logging.getLogger('lib.item')
+logger = logging.getLogger("lib.item")
 
 # ---------------------------------------------------------------------------
 # Sentinel
@@ -89,6 +89,7 @@ _COMPAT_NOTE = (
 # ---------------------------------------------------------------------------
 # _make_legacy_namespace
 # ---------------------------------------------------------------------------
+
 
 def _make_legacy_namespace(base_ns: dict) -> dict:
     """
@@ -117,21 +118,23 @@ def _make_legacy_namespace(base_ns: dict) -> dict:
     import dateutil.tz as tz
 
     extended = dict(base_ns)
-    extended.update({
-        # explicitly noted in item.py as intended for eval expressions
-        'time':      time,
-        'datetime':  datetime,
-        # other item.py globals — undocumented but previously reachable
-        'os':        os,
-        're':        re,
-        'sys':       sys,
-        'json':      json,
-        'copy':      copy,
-        'threading': threading,
-        'ast':       ast,
-        'inspect':   inspect,
-        'tz':        tz,
-    })
+    extended.update(
+        {
+            # explicitly noted in item.py as intended for eval expressions
+            "time": time,
+            "datetime": datetime,
+            # other item.py globals — undocumented but previously reachable
+            "os": os,
+            "re": re,
+            "sys": sys,
+            "json": json,
+            "copy": copy,
+            "threading": threading,
+            "ast": ast,
+            "inspect": inspect,
+            "tz": tz,
+        }
+    )
     return extended
 
 
@@ -139,11 +142,8 @@ def _make_legacy_namespace(base_ns: dict) -> dict:
 # _eval_with_legacy_fallback
 # ---------------------------------------------------------------------------
 
-def _eval_with_legacy_fallback(expr: str,
-                                primary_ns: dict,
-                                item,
-                                context: str,
-                                original_exc: Exception):
+
+def _eval_with_legacy_fallback(expr: str, primary_ns: dict, item, context: str, original_exc: Exception):
     """
     .. deprecated::
         Remove this function, :func:`_make_legacy_namespace`, and all call
@@ -183,7 +183,7 @@ def _eval_with_legacy_fallback(expr: str,
 
     # Legacy eval succeeded — log the deprecation notice and return.
     if isinstance(original_exc, NameError):
-        missing = (str(original_exc).split("'")[1:2] or ['?'])[0]
+        missing = (str(original_exc).split("'")[1:2] or ["?"])[0]
         logger.warning(
             f"Item '{item._path}': {context}: "
             f"name '{missing}' is not in the standard eval environment "

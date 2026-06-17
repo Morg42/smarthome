@@ -31,9 +31,10 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import tests.common as common
+
 common.register_shng_log_levels()
 
 from lib.item._stackinfo import (
@@ -45,6 +46,7 @@ from lib.item._stackinfo import (
 
 class FakeItem:
     """Minimal stand-in for Item — stackinfo functions only need it for API symmetry."""
+
     pass
 
 
@@ -54,7 +56,6 @@ def _frame():
 
 
 class TestGetClassFromFrame(unittest.TestCase):
-
     def setUp(self):
         self.item = FakeItem()
 
@@ -66,30 +67,30 @@ class TestGetClassFromFrame(unittest.TestCase):
     def test_starts_with_args(self):
         fr = _frame()
         result = get_class_from_frame(self.item, fr)
-        self.assertTrue(result.startswith('args='))
+        self.assertTrue(result.startswith("args="))
 
     def test_contains_value_dict(self):
         fr = _frame()
         result = get_class_from_frame(self.item, fr)
-        self.assertIn('  - value_dict=', result)
+        self.assertIn("  - value_dict=", result)
 
     def test_reflects_local_variable(self):
-        sentinel = 'unique_sentinel_xq7'  # noqa: F841  (used via frame locals)
+        sentinel = "unique_sentinel_xq7"  # noqa: F841  (used via frame locals)
         fr = inspect.currentframe()
         result = get_class_from_frame(self.item, fr)
-        self.assertIn('sentinel', result)
+        self.assertIn("sentinel", result)
 
     def test_reflects_arg_names(self):
         # When called from a function with named args, they appear in 'args='
         def helper(alpha, beta):
             return get_class_from_frame(FakeItem(), inspect.currentframe())
-        result = helper('a', 'b')
-        self.assertIn('alpha', result)
-        self.assertIn('beta', result)
+
+        result = helper("a", "b")
+        self.assertIn("alpha", result)
+        self.assertIn("beta", result)
 
 
 class TestGetCallingItemFromFrame(unittest.TestCase):
-
     def setUp(self):
         self.item = FakeItem()
 
@@ -102,9 +103,10 @@ class TestGetCallingItemFromFrame(unittest.TestCase):
         # Capture a frame from a plain function with no 'self' local.
         def selfless():
             return inspect.currentframe()
+
         fr = selfless()
         result = get_calling_item_from_frame(self.item, fr)
-        self.assertEqual(result, 'None')
+        self.assertEqual(result, "None")
 
     def test_returns_self_string_when_self_present(self):
         # Capture frame from inside a method where 'self' exists
@@ -112,15 +114,15 @@ class TestGetCallingItemFromFrame(unittest.TestCase):
 
         class Inner:
             def __str__(self):
-                return 'InnerObject'
+                return "InnerObject"
 
             def capture(self):
-                captured['fr'] = inspect.currentframe()
+                captured["fr"] = inspect.currentframe()
 
         obj = Inner()
         obj.capture()
-        result = get_calling_item_from_frame(FakeItem(), captured['fr'])
-        self.assertEqual(result, 'InnerObject')
+        result = get_calling_item_from_frame(FakeItem(), captured["fr"])
+        self.assertEqual(result, "InnerObject")
 
     def test_different_objects_give_different_strings(self):
         captured_a = {}
@@ -129,21 +131,22 @@ class TestGetCallingItemFromFrame(unittest.TestCase):
         class Obj:
             def __init__(self, name):
                 self._name = name
+
             def __str__(self):
                 return self._name
+
             def cap(self, store):
-                store['fr'] = inspect.currentframe()
+                store["fr"] = inspect.currentframe()
 
-        Obj('Alpha').cap(captured_a)
-        Obj('Beta').cap(captured_b)
+        Obj("Alpha").cap(captured_a)
+        Obj("Beta").cap(captured_b)
 
-        result_a = get_calling_item_from_frame(FakeItem(), captured_a['fr'])
-        result_b = get_calling_item_from_frame(FakeItem(), captured_b['fr'])
+        result_a = get_calling_item_from_frame(FakeItem(), captured_a["fr"])
+        result_b = get_calling_item_from_frame(FakeItem(), captured_b["fr"])
         self.assertNotEqual(result_a, result_b)
 
 
 class TestGetStackInfo(unittest.TestCase):
-
     def setUp(self):
         self.item = FakeItem()
 
@@ -159,7 +162,7 @@ class TestGetStackInfo(unittest.TestCase):
         # When called from a normal method (not __run_eval) the result
         # should be 'functionname()'.
         result = get_stack_info(self.item)
-        self.assertTrue(result.endswith('()'))
+        self.assertTrue(result.endswith("()"))
 
     def test_does_not_raise(self):
         # Must never raise regardless of stack depth.
@@ -175,14 +178,16 @@ class TestGetStackInfo(unittest.TestCase):
         def level_a():
             def level_b():
                 def level_c():
-                    results['info'] = get_stack_info(FakeItem())
+                    results["info"] = get_stack_info(FakeItem())
+
                 level_c()
+
             level_b()
 
         level_a()
         # We don't assert the exact name (runner-dependent depth), just that
         # the result is a non-empty string ending with '()'.
-        self.assertTrue(results['info'].endswith('()'))
+        self.assertTrue(results["info"].endswith("()"))
 
     def test_item_unused_no_error(self):
         # item parameter is only needed when the caller is __run_eval;
@@ -194,5 +199,5 @@ class TestGetStackInfo(unittest.TestCase):
             self.fail(f"get_stack_info(None) raised: {e}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -1,29 +1,19 @@
 #!/usr/bin/env bash
-# install-hooks.sh — install git quality-gate hooks for both the SmartHomeNG
-# core repository and the plugins repository in a single call.
+# install-hooks.sh — install git quality-gate hooks for SmartHomeNG repos.
 #
-# Usage:
-#   tools/install-hooks.sh [PLUGINS_DIR]
+# Usage (from the shng root or from tools/ directly):
+#   tools/install-hooks.sh
 #
-# PLUGINS_DIR defaults to ./plugins (relative to the shng root).
-# Override if your plugins checkout lives elsewhere:
-#   tools/install-hooks.sh /path/to/smarthomeng-plugins
+# The script asks whether to install hooks for core, plugins, or both.
+# To update existing hooks after changes, simply re-run the script.
 #
-# What the script does:
-#   shng repo  — activates the committed .githooks/ directory via
-#                  git config core.hooksPath .githooks
-#   plugins repo — writes post-commit and pre-push hooks directly into
-#                  PLUGINS_DIR/.git/hooks/ and makes them executable.
-#                  Both hooks cd into the shng root before running ruff/pytest
-#                  so that import paths and pyproject.toml are always found.
-#
-# To update plugin hooks after changes to this script, simply re-run it.
+# Hooks installed:
+#   pre-commit  format staged .py files with ruff format (auto-applied),
+#               then hard-gate on ruff check
+#   pre-push    hard-gate on pytest (shng: tests/ only; plugins: . from plugins root)
 
 set -euo pipefail
 
-# ---------------------------------------------------------------------------
-# Locate shng root (script may be called from any working directory)
-# ---------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SHNG_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -32,139 +22,181 @@ if [ ! -f "$SHNG_DIR/tox.ini" ] || [ ! -d "$SHNG_DIR/lib/item" ]; then
     exit 1
 fi
 
-# ---------------------------------------------------------------------------
-# Locate plugins repo
-# ---------------------------------------------------------------------------
-PLUGINS_DIR="${1:-$SHNG_DIR/plugins}"
-PLUGINS_DIR="$(cd "$PLUGINS_DIR" && pwd)"   # normalise to absolute path
-
-if [ ! -d "$PLUGINS_DIR/.git" ]; then
-    echo "ERROR: $PLUGINS_DIR is not a git repository (.git directory not found)."
-    echo "Pass the correct path as the first argument: tools/install-hooks.sh /path/to/plugins"
-    exit 1
-fi
-
-# ---------------------------------------------------------------------------
-# ruff / pytest discovery helpers (baked into generated hooks at install time)
-# ---------------------------------------------------------------------------
 RUFF_BIN="${SHNG_DIR}/venvs/shng/bin/ruff"
 PYTEST_BIN="${SHNG_DIR}/venvs/shng/bin/pytest"
 
 echo ""
 echo "SmartHomeNG git hook installer"
-echo "  shng root   : $SHNG_DIR"
-echo "  plugins root: $PLUGINS_DIR"
-echo "  ruff        : $([ -x "$RUFF_BIN" ] && echo "$RUFF_BIN" || echo "ruff (from PATH)")"
-echo "  pytest      : $([ -x "$PYTEST_BIN" ] && echo "$PYTEST_BIN" || echo "pytest (from PATH)")"
+echo "  shng root: $SHNG_DIR"
+echo "  ruff     : $([ -x "$RUFF_BIN" ] && echo "$RUFF_BIN" || echo "ruff (from PATH)")"
+echo "  pytest   : $([ -x "$PYTEST_BIN" ] && echo "$PYTEST_BIN" || echo "pytest (from PATH)")"
 echo ""
 
 # ---------------------------------------------------------------------------
-# 1. shng repo — activate committed .githooks/
+# Ask which repos to configure
 # ---------------------------------------------------------------------------
-echo "=== shng: activating .githooks/ ==="
+echo "Install hooks for:"
+echo "  c) shng core only"
+echo "  p) plugins only"
+echo "  b) both (default)"
+echo ""
+read -rp "Choice [b]: " choice
+choice="${choice:-b}"
+echo ""
 
-SHNG_HOOKS_DIR="$SHNG_DIR/.githooks"
-if [ ! -d "$SHNG_HOOKS_DIR" ]; then
-    echo "  ERROR: $SHNG_HOOKS_DIR not found — has the repo been cloned completely?"
-    exit 1
+INSTALL_CORE=false
+INSTALL_PLUGINS=false
+case "$choice" in
+    c|C) INSTALL_CORE=true ;;
+    p|P) INSTALL_PLUGINS=true ;;
+    b|B|"") INSTALL_CORE=true; INSTALL_PLUGINS=true ;;
+    *)
+        echo "Unknown choice '$choice' — use c, p, or b."
+        exit 1
+        ;;
+esac
+
+# ---------------------------------------------------------------------------
+# 1. shng core — activate committed .githooks/
+# ---------------------------------------------------------------------------
+if $INSTALL_CORE; then
+    echo "=== shng core: activating .githooks/ ==="
+
+    SHNG_HOOKS_DIR="$SHNG_DIR/.githooks"
+    if [ ! -d "$SHNG_HOOKS_DIR" ]; then
+        echo "  ERROR: $SHNG_HOOKS_DIR not found — is the repo complete?"
+        exit 1
+    fi
+
+    chmod +x "$SHNG_HOOKS_DIR/pre-commit" "$SHNG_HOOKS_DIR/pre-push"
+    git -C "$SHNG_DIR" config core.hooksPath .githooks
+    echo "  git config core.hooksPath .githooks  → done"
+    echo "  hooks: pre-commit (format + lint gate), pre-push (pytest gate)"
+
+    # Remove legacy post-commit if still present
+    if [ -f "$SHNG_HOOKS_DIR/post-commit" ]; then
+        rm "$SHNG_HOOKS_DIR/post-commit"
+        echo "  removed: .githooks/post-commit (superseded by pre-commit)"
+    fi
+    echo ""
 fi
-
-chmod +x "$SHNG_HOOKS_DIR/post-commit" "$SHNG_HOOKS_DIR/pre-push"
-git -C "$SHNG_DIR" config core.hooksPath .githooks
-echo "  git config core.hooksPath .githooks  → done"
-echo "  hooks: post-commit (informational), pre-push (blocking)"
-echo ""
 
 # ---------------------------------------------------------------------------
 # 2. plugins repo — write hooks into .git/hooks/
 # ---------------------------------------------------------------------------
-echo "=== plugins: writing hooks to $PLUGINS_DIR/.git/hooks/ ==="
+if $INSTALL_PLUGINS; then
+    DEFAULT_PLUGINS="${SHNG_DIR}/plugins"
+    read -rp "Plugins repository [$DEFAULT_PLUGINS]: " PLUGINS_DIR_INPUT
+    PLUGINS_DIR="${PLUGINS_DIR_INPUT:-$DEFAULT_PLUGINS}"
 
-PLUGIN_HOOKS_DIR="$PLUGINS_DIR/.git/hooks"
+    # Normalise to absolute path
+    if [[ "$PLUGINS_DIR" != /* ]]; then
+        PLUGINS_DIR="$(cd "$PLUGINS_DIR" 2>/dev/null && pwd)" || {
+            echo "ERROR: Cannot resolve path '$PLUGINS_DIR'."
+            exit 1
+        }
+    fi
 
-# -- post-commit (informational) -------------------------------------------
-cat > "$PLUGIN_HOOKS_DIR/post-commit" << HOOK
+    if [ ! -d "$PLUGINS_DIR/.git" ]; then
+        echo "ERROR: $PLUGINS_DIR is not a git repository (.git not found)."
+        exit 1
+    fi
+
+    echo ""
+    echo "=== plugins: writing hooks to $PLUGINS_DIR/.git/hooks/ ==="
+
+    HOOKS_DIR="$PLUGINS_DIR/.git/hooks"
+
+    # -- pre-commit (format + lint gate) -----------------------------------
+    cat > "$HOOKS_DIR/pre-commit" << HOOK
 #!/usr/bin/env bash
-# post-commit — informational ruff + pytest run after every commit.
-# Never exits non-zero: the commit already landed; pre-push is the hard gate.
-# Generated by tools/install-hooks.sh — re-run that script to update.
+# pre-commit — format and lint staged Python files.
+# Generated by tools/install-hooks.sh in the shng repo — re-run to update.
 
-SHNG_DIR="${SHNG_DIR}"
-cd "\$SHNG_DIR" || exit 0
+PLUGINS_DIR="\$(git rev-parse --show-toplevel)"
+cd "\$PLUGINS_DIR" || exit 1
 
 RUFF="${RUFF_BIN}"
 [ -x "\$RUFF" ] || RUFF="ruff"
-PYTEST="${PYTEST_BIN}"
-[ -x "\$PYTEST" ] || PYTEST="pytest"
 
-echo ""
-echo "── post-commit (plugins) ───────────────────────────────────────"
+STAGED=\$(git diff --cached --name-only --diff-filter=ACM | grep '\.py\$' || true)
 
-if "\$RUFF" check plugins/ --quiet 2>&1; then
-    echo "  ruff  : OK"
-else
-    echo "  ruff  : issues found — run 'ruff check plugins/' from shng root to review"
+if [ -z "\$STAGED" ]; then
+    exit 0
 fi
 
-"\$PYTEST" --tb=no -q 2>&1 | tail -4
+echo "\$STAGED" | xargs "\$RUFF" format --quiet
+echo "\$STAGED" | xargs git add
 
-echo "────────────────────────────────────────────────────────────────"
-echo ""
-exit 0
+if ! echo "\$STAGED" | xargs "\$RUFF" check; then
+    echo ""
+    echo "==> COMMIT REJECTED: ruff found lint errors in staged files."
+    echo ""
+    echo "    Fix the errors above, then:  git commit"
+    echo "    Bypass (use sparingly):      git commit --no-verify"
+    echo ""
+    echo "    Note: ruff is a required CI check — errors will block your PR."
+    exit 1
+fi
 HOOK
 
-# -- pre-push (blocking) ---------------------------------------------------
-cat > "$PLUGIN_HOOKS_DIR/pre-push" << HOOK
+    # -- pre-push (pytest gate) --------------------------------------------
+    cat > "$HOOKS_DIR/pre-push" << HOOK
 #!/usr/bin/env bash
-# pre-push — ruff + pytest must both pass before a push is allowed.
-# Generated by tools/install-hooks.sh — re-run that script to update.
+# pre-push — run plugin tests before pushing.
+# Generated by tools/install-hooks.sh in the shng repo — re-run to update.
 
-SHNG_DIR="${SHNG_DIR}"
-cd "\$SHNG_DIR" || exit 1
+PLUGINS_DIR="\$(git rev-parse --show-toplevel)"
+cd "\$PLUGINS_DIR" || exit 1
 
-RUFF="${RUFF_BIN}"
-[ -x "\$RUFF" ] || RUFF="ruff"
 PYTEST="${PYTEST_BIN}"
 [ -x "\$PYTEST" ] || PYTEST="pytest"
 
 echo ""
 echo "── pre-push gate (plugins) ─────────────────────────────────────"
-
-if ! "\$RUFF" check plugins/; then
-    echo ""
-    echo "  PUSH REJECTED: fix ruff errors first ('ruff check plugins/' from shng root)"
-    echo "────────────────────────────────────────────────────────────────"
-    echo ""
-    exit 1
-fi
-echo "  ruff  : OK"
+echo "  running tests ..."
+echo ""
 
 if ! "\$PYTEST" --tb=short -q; then
     echo ""
-    echo "  PUSH REJECTED: fix failing tests first"
+    echo "==> PUSH REJECTED: tests failed."
+    echo ""
+    echo "    Fix failing tests, then:  git push"
+    echo "    Bypass (use sparingly):   git push --no-verify"
+    echo ""
+    echo "    Note: pytest is a required CI check — failures will block your PR."
     echo "────────────────────────────────────────────────────────────────"
     echo ""
     exit 1
 fi
-echo "  pytest: OK"
 
+echo "  pytest: OK"
 echo "────────────────────────────────────────────────────────────────"
 echo ""
 HOOK
 
-chmod +x "$PLUGIN_HOOKS_DIR/post-commit" "$PLUGIN_HOOKS_DIR/pre-push"
-echo "  post-commit (informational) → written"
-echo "  pre-push    (blocking)      → written"
-echo ""
+    chmod +x "$HOOKS_DIR/pre-commit" "$HOOKS_DIR/pre-push"
+
+    # Remove legacy post-commit if present
+    if [ -f "$HOOKS_DIR/post-commit" ]; then
+        rm "$HOOKS_DIR/post-commit"
+        echo "  removed: post-commit (superseded by pre-commit)"
+    fi
+
+    echo "  pre-commit (format + lint gate) → written"
+    echo "  pre-push   (pytest gate)        → written"
+    echo ""
+fi
 
 # ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 echo "Installation complete."
 echo ""
-echo "Both hooks cd into the shng root before running ruff/pytest, so"
-echo "import paths and pyproject.toml are always resolved correctly."
-echo ""
-echo "To skip the pre-push gate for a specific push (use sparingly):"
+echo "To bypass a hook for a specific commit or push (use sparingly):"
+echo "  git commit --no-verify"
 echo "  git push --no-verify"
+echo ""
+echo "Note: CI checks in GitHub Actions are mandatory — bypassing hooks"
+echo "locally does not bypass the CI gate on pull requests."
 echo ""

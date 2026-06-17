@@ -47,31 +47,37 @@ def import_user_module(m):
 
     :return: True, if import was successful
     """
-    modulename = _uf_subdir + '.' + m
-#
-    print(f'import uf {m}')
+    modulename = _uf_subdir + "." + m
+    #
+    print(f"import uf {m}")
     import importlib
+
     try:
         exec(f"globals()['{m}']=importlib.import_module('{modulename}')")
     except Exception as e:
-        _logger.error(translate("Error importing userfunctions from '{module}': {error}", {'module': m, 'error': e}))
+        _logger.error(translate("Error importing userfunctions from '{module}': {error}", {"module": m, "error": e}))
         return False
     else:
         global _uf_version
-        _uf_version = '?.?.?'
+        _uf_version = "?.?.?"
         try:
-            exec( f"globals()['_uf_version'] = {m}._VERSION" )
+            exec(f"globals()['_uf_version'] = {m}._VERSION")
         except AttributeError:
-            exec( f"{m}._VERSION = _uf_version" )
+            exec(f"{m}._VERSION = _uf_version")
 
         global _uf_description
-        _uf_description = '?'
+        _uf_description = "?"
         try:
-            exec( f"globals()['_uf_description'] = {m}._DESCRIPTION" )
+            exec(f"globals()['_uf_description'] = {m}._DESCRIPTION")
         except AttributeError:
-            exec( f"{m}._DESCRIPTION = _uf_description" )
+            exec(f"{m}._DESCRIPTION = _uf_description")
 
-        _logger.notice(translate("Imported userfunctions from '{module}' v{version} - {description}", {'module': m, 'version':_uf_version, 'description': _uf_description}))
+        _logger.notice(
+            translate(
+                "Imported userfunctions from '{module}' v{version} - {description}",
+                {"module": m, "version": _uf_version, "description": _uf_description},
+            )
+        )
 
         return True
 
@@ -97,8 +103,8 @@ def init_lib(shng_base_dir=None, sh=None):
     if _sh:
         _func_dir = _sh.get_config_dir(DIR_UF)
         if _sh._config_etc:
-            _uf_subdir = 'etc.' + _uf_subdir
-            print('added etc to uf_subdir')
+            _uf_subdir = "etc." + _uf_subdir
+            print("added etc to uf_subdir")
     else:
         _func_dir = os.path.join(base_dir, _uf_subdir)
 
@@ -106,7 +112,7 @@ def init_lib(shng_base_dir=None, sh=None):
     if os.path.isdir(_func_dir):
         wrk = os.listdir(_func_dir)
         for f in wrk:
-            if f.endswith('.py'):
+            if f.endswith(".py"):
                 user_modules.append(f.split(".")[0])
 
     _user_modules = sorted(user_modules)
@@ -128,35 +134,45 @@ def reload(userlib):
 
     if userlib in _user_modules:
         try:
-            exec( f"importlib.reload({userlib})")
+            exec(f"importlib.reload({userlib})")
         except Exception as e:
             if str(e) == f"name '{userlib}' is not defined":
-                _logger.warning(translate("Error reloading userfunctions Modul '{module}': Module is not loaded, trying to newly import userfunctions '{module}' instead", {'module': userlib}))
+                _logger.warning(
+                    translate(
+                        "Error reloading userfunctions Modul '{module}': Module is not loaded, trying to newly import userfunctions '{module}' instead",
+                        {"module": userlib},
+                    )
+                )
                 if import_user_module(userlib):
                     return True
                 else:
                     return False
             else:
-                _logger.error(translate("Error reloading userfunctions '{module}': {error} - old version of '{module}' is still active", {'module': userlib, 'error': e}))
+                _logger.error(
+                    translate(
+                        "Error reloading userfunctions '{module}': {error} - old version of '{module}' is still active",
+                        {"module": userlib, "error": e},
+                    )
+                )
                 return False
 
         else:
-            _logger.notice(translate("Reloaded userfunctions '{module}'", {'module': userlib}))
+            _logger.notice(translate("Reloaded userfunctions '{module}'", {"module": userlib}))
             return True
     else:
         if import_user_module(userlib):
             _user_modules.append(userlib)
-            #_logger.notice(translate("Reload: Loaded new userfunctions '{module}'", {'module': userlib}))
+            # _logger.notice(translate("Reload: Loaded new userfunctions '{module}'", {'module': userlib}))
             return True
         else:
-            _logger.error(translate("Reload: Userfunctions '{module}' do not exist", {'module': userlib}))
+            _logger.error(translate("Reload: Userfunctions '{module}' do not exist", {"module": userlib}))
             return False
 
 
 def reload_all():
 
     if _user_modules == []:
-        _logger.warning(translate('No userfunctions are loaded, nothing to reload'))
+        _logger.warning(translate("No userfunctions are loaded, nothing to reload"))
         return False
     else:
         result = True
@@ -169,5 +185,4 @@ def reload_all():
 def list_userlib_files():
 
     for lib in _user_modules:
-        _logger.warning(f'uf.{lib}')
-
+        _logger.warning(f"uf.{lib}")

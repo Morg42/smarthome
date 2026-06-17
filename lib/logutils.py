@@ -28,6 +28,7 @@ import datetime
 This module contains utils to be used in logging
 """
 
+
 class Filter(logging.Filter):
     """
     This class builds a filter to be used in logging.yaml to configure logging
@@ -40,7 +41,8 @@ class Filter(logging.Filter):
     Returning True tells logging to suppress this logentry,
     whereas False will include the record into further processing and eventual output
     """
-    def __init__(self, name='', module='', msg='', timestamp='', invert=False):
+
+    def __init__(self, name="", module="", msg="", timestamp="", invert=False):
         self.logger = logging.getLogger(__name__)
         self.name = name if isinstance(name, list) else [] if len(name) == 0 else [name]
         self.module = module if isinstance(module, list) else [] if len(module) == 0 else [module]
@@ -84,14 +86,14 @@ class Filter(logging.Filter):
         hits = hits + 1 if len(self.msg) == 0 else hits
         hits = hits + 1 if len(self.timestamp) == 0 else hits
         if len(self.timestamp) > 0:
-            compare = datetime.datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S')
+            compare = datetime.datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
             for t in self.timestamp:
                 if t.match(compare):
                     hits += 1
         if isinstance(record.msg, dict):
-            record.msg = ['{}: {}'.format(i, record.msg[i]) for i in record.msg]
+            record.msg = ["{}: {}".format(i, record.msg[i]) for i in record.msg]
         if isinstance(record.msg, list):
-            record.msg = ', '.join(record.msg)
+            record.msg = ", ".join(record.msg)
         record.msg = str(record.msg)
         for n in self.name:
             if n.match(record.name):
@@ -102,8 +104,8 @@ class Filter(logging.Filter):
         for msg in self.msg:
             if msg.match(record.msg):
                 hits += 1
-        #invert is False: hide record if all of the given parameters match
-        #invert is True: show record if all of the given parameters match
+        # invert is False: hide record if all of the given parameters match
+        # invert is True: show record if all of the given parameters match
         return True if hits < total and not self.invert else True if hits >= total and self.invert else False
 
 
@@ -123,6 +125,7 @@ class DuplicateFilter(object):
     Returning True tells logging to suppress this logentry,
     whereas False will include the record into further processing and eventual output
     """
+
     def __init__(self):
         self.last_log = None
 

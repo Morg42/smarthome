@@ -89,11 +89,11 @@ def get_stack_info(item):
     :return:     Short caller description string.
     :rtype:      str
     """
-    msg = ''
+    msg = ""
     for level in range(4, 5):
         try:
             frame_info = inspect.stack()[level]
-            if frame_info.function == '__run_eval':
+            if frame_info.function == "__run_eval":
                 msg += f"Item '{get_calling_item_from_frame(item, frame_info.frame)}'"
             else:
                 msg += f"{frame_info.function}()"

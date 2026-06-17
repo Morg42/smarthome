@@ -38,9 +38,10 @@ import sys
 import time
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import tests.common as common
+
 common.register_shng_log_levels()
 
 import lib.item.item
@@ -65,8 +66,8 @@ def _make_sh():
     return MockSmartHome()
 
 
-def _item(sh, path='test', itype='num', **conf):
-    c = {'type': itype}
+def _item(sh, path="test", itype="num", **conf):
+    c = {"type": itype}
     c.update(conf)
     i = lib.item.item.Item(sh, sh, path, c)
     sh.items.add_item(path, i)
@@ -76,6 +77,7 @@ def _item(sh, path='test', itype='num', **conf):
 class _Base(unittest.TestCase):
     def setUp(self):
         self.sh = _make_sh()
+
     def tearDown(self):
         _reset()
 
@@ -83,6 +85,7 @@ class _Base(unittest.TestCase):
 # ===========================================================================
 # The core invariant: update-without-change
 # ===========================================================================
+
 
 class TestUpdateWithoutChange(_Base):
     """
@@ -151,8 +154,8 @@ class TestUpdateWithoutChange(_Base):
 # enforce_change — same value treated as change
 # ===========================================================================
 
-class TestEnforceChange(_Base):
 
+class TestEnforceChange(_Base):
     def test_enforce_change_advances_last_change_on_same_value(self):
         item = _item(self.sh)
         item(5)
@@ -176,15 +179,15 @@ class TestEnforceChange(_Base):
 # enforce_updates — plugin callbacks fire on same-value write
 # ===========================================================================
 
-class TestEnforceUpdates(_Base):
 
+class TestEnforceUpdates(_Base):
     def test_enforce_updates_triggers_method_on_same_value(self):
         item = _item(self.sh)
         item(5)
         item.property.enforce_updates = True
         calls = []
         item.add_method_trigger(lambda i, c, s, d: calls.append(1))
-        item(5)   # same value — without enforce_updates this would not fire
+        item(5)  # same value — without enforce_updates this would not fire
         self.assertEqual(len(calls), 1)
 
     def test_without_enforce_updates_no_callback_on_same_value(self):
@@ -192,7 +195,7 @@ class TestEnforceUpdates(_Base):
         item(5)
         calls = []
         item.add_method_trigger(lambda i, c, s, d: calls.append(1))
-        item(5)   # same value — should not fire
+        item(5)  # same value — should not fire
         self.assertEqual(len(calls), 0)
 
 
@@ -200,53 +203,53 @@ class TestEnforceUpdates(_Base):
 # Caller / source attribution
 # ===========================================================================
 
-class TestCallerAttribution(_Base):
 
+class TestCallerAttribution(_Base):
     def test_changed_by_contains_caller(self):
         item = _item(self.sh)
-        item(1, caller='Scheduler')
-        self.assertIn('Scheduler', item.changed_by())
+        item(1, caller="Scheduler")
+        self.assertIn("Scheduler", item.changed_by())
 
     def test_changed_by_contains_source(self):
         item = _item(self.sh)
-        item(1, caller='Plugin', source='my_source')
-        self.assertIn('my_source', item.changed_by())
+        item(1, caller="Plugin", source="my_source")
+        self.assertIn("my_source", item.changed_by())
 
     def test_updated_by_tracks_caller(self):
         item = _item(self.sh)
-        item(1, caller='TestCaller')
-        self.assertIn('TestCaller', item.updated_by())
+        item(1, caller="TestCaller")
+        self.assertIn("TestCaller", item.updated_by())
 
     def test_updated_by_advances_on_same_value(self):
         item = _item(self.sh)
-        item(5, caller='First')
-        item(5, caller='Second')
-        self.assertIn('Second', item.updated_by())
+        item(5, caller="First")
+        item(5, caller="Second")
+        self.assertIn("Second", item.updated_by())
 
     def test_triggered_by_tracks_caller(self):
         item = _item(self.sh)
-        item(1, caller='TriggerCaller')
-        self.assertIn('TriggerCaller', item.triggered_by())
+        item(1, caller="TriggerCaller")
+        self.assertIn("TriggerCaller", item.triggered_by())
 
     def test_prev_change_by_holds_previous_caller(self):
         item = _item(self.sh)
-        item(1, caller='First')
-        item(2, caller='Second')
-        self.assertIn('First', item.property.prev_change_by)
+        item(1, caller="First")
+        item(2, caller="Second")
+        self.assertIn("First", item.property.prev_change_by)
 
     def test_prev_update_by_holds_previous_update_caller(self):
         item = _item(self.sh)
-        item(5, caller='First')
-        item(5, caller='Second')   # same-value update
-        self.assertIn('First', item.property.prev_update_by)
+        item(5, caller="First")
+        item(5, caller="Second")  # same-value update
+        self.assertIn("First", item.property.prev_update_by)
 
 
 # ===========================================================================
 # Public history methods (backward-compat API on Item)
 # ===========================================================================
 
-class TestPublicHistoryMethods(_Base):
 
+class TestPublicHistoryMethods(_Base):
     def test_last_change_returns_datetime(self):
         item = _item(self.sh)
         self.assertIsInstance(item.last_change(), datetime.datetime)
@@ -303,6 +306,7 @@ class TestPublicHistoryMethods(_Base):
 # last_value / prev_value sequencing
 # ===========================================================================
 
+
 class TestValueSequencing(_Base):
     """
     Three-step sequence distinguishes __last_value from __prev_value.
@@ -353,5 +357,5 @@ class TestValueSequencing(_Base):
         self.assertNotEqual(item.property.last_value, 999)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

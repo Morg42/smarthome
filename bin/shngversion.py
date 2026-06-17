@@ -25,7 +25,7 @@ import sys
 import subprocess
 import datetime
 
-sys.path.append('..')
+sys.path.append("..")
 
 import plugins.__init__ as plugin_vers
 from lib.utils import Version
@@ -115,31 +115,44 @@ from lib.utils import Version
 
 # Update auf 1.12.0    wg. Release
 # Update auf 1.12.0.1  wg. Kennzeichnung des Repo Stands als "nach dem v1.11.0 Release"
-shNG_version = '1.12.0.1'
-shNG_branch = 'develop'
-shNG_releasedate = '09. Mai 2026'   # Muss beim Release für den master branch auf das Release Datum gesetzt werden
+shNG_version = "1.12.0.1"
+shNG_branch = "develop"
+shNG_releasedate = "09. Mai 2026"  # Muss beim Release für den master branch auf das Release Datum gesetzt werden
 
 # ---------------------------------------------------------------------------------
 FileBASE = None
 
-def _get_git_data(sub='', printout=False):
+
+def _get_git_data(sub="", printout=False):
     global FileBASE
     if FileBASE is None:
         FileBASE = os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2])
     BASE = FileBASE
-    if sub != '':
-        BASE = os.path.join(FileBASE,sub)
-    commit = '0'
-    branch = 'manual'
-    describe = ''
-    commit_short = ''
+    if sub != "":
+        BASE = os.path.join(FileBASE, sub)
+    commit = "0"
+    branch = "manual"
+    describe = ""
+    commit_short = ""
     if BASE is not None:
         try:
             os.chdir(BASE)
-            branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=subprocess.STDOUT).decode().strip('\n')
-            commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], stderr=subprocess.STDOUT).decode().strip('\n')
-            commit_short = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], stderr=subprocess.STDOUT).decode().strip('\n')
-            describe = subprocess.check_output(['git', 'describe', '--all'], stderr=subprocess.STDOUT).decode().strip('\n')
+            branch = (
+                subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], stderr=subprocess.STDOUT)
+                .decode()
+                .strip("\n")
+            )
+            commit = (
+                subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.STDOUT).decode().strip("\n")
+            )
+            commit_short = (
+                subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.STDOUT)
+                .decode()
+                .strip("\n")
+            )
+            describe = (
+                subprocess.check_output(["git", "describe", "--all"], stderr=subprocess.STDOUT).decode().strip("\n")
+            )
         except Exception:
             pass
     if printout:
@@ -152,37 +165,44 @@ def _get_git_data(sub='', printout=False):
         print()
     return commit, commit_short, branch, describe
 
+
 # ---------------------------------------------------------------------------------
 
+
 def get_shng_main_version():
-    return Version.format( shNG_version )
+    return Version.format(shNG_version)
+
 
 def get_shng_plugins_version():
-    plgversion = get_plugins_version().split('-')[0]
-    return Version.format( plgversion )
+    plgversion = get_plugins_version().split("-")[0]
+    return Version.format(plgversion)
+
 
 def get_shng_version():
     commit, commit_short, branch, describe = _get_git_data()
     VERSION = get_shng_main_version()
-    if branch == 'master':
-        VERSION += '-'+branch+' ('+commit_short+')'
-    elif branch == 'manual':
-        VERSION += '-'+shNG_branch+' ('+branch+')'
+    if branch == "master":
+        VERSION += "-" + branch + " (" + commit_short + ")"
+    elif branch == "manual":
+        VERSION += "-" + shNG_branch + " (" + branch + ")"
     else:
-        VERSION += '-'+commit_short+'.'+branch
+        VERSION += "-" + commit_short + "." + branch
     return VERSION
+
 
 def get_shng_version_date():
     now = datetime.datetime.now()
 
-    if shNG_branch == 'master':
+    if shNG_branch == "master":
         return shNG_releasedate
     else:
         return now.strftime("%d. %B %Y")
 
+
 def get_shng_branch():
     commit, commit_short, branch, describe = _get_git_data()
     return branch
+
 
 def get_shng_description():
     commit, commit_short, branch, describe = _get_git_data()
@@ -190,8 +210,8 @@ def get_shng_description():
 
 
 def get_plugins_version():
-    commit, commit_short, branch, describe = _get_git_data('plugins')
-    VERSION = Version.format( get_shng_main_version() )
+    commit, commit_short, branch, describe = _get_git_data("plugins")
+    VERSION = Version.format(get_shng_main_version())
     try:
         PLUGINS_VERSION = plugin_vers.plugin_release()
     except AttributeError:
@@ -199,39 +219,41 @@ def get_plugins_version():
     try:
         PLUGINS_SOURCE_BRANCH = plugin_vers.plugin_branch()
     except AttributeError:
-        PLUGINS_SOURCE_BRANCH = ''
+        PLUGINS_SOURCE_BRANCH = ""
 
-    if branch == 'master':
-        VERSION = Version.format( PLUGINS_VERSION )
-        VERSION += '-'+branch+' ('+commit_short+')'
-    elif branch == 'manual':
-        VERSION = Version.format( PLUGINS_VERSION )
-        if PLUGINS_SOURCE_BRANCH != '':
-            VERSION += '-'+PLUGINS_SOURCE_BRANCH
-        VERSION += ' ('+branch+')'
+    if branch == "master":
+        VERSION = Version.format(PLUGINS_VERSION)
+        VERSION += "-" + branch + " (" + commit_short + ")"
+    elif branch == "manual":
+        VERSION = Version.format(PLUGINS_VERSION)
+        if PLUGINS_SOURCE_BRANCH != "":
+            VERSION += "-" + PLUGINS_SOURCE_BRANCH
+        VERSION += " (" + branch + ")"
     else:
-        VERSION = Version.format( PLUGINS_VERSION )
-        VERSION += '-'+commit_short+'.'+branch
+        VERSION = Version.format(PLUGINS_VERSION)
+        VERSION += "-" + commit_short + "." + branch
     return VERSION
 
 
 def get_plugins_branch():
-    commit, commit_short, branch, describe = _get_git_data('plugins')
+    commit, commit_short, branch, describe = _get_git_data("plugins")
     return branch
 
+
 def get_plugins_description():
-    commit, commit_short, branch, describe = _get_git_data('plugins')
+    commit, commit_short, branch, describe = _get_git_data("plugins")
     return describe
+
 
 def get_shng_docversion():
     commit, commit_short, branch, describe = _get_git_data()
     VERSION = get_shng_main_version()
-    if branch != 'master':
-        VERSION += ' '+branch
+    if branch != "master":
+        VERSION += " " + branch
     return VERSION
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     print()
     print("get_shng_main_version:", get_shng_main_version())
     print()
@@ -242,7 +264,6 @@ if __name__ == '__main__':
     print()
     print("get_plugins_version  :", get_plugins_version())
     print(" - description       :", get_plugins_description())
-    commit, commit_short, branch, describe = _get_git_data('plugins')
+    commit, commit_short, branch, describe = _get_git_data("plugins")
     # print(" - get_plugins_git   :", commit+'.'+branch)
     print()
-
