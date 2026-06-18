@@ -192,3 +192,6 @@ Dokumentation
 
 * add new developer docs to dev subfolder
 
+module.admin
+~~~~~~~~~~~~
+* AdminUI updated to v1.12.1
