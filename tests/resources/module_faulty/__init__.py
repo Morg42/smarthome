@@ -22,8 +22,8 @@
 
 import logging
 
-class dummy():
 
+class dummy:
     version = '1.x.y'
     longname = 'Dummy module for SmartHomeNG'
 
@@ -40,30 +40,29 @@ class dummy():
 
         try:
             self._dummy = self._parameters['dummy']
-        except:
-            self.logger.critical("Module '{}': Inconsistent module (invalid metadata definition)".format(self.shortname))
+        except KeyError:
+            self.logger.critical(
+                "Module '{}': Inconsistent module (invalid metadata definition)".format(self.shortname)
+            )
             self._init_complete = False
             return
-                
-        
+
     def start(self):
         """
         If the module needs to startup threads or uses python modules that create threads,
         put thread creation code or the module startup code here.
-        
+
         Otherwise don't enter code here
         """
-#        self.logger.debug("Module '{}': Starting up".format(self.shortname))
+        #        self.logger.debug("Module '{}': Starting up".format(self.shortname))
         pass
-        
 
     def stop(self):
         """
         If the module has started threads or uses python modules that created threads,
         put cleanup code here.
-        
+
         Otherwise don't enter code here
         """
-#        self.logger.debug("Module '{}': Shutting down".format(self.shortname))
+        #        self.logger.debug("Module '{}': Shutting down".format(self.shortname))
         pass
-    

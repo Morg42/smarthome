@@ -34,7 +34,6 @@ well). If a configuration exists in ``etc`` in both file formats, the YAML file
 will be used.
 """
 
-
 import os
 import sys
 from pathlib import Path
@@ -47,7 +46,9 @@ print('')
 # Check Python Version
 #####################################################################
 if sys.hexversion < 0x03030000:
-    print(f'Der Python-Interpreter ({sys.version_info[0]}.{sys.version_info[1]}) ist zu alt. Bitte mindestens auf Python 3.3 aktualisieren.')
+    print(
+        f'Der Python-Interpreter ({sys.version_info[0]}.{sys.version_info[1]}) ist zu alt. Bitte mindestens auf Python 3.3 aktualisieren.'
+    )
     exit()
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -83,14 +84,11 @@ def _convert_directory(dir):
                 print(f'Fehler beim Umbenennen, bitte {configurationfile}.conf von Hand entfernen.')
 
 
-
 # ==================================================================================
 #   Main Converter Routine
 #
 
 if __name__ == '__main__':
-
-
     if item_conversion.is_ruamelyaml_installed() is False:
         print('Fehler: ruamel.yaml nicht installiert.')
         exit(1)

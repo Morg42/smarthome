@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 460" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12">
+
+  <rect width="860" height="460" fill="#f8f9fa" rx="8"/>
+
+  <text x="430" y="30" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">Test Suite Growth</text>
+
+  <!-- ── Left panel: stacked bar chart ── -->
+  <!-- Y axis -->
+  <line x1="80" y1="50" x2="80" y2="370" stroke="#ccc" stroke-width="1.5"/>
+  <!-- X axis -->
+  <line x1="80" y1="370" x2="420" y2="370" stroke="#ccc" stroke-width="1.5"/>
+
+  <!-- Y gridlines & labels -->
+  <!-- 0 -->
+  <text x="72" y="374" text-anchor="end" font-size="10" fill="#666">0</text>
+  <!-- 200 -->
+  <line x1="80" y1="304" x2="420" y2="304" stroke="#e0e0e0" stroke-dasharray="4,3"/>
+  <text x="72" y="308" text-anchor="end" font-size="10" fill="#666">200</text>
+  <!-- 400 -->
+  <line x1="80" y1="238" x2="420" y2="238" stroke="#e0e0e0" stroke-dasharray="4,3"/>
+  <text x="72" y="242" text-anchor="end" font-size="10" fill="#666">400</text>
+  <!-- 600 -->
+  <line x1="80" y1="172" x2="420" y2="172" stroke="#e0e0e0" stroke-dasharray="4,3"/>
+  <text x="72" y="176" text-anchor="end" font-size="10" fill="#666">600</text>
+  <!-- 800 -->
+  <line x1="80" y1="106" x2="420" y2="106" stroke="#e0e0e0" stroke-dasharray="4,3"/>
+  <text x="72" y="110" text-anchor="end" font-size="10" fill="#666">800</text>
+  <!-- 1000 -->
+  <line x1="80" y1="40" x2="420" y2="40" stroke="#e0e0e0" stroke-dasharray="4,3"/>
+  <text x="72" y="44" text-anchor="end" font-size="10" fill="#666">1000</text>
+
+  <!-- Scale: 370 → 0, 40 → 1000, so 1 test = 0.33px  (330px / 1000) -->
+  <!-- 689 existing = 370 - 689*0.33 = 370 - 227.4 = 142.6 → top of existing bar -->
+  <!-- 240 pre-session = 240*0.33 = 79.2px height -->
+  <!-- 80 this session = 80*0.33 = 26.4px height -->
+
+  <!-- Column 1: Original (689 tests) -->
+  <rect x="110" y="143" width="60" height="227" fill="#2980b9" rx="3"/>
+  <text x="140" y="139" text-anchor="middle" font-size="11" font-weight="bold" fill="#2980b9">689</text>
+  <text x="140" y="388" text-anchor="middle" font-size="10" fill="#555">Original</text>
+  <text x="140" y="400" text-anchor="middle" font-size="10" fill="#555">suite</text>
+
+  <!-- Column 2: After phase 1 (689 + 240 = 929) -->
+  <!-- existing: y=143 h=227 -->
+  <rect x="210" y="143" width="60" height="227" fill="#2980b9" rx="3"/>
+  <!-- phase 1 new: y=143-79=64 h=79 -->
+  <rect x="210" y="64"  width="60" height="79"  fill="#27ae60" rx="3"/>
+  <text x="240" y="59"  text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">929</text>
+  <text x="240" y="388" text-anchor="middle" font-size="10" fill="#555">+ 7 test</text>
+  <text x="240" y="400" text-anchor="middle" font-size="10" fill="#555">files (×240)</text>
+
+  <!-- Column 3: After phase 3 (929 + 80 = 1009) -->
+  <rect x="310" y="143" width="60" height="227" fill="#2980b9" rx="3"/>
+  <rect x="310" y="64"  width="60" height="79"  fill="#27ae60" rx="3"/>
+  <!-- phase 3: y=64-26=38 h=26 -->
+  <rect x="310" y="38"  width="60" height="26"  fill="#8e44ad" rx="3"/>
+  <text x="340" y="33"  text-anchor="middle" font-size="11" font-weight="bold" fill="#8e44ad">1 009</text>
+  <text x="340" y="388" text-anchor="middle" font-size="10" fill="#555">+ 3 gap-fill</text>
+  <text x="340" y="400" text-anchor="middle" font-size="10" fill="#555">files (×80)</text>
+
+  <!-- Legend -->
+  <rect x="80"  y="420" width="14" height="14" fill="#2980b9" rx="2"/>
+  <text x="98"  y="432" font-size="11" fill="#333">Pre-existing tests (689)</text>
+  <rect x="240" y="420" width="14" height="14" fill="#27ae60" rx="2"/>
+  <text x="258" y="432" font-size="11" fill="#333">Phase 1 new tests (240)</text>
+  <rect x="400" y="420" width="14" height="14" fill="#8e44ad" rx="2"/>
+  <text x="418" y="432" font-size="11" fill="#333">Phase 3 gap-fill (80)</text>
+
+  <!-- ── Right panel: per-file breakdown ── -->
+  <text x="600" y="55" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Tests per New File</text>
+
+  <!-- file rows -->
+  <!-- max = 43, bar max width = 200px -->
+  <!-- scale: 200/43 = 4.65 px/test -->
+
+  <text x="460" y="80" font-size="10" fill="#555">test_item_logchange</text>
+  <rect x="630" y="68" width="200" height="14" rx="2" fill="#e0e0e0"/>
+  <rect x="630" y="68" width="200" height="14" rx="2" fill="#27ae60"/>
+  <text x="836" y="80" font-size="10" fill="#27ae60" font-weight="bold">43</text>
+
+  <text x="460" y="102" font-size="10" fill="#555">test_item_eval</text>
+  <rect x="630" y="90" width="172" height="14" rx="2" fill="#27ae60"/>
+  <text x="808" y="102" font-size="10" fill="#27ae60" font-weight="bold">37</text>
+
+  <text x="460" y="124" font-size="10" fill="#555">test_item_typehandler</text>
+  <rect x="630" y="112" width="163" height="14" rx="2" fill="#27ae60"/>
+  <text x="799" y="124" font-size="10" fill="#27ae60" font-weight="bold">35</text>
+
+  <text x="460" y="146" font-size="10" fill="#555">test_item_history</text>
+  <rect x="630" y="134" width="158" height="14" rx="2" fill="#27ae60"/>
+  <text x="794" y="146" font-size="10" fill="#27ae60" font-weight="bold">34</text>
+
+  <text x="460" y="168" font-size="10" fill="#555">test_item_triggers</text>
+  <rect x="630" y="156" width="149" height="14" rx="2" fill="#8e44ad"/>
+  <text x="785" y="168" font-size="10" fill="#8e44ad" font-weight="bold">32</text>
+
+  <text x="460" y="190" font-size="10" fill="#555">test_item_autotimer</text>
+  <rect x="630" y="178" width="149" height="14" rx="2" fill="#27ae60"/>
+  <text x="785" y="190" font-size="10" fill="#27ae60" font-weight="bold">32</text>
+
+  <text x="460" y="212" font-size="10" fill="#555">test_item_pathresolution</text>
+  <rect x="630" y="200" width="140" height="14" rx="2" fill="#27ae60"/>
+  <text x="776" y="212" font-size="10" fill="#27ae60" font-weight="bold">30</text>
+
+  <text x="460" y="234" font-size="10" fill="#555">test_item_hysteresis</text>
+  <rect x="630" y="222" width="135" height="14" rx="2" fill="#27ae60"/>
+  <text x="771" y="234" font-size="10" fill="#27ae60" font-weight="bold">29</text>
+
+  <text x="460" y="256" font-size="10" fill="#555">test_item_trigger_condition</text>
+  <rect x="630" y="244" width="121" height="14" rx="2" fill="#8e44ad"/>
+  <text x="757" y="256" font-size="10" fill="#8e44ad" font-weight="bold">26</text>
+
+  <text x="460" y="278" font-size="10" fill="#555">test_item_castvalue</text>
+  <rect x="630" y="266" width="102" height="14" rx="2" fill="#8e44ad"/>
+  <text x="738" y="278" font-size="10" fill="#8e44ad" font-weight="bold">22</text>
+
+  <!-- Total -->
+  <line x1="460" y1="295" x2="845" y2="295" stroke="#ccc"/>
+  <text x="460" y="313" font-size="11" font-weight="bold" fill="#333">Total new tests:</text>
+  <text x="760" y="313" font-size="11" font-weight="bold" fill="#333">320</text>
+
+  <!-- right panel legend -->
+  <rect x="460" y="420" width="14" height="14" fill="#27ae60" rx="2"/>
+  <text x="478" y="432" font-size="11" fill="#333">Phase 1 (pre-extraction)</text>
+  <rect x="640" y="420" width="14" height="14" fill="#8e44ad" rx="2"/>
+  <text x="658" y="432" font-size="11" fill="#333">Phase 3 (gap-fill)</text>
+</svg>

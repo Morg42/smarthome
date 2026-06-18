@@ -20,9 +20,9 @@
 #########################################################################
 
 
-#try:
+# try:
 #    import pkg_resources
-#except:
+# except:
 #    print()
 #    print("ERROR: setuptools are not installed")
 #    print("Install with 'pip3 install setuptools'")
@@ -44,21 +44,20 @@ import re
 try:
     import requests
     import xmltodict
-except:
+except Exception:
     pass
 
 # Nicht hier importieren!!! shpypi muss auch ohne geladene Packages (hier: ruamel.yaml) lauffähig sein
 # import lib.shyaml as shyaml
 from lib.utils import Utils
 from lib.utils import Version
-from lib.constants import (YAML_FILE)
+from lib.constants import YAML_FILE
 
 
-_shpypi_instance = None    # Pointer to the initialized instance of the Shpypi class (for use by static methods)
+_shpypi_instance = None  # Pointer to the initialized instance of the Shpypi class (for use by static methods)
 
 
 class Shpypi:
-
     def __init__(self, sh=None, base=None, version=None, for_tests=False):
         """
 
@@ -72,9 +71,14 @@ class Shpypi:
         global _shpypi_instance
         if _shpypi_instance is not None:
             import inspect
+
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 4)
-            self.logger.critical("A second 'shpypi' object has been created. There should only be ONE instance of class 'Shpypi'!!! Called from: {} {} ({})".format(calframe[1][1], calframe[1][2], calframe[1][3]))
+            self.logger.critical(
+                "A second 'shpypi' object has been created. There should only be ONE instance of class 'Shpypi'!!! Called from: {} {} ({})".format(
+                    calframe[1][1], calframe[1][2], calframe[1][3]
+                )
+            )
 
         _shpypi_instance = self
         self.req_files = Requirements_files(version, self.for_tests)
@@ -83,17 +87,16 @@ class Shpypi:
 
         self.sh = sh
         if sh is None:
-            self.logger.debug("SmartHomeNG is None")
+            self.logger.debug('SmartHomeNG is None')
             if base:
                 self._sh_dir = base
                 self._error = False
         else:
-            self._sh_dir = sh.get_basedir()    # anders bestimmen für tools/build_requirements.py
+            self._sh_dir = sh.get_basedir()  # anders bestimmen für tools/build_requirements.py
 
             self._error = False
         self.logger.debug("SmartHomeNG is using '{}' as base directory".format(self._sh_dir))
         return
-
 
     # --------------------------------------------------------------------------------------------
     #   Following (static) method of the class Shpypi implement the API for PyPI checking in shNG
@@ -102,25 +105,24 @@ class Shpypi:
     @staticmethod
     def get_instance():
         """
-        Returns the instance of the Shpypi class, to be used to access the shpypi-API
+         Returns the instance of the Shpypi class, to be used to access the shpypi-API
 
-       .. code-block:: python
+        .. code-block:: python
 
-           from lib.shpypi import Shtime
-           shtime = Shpypi.get_instance()
+            from lib.shpypi import Shtime
+            shtime = Shpypi.get_instance()
 
-           # to access a method (eg. to get timezone info):
-           shtime.tzinfo()
+            # to access a method (eg. to get timezone info):
+            shtime.tzinfo()
 
 
-        :return: shinfo instance
-        :rtype: object or None
+         :return: shinfo instance
+         :rtype: object or None
         """
-        if _shpypi_instance == None:
+        if _shpypi_instance is None:
             return None
         else:
             return _shpypi_instance
-
 
     def set_scheduler_crontab(self, crontab):
         """
@@ -129,7 +131,6 @@ class Shpypi:
         :param crontab: crontab entry for the update task for PyPI releases
         """
         self.scheduler_crontab = ['init', crontab]
-
 
     def get_installed_packages(self):
         """
@@ -156,9 +157,8 @@ class Shpypi:
         for dist in distributions:
             installed_packages_dict[dist.metadata['Name'].lower()] = dist.version
 
-        self.logger.info(f"get_installed_packages: installed_packages_dict = {installed_packages_dict}")
+        self.logger.info(f'get_installed_packages: installed_packages_dict = {installed_packages_dict}')
         return installed_packages_dict
-
 
     # def get_installed_packages(self):
     #     """
@@ -180,15 +180,14 @@ class Shpypi:
     #             test_dict[p.lower()] = v
     #     return test_dict
 
-
     def test_requirements(self, filepath, logging=True, hard_requirement=True):
         if logging:
             self.logger.info("test_requirements: filepath '{}' is being checked".format(filepath))
 
         req_dict = self.parse_requirementsfile(filepath)
         inst_dict = self.get_installed_packages()
-        #self.logger.info(f"test_requirements: inst_dict={inst_dict}")
-        #self.logger.info(f"test_requirements: req_dict={req_dict}")
+        # self.logger.info(f"test_requirements: inst_dict={inst_dict}")
+        # self.logger.info(f"test_requirements: req_dict={req_dict}")
 
         requirements_met = True
         for req_pkg in req_dict:
@@ -213,9 +212,13 @@ class Shpypi:
                         elif inst_vers == '-':
                             self.logger.warning(f"test_requirements: '{req_pkg}' not installed. Minimum v{min} needed")
                         elif not min_met:
-                            self.logger.warning(f"test_requirements: '{req_pkg}' v{inst_vers} too old. Minimum v{min} needed")
+                            self.logger.warning(
+                                f"test_requirements: '{req_pkg}' v{inst_vers} too old. Minimum v{min} needed"
+                            )
                         else:
-                            self.logger.warning(f"test_requirements: '{req_pkg}' v{inst_vers} too new. Maximum v{max} needed")
+                            self.logger.warning(
+                                f"test_requirements: '{req_pkg}' v{inst_vers} too new. Maximum v{max} needed"
+                            )
                 else:
                     if not self._error:
                         print()
@@ -230,7 +233,6 @@ class Shpypi:
                         print(f"test_requirements: '{req_pkg}' v{inst_vers} too new. Maximum v{max} needed")
 
         return requirements_met
-
 
     def test_core_requirements(self, logging=True, pip3_command=None):
 
@@ -255,17 +257,14 @@ class Shpypi:
                 return 0
             else:
                 if logging:
-                    self.logger.error("test_core_requirements: Python package requirements not met - Should terminate")
+                    self.logger.error('test_core_requirements: Python package requirements not met - Should terminate')
                 else:
                     # no logging, if called before logging is configured
-                    #print("Python package requirements not met - SmartHomeNG is terminating")
+                    # print("Python package requirements not met - SmartHomeNG is terminating")
                     pass
                 return -1
 
-
-
     _conf_plugin_filelist = []
-
 
     def test_base_requirements(self, sh=None):
 
@@ -284,16 +283,17 @@ class Shpypi:
             if self.install_requirements('base', logging):
                 return 0
             else:
-                self.logger.info("test_base_requirements: Python package requirements not met")
+                self.logger.info('test_base_requirements: Python package requirements not met')
                 return -1
-
 
     def test_conf_plugins_requirements(self, plugin_conf_basename, plugins_dir):
         # import lib.shyaml here, so test_base_requirements() can be run even if ruamel.yaml package is not installed
         import lib.shyaml as shyaml
 
-        if not os.path.isfile(plugin_conf_basename+ YAML_FILE):
-            self.logger.warning("Requirments for configured plugins were not checked because the plugin configuration is not in YAML format")
+        if not os.path.isfile(plugin_conf_basename + YAML_FILE):
+            self.logger.warning(
+                'Requirments for configured plugins were not checked because the plugin configuration is not in YAML format'
+            )
             return True
 
         plugin_conf = shyaml.yaml_load(plugin_conf_basename + YAML_FILE, ordered=False)
@@ -316,10 +316,12 @@ class Shpypi:
 
                 if not os.path.isdir(os.path.join(plugins_dir, plugin)):
                     if plugin != plugin.lower():
-                        self.logger.warning(f"There is no plugin '{plugin}' - Change the configuration parameter 'plugin_name: {plugin}' to lowercase 'plugin_name: {plugin.lower()}'")
+                        self.logger.warning(
+                            f"There is no plugin '{plugin}' - Change the configuration parameter 'plugin_name: {plugin}' to lowercase 'plugin_name: {plugin.lower()}'"
+                        )
                         filename = os.path.join(plugins_dir, plugin.lower(), 'requirements.txt')
                     else:
-                        self.logger.error(f"There is no plugin {plugin}")
+                        self.logger.error(f'There is no plugin {plugin}')
 
                 if not os.path.isfile(filename):
                     filename = ''
@@ -333,9 +335,9 @@ class Shpypi:
             if use_it:
                 self._conf_plugin_filelist.append(req_dict[plugin])
             else:
-                self.logger.info(f"Not appended: ({msg}) conf_all: {req_dict[plugin]}")
+                self.logger.info(f'Not appended: ({msg}) conf_all: {req_dict[plugin]}')
 
-        #req_files = Requirements_files(self.sh)
+        # req_files = Requirements_files(self.sh)
         self.req_files.set_conf_plugin_files(self._conf_plugin_filelist)
         self.req_files.create_requirementsfile('conf_all')
         # clear list to prevent adding plugin requirements to base.txt
@@ -348,7 +350,9 @@ class Shpypi:
             if self.install_requirements('conf_all', logging):
                 return 0
             else:
-                self.logger.info("test_conf_plugins_requirements: Python package requirements for configured plugins not met")
+                self.logger.info(
+                    'test_conf_plugins_requirements: Python package requirements for configured plugins not met'
+                )
                 return -1
 
     def get_pip_command(self):
@@ -360,24 +364,26 @@ class Shpypi:
             if logging:
                 self.logger.warning("PIP command read from smarthome.yaml: '{}'".format(pip_command))
             return pip_command
-        except:
+        except Exception:
             pass
 
         if self.sh:
-            #print("self.sh.python_bin="+self.sh.python_bin)
+            # print("self.sh.python_bin="+self.sh.python_bin)
             python_bin_path = os.path.split(self.sh.python_bin)[0]
         else:
             python_bin_path = os.path.split(sys.executable)[0]
-        #print("python_bin_path={}".format(python_bin_path))
+        # print("python_bin_path={}".format(python_bin_path))
 
         if not os.name == 'nt':
             pip_command = os.path.join(python_bin_path, 'pip3')
             if not os.path.isfile(pip_command):
                 python_bin_path, python_bin_executable = os.path.split(os.__file__)
-                pip_command = os.path.join(python_bin_path[:python_bin_path.find('/lib')], 'bin', ('pip' + python_bin_path[-3:]))
+                pip_command = os.path.join(
+                    python_bin_path[: python_bin_path.find('/lib')], 'bin', ('pip' + python_bin_path[-3:])
+                )
                 if not os.path.isfile(pip_command):
                     # use pip3 if pip3.x does not exist
-                    pip_command = os.path.join(python_bin_path[:python_bin_path.find('/lib')], 'bin', 'pip3')
+                    pip_command = os.path.join(python_bin_path[: python_bin_path.find('/lib')], 'bin', 'pip3')
         else:
             pip_command = pathlib.Path(python_bin_path) / 'scripts' / 'pip.exe'
             if not pip_command.is_file():
@@ -385,33 +391,35 @@ class Shpypi:
 
         return str(pip_command)
 
-
     def create_pip_list(self, dest_file):
         pip_command = self.get_pip_command()
 
-        command_line = pip_command +' list >' + dest_file
+        command_line = pip_command + ' list >' + dest_file
         if logging:
-            self.logger.info('> '+command_line)
+            self.logger.info('> ' + command_line)
         else:
-            #print('> ' + command_line)
+            # print('> ' + command_line)
             pass
         stdout, stderr = Utils.execute_subprocess(command_line)
         return
-
 
     def install_requirements(self, req_type, logging=True, pip3_command=None):
         req_type_display = req_type
         if req_type == 'conf_all':
             req_type_display = 'plugin'
-        complete_filename = os.path.join(self._sh_dir, 'requirements', req_type + '.txt')
+        os.path.join(self._sh_dir, 'requirements', req_type + '.txt')
         if logging:
             try:
-                self.logger.notice("Installing "+req_type_display+" requirements for the current user, please wait...")
-            except:
-                self.logger.warning("Installing "+req_type_display+" requirements for the current user, please wait...")
+                self.logger.notice(
+                    'Installing ' + req_type_display + ' requirements for the current user, please wait...'
+                )
+            except AttributeError:
+                self.logger.warning(
+                    'Installing ' + req_type_display + ' requirements for the current user, please wait...'
+                )
         else:
             print()
-            print("Installing "+req_type_display+" requirements for the current user, please wait...")
+            print('Installing ' + req_type_display + ' requirements for the current user, please wait...')
 
         if pip3_command:
             pip_command = pip3_command
@@ -421,15 +429,15 @@ class Shpypi:
             msg = 'auto-determined'
         try:
             self.logger.notice(f"Using {msg} PIP: '{pip_command}'")
-        except:
+        except AttributeError:
             self.logger.warning(f"Using {msg} PIP: '{pip_command}'")
 
-        req_filepath = os.path.join(self._sh_dir, 'requirements', req_type+'.txt')
-        command_line = pip_command +' install -r ' + req_filepath + ' --user --no-warn-script-location'
+        req_filepath = os.path.join(self._sh_dir, 'requirements', req_type + '.txt')
+        command_line = pip_command + ' install -r ' + req_filepath + ' --user --no-warn-script-location'
         if logging:
-            self.logger.info('> '+command_line)
+            self.logger.info('> ' + command_line)
         else:
-            #print('> ' + command_line)
+            # print('> ' + command_line)
             pass
         stdout, stderr = Utils.execute_subprocess(command_line)
 
@@ -449,14 +457,26 @@ class Shpypi:
             if 'virtualenv' in stderr and '--user' in stderr:
                 if logging:
                     try:
-                        self.logger.notice("Running in a virtualenv environment - installing " + req_type_display + " requirements only to current virtual environment, please wait...")
-                    except:
-                        self.logger.warning("Running in a virtualenv environment - installing " + req_type_display + " requirements only to current virtual environment, please wait...")
+                        self.logger.notice(
+                            'Running in a virtualenv environment - installing '
+                            + req_type_display
+                            + ' requirements only to current virtual environment, please wait...'
+                        )
+                    except AttributeError:
+                        self.logger.warning(
+                            'Running in a virtualenv environment - installing '
+                            + req_type_display
+                            + ' requirements only to current virtual environment, please wait...'
+                        )
                 else:
                     print()
-                    print("Running in a virtual environment environment,")
-                    print("installing "+req_type_display+" requirements only to current virtual environment, please wait...")
-                stdout, stderr = Utils.execute_subprocess(pip_command+' install -r '+req_filepath)
+                    print('Running in a virtual environment environment,')
+                    print(
+                        'installing '
+                        + req_type_display
+                        + ' requirements only to current virtual environment, please wait...'
+                    )
+                stdout, stderr = Utils.execute_subprocess(pip_command + ' install -r ' + req_filepath)
         if logging:
             self.logger.debug("stdout = 'Output from PIP command:\n{}'".format(stdout))
         if not logging:
@@ -465,35 +485,36 @@ class Shpypi:
         if stderr == '':
             if logging:
                 try:
-                    self.logger.notice(req_type_display+" requirements installed")
-                except:
-                    self.logger.warning(req_type_display+" requirements installed")
+                    self.logger.notice(req_type_display + ' requirements installed')
+                except AttributeError:
+                    self.logger.warning(req_type_display + ' requirements installed')
             else:
-                print(req_type_display+" requirements installed")
+                print(req_type_display + ' requirements installed')
                 print()
-            #print('len(stdout)=' + str(len(str(stdout))))
-            #print(stdout)
+            # print('len(stdout)=' + str(len(str(stdout))))
+            # print(stdout)
             return True
         else:
-            if stdout.find("Successfully installed") > -1:
+            if stdout.find('Successfully installed') > -1:
                 # result on windows nt:
                 # WARNING: You are using pip version 19.2.3, however version 20.2.1 is available.
                 # You should consider upgrading via the 'python -m pip install --upgrade pip' command.
-                if (stderr.find("You should consider upgrading via") > -1 or stderr.find("[notice] A new release of pip") > -1) \
-                    and stderr.find("pip install --upgrade pip") > -1:
-                    #if logging:
+                if (
+                    stderr.find('You should consider upgrading via') > -1
+                    or stderr.find('[notice] A new release of pip') > -1
+                ) and stderr.find('pip install --upgrade pip') > -1:
+                    # if logging:
                     #    self.logger.warning(stderr)
                     return True
-            #if stdout.find("[notice] A new release of pip") > -1:
+            # if stdout.find("[notice] A new release of pip") > -1:
             #
             if logging:
                 self.logger.error(stderr)
             else:
-                #print('len(stderr)='+str(len(str(stderr))))
+                # print('len(stderr)='+str(len(str(stderr))))
                 print('ERROR:')
                 print(stderr)
         return False
-
 
     def parse_requirementsfile(self, file_path) -> dict:
         """
@@ -519,13 +540,13 @@ class Shpypi:
         :rtype: dict
         """
 
-        self.logger.info("parse_requirementsfile: file_path = {}".format(file_path))
+        self.logger.info('parse_requirementsfile: file_path = {}'.format(file_path))
         do_log = file_path.endswith('conf_all.txt')
 
         req_dict = {}
         try:
             fobj = open(file_path, encoding='utf8')
-        except:
+        except OSError:
             return req_dict
 
         # process file
@@ -536,39 +557,43 @@ class Shpypi:
                 try:
                     line, line_pyvers = line_raw.split(';')
                     line_pyvers = ';' + line_pyvers
-                except:
+                except ValueError:
                     line = line_raw
                     line_pyvers = ''
 
-                if ">" in line:
-                    key = line[0:line.find(">")].lower().strip()
+                if '>' in line:
+                    key = line[0 : line.find('>')].lower().strip()
                     if key in req_dict:
-                        req_dict[key] += " | " + line[line.find(">"):len(line)].lower().strip() + line_pyvers
+                        req_dict[key] += ' | ' + line[line.find('>') : len(line)].lower().strip() + line_pyvers
                     else:
-                        req_dict[key] = line[line.find(">"):len(line)].lower().strip() + line_pyvers
+                        req_dict[key] = line[line.find('>') : len(line)].lower().strip() + line_pyvers
 
-                elif "<" in line:
-                    key = line[0:line.find("<")].lower().strip()
+                elif '<' in line:
+                    key = line[0 : line.find('<')].lower().strip()
                     if key in req_dict:
-                        req_dict[key] += " | " + line[line.find("<"):len(line)].lower().strip() + line_pyvers
+                        req_dict[key] += ' | ' + line[line.find('<') : len(line)].lower().strip() + line_pyvers
                     else:
-                        req_dict[key] = line[line.find("<"):len(line)].lower().strip() + line_pyvers
+                        req_dict[key] = line[line.find('<') : len(line)].lower().strip() + line_pyvers
 
-                elif "=" in line:
-                    key = line[0:line.find("=")].lower().strip()
+                elif '=' in line:
+                    key = line[0 : line.find('=')].lower().strip()
                     if key in req_dict:
-                        req_dict[key] += " | " + line[line.find("="):len(line)].lower().strip() + line_pyvers
+                        req_dict[key] += ' | ' + line[line.find('=') : len(line)].lower().strip() + line_pyvers
                     else:
-                        req_dict[key] = line[line.find("="):len(line)].lower().strip() + line_pyvers
+                        req_dict[key] = line[line.find('=') : len(line)].lower().strip() + line_pyvers
 
                 else:
                     key = line.lower().strip()
                     if key in req_dict:
-                        req_dict[key] += " | " + '==*' + line_pyvers
+                        req_dict[key] += ' | ' + '==*' + line_pyvers
                     else:
                         req_dict[key] = '==*' + line_pyvers
                 if do_log:
-                    self.logger.info("parse_requirementsfile: line_raw = '{}', req_dict['{}'] = '{}'".format(line_raw, key, req_dict[key]))
+                    self.logger.info(
+                        "parse_requirementsfile: line_raw = '{}', req_dict['{}'] = '{}'".format(
+                            line_raw, key, req_dict[key]
+                        )
+                    )
 
         fobj.close()
 
@@ -577,22 +602,20 @@ class Shpypi:
             self.logger.debug("parse_requirementsfile: req_dict = '{}'".format(req_dict))
         for pkg in req_dict:
             if do_log:
-                self.logger.debug("parse_requirementsfile  : pkg = {}, req_dict[pkg] = {}".format(pkg, req_dict[pkg]))
+                self.logger.debug('parse_requirementsfile  : pkg = {}, req_dict[pkg] = {}'.format(pkg, req_dict[pkg]))
             result_dict[pkg] = self._split_requirement(req_dict[pkg], do_log)
             if do_log:
-                self.logger.info("parse_requirementsfile: pkg = {}, result_dict[pkg] = '{}'".format(pkg, result_dict[pkg]))
+                self.logger.info(
+                    "parse_requirementsfile: pkg = {}, result_dict[pkg] = '{}'".format(pkg, result_dict[pkg])
+                )
             if type(result_dict[pkg]) is list:
-                self.logger.warning(" - {}: MULTIPLE requirements {}".format(pkg, result_dict[pkg]))
+                self.logger.warning(' - {}: MULTIPLE requirements {}'.format(pkg, result_dict[pkg]))
             # self.logger.warning(" - {}: req_str = '{}', requirements = {}".format(pkg, req_dict[pkg], result_dict[pkg]))
         # self.logger.warning("parse_requirementsfile: result_dict = {}".format(result_dict))
 
         return result_dict
 
-
-
-
     package_list = []  # list of packages - gets filled by get_packagelist()
-
 
     def set_packagedata(self, name, add=False):
         """
@@ -604,13 +627,13 @@ class Shpypi:
         :return: index of the packages' dict within the list
         :rtype: int
         """
-        list_index = next((index for (index, d) in enumerate(self.package_list) if d["name"] == name), None)
-        if list_index == None and add:
+        list_index = next((index for (index, d) in enumerate(self.package_list) if d['name'] == name), None)
+        if list_index is None and add:
             package = {}
             package['name'] = name
             package['vers_installed'] = '-'
             package['is_required'] = False
-#            package['is_required_for_modules'] = False
+            #            package['is_required_for_modules'] = False
             package['is_required_for_plugins'] = False
             package['is_required_for_testsuite'] = False
             package['is_required_for_docbuild'] = False
@@ -629,12 +652,10 @@ class Shpypi:
             package['pypi_version_not_available_msg'] = ''
             package['pypi_doc_url'] = ''
 
-
             self.package_list.append(package)
             list_index = len(self.package_list) - 1
 
         return list_index
-
 
     def get_packagelist(self):
         """
@@ -648,12 +669,14 @@ class Shpypi:
 
         # process required base packages
         required_packages = self.parse_requirementsfile(os.path.join(self._sh_dir, 'requirements', 'base.txt'))
-        self.logger.info("get_packagelist: required_packages = {}".format(required_packages))
+        self.logger.info('get_packagelist: required_packages = {}'.format(required_packages))
 
         for pkg_name in required_packages:
-            if required_packages[pkg_name] != {}:   # ignore empty requirements (e.g. requirement exists only for other Python version
+            if (
+                required_packages[pkg_name] != {}
+            ):  # ignore empty requirements (e.g. requirement exists only for other Python version
                 index = self.set_packagedata(pkg_name, add=True)
-                if index != None:
+                if index is not None:
                     package = self.package_list[index]
 
                     package['is_required'] = True
@@ -665,53 +688,54 @@ class Shpypi:
                     package['vers_req_source'] = ''
                     package['sort'] = self._build_sortstring(package)
 
-
         # process installed packages
         installed_packages = self.get_installed_packages()
-        self.logger.info("get_packagelist: installed_packages = {}".format(installed_packages))
+        self.logger.info('get_packagelist: installed_packages = {}'.format(installed_packages))
         for pkg_name in installed_packages:
             index = self.set_packagedata(pkg_name, add=True)
-            if index != None:
+            if index is not None:
                 package = self.package_list[index]
 
                 package['vers_installed'] = installed_packages[pkg_name]
 
-        self.logger.info("get_packagelist: package_list = {}".format(self.package_list))
-
+        self.logger.info('get_packagelist: package_list = {}'.format(self.package_list))
 
         # process required (all) packages
         required_packages = self.parse_requirementsfile(os.path.join(self._sh_dir, 'requirements', 'all.txt'))
-        self.logger.info("get_packagelist: required_packages = {}".format(required_packages))
+        self.logger.info('get_packagelist: required_packages = {}'.format(required_packages))
 
         for pkg_name in required_packages:
-            if required_packages[pkg_name] != {}:   # ignore empty requirements (e.g. requirement exists only for other Python version
+            if (
+                required_packages[pkg_name] != {}
+            ):  # ignore empty requirements (e.g. requirement exists only for other Python version
                 index = self.set_packagedata(pkg_name, add=False)
-                if index != None:
+                if index is not None:
                     package = self.package_list[index]
 
-                    if package['is_required'] == False:
+                    if not package['is_required']:
                         package['is_required_for_plugins'] = True
                         package['sort'] = self._build_sortstring(package)
 
-                    self.logger.debug("Package name, type: {}, {}".format(pkg_name, type(required_packages[pkg_name])))
-                    self.logger.debug("Package value: {}".format(required_packages[pkg_name]))
+                    self.logger.debug('Package name, type: {}, {}'.format(pkg_name, type(required_packages[pkg_name])))
+                    self.logger.debug('Package value: {}'.format(required_packages[pkg_name]))
                     package['vers_req_min'] = required_packages[pkg_name].get('min', '*')
                     package['vers_req_max'] = required_packages[pkg_name].get('max', '*')
                     package['vers_req_msg'] = ''
                     package['vers_req_source'] = ''
 
-
         # process required doc-packages
         required_packages = self.parse_requirementsfile(os.path.join(self._sh_dir, 'doc', 'requirements.txt'))
-        self.logger.info("get_packagelist: required_doc_packages = {}".format(required_packages))
+        self.logger.info('get_packagelist: required_doc_packages = {}'.format(required_packages))
 
         for pkg_name in required_packages:
-            if required_packages[pkg_name] != {}:   # ignore empty requirements (e.g. requirement exists only for other Python version
+            if (
+                required_packages[pkg_name] != {}
+            ):  # ignore empty requirements (e.g. requirement exists only for other Python version
                 index = self.set_packagedata(pkg_name, add=True)
-                if index != None:
+                if index is not None:
                     package = self.package_list[index]
 
-                    if package['is_required'] == False:
+                    if not package['is_required']:
                         package['is_required_for_docbuild'] = True
                         package['sort'] = self._build_sortstring(package)
 
@@ -722,17 +746,18 @@ class Shpypi:
                     package['vers_req_msg'] = ''
                     package['vers_req_source'] = ''
 
-
         # process required test-packages
         required_packages = self.parse_requirementsfile(os.path.join(self._sh_dir, 'requirements', 'test.txt'))
-        self.logger.info("get_packagelist: required_test_packages = {}".format(required_packages))
+        self.logger.info('get_packagelist: required_test_packages = {}'.format(required_packages))
 
         for pkg_name in required_packages:
-            if required_packages[pkg_name] != {}:   # ignore empty requirements (e.g. requirement exists only for other Python version
+            if (
+                required_packages[pkg_name] != {}
+            ):  # ignore empty requirements (e.g. requirement exists only for other Python version
                 index = self.set_packagedata(pkg_name, add=True)
                 package = self.package_list[index]
 
-                if package['is_required'] == False:
+                if not package['is_required']:
                     package['is_required_for_testsuite'] = True
                     package['sort'] = self._build_sortstring(package)
 
@@ -744,45 +769,41 @@ class Shpypi:
 
         self.pypi_timeout = 4
         # check if pypi service is reachable
-        if self.pypi_timeout <= 0:
-            pypi_available = False
-            # pypi_unavailable_message = translate('PyPI Prüfung deaktiviert')
-            pypi_unavailable_message = 'PyPI Prüfung deaktiviert'
-        else:
-            pypi_available = True
+        if self.pypi_timeout > 0:
             try:
                 import socket
+
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(self.pypi_timeout)
                 # sock.connect(('pypi.python.org', 443))
                 sock.connect(('pypi.org', 443))
                 sock.close()
-            except:
-                pypi_available = False
+            except OSError:
+                pass
 
         # look for PyPI release data of the packages
         from lib.scheduler import Scheduler
+
         if self.pypi_timeout > 0:
             self.scheduler = Scheduler.get_instance()
-            self.scheduler.add('shpypi.get_releasedata', self.lookup_pypi_releasedata, cron = self.scheduler_crontab)
+            self.scheduler.add('shpypi.get_releasedata', self.lookup_pypi_releasedata, cron=self.scheduler_crontab)
         else:
             self.lookup_pypi_releasedata(False)
 
         sorted_package_list = sorted(self.package_list, key=lambda k: k['sort'], reverse=False)
-        self.logger.info("get_packagelist: Returning sorted_package_list = {}".format(sorted_package_list))
+        self.logger.info('get_packagelist: Returning sorted_package_list = {}'.format(sorted_package_list))
         return sorted_package_list
 
-
     def lookup_pypi_releasedata(self, pypi_available=True):
-        self.logger.debug("lookup_pypi_releasedata: pypi_available={}".format(pypi_available))
+        self.logger.debug('lookup_pypi_releasedata: pypi_available={}'.format(pypi_available))
         for package in self.package_list:
-            if (package['is_required'] == True) or True:
-                if pypi_available :
+            if (package['is_required']) or True:
+                if pypi_available:
                     self.get_package_releases_data(package)
-                    #scheduler.add(self, name, obj, prio=3, cron=None, cycle=None, value=None, offset=None, next=None, from_smartplugin=False):
-                    #self._sh.scheduler.add(self._itemname_prefix + self._path, self, cron=self._crontab, cycle=cycle)
+                    # scheduler.add(self, name, obj, prio=3, cron=None, cycle=None, value=None, offset=None, next=None, from_smartplugin=False):
+                    # self._sh.scheduler.add(self._itemname_prefix + self._path, self, cron=self._crontab, cycle=cycle)
                 else:
-                    self.logger.warning("get_packagelist ({}): PyPI nicht erreichbar".format(package))
+                    self.logger.warning('get_packagelist ({}): PyPI nicht erreichbar'.format(package))
                     if package['pypi_version'] == '':
                         package['pypi_version'] = '--'
                     package['pypi_version_not_available_msg'] = 'PyPI nicht erreichbar'
@@ -791,9 +812,8 @@ class Shpypi:
             try:
                 self.check_package_version_data(package)
             except Exception as e:
-                self.logger.exception(f"lookup_pypi_releasedata: Package {package} - Exception: {e}")
+                self.logger.exception(f'lookup_pypi_releasedata: Package {package} - Exception: {e}')
         return
-
 
     def check_package_version_data(self, package):
         # check if installed version is ok and recent
@@ -823,7 +843,6 @@ class Shpypi:
                     package['pypi_version_ok'] = False
         return
 
-
     def get_releasedata_frompypi(self, package):
         """
         Get data of available releases from pypi.org via
@@ -834,7 +853,7 @@ class Shpypi:
         try:
             r = requests.get('https://pypi.org/rss/project/' + package + '/releases.xml')
         except Exception as e:
-            self.logger.info("get_releasedata_frompypi: Error: {0}".format(e))
+            self.logger.info('get_releasedata_frompypi: Error: {0}'.format(e))
             return result
 
         if r.status_code == 200:
@@ -848,7 +867,6 @@ class Shpypi:
 
         return result
 
-
     def get_package_releases_data(self, package):
         """
         Get version/release data from pypi.org for a specific package
@@ -857,34 +875,39 @@ class Shpypi:
         :param owner:
         :return:
         """
-        max_tries = 5       # number of times getting version data from pypi.org is tried
+        max_tries = 5  # number of times getting version data from pypi.org is tried
 
         version_read = False
         reads = 0
-        while (version_read == False) and (reads < max_tries):
+        while (not version_read) and (reads < max_tries):
             package['pypi_version'] = '--'
             package['pypi_version_not_available_msg'] = '?'
             package['pypi_version_ok'] = False
             package['pypi_doc_url'] = ''
 
             available = self.get_releasedata_frompypi(package['name'])
-            self.logger.debug("get_package_releases_data: -> pypi package: project_name {}, availabe = {}".format(package['name'], available))
+            self.logger.debug(
+                'get_package_releases_data: -> pypi package: project_name {}, availabe = {}'.format(
+                    package['name'], available
+                )
+            )
             reads += 1
             try:
                 package['pypi_version'] = available[0]['title']
-                package['pypi_version_not_available_msg'] = ""
+                package['pypi_version_not_available_msg'] = ''
                 package['pypi_version_ok'] = True
                 package['pypi_doc_url'] = 'https://pypi.org/pypi/' + package['name']
                 version_read = True
-            except:
+            except Exception:
                 pass
 
-            self.logger.debug("get_package_releases_data ({}): Version {}".format(package['name'], package['pypi_version']))
+            self.logger.debug(
+                'get_package_releases_data ({}): Version {}'.format(package['name'], package['pypi_version'])
+            )
 
         if reads >= max_tries:
             self.logger.info("get_package_releases_data: pypi.org returned no data for package {package['name']}")
         return
-
 
     def _build_sortstring(self, package):
         """
@@ -899,8 +922,8 @@ class Shpypi:
         result = ''
         if package['is_required']:
             result = '1'
-#        elif package['is_required_for_modules']:
-#            result = '2'
+        #        elif package['is_required_for_modules']:
+        #            result = '2'
         elif package['is_required_for_plugins']:
             result = '3'
         elif package['is_required_for_testsuite']:
@@ -913,7 +936,6 @@ class Shpypi:
         package['required_group'] = result
         result += package['name']
         return result
-
 
     def _remove_comments(self, rline):
         """
@@ -929,11 +951,8 @@ class Shpypi:
             if rline.find('#') == -1:
                 line = rline
             else:
-                line = rline[0:rline.find("#")]
+                line = rline[0 : rline.find('#')]
         return line.lower().strip()
-
-
-
 
     def _split_requirement(self, req_str, do_log=False):
         """
@@ -942,16 +961,20 @@ class Shpypi:
         :param req_str:
         :return:
         """
-        pyversion = "{0}.{1}".format(sys.version_info[0], sys.version_info[1])
+        pyversion = '{0}.{1}'.format(sys.version_info[0], sys.version_info[1])
 
         # Split requirement string into list of requirements (with python version)
         requirements_list = req_str.split('|')
         result_list = []
         for i in range(0, len(requirements_list)):
             # Split requirement (with python version) into list of requirement and python version
-            requirement = requirements_list[i].split(';')   # split requirement into list of requirement and pyvers requirement
+            requirement = requirements_list[i].split(
+                ';'
+            )  # split requirement into list of requirement and pyvers requirement
             if do_log:
-                self.logger.debug("- _split_requirement *1: {} -> requirement = {}".format(requirements_list[i], requirement))
+                self.logger.debug(
+                    '- _split_requirement *1: {} -> requirement = {}'.format(requirements_list[i], requirement)
+                )
             if len(requirement) == 1:
                 result_list.append(self._split_requirement_to_min_max(requirement[0]))
             else:
@@ -959,7 +982,9 @@ class Shpypi:
                 for j in range(0, len(requirement)):
                     requirement[j] = requirement[j].strip()
                 if do_log:
-                    self.logger.info("- _split_requirement *2: {} -> requirement = {}".format(requirements_list[i], requirement))
+                    self.logger.info(
+                        '- _split_requirement *2: {} -> requirement = {}'.format(requirements_list[i], requirement)
+                    )
                 if requirement[1].startswith('python_version'):
                     requirement[1] = requirement[1].replace('python_version', '')
 
@@ -992,8 +1017,6 @@ class Shpypi:
 
         return result_list[0]
 
-
-
     def _split_operator(self, reqstring):
         """
         split operator and version from string
@@ -1005,20 +1028,18 @@ class Shpypi:
         :rtype: str, str
         """
         version = ''
-        if not(type(reqstring) is str):
+        if type(reqstring) is not str:
             self.logger.warning('_split_operator: reqstring = {}'.format(reqstring))
         reqstring = reqstring.strip()
         for operator in ['==', '<=', '>=', '<', '>']:
             if reqstring.startswith(operator):
                 # strip operator (and quotes)
-                version = Utils.strip_quotes(reqstring[len(operator):].strip())
+                version = Utils.strip_quotes(reqstring[len(operator) :].strip())
                 break
         if version == '':
             return '', reqstring.strip()
         else:
             return operator.strip(), version.strip()
-
-
 
     def _split_requirement_to_min_max(self, requirement):
         result = {}
@@ -1056,7 +1077,7 @@ class Shpypi:
         """
 
         def _to_num(vl: list) -> int:
-            """ convert version number in list form to 1000-based decimal """
+            """convert version number in list form to 1000-based decimal"""
             vi = int(vl[0])
             for d in vl[1:]:
                 vi = vi * 1000
@@ -1064,13 +1085,13 @@ class Shpypi:
             return vi
 
         def _to_str(vi: int) -> str:
-            """ convert 1000-based decimal to reduced string """
+            """convert 1000-based decimal to reduced string"""
             vl = []
             vs = str(vi)
             while vs:
                 vl = [str(int(vs[-3:]))] + vl
                 vs = vs[:-3]
-            return ".".join(vl)
+            return '.'.join(vl)
 
         if above == below:
             return version
@@ -1081,7 +1102,6 @@ class Shpypi:
         if below:
             vers_num -= 1
         return _to_str(vers_num)
-
 
     def _compare_versions(self, vers1, vers2, operator):
         """
@@ -1108,9 +1128,12 @@ class Shpypi:
         if v1 > v2 and operator in ['>', '>=']:
             result = True
 
-        self.logger.debug("_compare_versions: - - - vers1 = {}, vers2 = {}, v1 = {}, v2 = {}, operator = '{}', result = {}".format(vers1, vers2, v1, v2, operator, result))
+        self.logger.debug(
+            "_compare_versions: - - - vers1 = {}, vers2 = {}, v1 = {}, v2 = {}, operator = '{}', result = {}".format(
+                vers1, vers2, v1, v2, operator, result
+            )
+        )
         return result
-
 
     def _version_to_list(self, vers):
         """
@@ -1132,12 +1155,11 @@ class Shpypi:
             vi = 0
             try:
                 vi = int(v)
-            except:
+            except Exception:
                 pass
             vlist.append(vi)
 
         return vlist
-
 
 
 # ===================================================================================================
@@ -1151,8 +1173,8 @@ class Shpypi:
 #  - all (core + modules + plugins)
 #
 
-class Requirements_files():
 
+class Requirements_files:
     _module_files = []
     _plugin_files = []
     _core_files = []  # to be a list in the future
@@ -1166,13 +1188,12 @@ class Requirements_files():
         self._conf_plugin_files = []
 
         self.shng_version = Version.format(version.split('-')[0])
-        l = sys.version_info
-        self.py_version = Version.format(str(l[0])+'.'+str(l[1])+'.'+str(l[2]))
+        vi = sys.version_info
+        self.py_version = Version.format(str(vi[0]) + '.' + str(vi[1]) + '.' + str(vi[2]))
 
         self.sh_basedir = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
         self.logger.debug("Requirements_files is using '{}' as base directory".format(self.sh_basedir))
         return
-
 
     def _seperate_operator_version(self, op_vers):
         """
@@ -1204,8 +1225,7 @@ class Requirements_files():
             vers = op_vers
         vers = vers.strip()
 
-        return [op,vers]
-
+        return [op, vers]
 
     def _build_packagelist(self, requirements):
         """
@@ -1224,9 +1244,11 @@ class Requirements_files():
             packaged['pkg'] = wrk[0].strip()
             if packaged['pkg'].startswith('#'):
                 continue
-            self.logger.debug("_build_packagelist: Req_files: - key: '{}', wrk = '{}', packaged = '{}'".format(key, wrk, packaged))
+            self.logger.debug(
+                "_build_packagelist: Req_files: - key: '{}', wrk = '{}', packaged = '{}'".format(key, wrk, packaged)
+            )
 
-            pkg = key[len(packaged['pkg']):]
+            pkg = key[len(packaged['pkg']) :]
             if pkg.find(';') == -1:
                 # keine python_version angegeben
                 packaged['py_vers'] = ''
@@ -1240,7 +1262,7 @@ class Requirements_files():
                 # python_version angegeben
                 wrk = re.split(';', pkg)
                 if wrk[1].startswith('python_version'):
-                    wrk[1] = wrk[1][len('python_version'):]
+                    wrk[1] = wrk[1][len('python_version') :]
                 packaged['py_vers'] = wrk[1]
                 wrk = re.split(',', wrk[0])
                 wrk2 = []
@@ -1249,7 +1271,7 @@ class Requirements_files():
                     wrk2.append(r2)
                 packaged['req'] = wrk2
 
-            plglist = requirements[key]
+            requirements[key]
             packaged['used_by'] = requirements[key]
             packaged['key'] = packaged['pkg'] + '+' + packaged['py_vers']
             packagelist.append(packaged)
@@ -1259,7 +1281,7 @@ class Requirements_files():
             wrk = p['pkg']
             wrk += p['req'][0][0] + p['req'][0][1]
             if len(p['req']) > 1:
-                wrk += ','+p['req'][1][0] + p['req'][1][1]
+                wrk += ',' + p['req'][1][0] + p['req'][1][1]
             if p['py_vers'] != '':
                 wrk += ';' + 'python_version' + p['py_vers']
             p['requests'] = wrk
@@ -1267,37 +1289,43 @@ class Requirements_files():
         self.logger.debug("Req_files: _build_packagelist: packagelist = '{}'".format(packagelist))
         return packagelist
 
-
     def _test_plugin_versions(self, filename):
 
         # import lib.shyaml here, so test_base_requirements() can be run even if ruamel.yaml package is not installed
         import lib.shyaml as shyaml
+
         metaname = filename[:-16] + 'plugin.yaml'
         meta = shyaml.yaml_load(metaname, ignore_notfound=True)
         if meta is None:
-            #self.logger.warning(f"{metaname} not found")
+            # self.logger.warning(f"{metaname} not found")
             return False, ''
         else:
             sh_minversion = Version.format(meta['plugin'].get('sh_minversion', ''))
             sh_maxversion = Version.format(meta['plugin'].get('sh_maxversion', ''))
             py_minversion = Version.format(meta['plugin'].get('py_minversion', ''))
-            #py_maxversion = Version.format(meta['plugin'].get('py_maxversion', ''))
-            py_maxversion = meta['plugin'].get('py_maxversion', '') #w/o format to enable max 3.8 -> 3.8.999
+            # py_maxversion = Version.format(meta['plugin'].get('py_maxversion', ''))
+            py_maxversion = meta['plugin'].get('py_maxversion', '')  # w/o format to enable max 3.8 -> 3.8.999
             if sh_minversion != '':
-                self.logger.debug(f"sh_minversion={sh_minversion}, self.shng_version={self.shng_version}")
+                self.logger.debug(f'sh_minversion={sh_minversion}, self.shng_version={self.shng_version}')
                 if Version.compare(sh_minversion, self.shng_version, '>'):
-                    self.logger.debug(f"meta data: {metaname} - meta: sh_minversion={sh_minversion}, sh_maxversion={sh_maxversion}")
+                    self.logger.debug(
+                        f'meta data: {metaname} - meta: sh_minversion={sh_minversion}, sh_maxversion={sh_maxversion}'
+                    )
                     return False, 'SmartHomeNG min version'
             if sh_maxversion != '':
-                self.logger.debug(f"sh_maxversion={sh_maxversion}, self.shng_version={self.shng_version}")
+                self.logger.debug(f'sh_maxversion={sh_maxversion}, self.shng_version={self.shng_version}')
                 if Version.compare(sh_maxversion, self.shng_version, '<'):
-                    self.logger.debug(f"meta data: {metaname} - meta: sh_minversion={sh_minversion}, sh_maxversion={sh_maxversion}")
+                    self.logger.debug(
+                        f'meta data: {metaname} - meta: sh_minversion={sh_minversion}, sh_maxversion={sh_maxversion}'
+                    )
                     return False, 'SmartHomeNG max version'
 
             if py_minversion != '':
-                self.logger.debug(f"py_minversion={py_minversion}, self.py_version={self.py_version}")
+                self.logger.debug(f'py_minversion={py_minversion}, self.py_version={self.py_version}')
                 if Version.compare(py_minversion, self.py_version, '>'):
-                    self.logger.debug(f"meta data: {metaname} - meta: py_minversion={py_minversion}, py_maxversion={py_maxversion}")
+                    self.logger.debug(
+                        f'meta data: {metaname} - meta: py_minversion={py_minversion}, py_maxversion={py_maxversion}'
+                    )
                     return False, 'Python min version'
             if py_maxversion != '':
                 max = str(py_maxversion)
@@ -1306,14 +1334,15 @@ class Requirements_files():
                     max += '.999'
                 py_maxversion = Version.format(str(max))
 
-                self.logger.debug(f"py_maxversion={py_maxversion}, self.py_version={self.py_version}")
+                self.logger.debug(f'py_maxversion={py_maxversion}, self.py_version={self.py_version}')
                 if Version.compare(py_maxversion, self.py_version, '<'):
-                    self.logger.debug(f"meta data: {metaname} - meta: py_minversion={py_minversion}, py_maxversion={py_maxversion}")
+                    self.logger.debug(
+                        f'meta data: {metaname} - meta: py_minversion={py_minversion}, py_maxversion={py_maxversion}'
+                    )
                     return False, 'Python max version'
-            #if sh_minversion != '' or sh_maxversion != '' or py_minversion != '' or py_maxversion != '':
+            # if sh_minversion != '' or sh_maxversion != '' or py_minversion != '' or py_maxversion != '':
             #    self.logger.warning(f"meta data: {metaname} - meta: sh_minversion={sh_minversion}, sh_maxversion={sh_maxversion}, py_minversion={py_minversion}, py_maxversion={py_maxversion}")
         return True, ''
-
 
     def _get_filelist(self, selection):
         """
@@ -1330,12 +1359,12 @@ class Requirements_files():
         basedir_level = self.sh_basedir.count(os.sep)
         for root, dirnames, filenames in os.walk(self.sh_basedir + os.sep + selection):
             level = root.count(os.sep)
-            #self.logger.debug("level = {}: root = {}".format(level, root))
-            if (selection == "plugins" and "_pv" not in root) or (level < basedir_level + 3):
+            # self.logger.debug("level = {}: root = {}".format(level, root))
+            if (selection == 'plugins' and '_pv' not in root) or (level < basedir_level + 3):
                 for filename in fnmatch.filter(filenames, 'requirements.txt'):
                     use_it = True
                     msg = ''
-                    if (selection == "plugins"):
+                    if selection == 'plugins':
                         if self.for_tests:
                             use_it, msg = self._test_plugin_versions(os.path.join(root, filename))
                     if use_it:
@@ -1343,17 +1372,16 @@ class Requirements_files():
                         file_list.append(os.path.join(root, filename))
                         self.logger.debug("found '{}'".format(os.path.join(root, filename)))
                     else:
-                        self.logger.info(f"Not appended: ({msg}) all: {root}")
+                        self.logger.info(f'Not appended: ({msg}) all: {root}')
         self.logger.debug("_get_filelist found '{}'".format(file_list))
         return file_list
 
-
     def _build_filelists(self, selection):
 
-        self.logger.debug(f"_build_filelists: selection={selection}")
+        self.logger.debug(f'_build_filelists: selection={selection}')
         self._module_files = []
         self._plugin_files = []
-        self._core_files = []         # to be a list in the future
+        self._core_files = []  # to be a list in the future
         self._user_files = []
 
         if selection in ['modules', 'base', 'all', 'conf_all']:
@@ -1378,10 +1406,9 @@ class Requirements_files():
             self._user_files = self._get_filelist('functions')
             self._user_files += self._get_filelist('logics')
 
-        #self.logger.warning(f"_build_filelists: selection={selection=}\n- {self._module_files=}\n- {self._core_files=}\n- {self._plugin_files=}\n- {self._user_files=}\n- {self._plugin_files=}\n- {self._conf_plugin_files=}")
+        # self.logger.warning(f"_build_filelists: selection={selection=}\n- {self._module_files=}\n- {self._core_files=}\n- {self._plugin_files=}\n- {self._user_files=}\n- {self._plugin_files=}\n- {self._conf_plugin_files=}")
 
         return
-
 
     def _read_requirementfile(self, fname, requirements, add_info):
 
@@ -1398,42 +1425,40 @@ class Requirements_files():
                     requirements.setdefault(line.rstrip(), []).append(info)
         return
 
-
     def __read_requirementfiles(self):
 
         requirements = {}
 
         # Read requirements for core
-        #self.logger.warning(f"__read_requirementfiles: self._core_files={self._core_files}")
+        # self.logger.warning(f"__read_requirementfiles: self._core_files={self._core_files}")
         for fname in self._core_files:
             self._read_requirementfile(fname, requirements, 'SmartHomeNG-')
 
         # Read requirements for modules
-        #self.logger.warning(f"__read_requirementfiles: self._module_files={self._module_files}")
+        # self.logger.warning(f"__read_requirementfiles: self._module_files={self._module_files}")
         for fname in self._module_files:
             self._read_requirementfile(fname, requirements, 'SmartHomeNG-module ')
 
         # Read requirements for userfunctions
-        #self.logger.warning(f"__read_requirementfiles: self._module_files={self._module_files}")
+        # self.logger.warning(f"__read_requirementfiles: self._module_files={self._module_files}")
         self._read_requirementfile(fname, requirements, 'SmartHomeNG-userfunctions ')
 
         # Read requirements for plugins
-        #self.logger.warning(f"__read_requirementfiles: self._plugin_files={self._plugin_files}")
+        # self.logger.warning(f"__read_requirementfiles: self._plugin_files={self._plugin_files}")
         for fname in self._plugin_files:
             self._read_requirementfile(fname, requirements, 'plugin ')
 
         # Read requirements for configured plugins
-        #self.logger.warning(f"__read_requirementfiles: self._conf_plugin_files={self._conf_plugin_files}")
+        # self.logger.warning(f"__read_requirementfiles: self._conf_plugin_files={self._conf_plugin_files}")
         for fname in self._conf_plugin_files:
             self._read_requirementfile(fname, requirements, 'configured plugin ')
 
         # Read user defined requirements for userfunctions (and logics)
-        #self.logger.warning(f"__read_requirementfiles: self._user_files={self._user_files}")
+        # self.logger.warning(f"__read_requirementfiles: self._user_files={self._user_files}")
         for fname in self._user_files:
             self._read_requirementfile(fname, requirements, 'user-defined ')
 
         return requirements
-
 
     def _consolidate_requirements(self, packagelist):
 
@@ -1442,7 +1467,7 @@ class Requirements_files():
 
         # sort = <package>+<python-version req (if specified)+reqversion>
         packagelist_sorted = sorted(packagelist, key=lambda k: k['sort'])
-        self.logger.info("_consolidate_requirements: packagelist_sorted={}".format(packagelist_sorted))
+        self.logger.info('_consolidate_requirements: packagelist_sorted={}'.format(packagelist_sorted))
 
         packagelist_consolidated = []
         self.logger.debug("Req_files: _consolidate_requirements: packagelist_sorted = '{}'".format(packagelist_sorted))
@@ -1464,7 +1489,7 @@ class Requirements_files():
                                 p['used_by'] = pl
                                 packagelist_consolidated[idx] = p
                             break
-                        elif p['req'][0][0] == '==' and  (p['req'][0][1]) >= package_consolidated['req'][0][1]:
+                        elif p['req'][0][0] == '==' and (p['req'][0][1]) >= package_consolidated['req'][0][1]:
                             # if operator is == and version of p >= version of package_consolidated
                             # join list of plugins that use the package and set this package requirement in consolidated
                             pl = package_consolidated['used_by']
@@ -1472,7 +1497,14 @@ class Requirements_files():
                             p['used_by'] = pl
                             packagelist_consolidated[idx] = p
                         else:
-                            print("?gleiche? Version von {}: consolidated = {}, further = {}, used by {}".format(package_consolidated['pkg'], package_consolidated['req'][0][1], p['req'][0][1], p['used_by']))
+                            print(
+                                '?gleiche? Version von {}: consolidated = {}, further = {}, used by {}'.format(
+                                    package_consolidated['pkg'],
+                                    package_consolidated['req'][0][1],
+                                    p['req'][0][1],
+                                    p['used_by'],
+                                )
+                            )
                             break
                     elif package_consolidated['req'][0][0] == '==':
                         # if the requirements are not equal
@@ -1485,17 +1517,29 @@ class Requirements_files():
                             break
                         else:
                             print('ERROR: Requirements cannot be reconciled')
-                            print(package_consolidated['pkg'] + ': ' + package_consolidated['req'][0][0] +
-                                  package_consolidated['req'][0][1] + ' is incompatible to ' + p['req'][0][0] + p['req'][0][
-                                      1])
+                            print(
+                                package_consolidated['pkg']
+                                + ': '
+                                + package_consolidated['req'][0][0]
+                                + package_consolidated['req'][0][1]
+                                + ' is incompatible to '
+                                + p['req'][0][0]
+                                + p['req'][0][1]
+                            )
                             packagelist_consolidated.append(p)
                     elif p['req'][0][0] == '==':
                         # p Gleichheit p['key']=py-vapid+: >< / >1.8.2<
-                        print(f"p Gleichheit p['key']='{p['key']}': package_consolidated >{package_consolidated['req'][0][1]}< / p['req'] >{p['req'][0][1]}<")
-                        print(f"p = {p}")
+                        print(
+                            f"p Gleichheit p['key']='{p['key']}': package_consolidated >{package_consolidated['req'][0][1]}< / p['req'] >{p['req'][0][1]}<"
+                        )
+                        print(f'p = {p}')
                     elif package_consolidated['req'][0][0] == '':
                         # if consolidated version has no special requirements
-                        self.logger.debug("_consolidate_requirements: package_consolidated requirement w/o version - pkg={}".format(package_consolidated['pkg']))
+                        self.logger.debug(
+                            '_consolidate_requirements: package_consolidated requirement w/o version - pkg={}'.format(
+                                package_consolidated['pkg']
+                            )
+                        )
                         # join list of plugins that use the package
                         pl = package_consolidated['used_by']
                         pl.extend(p['used_by'])
@@ -1503,30 +1547,31 @@ class Requirements_files():
                         packagelist_consolidated[idx] = p
                         break
 
-
             else:
                 packagelist_consolidated.append(p)
 
-        self.logger.debug("Req_files: _consolidate_requirements: packagelist_consolidated = '{}'".format(packagelist_consolidated))
+        self.logger.debug(
+            "Req_files: _consolidate_requirements: packagelist_consolidated = '{}'".format(packagelist_consolidated)
+        )
         return packagelist_consolidated
 
-
     def _write_header(self, ofile, filename):
-        pip_statement = 'pip3 install -r '+filename+' --user'
+        pip_statement = 'pip3 install -r ' + filename + ' --user'
         pip_statement = pip_statement.ljust(49)
         ofile.write('\n')
         ofile.write('#   +--------------------------------------------------+\n')
         ofile.write('#   |                 SmartHomeNG                      |\n')
-        ofile.write('#   |            DON\'T EDIT THIS FILE                  |\n')
+        ofile.write("#   |            DON'T EDIT THIS FILE                  |\n")
         ofile.write('#   |           THIS FILE IS GENERATED                 |\n')
         ofile.write('#   |              BY lib/shpypi.py                    |\n')
-        ofile.write('#   |            ON '+datetime.datetime.now().strftime('%d.%m.%Y %H:%M')+'                   |\n')
+        ofile.write(
+            '#   |            ON ' + datetime.datetime.now().strftime('%d.%m.%Y %H:%M') + '                   |\n'
+        )
         ofile.write('#   |                                                  |\n')
         ofile.write('#   |               INSTALL WITH:                      |\n')
-        ofile.write('#   | '+pip_statement+'|\n')
+        ofile.write('#   | ' + pip_statement + '|\n')
         ofile.write('#   +--------------------------------------------------+\n')
         ofile.write('\n')
-
 
     def _write_resultfile(self, selection, packagelist_consolidated, requirements):
 
@@ -1547,14 +1592,12 @@ class Requirements_files():
                         outfile.write('# {}\n'.format(req))
                     outfile.write('{}\n\n'.format(pkg['requests']))
         else:
-            self.logger.error("_write_resultfile: packagelist_consolidated is empty".format())
+            self.logger.error('_write_resultfile: packagelist_consolidated is empty'.format())
 
         return complete_filename
 
-
     def set_conf_plugin_files(self, conf_plugin_filelist):
         self._conf_plugin_files = conf_plugin_filelist
-
 
     def create_requirementsfile(self, selection):
         """
@@ -1585,7 +1628,11 @@ class Requirements_files():
         # consolidate requirements
         packagelist_consolidated = self._consolidate_requirements(packagelist)
 
-        self.logger.info("create_requirementsfile: selection={}, packagelist={}".format(selection, packagelist))
-        self.logger.info("create_requirementsfile: selection={}, packagelist_consolidated={}".format(selection, packagelist_consolidated))
+        self.logger.info('create_requirementsfile: selection={}, packagelist={}'.format(selection, packagelist))
+        self.logger.info(
+            'create_requirementsfile: selection={}, packagelist_consolidated={}'.format(
+                selection, packagelist_consolidated
+            )
+        )
 
         return self._write_resultfile(selection, packagelist_consolidated, requirements)

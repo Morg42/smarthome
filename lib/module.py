@@ -33,6 +33,7 @@ They can be used the following way: To call eg. **xxx()**, use the following syn
 .. code-block:: python
 
         from lib.module import Modules
+
         modules = Modules.get_instance()
 
         # to access a method (eg. enable_logic()):
@@ -41,8 +42,10 @@ They can be used the following way: To call eg. **xxx()**, use the following syn
 :Warning: This library is part of the core of SmartHomeNG. It **should not be called directly** from plugins!
 
 """
+
 import logging
-#import threading
+
+# import threading
 import inspect
 import os
 
@@ -51,17 +54,17 @@ import importlib
 
 import lib.config
 import lib.translation as translation
-from lib.constants import (KEY_CLASS_NAME, KEY_CLASS_PATH, KEY_INSTANCE, DIR_MODULES)
+from lib.constants import KEY_CLASS_NAME, KEY_CLASS_PATH, KEY_INSTANCE, DIR_MODULES
 from lib.utils import Utils
 from lib.metadata import Metadata
 
 logger = logging.getLogger(__name__)
 
 
-_modules_instance = None    # Pointer to the initialized instance of the Modules class (for use by static methods)
+_modules_instance = None  # Pointer to the initialized instance of the Modules class (for use by static methods)
 
 
-class Modules():
+class Modules:
     """
     Module loader class. Parses config file and creates an instance for each module.
     To start the modules, the start() method has to be called.
@@ -78,14 +81,17 @@ class Modules():
     def __init__(self, smarthome, configfile):
         self._sh = smarthome
         self._basedir = smarthome.get_basedir()
-#        self._sh._moduledict = {}
+        #        self._sh._moduledict = {}
 
         global _modules_instance
         if _modules_instance is not None:
             import inspect
+
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 4)
-            logger.critical(f"A second 'modules' object has been created. There should only be ONE instance of class 'Modules'!!! Called from: {calframe[1][1]} ({calframe[1][3]})")
+            logger.critical(
+                f"A second 'modules' object has been created. There should only be ONE instance of class 'Modules'!!! Called from: {calframe[1][1]} ({calframe[1][3]})"
+            )
 
         _modules_instance = self
 
@@ -95,7 +101,7 @@ class Modules():
             return
 
         for module in _conf:
-            logger.debug(f"Modules, section: {module}")
+            logger.debug(f'Modules, section: {module}')
             module_name, self.meta = self._get_modulename_and_metadata(module, _conf[module])
             if module_name != '' and self.meta is not None:
                 if self.meta.test_shngcompatibility() and self.meta.test_pythoncompatibility():
@@ -105,17 +111,16 @@ class Modules():
                         try:
                             self._load_module(module, classname, classpath, args)
                         except Exception as e:
-                            logger.exception(f"Module {module} exception: {e}")
+                            logger.exception(f'Module {module} exception: {e}')
             else:
                 logger.warning(f"Section '{module}' ignored")
 
-        logger.info(f"Loaded Modules: {str( self.return_modules() )}")
+        logger.info(f'Loaded Modules: {str(self.return_modules())}')
 
         # clean up (module configuration from module.yaml)
-        del(_conf)  # clean up
+        del _conf  # clean up
 
         return
-
 
     def _get_modulename_and_metadata(self, module, mod_conf):
         """
@@ -127,7 +132,7 @@ class Modules():
         :return: module_name and metadata_instance
         :rtype: string, object
         """
-        module_name = mod_conf.get('module_name','').lower()
+        module_name = mod_conf.get('module_name', '').lower()
         meta = None
         if module_name != '':
             module_dir = os.path.join(self._sh.get_config_dir(DIR_MODULES), module_name)
@@ -136,15 +141,16 @@ class Modules():
             else:
                 logger.warning(f"Section '{module}': No module directory {module_dir} found")
         else:
-            classpath = mod_conf.get(KEY_CLASS_PATH,'')
+            classpath = mod_conf.get(KEY_CLASS_PATH, '')
             if classpath != '':
-                module_name = classpath.split('.')[len(classpath.split('.'))-1].lower()
-                logger.info(f"Section '{module}': module_name '{module_name}' was extracted from classpath '{classpath}'")
+                module_name = classpath.split('.')[len(classpath.split('.')) - 1].lower()
+                logger.info(
+                    f"Section '{module}': module_name '{module_name}' was extracted from classpath '{classpath}'"
+                )
                 meta = Metadata(self._sh, module_name, 'module', classpath)
             else:
                 logger.info(f"Section '{module}': No attribute 'module_name' found in configuration")
         return (module_name, meta)
-
 
     def _get_conf_args(self, mod_conf):
         """
@@ -165,7 +171,6 @@ class Modules():
                 args[arg] = value
         return args
 
-
     def _get_classname_and_classpath(self, mod_conf, module_name):
         """
         Returns the classname and the classpath for the actual module
@@ -180,13 +185,12 @@ class Modules():
         """
         classname = self.meta.get_string('classname')
         if classname == '':
-            classname = mod_conf.get(KEY_CLASS_NAME,'')
+            classname = mod_conf.get(KEY_CLASS_NAME, '')
         try:
             classpath = mod_conf[KEY_CLASS_PATH]
-        except:
+        except KeyError:
             classpath = DIR_MODULES + '.' + module_name
         return (classname, classpath)
-
 
     def _test_duplicate_configuration(self, module, classname):
         """
@@ -205,9 +209,10 @@ class Modules():
         for m in self._modules:
             if m.__class__.__name__ == classname:
                 duplicate = True
-                logger.warning(f"Modules, section '{module}': Multiple module instances of class '{classname}' detected, additional instance not initialized")
+                logger.warning(
+                    f"Modules, section '{module}': Multiple module instances of class '{classname}' detected, additional instance not initialized"
+                )
         return duplicate
-
 
     def _load_module(self, name, classname, classpath, args):
         """
@@ -227,7 +232,7 @@ class Modules():
         :rtype: object
         """
 
-        import modules    # needed for Python 3.13 and up
+        import modules  # needed for Python 3.13 and up
 
         enabled = Utils.strip_quotes(args.get('enabled', 'true').lower())
         if enabled == 'false':
@@ -238,69 +243,74 @@ class Modules():
         # Load an instance of the module
         try:
             if name == 'httpX':
-                #importlib.import_module(classpath)
+                # importlib.import_module(classpath)
                 import modules.http
             else:
-                exec(f"import {classpath}")
+                exec(f'import {classpath}')
         except Exception as e:
             logger.critical(f"Module '{name}' ({classpath}) exception during import of __init__.py: {e}")
             return None
 
         try:
-            exec(f"self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})")
+            exec(f'self.loadedmodule = {classpath}.{classname}.__new__({classpath}.{classname})')
         except Exception as e:
             logger.error(f"Module '{name}' ({classpath}) exception during initialization (__new__): {e}")
             pass
 
         # load module-specific translations
-        translation.load_translations('module', classpath.replace('.', '/'), 'module/'+classpath.split('.')[1])
-#        translation.load_translations('global', classpath.replace('.', '/'), 'module/'+classpath.split('.')[1])
+        translation.load_translations('module', classpath.replace('.', '/'), 'module/' + classpath.split('.')[1])
+        #        translation.load_translations('global', classpath.replace('.', '/'), 'module/'+classpath.split('.')[1])
 
         # get arguments defined in __init__ of module's class to self.args
         try:
-#            exec("self.args = inspect.getargspec({classpath}.{classname}.__init__)[0][1:]")
-            exec(f"self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]")
+            #            exec("self.args = inspect.getargspec({classpath}.{classname}.__init__)[0][1:]")
+            exec(f'self.args = inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]')
         except Exception as e:
-            logger.critical(f"Module '{name}' exception during 'inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]': {e}")
+            logger.critical(
+                f"Module '{name}' exception during 'inspect.getfullargspec({classpath}.{classname}.__init__)[0][1:]': {e}"
+            )
             return None
-        #logger.notice("- self.args = '{self.args}'")
+        # logger.notice("- self.args = '{self.args}'")
 
         # get list of argument used names, if they are defined in the module's class
         logger.info(f"Module '{classname}': args = '{str(args)}'")
         arglist = [name for name in self.args if name in args]
-        argstring = ",".join([f"{name}={args[name]}" for name in arglist])
+        argstring = ','.join([f'{name}={args[name]}' for name in arglist])
 
         self.loadedmodule._init_complete = False
         (module_params, params_ok, hide_params) = self.meta.check_parameters(args)
-        if params_ok == True:
+        if params_ok:
             if module_params != {}:
                 # initialize parameters the old way
-                argstring = ",".join(["{}={}".format(name, "'"+str(module_params.get(name,''))+"'") for name in arglist])
+                argstring = ','.join(
+                    ['{}={}'.format(name, "'" + str(module_params.get(name, '')) + "'") for name in arglist]
+                )
             # initialize parameters the new way: Define a dict within the instance
             self.loadedmodule._parameters = module_params
             self.loadedmodule._metadata = self.meta
 
             # initialize the loaded instance of the module
-            self.loadedmodule._init_complete = True   # set to false by module, if an initalization error occurs
-            exec(f"self.loadedmodule.__init__(self._sh{',' if len(arglist) else ''}{argstring})")
+            self.loadedmodule._init_complete = True  # set to false by module, if an initalization error occurs
+            exec(f'self.loadedmodule.__init__(self._sh{"," if len(arglist) else ""}{argstring})')
 
-        if self.loadedmodule._init_complete == True:
+        if self.loadedmodule._init_complete:
             try:
                 code_version = self.loadedmodule.version
-            except:
-                code_version = None    # if module code without version
+            except AttributeError:
+                code_version = None  # if module code without version
             if self.meta.test_version(code_version):
-                 logger.info(f"Modules: Loaded module '{name}' (class '{str(self.loadedmodule.__class__.__name__)}') v{self.meta.get_version()}: {self.meta.get_mlstring('description')}" )
-                 self._moduledict[name] = self.loadedmodule
-                 self._modules.append(self._moduledict[name])
-                 return self.loadedmodule
+                logger.info(
+                    f"Modules: Loaded module '{name}' (class '{str(self.loadedmodule.__class__.__name__)}') v{self.meta.get_version()}: {self.meta.get_mlstring('description')}"
+                )
+                self._moduledict[name] = self.loadedmodule
+                self._modules.append(self._moduledict[name])
+                return self.loadedmodule
             else:
-                logger.error(f"Module {name} not started: Module version mismatch")
+                logger.error(f'Module {name} not started: Module version mismatch')
                 return None
         else:
             logger.error("Modules: Module '{classpath.split('.')[1]}' initialization failed, module not loaded")
             return None
-
 
     # ------------------------------------------------------------------------------------
     #   Following (static) methods of the class Modules implement the API for modules in shNG
@@ -316,6 +326,7 @@ class Modules():
         .. code-block:: python
 
             from lib.module import Modules
+
             modules = Modules.get_instance()
 
             # to access a method (eg. xxx()):
@@ -325,11 +336,10 @@ class Modules():
         :return: modules instance
         :rtype: object of None
         """
-        if _modules_instance == None:
+        if _modules_instance is None:
             return None
         else:
             return _modules_instance
-
 
     def return_modules(self):
         """
@@ -338,11 +348,10 @@ class Modules():
         :return: list of module names
         :rtype: list
         """
-        l = []
+        result = []
         for module_key in self._moduledict.keys():
-            l.append(module_key)
-        return l
-
+            result.append(module_key)
+        return result
 
     def get_module(self, name):
         """
@@ -357,7 +366,6 @@ class Modules():
         """
         return self._moduledict.get(name)
 
-
     def start(self):
         """
         Start all modules
@@ -367,10 +375,9 @@ class Modules():
         logger.info('Start Modules')
 
         for module in self.return_modules():
-            logger.debug(f"Starting {module} Module")
+            logger.debug(f'Starting {module} Module')
             self.m = self.get_module(module)
             self.m.start()
-
 
     def stop(self):
         """
@@ -384,12 +391,11 @@ class Modules():
         # stop modules in revered order (module started first is stopped last)
         module_list.reverse()
         for module in module_list:
-            logger.debug(f"Stopping {module} Module")
+            logger.debug(f'Stopping {module} Module')
             self.m = self.get_module(module)
             try:
                 self.m.stop()
-#            except:
-#                pass
+            #            except:
+            #                pass
             except Exception as e:
                 logger.warning(f"Error while stopping module '{module}'\n-> {e}")
-

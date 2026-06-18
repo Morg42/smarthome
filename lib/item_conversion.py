@@ -33,8 +33,9 @@ import os
 RUAMEL_YAML_INSTALLED = False
 try:
     import ruamel.yaml as yaml
+
     RUAMEL_YAML_INSTALLED = True
-except:
+except ImportError:
     print('ERROR: module ruamel.yaml not found')
     print('')
     print('Please install ruamel.yaml using the command:')
@@ -50,7 +51,7 @@ from collections import OrderedDict
 
 yaml_version = '1.1'
 indent_spaces = 4
-store_raw_output = False			# Only for testing, otherwise False
+store_raw_output = False  # Only for testing, otherwise False
 
 
 def is_ruamelyaml_installed():
@@ -87,8 +88,8 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
     lastline_was_comment = False
     last_comment_nr = 0
 
-    if filename != None:
-        print("- parsing '{}'".format(os.path.basename(filename)), end="")
+    if filename is not None:
+        print("- parsing '{}'".format(os.path.basename(filename)), end='')
         with open(filename, 'r', encoding='UTF-8') as f:
             lines = iter(f.readlines())
     elif isinstance(conf_code, str):
@@ -108,11 +109,11 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
             if line.rstrip().endswith('\\'):
                 i = 0
                 while line.rstrip().endswith('\\'):
-                    multiline.append( line.rstrip().rstrip('\\').strip() )
+                    multiline.append(line.rstrip().rstrip('\\').strip())
                     i += 1
                     linenu += 1
                     line = next(lines, '').lstrip()
-                line = '\n'.join(multiline) + '\n'+line.strip()
+                line = '\n'.join(multiline) + '\n' + line.strip()
                 lastline_was_comment = False
 
             if (len(multiline) == 0) or (line[0] == '#'):
@@ -125,7 +126,7 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
                     # inline comment
                     if (line != '') and (comment != '') and line.find('[') == -1:
                         attr, __, value = line.partition('=')
-                        if ("'" in line) or ("|" in line):
+                        if ("'" in line) or ('|' in line):
                             comment = attr.strip() + ': ' + comment
                         else:
                             line = line + '    ## ' + comment
@@ -141,17 +142,21 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
                     if 'comment' in item.keys():
                         if lastline_was_comment:
                             if last_comment_nr > 0:
-                                item['comment'+str(last_comment_nr)] = _handle_multiline_string(item['comment'+str(last_comment_nr)] + '\n' + _strip_quotes(comment))
+                                item['comment' + str(last_comment_nr)] = _handle_multiline_string(
+                                    item['comment' + str(last_comment_nr)] + '\n' + _strip_quotes(comment)
+                                )
                             else:
-                                item['comment'] = _handle_multiline_string(item['comment'] + '\n' + _strip_quotes(comment))
+                                item['comment'] = _handle_multiline_string(
+                                    item['comment'] + '\n' + _strip_quotes(comment)
+                                )
                         else:
                             i = 1
-                            while 'comment'+str(i) in item.keys():
+                            while 'comment' + str(i) in item.keys():
                                 i += 1
-                            item['comment'+str(i)] = _handle_multiline_string(_strip_quotes(comment))
+                            item['comment' + str(i)] = _handle_multiline_string(_strip_quotes(comment))
                             last_comment_nr = i
                     else:
-#                        logger.info("comment: '{}'".format(comment))
+                        #                        logger.info("comment: '{}'".format(comment))
                         item['comment'] = _handle_multiline_string(_strip_quotes(comment))
                         last_comment_nr = 0
                     lastline_was_comment = True
@@ -181,18 +186,28 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
                         closing = True
                         if line[index] not in valid_chars + "'":
                             print()
-                            print("ERROR: Problem (1) parsing '{}' invalid character in \nline {}: {}. \nValid chars: {}".format(os.path.basename(filename), linenu, line, valid_chars))
+                            print(
+                                "ERROR: Problem (1) parsing '{}' invalid character in \nline {}: {}. \nValid chars: {}".format(
+                                    os.path.basename(filename), linenu, line, valid_chars
+                                )
+                            )
                             return config
                 if brackets != 0:
                     print()
-                    print("ERROR: Problem parsing '{}' unbalanced brackets in line {}: {}".format(filename, linenu, line))
+                    print(
+                        "ERROR: Problem parsing '{}' unbalanced brackets in line {}: {}".format(filename, linenu, line)
+                    )
                     return config
                 #
                 if comment_in_line > -1:
                     print()
-                    print("ERROR: Problem parsing '{}' \nunhandled comment {} in \nline {}: {}. \nValid chars: {}".format(os.path.basename(filename), comment, linenu, line, valid_chars))
+                    print(
+                        "ERROR: Problem parsing '{}' \nunhandled comment {} in \nline {}: {}. \nValid chars: {}".format(
+                            os.path.basename(filename), comment, linenu, line, valid_chars
+                        )
+                    )
                 #
-                name = line.strip("[]")
+                name = line.strip('[]')
                 name = _strip_quotes(name)
                 if level - offset == 1:
                     if name not in config:
@@ -220,17 +235,21 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
                 attr, __, value = line.partition('=')
                 comm = ''
                 if '##' in value:
-                    value, __, comm  = value.partition('##')
+                    value, __, comm = value.partition('##')
                     value = _strip_quotes(value)
                     value = value + '    ## ' + comm.strip()
-#                print("= attr >{}<, value >{}<, comment >{}<".format(attr, value, comm))
+                #                print("= attr >{}<, value >{}<, comment >{}<".format(attr, value, comm))
                 if not value:
                     continue
                 attr = attr.strip()
                 if not set(attr).issubset(valid_set):
                     print()
                     print("line: '{}'".format(line))
-                    print("ERROR: Problem (2) parsing '{}' invalid character in line {}: {}. Valid characters are: {}".format(filename, linenu, attr, valid_chars))
+                    print(
+                        "ERROR: Problem (2) parsing '{}' invalid character in line {}: {}. Valid characters are: {}".format(
+                            filename, linenu, attr, valid_chars
+                        )
+                    )
                     continue
                 if '|' in value:
                     item[attr] = [_strip_quotes(x) for x in value.split('|')]
@@ -239,7 +258,7 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
                     try:
                         ivalue = int(svalue)
                         item[attr] = ivalue
-                    except:
+                    except ValueError:
                         item[attr] = svalue.replace('\t', ' ')
 
         return config
@@ -249,12 +268,21 @@ def parse_for_convert(filename=None, conf_code=None, config=None):
 #   YAML handling routines
 #
 
+
 def _yaml_save_roundtrip(filename, data):
     """
     Dump yaml using the RoundtripDumper and correct linespacing in output file
     """
 
-    sdata = yaml.dump(data, Dumper=yaml.RoundTripDumper, version=yaml_version, indent=indent_spaces, block_seq_indent=2, width=32768, allow_unicode=True)
+    sdata = yaml.dump(
+        data,
+        Dumper=yaml.RoundTripDumper,
+        version=yaml_version,
+        indent=indent_spaces,
+        block_seq_indent=2,
+        width=32768,
+        allow_unicode=True,
+    )
 
     ldata = sdata.split('\n')
     rdata = []
@@ -262,24 +290,23 @@ def _yaml_save_roundtrip(filename, data):
         # Fix for ruamel.yaml handling: Reinsert empty line before comment of next section
         if len(line.lstrip()) > 0 and line.lstrip()[0] == '#':
             indentcomment = len(line) - len(line.lstrip(' '))
-            indentprevline = len(ldata[index-1]) - len(ldata[index-1].lstrip(' '))
-            if indentprevline - indentcomment >= 2*indent_spaces:
+            indentprevline = len(ldata[index - 1]) - len(ldata[index - 1].lstrip(' '))
+            if indentprevline - indentcomment >= 2 * indent_spaces:
                 rdata.append('')
             rdata.append(line)
         # Fix for ruamel.yaml handling: Remove empty line with spaces that have been inserted
         elif line.strip() == '' and line != '':
-            if ldata[index-1] != '':
+            if ldata[index - 1] != '':
                 rdata.append(line)
         else:
             rdata.append(line)
 
     sdata = '\n'.join(rdata)
     if sdata[0] == '\n':
-        sdata =sdata[1:]
+        sdata = sdata[1:]
 
-    with open(filename+'.yaml', 'w', encoding='utf8') as outfile:
-        outfile.write( sdata )
-
+    with open(filename + '.yaml', 'w', encoding='utf8') as outfile:
+        outfile.write(sdata)
 
 
 def yaml_save(filename, data):
@@ -294,10 +321,10 @@ def yaml_save(filename, data):
 
     sdata = convert_yaml(data)
 
-    print(", saving to '{}'".format(os.path.basename(filename)+'.yaml'))
-    if store_raw_output == True:
-        with open(filename+'_raw.yaml', 'w', encoding='UTF-8') as outfile:
-            outfile.write( sdata )
+    print(", saving to '{}'".format(os.path.basename(filename) + '.yaml'))
+    if store_raw_output:
+        with open(filename + '_raw.yaml', 'w', encoding='UTF-8') as outfile:
+            outfile.write(sdata)
 
     # Test if roundtrip gives the same result
     data = yaml.load(sdata, yaml.RoundTripLoader)
@@ -314,11 +341,28 @@ def convert_yaml(data):
     :return: yaml formated data
     """
 
-    ordered = (type(data).__name__ == 'OrderedDict')
+    ordered = type(data).__name__ == 'OrderedDict'
     if ordered:
-        sdata = _ordered_dump(data, Dumper=yaml.SafeDumper, version=yaml_version, indent=indent_spaces, block_seq_indent=2, width=32768, allow_unicode=True, default_flow_style=False)
+        sdata = _ordered_dump(
+            data,
+            Dumper=yaml.SafeDumper,
+            version=yaml_version,
+            indent=indent_spaces,
+            block_seq_indent=2,
+            width=32768,
+            allow_unicode=True,
+            default_flow_style=False,
+        )
     else:
-        sdata = yaml.dump(data, Dumper=yaml.SafeDumper, indent=indent_spaces, block_seq_indent=2, width=32768, allow_unicode=True, default_flow_style=False)
+        sdata = yaml.dump(
+            data,
+            Dumper=yaml.SafeDumper,
+            indent=indent_spaces,
+            block_seq_indent=2,
+            width=32768,
+            allow_unicode=True,
+            default_flow_style=False,
+        )
     sdata = _format_yaml_dump(sdata)
 
     return sdata
@@ -347,47 +391,46 @@ def _format_yaml_dump(data):
             # Handle inline-comments from converter
             if line.find('##') > -1 and line.find(": '") > -1 and line[-1:] == "'":
                 line = line.replace('##', '#')
-                line = line.replace(": '", ": ")
+                line = line.replace(": '", ': ')
                 line = line[:-1]
 
             # Handle comments from converter
             if line.find('comment') > -1 and line.find(':') > line.find('comment'):
-#                print('comment-line>', line, '<')
+                #                print('comment-line>', line, '<')
                 indent = len(line) - len(line.lstrip(' '))
-                if ldata[index+1][-1:] == ':':
-                    indent = len(ldata[index+1]) - len(ldata[index+1].lstrip(' '))
+                if ldata[index + 1][-1:] == ':':
+                    indent = len(ldata[index + 1]) - len(ldata[index + 1].lstrip(' '))
                 if line.find(': "|') > -1:
                     line = line[:-1]
                     line = line.replace(': "|', ': |')
                 else:
                     line = line.replace(': ', ': |\\n', 1)
-#                print('# ' + line[line.find("|\\n")+3:])
-                line = " "*indent + '# ' + line[line.find("|\\n")+3:]
+                #                print('# ' + line[line.find("|\\n")+3:])
+                line = ' ' * indent + '# ' + line[line.find('|\\n') + 3 :]
                 line = line.replace('>**<', '')
-                line = line.replace('\\n', '\n'+" "*indent + '# ')
+                line = line.replace('\\n', '\n' + ' ' * indent + '# ')
 
             # Handle newlines for multiline string-attributes ruamel.yaml
             if line.find(': "|') > -1 and line[-1:] == '"' and line.find('\\n') > -1:
                 indent = len(line) - len(line.lstrip(' ')) + indent_spaces
                 line = line[:-1]
                 line = line.replace(': "|', ': |')
-                line = line.replace('\\n', '\n'+" "*indent)
+                line = line.replace('\\n', '\n' + ' ' * indent)
 
         rdata.append(line)
-
 
     ldata = rdata
     rdata = []
     for index, line in enumerate(ldata):
-        if len(line.lstrip()) > 0 and  line.lstrip()[0] == '#' and ldata[index+1][-1:] == ':':
+        if len(line.lstrip()) > 0 and line.lstrip()[0] == '#' and ldata[index + 1][-1:] == ':':
             rdata.append('')
             rdata.append(line)
 
         # Insert empty line before section (key w/o a value)
         elif line[-1:] == ':':
-            if not (len(ldata[index-1].lstrip()) > 0 and ldata[index-1].lstrip()[0] == '#'):
+            if not (len(ldata[index - 1].lstrip()) > 0 and ldata[index - 1].lstrip()[0] == '#'):
                 # no empty line before list attributes
-                if ldata[index+1].strip()[0] != '-':
+                if ldata[index + 1].strip()[0] != '-':
                     rdata.append('')
                 rdata.append(line)
             else:
@@ -416,11 +459,9 @@ def _ordered_dump(data, stream=None, Dumper=yaml.Dumper, **kwds):
     # usage example: ordered_dump(data, Dumper=yaml.SafeDumper)
     class OrderedDumper(Dumper):
         pass
+
     def _dict_representer(dumper, data):
-        return dumper.represent_mapping(
-            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-            data.items())
+        return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, data.items())
+
     OrderedDumper.add_representer(OrderedDict, _dict_representer)
     return yaml.dump(data, stream, OrderedDumper, **kwds)
-
-

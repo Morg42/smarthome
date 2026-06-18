@@ -1,0 +1,8 @@
+%YAML 1.1
+---
+# Minimal holidays.yaml for the shng test suite.
+# Points to Germany (no province) so _initialize_holidays() can build a
+# CountryHoliday object without needing any instance-specific configuration.
+
+location:
+    country: Germany

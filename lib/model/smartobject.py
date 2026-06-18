@@ -25,11 +25,9 @@ from lib.utils import Utils
 logger = logging.getLogger(__name__)
 
 
-class SmartObject():
-
+class SmartObject:
     def __init__(self, **kwargs):
         pass
+
     def __new__(cls, *args, **kargs):
         return object.__new__(cls)
-
-

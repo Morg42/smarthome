@@ -33,15 +33,14 @@ import json
 =
 """
 
-class Protocol():
 
+class Protocol:
     version = '1.0.0'
 
     protocol_id = 'ex'
     protocol_name = 'sync_example'
     protocol_path = '/sync'
     protocol_enabled = True
-
 
     def __init__(self, ws_server, logger_name):
 
@@ -52,37 +51,33 @@ class Protocol():
 
         return
 
-
     def start_global_tasks(self, loop):
 
         self.loop = loop
 
-        self.logger.dbghigh("start_global_tasks: Nothing to start")
+        self.logger.dbghigh('start_global_tasks: Nothing to start')
         return
-
 
     async def handle_protocol(self, websocket):
 
         await self.counter_sync(websocket)
         return
 
-
     async def cleanup_connection(self, websocket):
 
         # Nothing to clean up for this protocol
         return
 
+    # --------------
 
-#--------------
-
-    STATE = {"value": 0}
+    STATE = {'value': 0}
 
     def state_event(self):
-        return json.dumps({"type": "state", **self.STATE})
+        return json.dumps({'type': 'state', **self.STATE})
 
     def users_event(self):
         sync_USERS = self.get_users()
-        return json.dumps({"type": "users", "count": len(sync_USERS)})
+        return json.dumps({'type': 'users', 'count': len(sync_USERS)})
 
     async def notify_state(self):
         sync_USERS = self.get_users()
@@ -103,15 +98,15 @@ class Protocol():
                     exception = task.exception()
                     if isinstance(exception, Exception):
                         if not str(exception).startswith('received 1000'):
-                            self.logger.info(f"notify_users: Finished task {name} threw {exception}")
+                            self.logger.info(f'notify_users: Finished task {name} threw {exception}')
 
                 for task in pending:
                     name = task.get_name()
                     exception = task.exception()
                     if isinstance(exception, Exception):
-                        self.logger.info(f"notify_users: Pending task {name} threw {exception}")
+                        self.logger.info(f'notify_users: Pending task {name} threw {exception}')
         except Exception as e:
-            self.logger.exception(f"Exception: {e}")
+            self.logger.exception(f'Exception: {e}')
 
     async def counter_sync(self, websocket):
         await self.notify_users()
@@ -120,31 +115,31 @@ class Protocol():
         try:
             async for message in websocket:
                 data = json.loads(message)
-                if data.get("cmd", ''):
-                    self.logger.info(f"CMD: {data}")
-                elif data.get("action", '') == "minus":
-                    self.STATE["value"] -= 1
-                    self.logger.info(f"Decremented value to {self.STATE['value']}")
+                if data.get('cmd', ''):
+                    self.logger.info(f'CMD: {data}')
+                elif data.get('action', '') == 'minus':
+                    self.STATE['value'] -= 1
+                    self.logger.info(f'Decremented value to {self.STATE["value"]}')
                     await self.notify_state()
-                elif data.get("action", '') == "plus":
-                    self.STATE["value"] += 1
-                    self.logger.info(f"Incremented value to {self.STATE['value']}")
+                elif data.get('action', '') == 'plus':
+                    self.STATE['value'] += 1
+                    self.logger.info(f'Incremented value to {self.STATE["value"]}')
                     await self.notify_state()
                 else:
-                    self.logging.error(f"Sync-protocol: unsupported event: {data}")
+                    self.logging.error(f'Sync-protocol: unsupported event: {data}')
 
             await self.notify_users()
 
         except Exception as e:
-            #logmsg = f"counter_sync error: Client {self.build_log_info(client_addr)} - {e}"
-            logmsg = f"counter_sync error: Client {self.client_address(websocket)} - {e}"
+            # logmsg = f"counter_sync error: Client {self.build_log_info(client_addr)} - {e}"
+            logmsg = f'counter_sync error: Client {self.client_address(websocket)} - {e}'
             if str(e).startswith(('no close frame received or sent', 'received 1005')):
                 self.logger.info(logmsg)
-            elif str(e).startswith(('code = 1005', 'code = 1006')) or str(e).endswith('keepalive ping timeout; no close frame received'):
+            elif str(e).startswith(('code = 1005', 'code = 1006')) or str(e).endswith(
+                'keepalive ping timeout; no close frame received'
+            ):
                 self.logger.warning(logmsg)
             else:
                 self.logger.error(logmsg)
 
         return
-
-

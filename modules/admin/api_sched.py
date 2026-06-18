@@ -30,21 +30,21 @@ from .rest import RESTResource
 
 
 class SchedulersController(RESTResource):
-
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
 
         return
-
 
     def build_task_info(self, obj):
 
         try:
             task_type = obj.__module__
-        except:
+        except AttributeError:
             task_type = '?'
 
         try:
@@ -54,7 +54,7 @@ class SchedulersController(RESTResource):
                 task_name = obj._path
             else:
                 task_name = obj.__name__
-        except:
+        except AttributeError:
             task_name = dir(obj)
 
         if task_type == 'lib.logic':
@@ -62,8 +62,8 @@ class SchedulersController(RESTResource):
             task_name = "'" + task_name + "'"
 
         elif task_type.startswith('lib.item'):
-                task_name = ''
-                task_type = ''
+            task_name = ''
+            task_type = ''
 
         else:
             if task_type.startswith('plugins.'):
@@ -82,7 +82,6 @@ class SchedulersController(RESTResource):
 
         return (task_type, task_name)
 
-
     # ======================================================================
     #  GET /api/schedulers
     #
@@ -96,7 +95,7 @@ class SchedulersController(RESTResource):
         for entry in self._sh.scheduler._scheduler:
             schedule = dict()
             s = self._sh.scheduler._scheduler[entry]
-            if s['next'] != None and s['cycle'] != '' and s['cron'] != '':
+            if s['next'] is not None and s['cycle'] != '' and s['cron'] != '':
                 schedule['fullname'] = entry
                 schedule['name'] = entry
                 schedule['group'] = 'other'
@@ -129,25 +128,25 @@ class SchedulersController(RESTResource):
                 schedule_list.append(schedule)
 
         # Handle all waiting triggers
-        triggers = self._sh.scheduler._triggerq.dump()    # returns a list
+        triggers = self._sh.scheduler._triggerq.dump()  # returns a list
         for trigger in triggers:
             # trigger holds tuples of (datetime, priority) and (name, obj, by, source, dest, value)
-            #(dt, prio), (name, obj, by, source, dest, value) = self._triggerq.get()
+            # (dt, prio), (name, obj, by, source, dest, value) = self._triggerq.get()
 
             triggerinfo = dict()
             (dt, prio), (name, obj, by, source, dest, value) = trigger
 
             triggerinfo['fullname'] = 'trigger.' + name
             triggerinfo['name'] = 'trigger.' + name
-            triggerinfo['group'] = 'trigger'    # later: 'trigger'
+            triggerinfo['group'] = 'trigger'  # later: 'trigger'
             triggerinfo['next'] = dt.strftime('%Y-%m-%d %H:%M:%S%z')
             triggerinfo['cycle'] = '-'
             triggerinfo['cron'] = '-'
             triggerinfo['prio'] = prio
-            #triggerinfo['active'] = True
+            # triggerinfo['active'] = True
             triggerinfo['value'] = str(value)
             triggerinfo['by'] = by
-        #     # obj, source, dest
+            #     # obj, source, dest
             (triggerinfo['task_type'], triggerinfo['task_name']) = self.build_task_info(obj)
             schedule_list.append(triggerinfo)
 
@@ -156,4 +155,3 @@ class SchedulersController(RESTResource):
 
     read.expose_resource = True
     read.authentication_needed = True
-

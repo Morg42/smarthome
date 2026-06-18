@@ -26,7 +26,7 @@ import socket
 from collections import deque
 
 
-class aioUDPServer():
+class aioUDPServer:
     def __init__(self):
         self._recv_max_size = 4096
 

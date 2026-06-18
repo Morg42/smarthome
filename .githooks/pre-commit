@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# pre-commit — format and lint staged Python files.
+# Installed via: git config core.hooksPath .githooks
+
+SHNG_DIR="$(git rev-parse --show-toplevel)"
+cd "$SHNG_DIR" || exit 1
+
+RUFF="${SHNG_DIR}/venvs/shng/bin/ruff"
+[ -x "$RUFF" ] || RUFF="ruff"
+
+# Staged Python files only (Added, Copied, Modified)
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+if [ -z "$STAGED" ]; then
+    exit 0
+fi
+
+# --- Format (auto-apply + re-stage) ---
+echo "$STAGED" | xargs "$RUFF" format --quiet
+echo "$STAGED" | xargs git add
+
+# --- Lint ---
+if ! echo "$STAGED" | xargs "$RUFF" check; then
+    echo ""
+    echo "==> COMMIT REJECTED: ruff found lint errors in staged files."
+    echo ""
+    echo "    Fix the errors above, then:  git commit"
+    echo "    Bypass (use sparingly):      git commit --no-verify"
+    echo ""
+    echo "    Note: ruff is a required CI check — errors will block your PR."
+    exit 1
+fi

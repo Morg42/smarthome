@@ -28,14 +28,15 @@ import subprocess
 try:
     import utils
     import cpuinfo
-except:
+except ImportError:
     import lib.utils as utils
     import lib.cpuinfo as cpuinfo
 
 try:
     import lib.shyaml as shyaml
+
     yaml_support = True
-except:
+except ImportError:
     yaml_support = False
 
 
@@ -79,6 +80,7 @@ def _get_field_actual(cant_be_number, raw_string, field_names):
 
     return None
 
+
 def _get_field(cant_be_number, raw_string, convert_to, default_value, *field_names):
     retval = _get_field_actual(cant_be_number, raw_string, field_names)
 
@@ -98,8 +100,8 @@ def _get_field(cant_be_number, raw_string, convert_to, default_value, *field_nam
 
 # ==========================================================================================
 
-class Systeminfo:
 
+class Systeminfo:
     @classmethod
     def read_linuxinfo(cls):
         """
@@ -139,15 +141,14 @@ class Systeminfo:
                                 continue
                             key, val = line.strip().split('=')
                             os_release[key] = val
-                except:
+                except OSError:
                     os_release = {}
         return os_release
-
 
     @classmethod
     def read_macosinfo(cls):
 
-        output = subprocess.Popen(["sw_vers", ], stdout=subprocess.PIPE).communicate()
+        output = subprocess.Popen(['sw_vers'], stdout=subprocess.PIPE).communicate()
         try:
             ostype, vers, build, extra = output[0].decode().split('\n')
         except Exception:
@@ -165,7 +166,6 @@ class Systeminfo:
         pf = platform.system().lower()
         return pf
 
-
     @classmethod
     def get_osflavor(cls):
         pf = platform.system().lower()
@@ -177,7 +177,6 @@ class Systeminfo:
             return os_release.get('ID', 'linux')
         else:
             return ''
-
 
     @classmethod
     def get_osname(cls):
@@ -199,12 +198,10 @@ class Systeminfo:
         else:
             return pf
 
-
     @classmethod
     def get_oskernelversion(cls):
 
-        return getattr(platform.uname(),'release')
-
+        return getattr(platform.uname(), 'release')
 
     @classmethod
     def get_osversion(cls):
@@ -223,11 +220,9 @@ class Systeminfo:
         else:
             return ''
 
-
     # ==========================================================================================
 
     cpuinfo_dict = None
-
 
     @classmethod
     def ensure_cpuinfo(cls):
@@ -235,37 +230,31 @@ class Systeminfo:
             cls.cpuinfo_dict = cpuinfo.get_cpu_info()
         return
 
-
     @classmethod
     def get_cpuinfo(cls):
         cls.ensure_cpuinfo()
         return cls.cpuinfo_dict
 
-
     @classmethod
     def get_cpuarch(cls):
         cls.ensure_cpuinfo()
         return cls.cpuinfo_dict.get('arch_string_raw', '')
-        #return cls.cpuinfo_dict.get('arch', '')
-
+        # return cls.cpuinfo_dict.get('arch', '')
 
     @classmethod
     def get_cpubrand(cls):
         cls.ensure_cpuinfo()
         return cls.cpuinfo_dict.get('brand_raw', '')
 
-
     @classmethod
     def get_cpucores(cls):
         cls.ensure_cpuinfo()
         return cls.cpuinfo_dict.get('count', '')
 
-
     @classmethod
     def get_cpubits(cls):
         cls.ensure_cpuinfo()
         return cls.cpuinfo_dict.get('bits', '')
-
 
     @classmethod
     def get_cpu_speed(cls, var_dir):
@@ -278,10 +267,9 @@ class Systeminfo:
                 if cls.get_cpubrand() == cls._systeminfo_dict['systeminfo']['cpu_brand']:
                     # return time, if cpu brand has not changed since stored measurement
                     return cls.cpu_speed_class
-            except:
+            except (KeyError, TypeError):
                 return None
-        return None     # None = No previous measurement stored
-
+        return None  # None = No previous measurement stored
 
     cpu_duration = None
     cpu_speed_class = None
@@ -320,9 +308,9 @@ class Systeminfo:
 
         import timeit
 
-        _logger.notice(f"Testing cpu speed... (could take several minutes on slow computers)")
+        _logger.notice('Testing cpu speed... (could take several minutes on slow computers)')
 
-        #cpu_speed = round(timeit.timeit('"|".join(str(i) for i in range(99999))', number=1000), 2)
+        # cpu_speed = round(timeit.timeit('"|".join(str(i) for i in range(99999))', number=1000), 2)
         cpu_duration = round(timeit.timeit('"|".join(str(i) for i in range(50000))', number=1000), 2)
 
         if cpu_duration > 120:
@@ -333,7 +321,6 @@ class Systeminfo:
             cpu_speed_class = 'fast'
 
         return cpu_duration, cpu_speed_class
-
 
     @classmethod
     def check_cpu_speed(cls, var_dir):
@@ -349,10 +336,9 @@ class Systeminfo:
         cls._systeminfo_dict['systeminfo'] = {}
         cls._systeminfo_dict['systeminfo']['cpu_brand'] = cls.get_cpubrand()
         cls._systeminfo_dict['systeminfo']['cpu_measured_time'] = cls.cpu_duration
-        cls._systeminfo_dict['systeminfo']['cpu_speed_class'] = cls.cpu_speed_class   # slow / medium / fast
+        cls._systeminfo_dict['systeminfo']['cpu_speed_class'] = cls.cpu_speed_class  # slow / medium / fast
 
         if yaml_support:
-
             # write results to yaml file
             shyaml.yaml_save(os.path.join(var_dir, 'systeminfo.yaml'), cls._systeminfo_dict)
         return cls._systeminfo_dict['systeminfo']['cpu_speed_class']
@@ -360,7 +346,6 @@ class Systeminfo:
     # ==========================================================================================
 
     proc_cpuinfo = None
-
 
     @classmethod
     def ensure_proc_cpuinfo(cls):
@@ -371,70 +356,62 @@ class Systeminfo:
         else:
             cls.proc_cpuinfo = ''
 
-
     @classmethod
     def running_on_rasppi(self):
         """
         Returns True, if running on a Raspberry Pi
         """
         if self.get_rasppi_revision() != '':
-#            return self.cpu_info.get('revision_raw', '')
+            #            return self.cpu_info.get('revision_raw', '')
             return self.get_rasppi_revision()
         return ''
-
 
     @classmethod
     def get_rasppi_hardware(cls):
         cls.ensure_proc_cpuinfo()
         return _get_field(False, cls.proc_cpuinfo, None, '', 'Hardware')
 
-
     @classmethod
     def get_rasppi_revision(cls):
         cls.ensure_proc_cpuinfo()
         return _get_field(False, cls.proc_cpuinfo, None, '', 'Revision')
-
 
     @classmethod
     def get_rasppi_serial(cls):
         cls.ensure_proc_cpuinfo()
         return _get_field(False, cls.proc_cpuinfo, None, '', 'Serial')
 
-
     @classmethod
     def get_rasppi_info(cls):
         rev_info = {
-            '0002'  : {'model': 'Model B Rev 1', 'ram': '256MB', 'revision': ''},
-            '0003'  : {'model': 'Model B Rev 1 - ECN0001 (no fuses, D14 removed)', 'ram': '256MB', 'revision': ''},
-            '0004'  : {'model': 'Model B Rev 2', 'ram': '256MB', 'revision': ''},
-            '0005'  : {'model': 'Model B Rev 2', 'ram': '256MB', 'revision': ''},
-            '0006'  : {'model': 'Model B Rev 2', 'ram': '256MB', 'revision': ''},
-            '0007'  : {'model': 'Model A', 'ram': '256MB', 'revision': ''},
-            '0008'  : {'model': 'Model A', 'ram': '256MB', 'revision': ''},
-            '0009'  : {'model': 'Model A', 'ram': '256MB', 'revision': ''},
-            '000d'  : {'model': 'Model B Rev 2', 'ram': '512MB', 'revision': ''},
-            '000e'  : {'model': 'Model B Rev 2', 'ram': '512MB', 'revision': ''},
-            '000f'  : {'model': 'Model B Rev 2', 'ram': '512MB', 'revision': ''},
-            '0010'  : {'model': 'Model B+', 'ram': '512MB', 'revision': ''},
-            '0013'  : {'model': 'Model B+', 'ram': '512MB', 'revision': ''},
+            '0002': {'model': 'Model B Rev 1', 'ram': '256MB', 'revision': ''},
+            '0003': {'model': 'Model B Rev 1 - ECN0001 (no fuses, D14 removed)', 'ram': '256MB', 'revision': ''},
+            '0004': {'model': 'Model B Rev 2', 'ram': '256MB', 'revision': ''},
+            '0005': {'model': 'Model B Rev 2', 'ram': '256MB', 'revision': ''},
+            '0006': {'model': 'Model B Rev 2', 'ram': '256MB', 'revision': ''},
+            '0007': {'model': 'Model A', 'ram': '256MB', 'revision': ''},
+            '0008': {'model': 'Model A', 'ram': '256MB', 'revision': ''},
+            '0009': {'model': 'Model A', 'ram': '256MB', 'revision': ''},
+            '000d': {'model': 'Model B Rev 2', 'ram': '512MB', 'revision': ''},
+            '000e': {'model': 'Model B Rev 2', 'ram': '512MB', 'revision': ''},
+            '000f': {'model': 'Model B Rev 2', 'ram': '512MB', 'revision': ''},
+            '0010': {'model': 'Model B+', 'ram': '512MB', 'revision': ''},
+            '0013': {'model': 'Model B+', 'ram': '512MB', 'revision': ''},
             '900032': {'model': 'Model B+', 'ram': '512MB', 'revision': ''},
-            '0011'  : {'model': 'Compute Modul', 'ram': '512MB', 'revision': ''},
-            '0014'  : {'model': 'Compute Modul', 'ram': '512MB', 'revision': '', 'manufacturer': 'Embest, China'},
-            '0012'  : {'model': 'Model A+', 'ram': '256MB', 'revision': ''},
-            '0015'  : {'model': 'Model A+', 'ram': '256MB/512MB', 'revision': '', 'manufacturer': 'Embest, China'},
+            '0011': {'model': 'Compute Modul', 'ram': '512MB', 'revision': ''},
+            '0014': {'model': 'Compute Modul', 'ram': '512MB', 'revision': '', 'manufacturer': 'Embest, China'},
+            '0012': {'model': 'Model A+', 'ram': '256MB', 'revision': ''},
+            '0015': {'model': 'Model A+', 'ram': '256MB/512MB', 'revision': '', 'manufacturer': 'Embest, China'},
             #'0015' : {'model': 'Model A+', 'ram': '512MB', 'revision': '', 'manufacturer': 'Embest, China'},
-
             'a01041': {'model': 'Pi 2 Model B', 'ram': '1GB', 'revision': '1.1', 'manufacturer': 'Sony, UK'},
             'a21041': {'model': 'Pi 2 Model B', 'ram': '1GB', 'revision': '1.1', 'manufacturer': 'Embest, China'},
             'a22042': {'model': 'Pi 2 Model B', 'ram': '1GB', 'revision': '1.2'},
             '900092': {'model': 'Pi Zero v1.2', 'ram': '512MB', 'revision': '1.2'},
             '900093': {'model': 'Pi Zero v1.3', 'ram': '512MB', 'revision': '1.3'},
             '9000C1': {'model': 'Pi Zero W', 'ram': '512MB', 'revision': '1.1'},
-
             'a02082': {'model': 'Pi 3 Model B', 'ram': '1GB', 'revision': '1.2', 'manufacturer': 'Sony, UK'},
             'a22082': {'model': 'Pi 3 Model B', 'ram': '1GB', 'revision': '1.2', 'manufacturer': 'Embest, China'},
             'a020d3': {'model': 'Pi 3 Model B+', 'ram': '1GB', 'revision': '1.3', 'manufacturer': 'Sony, UK'},
-
             'a03111': {'model': 'Pi 4', 'ram': '1GB', 'revision': '1.1', 'manufacturer': 'Sony, UK'},
             'b03111': {'model': 'Pi 4', 'ram': '2GB', 'revision': '1.1', 'manufacturer': 'Sony, UK'},
             'b03112': {'model': 'Pi 4', 'ram': '2GB', 'revision': '1.2', 'manufacturer': 'Sony, UK'},
@@ -455,7 +432,7 @@ class Systeminfo:
             if info.get('revision', ''):
                 result += ' v' + info.get('revision', '')
             if info.get('ram', ''):
-                result += ', '+info.get('ram', '')
+                result += ', ' + info.get('ram', '')
             if info.get('manufacturer', ''):
                 result += ' (' + info.get('manufacturer', '') + ')'
             return result
@@ -464,44 +441,46 @@ class Systeminfo:
 
 # ==========================================================================================
 
-def main():
-    #info = cpuinfo._get_cpu_info_internal()
-    #print(type(info))
 
-    print("lib.systeminfo")
+def main():
+    # info = cpuinfo._get_cpu_info_internal()
+    # print(type(info))
+
+    print('lib.systeminfo')
     print()
-    print(f"Platform           : {platform.platform()}")
-    print(f"cpuinfo version    : {cpuinfo.CPUINFO_VERSION_STRING}")
+    print(f'Platform           : {platform.platform()}')
+    print(f'cpuinfo version    : {cpuinfo.CPUINFO_VERSION_STRING}')
     print()
     print('Operating System Info:')
-    print(f"- OS Prettyname    : {Systeminfo.get_osname()}")
-    print(f"- OS Type          : {Systeminfo.get_ostype()}")
-    print(f"- Kernel Version   : {Systeminfo.get_oskernelversion()}")
-    print(f"- OS Distribution  : {Systeminfo.get_osflavor()}")
-    print(f"- OS/Distro Version: {Systeminfo.get_osversion()}")
+    print(f'- OS Prettyname    : {Systeminfo.get_osname()}')
+    print(f'- OS Type          : {Systeminfo.get_ostype()}')
+    print(f'- Kernel Version   : {Systeminfo.get_oskernelversion()}')
+    print(f'- OS Distribution  : {Systeminfo.get_osflavor()}')
+    print(f'- OS/Distro Version: {Systeminfo.get_osversion()}')
     print()
     print('Hardware Info:')
-    print(f"- CPU Architecture : {Systeminfo.get_cpuarch()}")
-    print(f"- CPU Brand        : {Systeminfo.get_cpubrand()}")
-    print(f"- Processor        : {Systeminfo.get_cpubits()}-bit")
-    print(f"- Cores            : {Systeminfo.get_cpucores()}")
+    print(f'- CPU Architecture : {Systeminfo.get_cpuarch()}')
+    print(f'- CPU Brand        : {Systeminfo.get_cpubrand()}')
+    print(f'- Processor        : {Systeminfo.get_cpubits()}-bit')
+    print(f'- Cores            : {Systeminfo.get_cpucores()}')
     print()
     print('SOC Info:')
-    print(f"- Running on RaspPi: {Systeminfo.running_on_rasppi()}")
-    print(f"- Hardware         : {Systeminfo.get_rasppi_hardware()}")
-    print(f"- Revision         : {Systeminfo.get_rasppi_revision()}")
-    print(f"- Serial           : {Systeminfo.get_rasppi_serial()}")
-    print(f"- Board Model      : {Systeminfo.get_rasppi_info()}")
+    print(f'- Running on RaspPi: {Systeminfo.running_on_rasppi()}')
+    print(f'- Hardware         : {Systeminfo.get_rasppi_hardware()}')
+    print(f'- Revision         : {Systeminfo.get_rasppi_revision()}')
+    print(f'- Serial           : {Systeminfo.get_rasppi_serial()}')
+    print(f'- Board Model      : {Systeminfo.get_rasppi_info()}')
     print()
 
     Systeminfo.ensure_cpuinfo()
     import pprint
-#    pprint.pprint(Systeminfo.get_cpuinfo())
-#    print()
+
+    #    pprint.pprint(Systeminfo.get_cpuinfo())
+    #    print()
     return
 
 
 if __name__ == '__main__':
     main()
-#else:
+# else:
 #    _check_arch()

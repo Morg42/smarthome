@@ -35,7 +35,7 @@ from lib.item_conversion import convert_yaml as convert_yaml
 from lib.item_conversion import parse_for_convert as parse_for_convert
 from lib.shtime import Shtime
 import lib.env
-from lib.constants import (DIR_ETC, DIR_MODULES)
+from lib.constants import DIR_ETC, DIR_MODULES
 
 
 # ======================================================================
@@ -50,11 +50,12 @@ class ServicesController(RESTResource):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
         self.modules_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
-
 
     def get_body(self, text=False):
         """
@@ -68,17 +69,16 @@ class ServicesController(RESTResource):
             # return 'Bad request'
             raise cherrypy.HTTPError(status=411)
         rawbody = cherrypy.request.body.read(int(cl))
-        self.logger.debug("ServicesController(): get_body(): rawbody = {}".format(rawbody))
+        self.logger.debug('ServicesController(): get_body(): rawbody = {}'.format(rawbody))
         try:
             if text:
                 params = rawbody.decode('utf-8')
             else:
                 params = json.loads(rawbody.decode('utf-8'))
         except Exception as e:
-            self.logger.warning("ServicesController(): get_body(): Exception {}".format(e))
+            self.logger.warning('ServicesController(): get_body(): Exception {}'.format(e))
             return None
         return params
-
 
     def strip_empty_lines(self, txt):
         """
@@ -91,7 +91,6 @@ class ServicesController(RESTResource):
         #        self.logger.warning("strip_empty_lines: txt = {}".format(txt))
         return txt
 
-
     # ======================================================================
     #  eval_syntax_checker
     #
@@ -99,13 +98,12 @@ class ServicesController(RESTResource):
         expanded_code = ''
 
         # set up environment for calculating eval-expression
-        sh = self._sh
-        shtime = Shtime.get_instance()
-        env = lib.env
+        sh = self._sh  # noqa: F841  # eval setup
+        shtime = Shtime.get_instance()  # noqa: F841  # eval setup
+        env = lib.env  # noqa: F841  # eval setup
         items = Items.get_instance()
         import math
         import lib.userfunctions as uf
-
 
         eval_code = eval_code.replace('\r', '').replace('\n', ' ').replace('  ', ' ').strip()
         if relative_to == '':
@@ -115,18 +113,17 @@ class ServicesController(RESTResource):
             if rel_to_item is not None:
                 expanded_code = rel_to_item.get_stringwithabsolutepathes(eval_code, 'sh.', '(')
                 # Aufruf mit '.property' ist überflüssig
-                #expanded_code = rel_to_item.get_stringwithabsolutepathes(expanded_code, 'sh.', '.property')
-                value = rel_to_item()    #  item value for use in eval
+                # expanded_code = rel_to_item.get_stringwithabsolutepathes(expanded_code, 'sh.', '.property')
+                value = rel_to_item()  #  item value for use in eval
             else:
-                expanded_code = "Error: Item {} does not exist!".format(relative_to)
+                expanded_code = 'Error: Item {} does not exist!'.format(relative_to)
         try:
             value = eval(expanded_code)
         except Exception as e:
-            check_result = "Problem evaluating {}:  {}".format(expanded_code, e)
+            check_result = 'Problem evaluating {}:  {}'.format(expanded_code, e)
         else:
             check_result = value
         return expanded_code, check_result
-
 
     # ======================================================================
     #  conf_yaml_converter
@@ -135,10 +132,9 @@ class ServicesController(RESTResource):
         conf_code = self.strip_empty_lines(conf_code)
         yaml_code = ''
         ydata = parse_for_convert(conf_code=conf_code)
-        if ydata != None:
+        if ydata is not None:
             yaml_code = convert_yaml(ydata)
         return yaml_code
-
 
     # ======================================================================
     #  yaml_syntax_checker
@@ -161,7 +157,7 @@ class ServicesController(RESTResource):
             check_result = 'ERROR: \n\n' + estr
         elif not isinstance(ydata, collections.OrderedDict):
             check_result = 'ERROR: \n\n' + 'No valid YAML code'
-        elif ydata != None:
+        elif ydata is not None:
             # found valid yaml code
 
             # Test if the loaded data items with 'struct' attribute
@@ -169,14 +165,13 @@ class ServicesController(RESTResource):
             self.items = Items.get_instance()
             struct_dict = self.items.structs._struct_definitions
             shconfig.search_for_struct_in_items(ydata, struct_dict, config)
-            self.logger.info("ydata = {}".format(ydata))
-            self.logger.info("config = {}".format(config))
+            self.logger.info('ydata = {}'.format(ydata))
+            self.logger.info('config = {}'.format(config))
 
             # return data structure converted back to yaml format
             check_result = convert_yaml(config).replace('\n\n', '\n')
 
         return check_result
-
 
     # ======================================================================
     #  /api/server/evalcheck
@@ -189,22 +184,21 @@ class ServicesController(RESTResource):
         """
         params = self.get_body(text=False)
         if params is None:
-            self.logger.warning("ServicesController(): evalcheck(): Bad, request")
+            self.logger.warning('ServicesController(): evalcheck(): Bad, request')
             raise cherrypy.HTTPError(status=411)
-        self.logger.info("ServicesController(): evalcheck(): {}".format(params))
+        self.logger.info('ServicesController(): evalcheck(): {}'.format(params))
 
         expanded_code, eval_result = self.eval_syntax_checker(params['expression'], params['relative_to'])
         result_type = str(type(eval_result))
         if result_type.startswith("<class '"):
-            result_type = result_type[len("<class '"):]
+            result_type = result_type[len("<class '") :]
             result_type = result_type[:-2]
         result = {'expression': expanded_code, 'result': eval_result, 'type': result_type}
         # return json.dumps({'expression': 'Expandierter Ausdruck (Antwort vom Server)', 'result': '42 (Antwort vom Server)'})
         try:
             return json.dumps(result)
-        except:
+        except TypeError:
             return json.dumps({'expression': expanded_code, 'result': str(eval_result), 'type': result_type})
-
 
     # ======================================================================
     #  /api/server/yamlcheck
@@ -217,12 +211,11 @@ class ServicesController(RESTResource):
         """
         params = self.get_body(text=True)
         if params is None:
-            self.logger.warning("ServicesController(): yamlcheck(): Bad, request")
+            self.logger.warning('ServicesController(): yamlcheck(): Bad, request')
             raise cherrypy.HTTPError(status=411)
         self.logger.info("ServicesController(): yamlcheck(): '{}'".format(params))
 
         return self.yaml_syntax_checker(params)
-
 
     # ======================================================================
     #  /api/server/yamlconvert
@@ -235,12 +228,11 @@ class ServicesController(RESTResource):
         """
         params = self.get_body(text=True)
         if params is None:
-            self.logger.warning("ServicesController(): yamlconvert(): Bad, request")
+            self.logger.warning('ServicesController(): yamlconvert(): Bad, request')
             raise cherrypy.HTTPError(status=411)
         self.logger.info("ServicesController(): yamlconvert(): '{}'".format(params))
 
         return self.conf_yaml_converter(params)
-
 
     def cachecheck(self):
         """
@@ -254,15 +246,15 @@ class ServicesController(RESTResource):
             onlyfiles = [f for f in os.listdir(cache_path) if os.path.isfile(os.path.join(cache_path, f))]
 
             for file in onlyfiles:
-                if not file.find(".") == 0:  # filter .gitignore etc.
+                if not file.find('.') == 0:  # filter .gitignore etc.
                     self.items = Items.get_instance()
                     item = self.items.return_item(file)
                     no_cache_file = False
                     if item is None:
-                        self.logger.debug("cachecheck: no item {}".format(file))
+                        self.logger.debug('cachecheck: no item {}'.format(file))
                         no_cache_file = True
                     elif not item._cache:
-                        self.logger.debug("cachecheck: item {}, no _cache".format(file))
+                        self.logger.debug('cachecheck: item {}, no _cache'.format(file))
                         no_cache_file = True
 
                     if no_cache_file:
@@ -278,7 +270,6 @@ class ServicesController(RESTResource):
                         unused_cache_files.append(file_data)
 
         return json.dumps(unused_cache_files)
-
 
     # cache_file_delete.html?filename="+filename
     def cachefile_delete(self, filename=''):
@@ -296,11 +287,10 @@ class ServicesController(RESTResource):
                 file_path = os.path.join(self.base_dir, 'var', 'cache', filename)
                 if os.path.isfile(file_path):
                     self.logger.info("cachefile_delete: cachefile '{}' deleted".format(file_path))
-                    os.remove(file_path);
+                    os.remove(file_path)
                     response = {'result': 'ok'}
 
         return json.dumps(response)
-
 
     # ======================================================================
     #  GET /api/services/
@@ -316,7 +306,6 @@ class ServicesController(RESTResource):
 
     read.expose_resource = True
     read.authentication_needed = True
-
 
     def update(self, id='', filename=''):
         """

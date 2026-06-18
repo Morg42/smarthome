@@ -30,7 +30,8 @@ from .rest import RESTResource
 import bin.shngversion
 import lib.daemon
 import lib.backup as backup
-from lib.constants import (DIR_ETC, DIR_MODULES)
+from lib.constants import DIR_ETC, DIR_MODULES
+from lib.shpypi import Shpypi
 
 
 # ======================================================================
@@ -53,11 +54,11 @@ def get_process_info(command, wait=True, append_error=False):
     # Interact with process: Send data to stdin. Read data from stdout and stderr, until end-of-file is reached.
     # Wait for process to terminate. The optional input argument should be a string to be sent to the child process, or None, if no data should be sent to the child.
     (result, err) = p.communicate()
-#    logger.warning("get_process_info: command='{}', result='{}', err='{}'".format(command, result, err))
+    #    logger.warning("get_process_info: command='{}', result='{}', err='{}'".format(command, result, err))
 
     if wait:
         ## Wait for date to terminate. Get return returncode ##
-        p_status = p.wait()
+        p.wait()
 
     return str(result, encoding='utf-8', errors='strict')
 
@@ -74,11 +75,12 @@ class ServerController(RESTResource):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
         self.modules_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
-
 
     # ======================================================================
     #  /api/server
@@ -95,10 +97,17 @@ class ServerController(RESTResource):
         response['default_language'] = self._sh.get_defaultlanguage()
         response['client_ip'] = client_ip
         http_user_dict = self.module.mod_http.get_user_dict()
-        response['login_required'] = http_user_dict.get('admin', {"password_hash": ""}).get("password_hash", "") != ""
+        pw_hash = http_user_dict.get('admin', {}).get('password_hash') or ''
+        response['login_required'] = pw_hash != ''
+        # Include websocket connection info so the frontend can set wsPort/wsHost
+        # during APP_INITIALIZER (getServerBasicinfo) rather than waiting for the
+        # later getServerinfo() call from TopNavigationComponent.  Without these
+        # fields the frontend starts routing with wsPort='' and WebSocket-dependent
+        # components (e.g. resource graphs) skip their connection on first load.
+        response['websocket_port'] = self.module.websocket_port
+        response['websocket_host'] = self.module.websocket_host
 
         return json.dumps(response)
-
 
     # ======================================================================
     #  /api/server/info
@@ -147,13 +156,12 @@ class ServerController(RESTResource):
         response['backup_stem'] = ''
         try:
             response['backup_stem'] = self._sh._backup_name_stem
-        except:
+        except Exception:
             pass
         response['last_backup'] = backup.get_lastbackuptime()
         # response['pid'] = str(lib.daemon.read_pidfile(self._sh._pidfile))
-        self.logger.info("ServerController.info(): response = {}".format(response))
+        self.logger.info('ServerController.info(): response = {}'.format(response))
         return json.dumps(response)
-
 
     def get_knx_daemon(self):
         """
@@ -165,21 +173,20 @@ class ServerController(RESTResource):
 
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
-            if get_process_info("ps cax|grep eibd") != '':
+            if get_process_info('ps cax|grep eibd') != '':
                 daemon = 'eibd'
-            if get_process_info("ps cax|grep knxd") != '':
+            if get_process_info('ps cax|grep knxd') != '':
                 if daemon != 'SERVICES.INACTIVE':
                     daemon += ' and knxd'
                 else:
                     daemon = 'knxd'
                     # get version of installed knx daemon (knxd v0.14.30 outputs version to stderr instead of stdout)
-                    wrk = get_process_info("knxd -l?V|grep knxd", append_error=True)
+                    wrk = get_process_info('knxd -l?V|grep knxd', append_error=True)
                     wrk = wrk.split()
                     wrk = wrk[1].split(':')
                     if wrk != []:
                         daemon += ' v' + wrk[0]
         return daemon
-
 
     def get_1wire_daemon(self):
         """
@@ -187,7 +194,7 @@ class ServerController(RESTResource):
         """
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
-            if get_process_info("ps cax|grep owserver") != '':
+            if get_process_info('ps cax|grep owserver') != '':
                 daemon = 'owserver'
                 # get version of installed owserver
                 wrk = get_process_info("owserver -V|grep 'owserver version'", append_error=True)
@@ -196,7 +203,6 @@ class ServerController(RESTResource):
                     daemon += ' v' + wrk[2]
         return daemon
 
-
     def get_mqtt_daemon(self):
         """
         Tests it 1wire are running
@@ -204,15 +210,14 @@ class ServerController(RESTResource):
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
             # test id mqtt broker is running
-            if get_process_info("ps cax|grep mosquitto") != '':
+            if get_process_info('ps cax|grep mosquitto') != '':
                 daemon = 'mosquitto'
                 # get version of installed mosquitto broker
-                wrk = get_process_info("/usr/sbin/mosquitto -h|grep version")
+                wrk = get_process_info('/usr/sbin/mosquitto -h|grep version')
                 wrk = wrk.split()
                 if wrk != []:
                     daemon += ' v' + wrk[2]
         return daemon
-
 
     def get_node_red_daemon(self):
         """
@@ -220,15 +225,14 @@ class ServerController(RESTResource):
         """
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
-            if get_process_info("ps cax|grep node-red") != '':
+            if get_process_info('ps cax|grep node-red') != '':
                 daemon = 'node-red'
                 # get version of installed node-red
-                wrk = get_process_info("node-red --help|grep Node-RED")
+                wrk = get_process_info('node-red --help|grep Node-RED')
                 wrk = wrk.split()
                 if wrk != []:
                     daemon += ' ' + wrk[1]
         return daemon
-
 
     # ======================================================================
     #  /api/server/status
@@ -241,12 +245,11 @@ class ServerController(RESTResource):
         """
         try:
             response = self._sh.shng_status
-        except:
+        except AttributeError:
             response = {'code': -1, 'text': 'unknown'}
 
         # self.logger.debug("ServerController.index(): /{} - response '{}'".format(id, response))
         return json.dumps(response)
-
 
     # ======================================================================
     #  /api/server/restart
@@ -257,7 +260,7 @@ class ServerController(RESTResource):
 
         :return: status dict
         """
-        self.logger.info("ServerController.restart()")
+        self.logger.info('ServerController.restart()')
 
         status = self._sh.shng_status
         if status['code'] == 20:
@@ -269,6 +272,24 @@ class ServerController(RESTResource):
         self.logger.info("ServerController.update(): /{} - response '{}'".format(id, response))
         return json.dumps(response)
 
+    # ======================================================================
+    #  /api/server/pypi
+    #
+    def pypi(self):
+        """
+        Returns PyPI package requirement and availability information.
+
+        Uses the Shpypi singleton's package_list when already populated so
+        that in-place updates by the scheduler's lookup_pypi_releasedata job
+        are reflected — mirroring the cache behaviour of the legacy endpoint.
+        """
+        shpypi = Shpypi.get_instance()
+        if shpypi.package_list:
+            source = shpypi.package_list
+        else:
+            source = shpypi.get_packagelist()
+        sorted_list = sorted(source, key=lambda k: k['sort'], reverse=False)
+        return json.dumps(sorted_list)
 
     # ======================================================================
     #  GET /api/server/
@@ -285,13 +306,14 @@ class ServerController(RESTResource):
             return self.status()
         elif id == 'info':
             return self.info()
+        elif id == 'pypi':
+            return self.pypi()
 
         return None
 
     read.expose_resource = True
     read.authentication_needed = True
     read.public_root = True
-
 
     def update(self, id='', level=None):
         """
@@ -306,4 +328,3 @@ class ServerController(RESTResource):
 
     update.expose_resource = True
     update.authentication_needed = True
-

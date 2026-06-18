@@ -31,17 +31,17 @@ from .rest import RESTResource
 
 
 class ScenesController(RESTResource):
-
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
 
         self.items = Items.get_instance()
 
         return
-
 
     # ======================================================================
     #  /api/scenes
@@ -90,7 +90,6 @@ class ScenesController(RESTResource):
     #         supported = False
     #     return json.dumps(disp_scene_list)
 
-
     # ======================================================================
     #  GET /api/scenes
     #
@@ -99,13 +98,13 @@ class ScenesController(RESTResource):
         """
         Handle GET requests for scenes API
         """
-        if self.items == None:
+        if self.items is None:
             self.items = Items.get_instance()
 
         from lib.scene import Scenes
-        get_param_func = getattr(Scenes, "get_instance", None)
+
+        get_param_func = getattr(Scenes, 'get_instance', None)
         if callable(get_param_func):
-            supported = True
             self.scenes = Scenes.get_instance()
             scene_list = []
             if self.scenes is not None:
@@ -135,11 +134,9 @@ class ScenesController(RESTResource):
 
                     disp_action_list.append(action_dict)
                 scene_dict['values'] = disp_action_list
-                self.logger.debug("scenes_html: disp_action_list for scene {} = {}".format(scene, disp_action_list))
+                self.logger.debug('scenes_html: disp_action_list for scene {} = {}'.format(scene, disp_action_list))
 
                 disp_scene_list.append(scene_dict)
-        else:
-            supported = False
         return json.dumps(disp_scene_list)
 
     read.expose_resource = True
@@ -147,7 +144,6 @@ class ScenesController(RESTResource):
 
 
 class ScenesReloadController(RESTResource):
-
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
@@ -157,7 +153,6 @@ class ScenesReloadController(RESTResource):
         self.items = Items.get_instance()
 
         return
-
 
     # ======================================================================
     #  /api/scenes/reload
@@ -169,6 +164,7 @@ class ScenesReloadController(RESTResource):
         Handle PUT requests for scenes/reload API
         """
         from lib.scene import Scenes
+
         self.scenes = Scenes.get_instance()
 
         if id == 'all':

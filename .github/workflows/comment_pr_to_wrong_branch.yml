@@ -6,16 +6,30 @@ on:
     branches:
       - '*'
       - '!develop'
+      - '!develop-adminui'
 
 jobs:
-    comment_pr:
-      runs-on: ubuntu-latest
-      name: Comment on wrong branch
-      steps:
-        - name: Comment PR
-          uses: thollander/actions-comment-pull-request@v1
-          with:
-            message: 'Pull requests should only be placed against the develop branch'
-            reactions: '-1'
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+  comment_pr:
+    runs-on: ubuntu-latest
+    name: Comment on wrong branch
+    permissions:
+      pull-requests: write
+    steps:
+      # Replaced thollander/actions-comment-pull-request@v2 (third-party JS action)
+      # with actions/github-script@v7 (GitHub first-party, inline JS, no external deps).
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Pull requests should only be placed against the develop branch'
+            });
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: comment.data.id,
+              content: '-1'
+            });

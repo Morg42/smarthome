@@ -44,7 +44,7 @@ Currently it uses ephem for calculation of the sky bound events.
 """
 
 
-class Orb():
+class Orb:
     """
     Save an observers location and the name of a celestial body for future use
 
@@ -94,7 +94,7 @@ class Orb():
         :param elev: elevation of observer in meters
         """
         if ephem is None:
-            logger.warning("Could not find/use ephem!")
+            logger.warning('Could not find/use ephem!')
             return
 
         self.shtime = Shtime.get_instance()
@@ -111,12 +111,12 @@ class Orb():
         if self.orb == 'sun':
             self.neverup_delta = neverup_delta
             if not neverup_delta == 0.00001:
-                logger.notice(f"neverup_delta was adjusted to {neverup_delta} for sun calculations")
+                logger.notice(f'neverup_delta was adjusted to {neverup_delta} for sun calculations')
         elif self.orb == 'moon':
             self.phase = self._phase
             self.light = self._light
 
-        logger.debug(f"Orb object {orb=} created with location {lon=},{lat=},{elev=}")
+        logger.debug(f'Orb object {orb=} created with location {lon=},{lat=},{elev=}')
 
     def get_observer_and_orb(self):
         """
@@ -183,18 +183,29 @@ class Orb():
         noon = self.noon(0, 0, dt=dt)
 
         # If the altitudes are calculated from previous or next day, set the correct day for the observer query
-        noon = noon if noon >= date_utc else \
-            self.noon(0, 0, dt=date_utc + dateutil.relativedelta.relativedelta(days=1))
-        midnight = midnight if midnight >= date_utc else \
-            self.midnight(0, 0, dt=date_utc - dateutil.relativedelta.relativedelta(days=1))
+        noon = noon if noon >= date_utc else self.noon(0, 0, dt=date_utc + dateutil.relativedelta.relativedelta(days=1))
+        midnight = (
+            midnight
+            if midnight >= date_utc
+            else self.midnight(0, 0, dt=date_utc - dateutil.relativedelta.relativedelta(days=1))
+        )
         # Get lowest and highest altitudes of the relevant day/night
-        max_altitude = self.pos(offset=None, degree=True, dt=midnight)[1] if doff <= 0 else \
-                                self.pos(offset=None, degree=True, dt=noon)[1]
+        max_altitude = (
+            self.pos(offset=None, degree=True, dt=midnight)[1]
+            if doff <= 0
+            else self.pos(offset=None, degree=True, dt=noon)[1]
+        )
 
         # Limit degree offset to the highest or lowest possible for the given date
-        doff = max(doff, max_altitude + self.neverup_delta) if doff < 0 else min(doff, max_altitude - self.neverup_delta) if doff > 0 else doff
+        doff = (
+            max(doff, max_altitude + self.neverup_delta)
+            if doff < 0
+            else min(doff, max_altitude - self.neverup_delta)
+            if doff > 0
+            else doff
+        )
         if not originaldoff == doff:
-            logger.notice(f"offset {originaldoff} truncated to {doff}")
+            logger.notice(f'offset {originaldoff} truncated to {doff}')
         return doff
 
     def noon(self, doff=0, moff=0, dt=None):
@@ -212,16 +223,26 @@ class Orb():
         """
         observer, orb = self.get_observer_and_orb()
         if dt is None:
-            dt = self.shtime.utcnow() - dateutil.relativedelta.relativedelta(minutes=moff) + dateutil.relativedelta.relativedelta(seconds=2)
+            dt = (
+                self.shtime.utcnow()
+                - dateutil.relativedelta.relativedelta(minutes=moff)
+                + dateutil.relativedelta.relativedelta(seconds=2)
+            )
             observer.date = dt
-            logger.debug(f"ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}")
+            logger.debug(
+                f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
+            )
         else:
             if dt.tzinfo is None:
                 # unaware datetime
-                logger.debug(f"ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time")
+                logger.debug(
+                    f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
+                )
                 observer.date = self.unaware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
             else:
-                logger.debug(f"ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}")
+                logger.debug(
+                    f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
+                )
                 observer.date = self.aware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
 
         # observer.date.datetime will be utc but it might be without tzinfo
@@ -235,7 +256,7 @@ class Orb():
         next_transit = observer.next_transit(orb).datetime()
         next_transit = next_transit + dateutil.relativedelta.relativedelta(minutes=moff)
         next_transit = next_transit.replace(tzinfo=tzutc())
-        logger.debug(f"ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_transit}")
+        logger.debug(f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_transit}')
         return next_transit
 
     def midnight(self, doff=0, moff=0, dt=None):
@@ -254,15 +275,25 @@ class Orb():
 
         observer, orb = self.get_observer_and_orb()
         if dt is None:
-            observer.date = self.shtime.utcnow() - dateutil.relativedelta.relativedelta(minutes=moff) + dateutil.relativedelta.relativedelta(seconds=2)
-            logger.debug(f"ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}")
+            observer.date = (
+                self.shtime.utcnow()
+                - dateutil.relativedelta.relativedelta(minutes=moff)
+                + dateutil.relativedelta.relativedelta(seconds=2)
+            )
+            logger.debug(
+                f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
+            )
         else:
             if dt.tzinfo is None:
                 # unaware datetime
-                logger.debug(f"ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time")
+                logger.debug(
+                    f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
+                )
                 observer.date = self.unaware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
             else:
-                logger.debug(f"ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}")
+                logger.debug(
+                    f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
+                )
                 observer.date = self.aware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
 
         date_utc = (observer.date.datetime()).replace(tzinfo=tzutc())
@@ -275,7 +306,9 @@ class Orb():
         next_antitransit = observer.next_antitransit(orb).datetime()
         next_antitransit = next_antitransit + dateutil.relativedelta.relativedelta(minutes=moff)
         next_antitransit = next_antitransit.replace(tzinfo=tzutc())
-        logger.debug(f"ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_antitransit}")
+        logger.debug(
+            f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_antitransit}'
+        )
         return next_antitransit
 
     def rise(self, doff=0, moff=0, center=True, dt=None):
@@ -291,14 +324,20 @@ class Orb():
         # workaround if rise is 0.001 seconds in the past
         if dt is None:
             observer.date = self.shtime.utcnow() + dateutil.relativedelta.relativedelta(seconds=2)
-            logger.debug(f"ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}")
+            logger.debug(
+                f'ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
+            )
         else:
             if dt.tzinfo is None:
                 # unaware datetime
-                logger.debug(f"ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time")
+                logger.debug(
+                    f'ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
+                )
                 observer.date = self.unaware_datetime_to_utc(dt)
             else:
-                logger.debug(f"ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}")
+                logger.debug(
+                    f'ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
+                )
                 observer.date = self.aware_datetime_to_utc(dt)
 
         date_utc = (observer.date.datetime()).replace(tzinfo=tzutc())
@@ -317,9 +356,13 @@ class Orb():
         next_rising = next_rising + dateutil.relativedelta.relativedelta(minutes=moff)
         next_rising = next_rising.replace(tzinfo=tzutc())
         if doff < 0 and next_rising > next_real_rising:
-            logger.debug(f"ephem: adjusted next_rising {next_rising} to previous day as it is later than {next_real_rising}")
+            logger.debug(
+                f'ephem: adjusted next_rising {next_rising} to previous day as it is later than {next_real_rising}'
+            )
             next_rising -= datetime.timedelta(days=1)
-        logger.debug(f"ephem: next_rising for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_rising}")
+        logger.debug(
+            f'ephem: next_rising for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_rising}'
+        )
         return next_rising
 
     def set(self, doff=0, moff=0, center=True, dt=None):
@@ -335,14 +378,20 @@ class Orb():
         # workaround if set is 0.001 seconds in the past
         if dt is None:
             observer.date = self.shtime.utcnow() + dateutil.relativedelta.relativedelta(seconds=2)
-            logger.debug(f"ephem: set for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}")
+            logger.debug(
+                f'ephem: set for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
+            )
         else:
             if dt.tzinfo is None:
                 # unaware datetime
-                logger.debug(f"ephem: set for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time")
+                logger.debug(
+                    f'ephem: set for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
+                )
                 observer.date = self.unaware_datetime_to_utc(dt)
             else:
-                logger.debug(f"ephem: set for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}")
+                logger.debug(
+                    f'ephem: set for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
+                )
                 observer.date = self.aware_datetime_to_utc(dt)
 
         date_utc = (observer.date.datetime()).replace(tzinfo=tzutc())
@@ -361,9 +410,13 @@ class Orb():
         next_setting = next_setting + dateutil.relativedelta.relativedelta(minutes=moff)
         next_setting = next_setting.replace(tzinfo=tzutc())
         if doff < 0 and next_setting < next_real_setting:
-            logger.debug(f"ephem: adjusted next_setting {next_setting} to next day as it is earlier than actual sunset at {next_real_setting}")
+            logger.debug(
+                f'ephem: adjusted next_setting {next_setting} to next day as it is earlier than actual sunset at {next_real_setting}'
+            )
             next_setting += datetime.timedelta(days=1)
-        logger.debug(f"ephem: next_setting for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_setting}")
+        logger.debug(
+            f'ephem: next_setting for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_setting}'
+        )
         return next_setting
 
     def pos(self, offset=None, degree=False, dt=None):
@@ -377,14 +430,20 @@ class Orb():
         observer, orb = self.get_observer_and_orb()
         if dt is None:
             date = self.shtime.utcnow()
-            logger.debug(f"ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt is None, using observer.date={observer.date}")
+            logger.debug(
+                f'ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt is None, using observer.date={observer.date}'
+            )
         else:
             if dt.tzinfo is None:
                 # unaware datetime
-                logger.debug(f"ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, dt is unaware of timezone, assuming local time")
+                logger.debug(
+                    f'ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, dt is unaware of timezone, assuming local time'
+                )
                 date = self.unaware_datetime_to_utc(dt)
             else:
-                logger.debug(f"ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, dt timezone is {dt.tzinfo}")
+                logger.debug(
+                    f'ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, dt timezone is {dt.tzinfo}'
+                )
                 date = self.aware_datetime_to_utc(dt)
 
         if offset:

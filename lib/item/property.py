@@ -57,7 +57,11 @@ class Property:
 
     def _cast_warning(self, value):
         prop = inspect.stack()[1][3]
-        self.logger.warning("Casting value '{}' to required type before assigning it to property '{}' of item '{}'".format(value, prop, self._item._path))
+        self.logger.warning(
+            "Casting value '{}' to required type before assigning it to property '{}' of item '{}'".format(
+                value, prop, self._item._path
+            )
+        )
         return
 
     @property
@@ -830,7 +834,6 @@ class Property:
         self._item(value, caller='Property', source='Assign')
         return
 
-
     @property
     def hysteresis_state(self):
         """
@@ -847,6 +850,7 @@ class Property:
         :rtype: int
         """
         return self._item.hysteresis_state()
+
 
 """
 ---

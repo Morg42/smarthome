@@ -27,13 +27,11 @@
 import json
 
 # default / reference datatypes
-datatypes = (
-    'int', 'num', 'str', 'dict', 'list', 'tuple', 'bytes', 'bytearray', 'json'
-)
+datatypes = ('int', 'num', 'str', 'dict', 'list', 'tuple', 'bytes', 'bytearray', 'json')
 
 
 class Datatype(object):
-    """ Datatype class for conversion tasks
+    """Datatype class for conversion tasks
 
     This is one of the most important classes. By declaration, it contains
     information about the data type and format needed by a device and methods
@@ -65,6 +63,7 @@ class Datatype(object):
     To define own Datatype classes, define derived class and overwrite at least
     get_shng_data() and/or get_send_data().
     """
+
     def __init__(self, fail_silent=True):
         """
         :param fail_silent: keep silent on data conversion error or raise exception
@@ -184,7 +183,8 @@ class Datatype(object):
 
 
 class DT_none(Datatype):
-    """ don't pass on anything. Maybe needed someplace... """
+    """don't pass on anything. Maybe needed someplace..."""
+
     def get_send_data(self, data, **kwargs):
         return None
 
@@ -193,12 +193,14 @@ class DT_none(Datatype):
 
 
 class DT_raw(Datatype):
-    """ pass on data, identical to base class """
+    """pass on data, identical to base class"""
+
     pass
 
 
 class DT_bool(Datatype):
-    """ cast to bool """
+    """cast to bool"""
+
     def get_send_data(self, data, **kwargs):
         return bool(data)
 
@@ -210,7 +212,8 @@ class DT_bool(Datatype):
 
 
 class DT_int(Datatype):
-    """ cast to int """
+    """cast to int"""
+
     def get_send_data(self, data, **kwargs):
         return int(data)
 
@@ -222,7 +225,8 @@ class DT_int(Datatype):
 
 
 class DT_num(Datatype):
-    """ cast to float """
+    """cast to float"""
+
     def get_send_data(self, data, **kwargs):
         return float(data)
 
@@ -234,7 +238,8 @@ class DT_num(Datatype):
 
 
 class DT_str(Datatype):
-    """ cast to str """
+    """cast to str"""
+
     def get_send_data(self, data, **kwargs):
         return str(data)
 
@@ -248,7 +253,8 @@ class DT_str(Datatype):
 
 
 class DT_list(Datatype):
-    """ enlist """
+    """enlist"""
+
     def get_send_data(self, data, **kwargs):
         return list(data)
 
@@ -259,7 +265,8 @@ class DT_list(Datatype):
 
 
 class DT_dict(Datatype):
-    """ dict-ate """
+    """dict-ate"""
+
     def get_send_data(self, data, **kwargs):
         return dict(data)
 
@@ -270,7 +277,8 @@ class DT_dict(Datatype):
 
 
 class DT_tuple(Datatype):
-    """ toupling (meh...) """
+    """toupling (meh...)"""
+
     def get_send_data(self, data, **kwargs):
         return tuple(data)
 
@@ -311,7 +319,8 @@ class DT_json(Datatype):
 
 
 class DT_webservices(Datatype):
-    """ extract value of key 'value' from json data, e.g. for webservices plugin """
+    """extract value of key 'value' from json data, e.g. for webservices plugin"""
+
     def get_send_data(self, data, **kwargs):
         return data
 

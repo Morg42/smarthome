@@ -32,25 +32,26 @@ from lib.module import Modules
 from lib.plugin import Plugins
 from lib.metadata import Metadata
 from lib.model.smartplugin import SmartPlugin
-from lib.constants import (KEY_CLASS_PATH, YAML_FILE, DIR_PLUGINS)
+from lib.constants import KEY_CLASS_PATH, YAML_FILE, DIR_PLUGINS
 
 from .rest import RESTResource
 
 
 class PluginController(RESTResource):
-
     def __init__(self, module, jwt_secret=False):
         self._sh = module._sh
+        self.module = module
         self.base_dir = self._sh.get_basedir()
         self.plugins_dir = self._sh.get_config_dir(DIR_PLUGINS)
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
-        self.logger.info("PluginController(): __init__")
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
+        self.logger.info('PluginController(): __init__')
         self.plugins = Plugins.get_instance()
 
         self.plugin_data = {}
         self.jwt_secret = jwt_secret
         return
-
 
     def get_body(self):
         """
@@ -64,28 +65,30 @@ class PluginController(RESTResource):
             # return 'Bad request'
             raise cherrypy.HTTPError(status=411)
         rawbody = cherrypy.request.body.read(int(cl))
-        self.logger.debug("PluginController(): ___(): rawbody = {}".format(rawbody))
+        self.logger.debug('PluginController(): ___(): rawbody = {}'.format(rawbody))
         try:
             params = json.loads(rawbody.decode('utf-8'))
         except Exception as e:
-            self.logger.warning("PluginController(): ___(): Exception {}".format(e))
+            self.logger.warning('PluginController(): ___(): Exception {}'.format(e))
             return None
         return params
 
-
     def test_for_old_config(self, config_filename):
         # make it 'readonly', if plugin.conf is used
-        result = not(os.path.splitext(config_filename)[1].lower() == '.yaml')
+        result = not (os.path.splitext(config_filename)[1].lower() == '.yaml')
 
         _etc_dir = os.path.dirname(config_filename)
         if not result:
             # for beta-testing: create a backup of ../etc/plugin.yaml
             if not os.path.isfile(os.path.join(_etc_dir, 'plugin_before_admin_config.yaml')):
                 shutil.copy2(config_filename, os.path.join(_etc_dir, 'plugin_before_admin_config.yaml'))
-                self.logger.warning('Created a backup copy of plugin.yaml ({})'.format(os.path.join(_etc_dir, 'plugin_before_admin_config.yaml')))
+                self.logger.warning(
+                    'Created a backup copy of plugin.yaml ({})'.format(
+                        os.path.join(_etc_dir, 'plugin_before_admin_config.yaml')
+                    )
+                )
 
         return result
-
 
     def get_config_filename(self):
 
@@ -93,8 +96,6 @@ class PluginController(RESTResource):
             self.plugins = Plugins.get_instance()
 
         return self.plugins._get_plugin_conf_filename()
-
-
 
     # ======================================================================
     #  GET /api/plugin
@@ -116,7 +117,7 @@ class PluginController(RESTResource):
         plg_found = False
         if id is not None:
             for confplg in _conf:
-                if (confplg == id) or (id == None):
+                if (confplg == id) or (id is None):
                     self.logger.info(f"PluginController(): index('{id}') - confplg {confplg}")
                     info['config'] = _conf[confplg]
                     plg_found = True
@@ -128,7 +129,6 @@ class PluginController(RESTResource):
 
     read.expose_resource = True
     read.authentication_needed = True
-
 
     def add(self, id=None):
         self.logger.info("PluginController(): add('{}')".format(id))
@@ -155,12 +155,11 @@ class PluginController(RESTResource):
                 shyaml.yaml_save_roundtrip(config_filename, plugin_conf, False)
                 response = {'result': 'ok'}
 
-        self.logger.info("PluginController(): add(): response = {}".format(response))
+        self.logger.info('PluginController(): add(): response = {}'.format(response))
         return json.dumps(response)
 
     add.expose_resource = True
     add.authentication_needed = True
-
 
     def handle_plugin_action(self, id, action):
 
@@ -184,6 +183,46 @@ class PluginController(RESTResource):
 
         return response
 
+    def handle_plugin_lifecycle(self, id, action):
+        if self.plugins is None:
+            self.plugins = Plugins.get_instance()
+
+        if action == 'load':
+            if self.plugins.return_plugin(id):
+                return {'result': 'error', 'description': "Plugin '{}' is already loaded".format(id)}
+            _conf = lib.config.parse_basename(self.plugins._configfile, configtype='plugin')
+            plg_conf = _conf.get(id)
+            if plg_conf is None:
+                return {'result': 'error', 'description': "No configuration section '{}' found".format(id)}
+            result = self.plugins.load_plugin(id, plg_conf)
+            if result:
+                myplugin = self.plugins.return_plugin(id)
+                if myplugin:
+                    myplugin.run()
+                return {'result': 'ok'}
+            return {'result': 'error', 'description': "load_plugin('{}') returned False".format(id)}
+
+        elif action == 'unload':
+            if self.plugins.return_plugin(id) is None:
+                return {'result': 'error', 'description': "Plugin '{}' is not loaded".format(id)}
+            result = self.plugins.unload_plugin(id)
+            return (
+                {'result': 'ok'}
+                if result
+                else {'result': 'error', 'description': "unload_plugin('{}') returned False".format(id)}
+            )
+
+        elif action == 'reload':
+            if self.plugins.return_plugin(id) is None:
+                return {'result': 'error', 'description': "Plugin '{}' is not loaded".format(id)}
+            result = self.plugins.reload_plugin(id)
+            return (
+                {'result': 'ok'}
+                if result
+                else {'result': 'error', 'description': "reload_plugin('{}') returned False".format(id)}
+            )
+
+        return {'result': 'error', 'description': "Unknown lifecycle action '{}'".format(action)}
 
     def update(self, id='', action=''):
         self.logger.info("PluginController.update(id='{}', action='{}')".format(id, action))
@@ -206,26 +245,30 @@ class PluginController(RESTResource):
                 plugin_conf = shyaml.yaml_load_roundtrip(config_filename)
                 sect = plugin_conf.get(id)
                 if sect is None:
-                    response = {'result': 'error', 'description': "Configuration section '{}' does not exist".format(id)}
+                    response = {
+                        'result': 'error',
+                        'description': "Configuration section '{}' does not exist".format(id),
+                    }
                 else:
-                    self.logger.debug("update: params = {}".format(params))
-                    if params.get('config', {}).get('plugin_enabled', None) == True:
+                    self.logger.debug('update: params = {}'.format(params))
+                    if params.get('config', {}).get('plugin_enabled', None):
                         del params['config']['plugin_enabled']
                     plugin_conf[id] = params.get('config', {})
                     shyaml.yaml_save_roundtrip(config_filename, plugin_conf, False)
                     response = {'result': 'ok'}
-        elif action in ['start','stop']:
+        elif action in ['start', 'stop']:
             response = self.handle_plugin_action(id, action)
+        elif action in ['load', 'unload', 'reload']:
+            response = self.handle_plugin_lifecycle(id, action)
         else:
             response = {'result': 'error', 'description': "Plugin '{}': unknown action '{}'".format(id, action)}
-            self.logger.warning("PluginController.update(): " + response['description'])
+            self.logger.warning('PluginController.update(): ' + response['description'])
 
-        self.logger.info("PluginController.update(): response = {}".format(response))
+        self.logger.info('PluginController.update(): response = {}'.format(response))
         return json.dumps(response)
 
     update.expose_resource = True
     update.authentication_needed = True
-
 
     @cherrypy.expose
     def delete(self, id=None):
@@ -246,9 +289,8 @@ class PluginController(RESTResource):
                 shyaml.yaml_save_roundtrip(config_filename, plugin_conf, False)
                 response = {'result': 'ok'}
 
-        self.logger.info("PluginController(): delete(): response = {}".format(response))
+        self.logger.info('PluginController(): delete(): response = {}'.format(response))
         return json.dumps(response)
 
     delete.expose_resource = True
     delete.authentication_needed = True
-

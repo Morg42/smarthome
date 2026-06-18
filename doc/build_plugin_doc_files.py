@@ -168,9 +168,7 @@ def get_description(section_dict: dict, lang: str = 'en', key: str = 'descriptio
     return desc
 
 
-def get_doc_description(
-    from_dict: dict, language: str, key: str = 'description', index: Optional[int] = None
-) -> str:
+def get_doc_description(from_dict: dict, language: str, key: str = 'description', index: Optional[int] = None) -> str:
     if index is None:
         # return description
         desc = get_description(from_dict, language, key + '_long')
@@ -303,9 +301,7 @@ def write_formatted(fh, str):
     fh.write('\n')
 
 
-def build_pluginlist(
-    plugins: list[str], changed_plugins: list[str], language: str = 'de'
-) -> dict[str, list]:
+def build_pluginlist(plugins: list[str], changed_plugins: list[str], language: str = 'de') -> dict[str, list]:
     """
     Return a dict of <type>: <plugin_dict> for each plugin of the requested type
     The dict contains the plugin name, type and description as strings
@@ -541,9 +537,7 @@ def write_type_files(
      - Tester""")
 
         for plg in plglist:
-            if os.path.isfile(
-                os.path.join(plugin_rst_dir, 'plugins_doc', 'config', plg['name'] + '.rst')
-            ):
+            if os.path.isfile(os.path.join(plugin_rst_dir, 'plugins_doc', 'config', plg['name'] + '.rst')):
                 # a generated <config>.rst exists
                 plg_readme_link = f':doc:`{plg["name"]} <config/{plg["name"]}>`'
             else:
@@ -560,14 +554,8 @@ def write_type_files(
 
             desc = (
                 [plg['desc']]
-                + make_table_bullet_lines(
-                    [plg_doc if plg['doc'] else []] + [plg_sup if plg['sup'] else []], 0
-                )
-                + (
-                    [f'Plugin {texts["type"][language]}: {bold(plg["type"])}']
-                    if plgtype == 'all'
-                    else []
-                )
+                + make_table_bullet_lines([plg_doc if plg['doc'] else []] + [plg_sup if plg['sup'] else []], 0)
+                + ([f'Plugin {texts["type"][language]}: {bold(plg["type"])}'] if plgtype == 'all' else [])
             )
 
             if plg.get('py_maxversion'):
@@ -585,12 +573,8 @@ def write_type_files(
                             plg_readme_link,
                             plg['version'],
                             make_table_lines(desc, 2),
-                            make_table_lines(
-                                [x.strip() for x in plg['maint'].split(',')], 2, wide=True
-                            ),
-                            make_table_lines(
-                                [x.strip() for x in plg['test'].split(',')], 2, wide=True
-                            ),
+                            make_table_lines([x.strip() for x in plg['maint'].split(',')], 2, wide=True),
+                            make_table_lines([x.strip() for x in plg['test'].split(',')], 2, wide=True),
                             [],
                         ],
                         top=True,
@@ -821,9 +805,7 @@ def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
                 fh.write(' - Mögliche Werte:\n')
                 fh.write('\n')
                 for index, v in enumerate(validlist):
-                    desc = get_doc_description(
-                        parameter_yaml[p], language, key='valid_list_description', index=index
-                    )
+                    desc = get_doc_description(parameter_yaml[p], language, key='valid_list_description', index=index)
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
                     fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -873,9 +855,7 @@ def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
                 fh.write(' - Mögliche Werte:\n')
                 fh.write('\n')
                 for index, v in enumerate(validlist):
-                    desc = get_doc_description(
-                        iattributes_yaml[a], language, key='valid_list_description', index=index
-                    )
+                    desc = get_doc_description(iattributes_yaml[a], language, key='valid_list_description', index=index)
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
                     fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -963,9 +943,7 @@ def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
     # ---------------------------------
     write_heading(fh, 'Plugin Functions', 1)
     fh.write('\n')
-    fh.write(
-        'Das Plugin verfügt über folgende öffentliche Funktionen, die z.B. in Logiken aufgerufen werden können.\n'
-    )
+    fh.write('Das Plugin verfügt über folgende öffentliche Funktionen, die z.B. in Logiken aufgerufen werden können.\n')
     fh.write('\n')
 
     if not functions_yaml:
@@ -1027,9 +1005,7 @@ def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
                 fh.write(' - Mögliche Werte:\n')
                 fh.write('\n')
                 for index, v in enumerate(validlist):
-                    desc = get_doc_description(
-                        functions_yaml[f], language, key='valid_list_description', index=index
-                    )
+                    desc = get_doc_description(functions_yaml[f], language, key='valid_list_description', index=index)
                     if desc != '':
                         desc = ' |_| - |_| ' + desc
                     fh.write('   - ' + bold(str(v)) + desc + '\n')
@@ -1060,10 +1036,7 @@ def write_configfile(plg: dict, configfile_dir: str, language: str = 'de'):
                         fh.write('\n')
                         for index, v in enumerate(validlist):
                             desc = get_doc_description(
-                                func_param_yaml[par],
-                                language,
-                                key='valid_list_description',
-                                index=index,
+                                func_param_yaml[par], language, key='valid_list_description', index=index
                             )
                             if desc != '':
                                 desc = ' |_| - |_| ' + desc
@@ -1192,11 +1165,5 @@ if __name__ == '__main__':
         if plugins_by_type[pl] is None:
             print(f'Datei: plugins_doc/plugins_{pl.lower()}.rst: Daten unverändert, übersprungen')
         else:
-            write_type_files(
-                plugins_by_type,
-                plugin_rst_dir,
-                pl,
-                plugin_sections[pl][language],
-                language=language,
-            )
+            write_type_files(plugins_by_type, plugin_rst_dir, pl, plugin_sections[pl][language], language=language)
     print()

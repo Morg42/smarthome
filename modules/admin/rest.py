@@ -225,6 +225,7 @@ class RESTResource:
     with the post with the slug 'my-first-post' that is owned by bob.
 
     """
+
     REST_dispatch_execute_warnlevel = 'WARNING'
 
     # default method mapping. ie, if a GET request is made for
@@ -232,11 +233,7 @@ class RESTResource:
     # if a PUT request is made, it will try to call an update() method.
     # if you prefer other method names, just override these values in your
     # controller with REST_map
-    REST_defaults = {'DELETE' : 'delete',
-                     'GET' : 'read',
-                     'POST' : 'add',
-                     'PUT' : 'update',
-                     'OPTIONS': 'options'}
+    REST_defaults = {'DELETE': 'delete', 'GET': 'read', 'POST': 'add', 'PUT': 'update', 'OPTIONS': 'options'}
     REST_map = {}
 
     # if the resource has children resources, list them here. format is
@@ -252,28 +249,27 @@ class RESTResource:
         """
         Set http response headers for CORS support
         """
-#        if vpath != 'status':
-#            self.logger.notice(f"set_response_headers ({vpath=}): request headers: {cherrypy.request.headers}")
+        #        if vpath != 'status':
+        #            self.logger.notice(f"set_response_headers ({vpath=}): request headers: {cherrypy.request.headers}")
         cherrypy.response.headers['Access-Control-Allow-Headers'] = '*'
-        #cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
+        # cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
         origin = cherrypy.request.headers.get('Origin', '*')
         cherrypy.response.headers['Access-Control-Allow-Origin'] = origin
         cherrypy.response.headers['Access-Control-Allow-Credentials'] = 'true'
-#        if vpath != 'status':
-#            self.logger.notice(f"set_response_headers: response headers for: {cherrypy.response.headers}")
+
+    #        if vpath != 'status':
+    #            self.logger.notice(f"set_response_headers: response headers for: {cherrypy.response.headers}")
 
     @cherrypy.expose
     def index(self, *vpath, **params):
-        self.logger.info(f"RESTResource.index for class {self.__class__.__name__} - *vpath={vpath}, **params={params}")
+        self.logger.info(f'RESTResource.index for class {self.__class__.__name__} - *vpath={vpath}, **params={params}')
         self.set_response_headers()
         return self.default(*vpath, **params)
 
-
     def index2(self):
-        self.logger.info("RESTResource index2 (nicht überschrieben){}".format(self.__class__.__name__))
+        self.logger.info('RESTResource index2 (nicht überschrieben){}'.format(self.__class__.__name__))
         # Methode muss überschrieben werden
         return
-
 
     def REST_get_jwt_token(self):
         """
@@ -287,25 +283,21 @@ class RESTResource:
         # self.logger.debug("REST_test_jwt_token(): raw token = {}".format(token))
         if token != '':
             if token.startswith('Bearer '):
-                token = token[len('Bearer '):]
+                token = token[len('Bearer ') :]
 
         # self.logger.debug("REST_test_jwt_token(): jwt token = {}".format(token))
         if self.jwt_secret and (len(token) > 0):
             try:
                 decoded = jwt.decode(token, self.jwt_secret, verify=True, algorithms='HS256')
             except Exception as e:
-                self.logger.debug("REST_test_jwt_token(): Exception = {}".format(e))
-                se = format(e)
-                if se.endswith('expired'):
-                    error_text = format(e)
+                self.logger.debug('REST_test_jwt_token(): Exception = {}'.format(e))
                 token = ''
                 decoded = {}
-        self.logger.debug("REST_test_jwt_token(): decoded jwt token = {}".format(decoded))
+        self.logger.debug('REST_test_jwt_token(): decoded jwt token = {}'.format(decoded))
 
         if len(token) == 0:
             decoded = {}
         return decoded
-
 
     def REST_test_jwt_token(self):
         """
@@ -342,19 +334,23 @@ class RESTResource:
         return (True, '')
 
     def REST_dispatch_execute(self, m, method, root, resource, **params):
-        if m and getattr(m, "expose_resource", False):
+        if m and getattr(m, 'expose_resource', False):
             public_root = False
             if root:
-                public_root = getattr(m, "public_root", False)
+                public_root = getattr(m, 'public_root', False)
                 self.logger.info(f"REST_dispatch_execute(): public_root = '{public_root}'")
             if not public_root:
-                auth_needed = getattr(m, "authentication_needed", False)
-                self.logger.info(f"REST_dispatch_execute(): {('' if auth_needed else 'No ')}Authentication needed for {method} ({str(m).split()[2]})")
+                auth_needed = getattr(m, 'authentication_needed', False)
+                self.logger.info(
+                    f'REST_dispatch_execute(): {("" if auth_needed else "No ")}Authentication needed for {method} ({str(m).split()[2]})'
+                )
                 if auth_needed:
                     # self.logger.info("REST_dispatch: Authentication needed for {} ({})".format(method, str(m).split()[2]))
                     token_valid, error_text = self.REST_test_jwt_token()
                     if not token_valid:
-                        self.logger.info("REST_dispatch_execute(): Authentication failed for {method} ({str(m).split()[2]})")
+                        self.logger.info(
+                            'REST_dispatch_execute(): Authentication failed for {method} ({str(m).split()[2]})'
+                        )
                         response = {'result': 'error', 'description': error_text}
                         return json.dumps(response)
 
@@ -362,11 +358,13 @@ class RESTResource:
                 return m(resource, **params)
             except Exception as e:
                 if self.module.rest_dispatch_force_exception:
-                    self.logger.notice("The following exception is thrown, due to the configuration in etc/module.yaml:")
-                    self.logger.exception(f"REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}")
+                    self.logger.notice(
+                        'The following exception is thrown, due to the configuration in etc/module.yaml:'
+                    )
+                    self.logger.exception(f'REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}')
                 else:
-                    self.logger.warning(f"REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}")
-                response = {'result': 'error', 'description': f"{e.__class__.__name__} {e}"}
+                    self.logger.warning(f'REST_dispatch_execute: {resource}: {e.__class__.__name__} {e}')
+                response = {'result': 'error', 'description': f'{e.__class__.__name__} {e}'}
                 return json.dumps(response)
         return None
 
@@ -377,24 +375,28 @@ class RESTResource:
         method = cherrypy.request.method
         if method in self.REST_map:
             try:
-                m = getattr(self,self.REST_map[method])
-            except:
-                self.logger.info("REST_dispatch *1: Unsupported method  = {} for resource '{}'".format(method, resource))
+                m = getattr(self, self.REST_map[method])
+            except Exception:
+                self.logger.info(
+                    "REST_dispatch *1: Unsupported method  = {} for resource '{}'".format(method, resource)
+                )
                 raise cherrypy.HTTPError(status=404)
             result = self.REST_dispatch_execute(m, method, root, resource, **params)
-            if result != None:
+            if result is not None:
                 return result
             else:
                 raise cherrypy.NotFound
         else:
             if method in self.REST_defaults:
                 try:
-                    m = getattr(self,self.REST_defaults[method])
-                except:
-                    self.logger.info("REST_dispatch: Unsupported method  = {} for resource '{}'".format(method, resource))
+                    m = getattr(self, self.REST_defaults[method])
+                except Exception:
+                    self.logger.info(
+                        "REST_dispatch: Unsupported method  = {} for resource '{}'".format(method, resource)
+                    )
                     raise cherrypy.HTTPError(status=404)
                 result = self.REST_dispatch_execute(m, method, root, resource, **params)
-                if result != None:
+                if result is not None:
                     return result
                 else:
                     raise cherrypy.NotFound
@@ -403,11 +405,11 @@ class RESTResource:
 
     @cherrypy.expose
     def default(self, *vpath, **params):
-        self.logger.info(f"RESTResource.default: *vpath={vpath}, **params={params} {type(vpath)=}")
+        self.logger.info(f'RESTResource.default: *vpath={vpath}, **params={params} {type(vpath)=}')
         try:
             self.set_response_headers(*vpath)
         except Exception as ex:
-            self.logger.error(f"reas.py default: Exception {ex} - parameters: {vpath}")
+            self.logger.error(f'reas.py default: Exception {ex} - parameters: {vpath}')
         if not vpath:
             resource = None
             # self.logger.info("RESTResource.default: vpath = '{}',  params = '{}'".format(list(vpath), dict(**params)))
@@ -422,7 +424,7 @@ class RESTResource:
         # Coerce the ID to the correct db type
         resource = self.REST_instantiate(atom)
         if resource is None:
-            if cherrypy.request.method == "PUT":
+            if cherrypy.request.method == 'PUT':
                 # PUT is special since it can be used to create
                 # a resource
                 resource = self.REST_create(atom)
@@ -438,8 +440,8 @@ class RESTResource:
                 c.parent = resource
                 return c.default(*vpath, **params)
             method = getattr(self, a, None)
-            #self.logger.notice(f"dir(method): {dir(method)}")
-            if method and getattr(method, "expose_resource", False):
+            # self.logger.notice(f"dir(method): {dir(method)}")
+            if method and getattr(method, 'expose_resource', False):
                 return method(resource, *vpath, **params)
             else:
                 # path component was specified but doesn't
@@ -448,10 +450,10 @@ class RESTResource:
 
         # No further known vpath components. Call a default handler
         # based on the method
-        return self.REST_dispatch(False, resource,**params)
+        return self.REST_dispatch(False, resource, **params)
 
-    def REST_instantiate(self,id):
-        """ instantiate a REST resource based on the id
+    def REST_instantiate(self, id):
+        """instantiate a REST resource based on the id
 
         this method MUST be overridden in your class. it will be passed
         the id (from the url fragment) and should return a model object
@@ -464,8 +466,8 @@ class RESTResource:
         return id
         # raise cherrypy.NotFound
 
-    def REST_create(self,id):
-        """ create a REST resource with the specified id
+    def REST_create(self, id):
+        """create a REST resource with the specified id
 
         this method should be overridden in your class.
         this method will be called when a PUT request is made for a resource
@@ -480,7 +482,7 @@ class RESTResource:
         """
         Handle OPTIONS requests
         """
-        self.logger.notice("RESTResource.options for class {self.__class__.__name__}")
+        self.logger.notice('RESTResource.options for class {self.__class__.__name__}')
 
         return json.dumps(False)
 

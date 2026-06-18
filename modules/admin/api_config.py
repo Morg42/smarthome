@@ -23,11 +23,12 @@
 import os
 import logging
 import json
+import pathlib
 import cherrypy
 
 from lib.module import Modules
 import lib.shyaml as shyaml
-from lib.constants import (DIR_ETC, DIR_MODULES, BASE_SH, BASE_HOLIDAY, BASE_MODULE)
+from lib.constants import DIR_ETC, DIR_MODULES, BASE_SH, BASE_HOLIDAY, BASE_MODULE
 
 from .rest import RESTResource
 
@@ -41,7 +42,9 @@ class ConfigController(RESTResource):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)
         self.modules_dir = self._sh.get_config_dir(DIR_MODULES)
@@ -53,7 +56,6 @@ class ConfigController(RESTResource):
         self.mqtt_conf = shyaml.yaml_load(os.path.join(self.modules_dir, 'mqtt', 'module.yaml'))
 
         return
-
 
     def update_configdict(self, config_dict, data, section='unknown'):
         """
@@ -68,7 +70,6 @@ class ConfigController(RESTResource):
                 config_dict[key] = update_data[key]
         return
 
-
     # ======================================================================
     #  Read holidays
     #
@@ -79,18 +80,17 @@ class ConfigController(RESTResource):
             self.core_confdata['holidays_province'] = self.holidays_confdata['location'].get('province', '')
             self.core_confdata['holidays_state'] = self.holidays_confdata['location'].get('state', '')
 
-        for i in range(1,6):
-            self.core_confdata['holidays_custom'+str(i)] = ''
+        for i in range(1, 6):
+            self.core_confdata['holidays_custom' + str(i)] = ''
         try:
             for i in range(1, 6):
-                if isinstance(self.holidays_confdata['custom'][i-1], dict):
-                    self.core_confdata['holidays_custom'+str(i)] = json.dumps(self.holidays_confdata['custom'][i-1])
+                if isinstance(self.holidays_confdata['custom'][i - 1], dict):
+                    self.core_confdata['holidays_custom' + str(i)] = json.dumps(self.holidays_confdata['custom'][i - 1])
                 else:
                     self.core_confdata['holidays_custom' + str(i)] = self.holidays_confdata['custom'][i - 1]
-        except:
+        except Exception:
             pass
         return
-
 
     # ======================================================================
     #  Update holidays
@@ -119,7 +119,7 @@ class ConfigController(RESTResource):
                 for i in range(1, 6):
                     custom = data['common']['data']['holidays_custom' + str(i)]
                     if custom is not None and custom != '':
-                        self.holidays_confdata['custom'][i-1] = custom
+                        self.holidays_confdata['custom'][i - 1] = custom
             else:
                 self.holidays_confdata['custom'] = []
                 for i in range(1, 6):
@@ -130,10 +130,10 @@ class ConfigController(RESTResource):
             for i in range(1, 6):
                 del data['common']['data']['holidays_custom' + str(i)]
         except Exception as e:
-            self.logger.critical("update_holidays: Exception {}".format(e))
+            self.logger.critical('update_holidays: Exception {}'.format(e))
 
         if self.holidays_confdata['custom'] == []:
-            #self.holidays_confdata['custom'] = None
+            # self.holidays_confdata['custom'] = None
             del self.holidays_confdata['custom']
 
         if self.holidays_confdata['location']['state'] is None:
@@ -143,7 +143,6 @@ class ConfigController(RESTResource):
         shyaml.yaml_save_roundtrip(filename, self.holidays_confdata, create_backup=True)
         return
 
-
     # ======================================================================
     #  Handling of http REST requests
     #
@@ -151,7 +150,7 @@ class ConfigController(RESTResource):
         """
         Handle GET requests
         """
-        self.logger.info("ConfigController.read(): config = {}".format(id))
+        self.logger.info('ConfigController.read(): config = {}'.format(id))
 
         self.core_confdata = shyaml.yaml_load(self._sh.get_config_file(BASE_SH))
         self.read_holidays()
@@ -179,31 +178,31 @@ class ConfigController(RESTResource):
             if result['mqtt']['data'].get('enabled', None) is None:
                 result['mqtt']['data']['enabled'] = True
             result['mqtt']['meta'] = self.mqtt_conf
-            self.logger.info("  - index: core = {}".format(result))
+            self.logger.info('  - index: core = {}'.format(result))
             return json.dumps(result)
 
         if id == 'common':
             result['data'] = self.core_confdata
             result['meta'] = self.core_conf
-            self.logger.info("  - index: common = {}".format(result))
+            self.logger.info('  - index: common = {}'.format(result))
             return json.dumps(result)
 
         if id == 'http':
             result['data'] = self.module_confdata.get('http', {})
             result['meta'] = self.http_conf
-            self.logger.info("  - index: http = {}".format(result))
+            self.logger.info('  - index: http = {}'.format(result))
             return json.dumps(result)
 
         if id == 'websocket':
             result['data'] = self.module_confdata.get('websocket', {})
             result['meta'] = self.websocket_conf
-            self.logger.info("  - index: http = {}".format(result))
+            self.logger.info('  - index: http = {}'.format(result))
             return json.dumps(result)
 
         if id == 'admin':
             result['data'] = self.module_confdata.get('admin', {})
             result['meta'] = self.admin_conf
-            self.logger.info("  - index: admin = {}".format(result))
+            self.logger.info('  - index: admin = {}'.format(result))
             return json.dumps(result)
 
         if id == 'mqtt':
@@ -211,30 +210,34 @@ class ConfigController(RESTResource):
             if result['mqtt']['data'].get('enabled', None) is None:
                 result['mqtt']['data']['enabled'] = True
             result['meta'] = self.mqtt_conf
-            self.logger.info("  - index: admin = {}".format(result))
+            self.logger.info('  - index: admin = {}'.format(result))
             return json.dumps(result)
+
+        if id == 'check_config_etc':
+            return self.check_config_etc()
 
         raise cherrypy.NotFound
 
     read.expose_resource = True
     read.authentication_needed = True
 
-
     @cherrypy.expose
     def update(self, id=None):
         """
         Handle PUT requests
         """
-        self.logger.info("ConfigController() update: config {}".format(id))
-        if id in ['common', 'http', 'admin', 'mqtt', 'core']:
+        self.logger.info('ConfigController() update: config {}'.format(id))
+        if id == 'enable_config_etc':
+            return self.enable_config_etc()
 
+        if id in ['common', 'http', 'admin', 'mqtt', 'core']:
             # get http headers
             cl = cherrypy.request.headers.get('Content-Length', 0)
             if cl == 0:
                 raise cherrypy.HTTPError(status=411)
             rawbody = cherrypy.request.body.read(int(cl))
             data = json.loads(rawbody.decode('utf-8'))
-            self.logger.info("  - update: data = {}".format(data))
+            self.logger.info('  - update: data = {}'.format(data))
 
             # update holidays and remove keys from self.core_confdata
             self.update_holidays(data)
@@ -258,38 +261,112 @@ class ConfigController(RESTResource):
                 self.module_confdata['websocket'] = {}
                 self.module_confdata['websocket']['module_name'] = 'websocket'
             self.update_configdict(self.module_confdata['websocket'], data, 'websocket')
-            self.logger.info("Update: self.websocket_conf = {}".format(self.websocket_conf))
+            self.logger.info('Update: self.websocket_conf = {}'.format(self.websocket_conf))
             if self.module_confdata['websocket'].get('enabled', None) is None:
                 self.module_confdata['websocket']['enabled'] = True
             if self.module_confdata['websocket']['enabled']:
                 self.module_confdata['websocket'].pop('enabled', None)
-            #self.logger.warning("Update: ['websocket'] = {}".format(self.module_confdata['websocket']))
-            #self.logger.warning("Update: - enabled = {}".format(self.module_confdata['websocket'].get('enabled', None)))
+            # self.logger.warning("Update: ['websocket'] = {}".format(self.module_confdata['websocket']))
+            # self.logger.warning("Update: - enabled = {}".format(self.module_confdata['websocket'].get('enabled', None)))
 
             if self.module_confdata.get('mqtt', None) is None:
                 self.module_confdata['mqtt'] = {}
                 self.module_confdata['mqtt']['module_name'] = 'mqtt'
             self.update_configdict(self.module_confdata['mqtt'], data, 'mqtt')
-            self.logger.info("Update: self.mqtt_conf = {}".format(self.mqtt_conf))
+            self.logger.info('Update: self.mqtt_conf = {}'.format(self.mqtt_conf))
             if self.module_confdata['mqtt'].get('enabled', None) is None:
                 self.module_confdata['mqtt']['enabled'] = False
             if self.module_confdata['mqtt']['enabled']:
                 self.module_confdata['mqtt'].pop('enabled', None)
             self.logger.info("Update: ['mqtt'] = {}".format(self.module_confdata['mqtt']))
-            self.logger.info("Update: - enabled = {}".format(self.module_confdata['mqtt'].get('enabled', None)))
+            self.logger.info('Update: - enabled = {}'.format(self.module_confdata['mqtt'].get('enabled', None)))
             shyaml.yaml_save_roundtrip(self._sh.get_config_file(BASE_MODULE), self.module_confdata, create_backup=True)
 
-            result = {"result": "ok"}
+            result = {'result': 'ok'}
             return json.dumps(result)
 
-        result = {"result": "error"}
+        result = {'result': 'error'}
         return json.dumps(result)
 
     update.expose_resource = True
     update.authentication_needed = True
 
+    # ======================================================================
+    #  config_etc migration check
+    #
+    def check_config_etc(self):
+        """
+        Dry-run the config_etc migration and report conflicts / files to migrate.
+        Returns JSON with keys: result, already_enabled, safe, conflicts, to_migrate,
+        already_done, not_present.
+        """
+        base = pathlib.Path(self.base_dir)
+        etc = pathlib.Path(self.etc_dir)
 
-    def REST_instantiate(self,param):
+        core_conf = shyaml.yaml_load(self._sh.get_config_file(BASE_SH))
+        already_enabled = bool(core_conf.get('config_etc', False))
+
+        dirnames = ['items', 'logics', 'structs', 'scenes', 'functions']
+        conflicts = {}
+        to_migrate = {}
+        already_done = []
+        not_present = []
+
+        for dirname in dirnames:
+            old_dir = base / dirname
+            new_dir = etc / dirname
+            if not old_dir.exists():
+                if new_dir.exists():
+                    already_done.append(dirname)
+                else:
+                    not_present.append(dirname)
+                continue
+            dir_conflicts = []
+            dir_to_migrate = []
+            for entry in old_dir.glob('*'):
+                target = new_dir / entry.name
+                if target.exists():
+                    dir_conflicts.append(entry.name)
+                else:
+                    dir_to_migrate.append(entry.name)
+            if dir_conflicts:
+                conflicts[dirname] = dir_conflicts
+            if dir_to_migrate:
+                to_migrate[dirname] = dir_to_migrate
+
+        return json.dumps(
+            {
+                'result': 'ok',
+                'already_enabled': already_enabled,
+                'safe': len(conflicts) == 0,
+                'conflicts': conflicts,
+                'to_migrate': to_migrate,
+                'already_done': already_done,
+                'not_present': not_present,
+            }
+        )
+
+    # ======================================================================
+    #  Enable config_etc in smarthome.yaml
+    #
+    def enable_config_etc(self):
+        """
+        Write config_etc: true to etc/smarthome.yaml so migration runs on next restart.
+        """
+        try:
+            conf_file = self._sh.get_config_file(BASE_SH)
+            conf = shyaml.yaml_load_roundtrip(conf_file)
+            if conf is None:
+                conf = {}
+            conf['config_etc'] = True
+            shyaml.yaml_save_roundtrip(conf_file, conf, create_backup=True)
+            self.logger.info('enable_config_etc: config_etc set to True in smarthome.yaml')
+            return json.dumps({'result': 'ok'})
+        except Exception as e:
+            self.logger.error(f'enable_config_etc: {e}')
+            return json.dumps({'result': 'error', 'description': str(e)})
+
+    def REST_instantiate(self, param):
         """
         instantiate a REST resource based on the id
 
@@ -302,4 +379,3 @@ class ConfigController(RESTResource):
         REST_create() will be called so you can actually create the resource.
         """
         return param
-

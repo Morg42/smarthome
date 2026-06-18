@@ -33,8 +33,9 @@ VERSION = '0.1.0'
 
 def measure():
 
-    #return round(timeit.timeit('"|".join(str(i) for i in range(99999))', number=1000), 2)
+    # return round(timeit.timeit('"|".join(str(i) for i in range(99999))', number=1000), 2)
     return round(timeit.timeit('"|".join(str(i) for i in range(50000))', number=1000), 2)
+
 
 def read_cpuinfo():
 
@@ -44,10 +45,10 @@ def read_cpuinfo():
 
         for line in lines:
             if line.startswith('model name'):
-                print('cpu '+ line)
+                print('cpu ' + line)
                 break
-    except:
-        print("cpu model name\t: Could not determine cpu model - unable to read /proc/cpuinfo")
+    except OSError:
+        print('cpu model name\t: Could not determine cpu model - unable to read /proc/cpuinfo')
         print()
 
 
@@ -60,12 +61,12 @@ if __name__ == '__main__':
     print('')
 
     version = platform.python_version()
-    print(f"Python version\t: {version}")
+    print(f'Python version\t: {version}')
     print()
 
     read_cpuinfo()
 
-    sys.stdout.write(f"test duration\t: ")
+    sys.stdout.write('test duration\t: ')
     sys.stdout.flush()
-    print(f"{measure()} seconds")
+    print(f'{measure()} seconds')
     print()

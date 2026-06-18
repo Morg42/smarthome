@@ -3,22 +3,21 @@ import os
 from setuptools import setup, find_packages
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-DOWNLOAD_URL = ('https://github.com/smarthomeNG/smarthome/archive/v{}.zip'.format("1.6"))
+DOWNLOAD_URL = 'https://github.com/smarthomeNG/smarthome/archive/v{}.zip'.format('1.6')
 
 PACKAGES = find_packages(exclude=['tests', 'tests.*'])
 
-#REQUIRES = [
+# REQUIRES = [
 #    'requests>=2,<3',
 #    'pyyaml>=3.11,<4',
 #    'psutil',
 #
-#]
-REQUIRES = [
-]
+# ]
+REQUIRES = []
 
 setup(
     name='SmartHomeNG',
-    version="1.6b",
+    version='1.6b',
     license='GPL',
     url='https://github.com/smarthomeNG/smarthome',
     download_url=DOWNLOAD_URL,
@@ -32,11 +31,7 @@ setup(
     install_requires=REQUIRES,
     test_suite='tests',
     keywords=['home', 'automation'],
-    entry_points={
-        'console_scripts': [
-            ''
-        ]
-    },
+    entry_points={'console_scripts': ['']},
     classifiers=[
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
@@ -45,6 +40,6 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Topic :: Home Automation'
+        'Topic :: Home Automation',
     ],
 )

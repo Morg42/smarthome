@@ -49,6 +49,7 @@ import subprocess  # noqa
 
 try:
     from lib.module import Modules
+
     _lib_modules_found = True
 except ImportError:
     _lib_modules_found = False
@@ -57,7 +58,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 tasks_logger = logging.getLogger(__name__ + '.tasks')
 
-_scheduler_instance = None    # Pointer to the initialized instance of the scheduler class  (for use by static methods)
+_scheduler_instance = None  # Pointer to the initialized instance of the scheduler class  (for use by static methods)
 
 
 class LeaveLogic(Exception):
@@ -69,6 +70,7 @@ class _PriorityQueue:
     Implements a queue which contain tuples of priority and data sorted by priority.
     Lowest priority given will be the first candidate for a get from the queue, data can be anything
     """
+
     def __init__(self):
         self.queue = []
         self.lock = threading.Lock()
@@ -125,19 +127,20 @@ class _PriorityQueue:
 
 
 class Scheduler(threading.Thread):
-
     _workers = []
     _worker_num = 5
     _worker_max = 20
     _worker_delta = 60  # wait 60 seconds before adding another worker thread
 
-    _scheduler = {}                     # holder schedulers, key is the scheduler name. Each scheduler is stored in a dict
-                                        # (keys are 'obj', 'active', 'prio', 'next', 'value', 'cycle', 'cron')
-    _runq = _PriorityQueue()            # holds priority and a tuple of (name, obj, by, source, dest, value) for immediate execution
-    _triggerq = _PriorityQueue()        # holds tuples of (datetime, priority) and (name, obj, by, source, dest, value)
-                                        # to be put in the run queue when time is due
+    _scheduler = {}  # holder schedulers, key is the scheduler name. Each scheduler is stored in a dict
+    # (keys are 'obj', 'active', 'prio', 'next', 'value', 'cycle', 'cron')
+    _runq = (
+        _PriorityQueue()
+    )  # holds priority and a tuple of (name, obj, by, source, dest, value) for immediate execution
+    _triggerq = _PriorityQueue()  # holds tuples of (datetime, priority) and (name, obj, by, source, dest, value)
+    # to be put in the run queue when time is due
 
-    _pluginname_prefix = 'plugins.'     # prefix for scheduler names
+    _pluginname_prefix = 'plugins.'  # prefix for scheduler names
 
     def __init__(self, smarthome):
         threading.Thread.__init__(self, name='Scheduler')
@@ -145,14 +148,19 @@ class Scheduler(threading.Thread):
         self._sh = smarthome
         self._lock = threading.Lock()
         self._runc = threading.Condition()
-        self._cycle_items = {}          # store items for dynamic cycles {'item2.property.path': {name1, name2, ...}}
+        self._cycle_items = {}  # store items for dynamic cycles {'item2.property.path': {name1, name2, ...}}
 
         global _scheduler_instance
         if _scheduler_instance is not None:
             import inspect
+
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 4)
-            logger.critical("A second 'scheduler' object has been created. There should only be ONE instance of class 'Scheduler'!!! Called from: {} ({})".format(calframe[1][1], calframe[1][3]))
+            logger.critical(
+                "A second 'scheduler' object has been created. There should only be ONE instance of class 'Scheduler'!!! Called from: {} ({})".format(
+                    calframe[1][1], calframe[1][3]
+                )
+            )
 
         _scheduler_instance = self
 
@@ -175,6 +183,7 @@ class Scheduler(threading.Thread):
         .. code-block:: python
 
             from lib.scheduler import Scheduler
+
             scheduler = Scheduler.get_instance()
 
             # to access a method (eg. to trigger a logic):
@@ -189,12 +198,10 @@ class Scheduler(threading.Thread):
         else:
             return _scheduler_instance
 
-
     def set_worker_warn_count(self, count):
 
         self._worker_max = count
-        logger.info(f"Warn Level for maximum number of workers set to {self._worker_max}")
-
+        logger.info(f'Warn Level for maximum number of workers set to {self._worker_max}')
 
     def get_worker_count(self):
         """
@@ -203,7 +210,6 @@ class Scheduler(threading.Thread):
         :return: number of worker threads
         """
         return len(self._workers)
-
 
     def get_idle_worker_count(self):
         """
@@ -214,9 +220,8 @@ class Scheduler(threading.Thread):
         idle_count = 0
         for w in self._workers:
             if w.name == 'idle':
-                idle_count +=1
+                idle_count += 1
         return idle_count
-
 
     def get_worker_names(self):
         """
@@ -230,10 +235,9 @@ class Scheduler(threading.Thread):
                 worker_names.append(w.name)
         return worker_names
 
-
     def run(self):
         self.alive = True
-        logger.debug(f"creating {self._worker_num} workers")
+        logger.debug(f'creating {self._worker_num} workers')
         for i in range(self._worker_num):
             self._add_worker()
         while self.alive:
@@ -244,12 +248,16 @@ class Scheduler(threading.Thread):
                     if len(self._workers) < self._worker_max:
                         self._add_worker()
                     else:
-                        logger.error(f"Needing more worker threads than the specified maximum of {self._worker_max}!  ({len(self._workers)} worker threads active)")
+                        logger.error(
+                            f'Needing more worker threads than the specified maximum of {self._worker_max}!  ({len(self._workers)} worker threads active)'
+                        )
                         tn = {}
                         # for t in threading.enumerate():
                         for t in self._workers:
                             tn[t.name] = tn.get(t.name, 0) + 1
-                        logger.info('Worker-Threads: ' + ', '.join("{0}: {1}".format(k, v) for (k, v) in list(tn.items())))
+                        logger.info(
+                            'Worker-Threads: ' + ', '.join('{0}: {1}'.format(k, v) for (k, v) in list(tn.items()))
+                        )
 
                         if int(self._sh._restart_on_num_workers) < self._worker_max:
                             # do no restart
@@ -258,14 +266,21 @@ class Scheduler(threading.Thread):
                             if len(self._workers) < int(self._sh._restart_on_num_workers):
                                 self._add_worker()
                             else:
-                                logger.warning('Worker-Threads: ' + ', '.join("{0}: {1}".format(k, v) for (k, v) in list(tn.items())))
-                                self._sh.restart('SmartHomeNG (scheduler started too many worker threads ({}))'.format(len(self._workers)))
+                                logger.warning(
+                                    'Worker-Threads: '
+                                    + ', '.join('{0}: {1}'.format(k, v) for (k, v) in list(tn.items()))
+                                )
+                                self._sh.restart(
+                                    'SmartHomeNG (scheduler started too many worker threads ({}))'.format(
+                                        len(self._workers)
+                                    )
+                                )
 
             while self._triggerq.qsize() > 0:
                 try:
                     (dt, prio), (name, obj, by, source, dest, value) = self._triggerq.get()
                 except Exception as e:
-                    logger.warning(f"Trigger queue exception: {e}")
+                    logger.warning(f'Trigger queue exception: {e}')
                     break
 
                 if dt < now:  # run it
@@ -284,8 +299,8 @@ class Scheduler(threading.Thread):
             #         task_count += 1
             # End for debugging
             if not self._lock.acquire(timeout=1):
-            #     logger.critical("Scheduler: Deadlock! - Task Count to enter run queue: {}".format(task_count))
-                logger.critical("Scheduler: Deadlock!")
+                #     logger.critical("Scheduler: Deadlock! - Task Count to enter run queue: {}".format(task_count))
+                logger.critical('Scheduler: Deadlock!')
                 continue
             try:
                 for name in self._scheduler:
@@ -294,7 +309,10 @@ class Scheduler(threading.Thread):
                         if task['next'] <= now:
                             self._runc.acquire()
                             # insert priority and a tuple of (name, obj, by, source, dest, value) # ms
-                            self._runq.insert(task['prio'], (name, task['obj'], 'Scheduler', task.get('source', None), None, task['value']))
+                            self._runq.insert(
+                                task['prio'],
+                                (name, task['obj'], 'Scheduler', task.get('source', None), None, task['value']),
+                            )
                             self._runc.notify()
                             self._runc.release()
                             task['next'] = None
@@ -309,23 +327,24 @@ class Scheduler(threading.Thread):
                             self._next_time(name)
             except Exception as e:
                 tb_str = ''.join(traceback.format_exception(None, e, e.__traceback__))
-                logger.warning(f"Exception: {e} while searching scheduler for due tasks. Traceback: {tb_str}")
+                logger.warning(f'Exception: {e} while searching scheduler for due tasks. Traceback: {tb_str}')
             finally:
                 self._lock.release()
             time.sleep(0.5)
 
         if self._sh.shng_status['code'] > 20:
-            logger.info("scheduler leaves run method")
+            logger.info('scheduler leaves run method')
         else:
-            logger.warning("scheduler leaves run method")
+            logger.warning('scheduler leaves run method')
         return
-
 
     def stop(self):
         self.alive = False
-        logger.debug("scheduler leaves stop method")
+        logger.debug('scheduler leaves stop method')
 
-    def trigger(self, name, obj=None, by='Logic', source=None, value=None, dest=None, prio=3, dt=None, from_smartplugin=False):
+    def trigger(
+        self, name, obj=None, by='Logic', source=None, value=None, dest=None, prio=3, dt=None, from_smartplugin=False
+    ):
         """
         triggers the execution of a logic optional at a certain datetime given with dt
 
@@ -344,26 +363,26 @@ class Scheduler(threading.Thread):
             if name in self._scheduler:
                 obj = self._scheduler[name]['obj']
             else:
-                logger.warning(f"Logic name not found: {name}")
+                logger.warning(f'Logic name not found: {name}')
                 return
         if name in self._scheduler:
             if not self._scheduler[name]['active']:
                 logger.debug(f"Logic '{name}' deactivated. Ignoring trigger from {by} {source}")
                 return
         if dt is None:
-            logger.debug(f"Triggering {name} - by: {by} source: {source} dest: {dest} value: {value}")
+            logger.debug(f'Triggering {name} - by: {by} source: {source} dest: {dest} value: {value}')
             self._runc.acquire()
             self._runq.insert(prio, (name, obj, by, source, dest, value))
             self._runc.notify()
             self._runc.release()
         else:
             if not isinstance(dt, datetime.datetime):
-                logger.warning(f"Trigger: Not a valid timezone aware datetime for {name}. Ignoring.")
+                logger.warning(f'Trigger: Not a valid timezone aware datetime for {name}. Ignoring.')
                 return
             if dt.tzinfo is None:
-                logger.warning(f"Trigger: Not a valid timezone aware datetime for {name}. Ignoring.")
+                logger.warning(f'Trigger: Not a valid timezone aware datetime for {name}. Ignoring.')
                 return
-            logger.debug(f"Triggering {name} - by: {by} source: {source} dest: {dest} value: {value} at: {dt}")
+            logger.debug(f'Triggering {name} - by: {by} source: {source} dest: {dest} value: {value} at: {dt}')
             self._triggerq.insert((dt, prio), (name, obj, by, source, dest, value))
 
     def remove(self, name, from_smartplugin=False):
@@ -377,14 +396,13 @@ class Scheduler(threading.Thread):
         self._lock.acquire()
         try:
             name = self.check_caller(name, from_smartplugin)
-            logger.debug(f"remove scheduler entry with name: {name}")
+            logger.debug(f'remove scheduler entry with name: {name}')
             if name in self._scheduler:
-                del(self._scheduler[name])
+                del self._scheduler[name]
         except Exception as e:
-            logger.error(f"Exception {e}: Could not remove scheduler entry for {name}")
+            logger.error(f'Exception {e}: Could not remove scheduler entry for {name}')
         finally:
             self._lock.release()
-
 
     def check_caller(self, name, from_smartplugin=False):
         """
@@ -404,7 +422,7 @@ class Scheduler(threading.Thread):
             logger.exception(f"check_caller('{name}') *1: Exception in inspect.stack(): {e}")
 
         try:
-            obj = stack[2][0].f_locals["self"]
+            obj = stack[2][0].f_locals['self']
         except KeyError:
             return name
         except Exception as e:
@@ -415,7 +433,7 @@ class Scheduler(threading.Thread):
             if isinstance(obj, SmartPlugin):
                 iname = obj.get_instance_name()
                 if iname != '':
-#                    if not (iname).startswith(self._pluginname_prefix):
+                    #                    if not (iname).startswith(self._pluginname_prefix):
                     if not from_smartplugin:
                         if not str(name).endswith('_' + iname):
                             name = name + '_' + obj.get_instance_name()
@@ -424,7 +442,6 @@ class Scheduler(threading.Thread):
             logger.exception(f"check_caller('{name}') *3: Exception in inspect.stack(): {e}")
         return name
 
-
     def return_next(self, name, from_smartplugin=False):
         # name = self.check_caller(name, from_smartplugin)   # ms
         if name in self._scheduler:
@@ -432,15 +449,27 @@ class Scheduler(threading.Thread):
 
     @staticmethod
     def __get_first(d):
-        """ return first k, v pair from dict """
+        """return first k, v pair from dict"""
         try:
-            for (k, v) in d.items():
+            for k, v in d.items():
                 return (k, v)
         except Exception:
             pass
         return (False, None)
 
-    def add(self, name, obj, prio=3, cron=None, cycle=None, value=None, offset=None, next=None, from_smartplugin=False, items=None):
+    def add(
+        self,
+        name,
+        obj,
+        prio=3,
+        cron=None,
+        cycle=None,
+        value=None,
+        offset=None,
+        next=None,
+        from_smartplugin=False,
+        items=None,
+    ):
         """
         Adds an entry to the scheduler.
 
@@ -456,15 +485,15 @@ class Scheduler(threading.Thread):
         :param items: None or list of items to register for update_item calls (if cycle time is calculated from expression containing item(s))
         """
         # set shtime and items if they were initialized to None in __init__  (potenital timing problem in init of shng)
-        if self.shtime == None:
+        if self.shtime is None:
             self.shtime = Shtime.get_instance()
-        if self.items == None:
+        if self.items is None:
             self.items = Items.get_instance()
         if self._lock.acquire():
             try:
                 source = '??'
                 if isinstance(cron, str):
-                    cron = [cron, ]
+                    cron = [cron]
                 if isinstance(cron, list):
                     details = None
                     _cron = {}
@@ -504,7 +533,7 @@ class Scheduler(threading.Thread):
                         if obj.__self__.get_instance_name() != '':
                             if not from_smartplugin:
                                 name = name + '_' + obj.__self__.get_instance_name()
-                            logger.debug("Scheduler: Name changed by adding plugin instance name to: " + name)
+                            logger.debug('Scheduler: Name changed by adding plugin instance name to: ' + name)
 
                 item = None
                 if isinstance(cycle, (int, float)):
@@ -526,7 +555,7 @@ class Scheduler(threading.Thread):
                     try:
                         cycle = int(cycle.strip())
                     except Exception as e:
-                        logger.warning(f"Scheduler: Exception {e}: Invalid cycle entry for {name} {cycle}")
+                        logger.warning(f'Scheduler: Exception {e}: Invalid cycle entry for {name} {cycle}')
                         return
                     if _value != '':
                         _value = _value.strip()
@@ -536,14 +565,18 @@ class Scheduler(threading.Thread):
                     source = {'source': 'cycle', 'details': _value}
 
                 elif isinstance(cycle, dict) and False in cycle:
-                    logger.warning(f"scheduler {name}: can't add cycle with length False, check cycle assignment (obj {obj}, source {source}).")
+                    logger.warning(
+                        f"scheduler {name}: can't add cycle with length False, check cycle assignment (obj {obj}, source {source})."
+                    )
                     return
 
                 # check if lib.item found an item reference for duration
                 if items:
                     for item in items:
                         if item is None:
-                            logger.warning(f'Item {item} for scheduler {name} not found, check cycle assignment, skipping item')
+                            logger.warning(
+                                f'Item {item} for scheduler {name} not found, check cycle assignment, skipping item'
+                            )
                             continue
 
                         # store item for callback
@@ -559,7 +592,16 @@ class Scheduler(threading.Thread):
                 #     logger.error(f'cycle not in dict format: {cycle} ({type(cycle)}) for scheduler {name}')
                 #     return
 
-                self._scheduler[name] = {'prio': prio, 'obj': obj, 'source': source, 'cron': cron, 'cycle': cycle, 'value': value, 'next': next, 'active': True}
+                self._scheduler[name] = {
+                    'prio': prio,
+                    'obj': obj,
+                    'source': source,
+                    'cron': cron,
+                    'cycle': cycle,
+                    'value': value,
+                    'next': next,
+                    'active': True,
+                }
                 if next is None:
                     self._next_time(name, offset)
             except Exception:
@@ -568,16 +610,15 @@ class Scheduler(threading.Thread):
             finally:
                 self._lock.release()
         else:
-            logger.error("Could not aquire lock to add a new entry to scheduler")
+            logger.error('Could not aquire lock to add a new entry to scheduler')
 
     def update_item(self, item, caller=None, source=None, dest=None):
-        """ provide a mechanism to handle changes of cycle item references """
+        """provide a mechanism to handle changes of cycle item references"""
         if item.property.path not in self._cycle_items:
             logger.warning(f'item {item} not registered for cycle update, ignoring.')
             return
 
         for name in self._cycle_items[item.property.path]:
-
             cycle_item = self._scheduler[name]['obj']
             cycle = cycle_item.get_attr_time('cycle')
             if cycle is None:
@@ -641,37 +682,39 @@ class Scheduler(threading.Thread):
                                     try:
                                         _cycle = int(_cycle.strip())
                                     except Exception:
-                                        logger.warning("scheduler.change: Invalid cycle entry for {} {}".format(name, _cycle))
+                                        logger.warning(
+                                            'scheduler.change: Invalid cycle entry for {} {}'.format(name, _cycle)
+                                        )
                                         return
                                     if _value != '':
                                         _value = _value.strip()
                                     else:
                                         _value = None
                                     _cycle = {_cycle: _value}
-                                #logger.warning("scheduler.change: {}: {}, type = type(kwargs[key])={}".format(name, kwargs[key], type(kwargs[key])))
+                                # logger.warning("scheduler.change: {}: {}, type = type(kwargs[key])={}".format(name, kwargs[key], type(kwargs[key])))
                                 kwargs[key] = _cycle
-                                #logger.warning("scheduler.change: {}: cycle entry {}".format(name, _cycle))
+                                # logger.warning("scheduler.change: {}: cycle entry {}".format(name, _cycle))
                             elif key == 'active':
                                 if kwargs['active'] and not self._scheduler[name]['active']:
-                                    logger.info("Activating logic: {0}".format(name))
+                                    logger.info('Activating logic: {0}'.format(name))
                                 elif not kwargs['active'] and self._scheduler[name]['active']:
-                                    logger.info("Deactivating logic: {0}".format(name))
+                                    logger.info('Deactivating logic: {0}'.format(name))
                             self._scheduler[name][key] = kwargs[key]
                         else:
-                            logger.warning(f"Attribute {key} for {name} not specified. Could not change it.")
+                            logger.warning(f'Attribute {key} for {name} not specified. Could not change it.')
                     if self._scheduler[name]['active'] is True:
                         if 'cycle' in kwargs or 'cron' in kwargs:
                             self._next_time(name)
                     else:
                         self._scheduler[name]['next'] = None
                 else:
-                    logger.warning(f"Could not change {name}. No logic/method with this name found.")
+                    logger.warning(f'Could not change {name}. No logic/method with this name found.')
             except Exception as e:
-                logger.error(f"Exception: {e} while trying to change entry for {name}")
+                logger.error(f'Exception: {e} while trying to change entry for {name}')
             finally:
                 self._lock.release()
         else:
-            logger.error(f"Could not aquire lock to change entry for {name}")
+            logger.error(f'Could not aquire lock to change entry for {name}')
 
     def _next_time(self, name, offset=None):
         """
@@ -701,7 +744,6 @@ class Scheduler(threading.Thread):
                 # check if item is stored in cycle_items
                 item = job['obj']
                 if item.property.path in self._cycle_items:
-
                     cycle = item.get_attr_time('cycle')
                     value = item.get_attr_value('cycle')
 
@@ -744,11 +786,11 @@ class Scheduler(threading.Thread):
         t.start()
         self._workers.append(t)
         if len(self._workers) > self._worker_num:
-            logger.info("Adding worker thread. Total: {0}".format(len(self._workers)))
+            logger.info('Adding worker thread. Total: {0}'.format(len(self._workers)))
             tn = {}
             for t in threading.enumerate():
                 tn[t.name] = tn.get(t.name, 0) + 1
-            logger.info('Threads: ' + ', '.join("{0}: {1}".format(k, v) for (k, v) in list(tn.items())))
+            logger.info('Threads: ' + ', '.join('{0}: {1}'.format(k, v) for (k, v) in list(tn.items())))
 
     def _worker(self):
         while self.alive:
@@ -762,10 +804,9 @@ class Scheduler(threading.Thread):
                 self._runc.release()
             self._task(name, obj, by, source, dest, value)
 
-
     def _task(self, name, obj, by, source, dest, value):
         threading.current_thread().name = name
-        #logger = logging.getLogger('_task.' + name)
+        # logger = logging.getLogger('_task.' + name)
 
         # logger.warning(f'task {obj} ({obj.__class__.__name__}) with {value} by {by} source {source}')
         if obj.__class__.__name__ == 'Logic':
@@ -798,7 +839,7 @@ class Scheduler(threading.Thread):
                     src = f'Scheduler{scheduler_source}'
                 obj(value, caller=src.capitalize())
             except Exception as e:
-                tasks_logger.exception(f"Item {name} exception: {e}")
+                tasks_logger.exception(f'Item {name} exception: {e}')
 
         else:  # method
             try:
@@ -811,10 +852,9 @@ class Scheduler(threading.Thread):
                             value['caller'] = by
                     obj(**value)
             except Exception as e:
-                tasks_logger.exception(f"Method {name} exception: {e}")
+                tasks_logger.exception(f'Method {name} exception: {e}')
 
         threading.current_thread().name = 'idle'
-
 
     def _execute_logic_task(self, logic, by, source, dest, value):
         """
@@ -857,13 +897,15 @@ class Scheduler(threading.Thread):
         if not self.mqtt:
             if _lib_modules_found:
                 self.mqtt = Modules.get_instance().get_module('mqtt')
-        #mqtt = self.mqtt
+        # mqtt = self.mqtt
         logic.mqtt = self.mqtt
 
         try:
             if logic._enabled:
                 if self._sh.shng_status['code'] < 20:
-                    logger.warning(f"Logik ignoriert, SmartHomeNG ist noch nicht vollständig initialisiert - Logik wurde getriggert durch {trigger}")
+                    logger.warning(
+                        f'Logik ignoriert, SmartHomeNG ist noch nicht vollständig initialisiert - Logik wurde getriggert durch {trigger}'
+                    )
                 else:
                     # set up "globals" environment for the logic
                     logic_globals = dict(globals())
@@ -878,7 +920,7 @@ class Scheduler(threading.Thread):
                     logic_globals['logics'] = logic._logics
 
                     # execute logic
-                    logger.debug(f"Getriggert durch: {trigger}")
+                    logger.debug(f'Getriggert durch: {trigger}')
                     exec(logic._bytecode, logic_globals)
                     # store timestamp of last run
                     logic.set_last_run()
@@ -886,7 +928,7 @@ class Scheduler(threading.Thread):
                         try:
                             method(logic, by, source, dest)
                         except Exception as e:
-                            logger.exception(f"Logic: Trigger {method} for {logic.name} failed: {e}")
+                            logger.exception(f'Logic: Trigger {method} for {logic.name} failed: {e}')
         except LeaveLogic as e:
             # 'LeaveLogic' is no error
             if str(e) != '':
@@ -901,7 +943,9 @@ class Scheduler(threading.Thread):
                 logic_method = 'Hauptroutine der Logik'
             else:
                 logic_method = 'function ' + tb[2] + '()'
-            logger.error(f"In der Logik ist ein Fehler aufgetreten:\n   Logik '{logic.name}', Datei '{tb[0]}', Zeile {tb[1]}\n   {logic_method}, Exception: {e}")
-            #logger.exception(f"In der Logik ist ein Fehler aufgetreten:\n   Logik '{logic.name}', Datei '{tb[0]}', Zeile {tb[1]}\n   {logic_method}, Exception: '{e}'\n ")
+            logger.error(
+                f"In der Logik ist ein Fehler aufgetreten:\n   Logik '{logic.name}', Datei '{tb[0]}', Zeile {tb[1]}\n   {logic_method}, Exception: {e}"
+            )
+            # logger.exception(f"In der Logik ist ein Fehler aufgetreten:\n   Logik '{logic.name}', Datei '{tb[0]}', Zeile {tb[1]}\n   {logic_method}, Exception: '{e}'\n ")
 
         return

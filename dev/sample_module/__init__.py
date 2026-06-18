@@ -32,7 +32,6 @@ from lib.shtime import Shtime
 from lib.Utils import Utils
 
 
-
 class SampleModule(Module):
     version = '1.0.0'
     longname = '... module for SmartHomeNG'
@@ -71,11 +70,12 @@ class SampleModule(Module):
             pass
         except KeyError as e:
             self.logger.critical(
-                f"Module '{self._shortname}': Inconsistent module (invalid metadata definition: {e} not defined)")
+                f"Module '{self._shortname}': Inconsistent module (invalid metadata definition: {e} not defined)"
+            )
             self._init_complete = False
             return
 
-        ip = Utils.get_local_ipv4_address()  # remove line if `ip` unused
+        ip = Utils.get_local_ipv4_address()  # noqa: F841  # sample code # remove line if `ip` unused
 
     def start(self):
         """

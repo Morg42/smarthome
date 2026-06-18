@@ -32,8 +32,8 @@ from tests.mock.core import MockSmartHome
 
 logger = logging.getLogger(__name__)
 
-class TestModule(unittest.TestCase):
 
+class TestModule(unittest.TestCase):
     def test_fail(self):
 
         logger.warning('')
@@ -46,4 +46,3 @@ class TestModule(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
-

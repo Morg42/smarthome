@@ -33,9 +33,19 @@ from typing import Any
 
 import lib.model.sdp.datatypes as DT
 from lib.model.sdp.globals import (
-    CMD_ATTR_PARAMS, CMD_STR_VAL_RAW, CMD_STR_VAL_UPP, CMD_STR_VAL_LOW,
-    CMD_STR_VAL_CAP, CMD_STR_VALUE, CMD_STR_OPCODE, CMD_STR_PARAM, CMD_STR_CUSTOM_PARAM,
-    CMD_STR_CUSTOM, COMMAND_PARAMS, MINMAXKEYS)
+    CMD_ATTR_PARAMS,
+    CMD_STR_VAL_RAW,
+    CMD_STR_VAL_UPP,
+    CMD_STR_VAL_LOW,
+    CMD_STR_VAL_CAP,
+    CMD_STR_VALUE,
+    CMD_STR_OPCODE,
+    CMD_STR_PARAM,
+    CMD_STR_CUSTOM_PARAM,
+    CMD_STR_CUSTOM,
+    COMMAND_PARAMS,
+    MINMAXKEYS,
+)
 
 
 #############################################################################################################################################################################################################################################
@@ -44,8 +54,9 @@ from lib.model.sdp.globals import (
 #
 #############################################################################################################################################################################################################################################
 
+
 class SDPCommand(object):
-    """ SDPCommand class for command data handling
+    """SDPCommand class for command data handling
 
     This class represents a general command that uses read_cmd/write_cmd or, if
     not present, opcode as payload for the connection. Data is supplied in the
@@ -57,6 +68,7 @@ class SDPCommand(object):
 
     This class serves as a base class for further format-specific command types.
     """
+
     name = ''
     opcode = ''
     read = False
@@ -90,7 +102,9 @@ class SDPCommand(object):
         try:
             self._DT = dt_class()
         except Exception as e:
-            self.logger.error(f'building command {command} failed on instantiating datatype class {dt_class}. Error was: {e}')
+            self.logger.error(
+                f'building command {command} failed on instantiating datatype class {dt_class}. Error was: {e}'
+            )
             self._DT = DT.DT_raw()
 
         # only log if base class. Derived classes log their own messages
@@ -122,7 +136,7 @@ class SDPCommand(object):
         return value
 
     def get_lookup(self) -> str | None:
-        """ getter for lookup """
+        """getter for lookup"""
         return self.lookup
 
     def _apply_kwargs(self, args: list | tuple, **kwargs):
@@ -138,7 +152,7 @@ class SDPCommand(object):
                 setattr(self, arg, kwargs[arg])
 
     def _check_min_max(self, data: Any, key: str, min: bool = True, force: bool = False) -> Any:
-        """ helper routine to check for min/max compliance and int/float type """
+        """helper routine to check for min/max compliance and int/float type"""
         if key in self.cmd_settings:
             bound = self.cmd_settings[key]
             if not isinstance(data, type(bound)):
@@ -179,13 +193,17 @@ class SDPCommand(object):
                         if isinstance(data, str):
                             val = data.lower()
                         if val not in self.cmd_settings['valid_list_ci']:
-                            raise ValueError(f'value {val} not in case insensitive list {self.cmd_settings["valid_list_ci"]}')
+                            raise ValueError(
+                                f'value {val} not in case insensitive list {self.cmd_settings["valid_list_ci"]}'
+                            )
                     elif self.cmd_settings.get('valid_list', None):
                         if data not in self.cmd_settings['valid_list']:
                             raise ValueError(f'value {data} not in list {self.cmd_settings["valid_list"]}')
                     elif self.cmd_settings.get('valid_list_re', None):
                         if not any(pat.fullmatch(data) for pat in self.cmd_settings['valid_list_re_compiled']):
-                            raise ValueError(f'value {data} not matching any of {self.cmd_settings["valid_list_re_compiled"]}')
+                            raise ValueError(
+                                f'value {data} not matching any of {self.cmd_settings["valid_list_re_compiled"]}'
+                            )
                     # min/max not in addition to valid_list
                     elif any(key in self.cmd_settings.keys() for key in MINMAXKEYS):
                         for key in MINMAXKEYS:
@@ -197,7 +215,7 @@ class SDPCommand(object):
         return data
 
     def get_valid_list(self) -> tuple[list, bool, bool]:
-        """ return valid_list parameter and type (ci, re) """
+        """return valid_list parameter and type (ci, re)"""
         if self.cmd_settings:
             if 'valid_list' in self.cmd_settings:
                 return self.cmd_settings['valid_list'], False, False
@@ -208,7 +226,7 @@ class SDPCommand(object):
         return [], False, False
 
     def set_valid_list(self, vl: list, ci: bool = False, re: bool = False) -> bool:
-        """ set/change valid_list[_ci|_re] values """
+        """set/change valid_list[_ci|_re] values"""
         if not self.cmd_settings:
             self.cmd_settings = {}
 
@@ -230,7 +248,7 @@ class SDPCommand(object):
 
 
 class SDPCommandStr(SDPCommand):
-    """ Command for string-based communication
+    """Command for string-based communication
 
     This class represents a command which uses a string with arguments as payload,
     for example as query URL.
@@ -259,6 +277,7 @@ class SDPCommandStr(SDPCommand):
 
     This class is provided as a reference implementation for the Net-Connections.
     """
+
     read_data = None
 
     def get_send_data(self, data: Any, **kwargs) -> dict:
@@ -304,6 +323,7 @@ class SDPCommandStr(SDPCommand):
         The replacement order ensures that PARAM-patterns from the opcode
         can be replaced as well as VALUE-pattern in any of the strings.
         """
+
         def get_param(matchobj):
             returnvalue = self._plugin_params.get(matchobj.group(2))
             if returnvalue is None:
@@ -317,8 +337,10 @@ class SDPCommandStr(SDPCommand):
                 try:
                     return str(self._plugin_params.get(matchobj.group(3)).get(custom_entry, ''))
                 except TypeError as e:
-                    self.logger.warning(f'Issue getting custom parameter. Plugin parameter must contain an entry like '
-                                        f'"{matchobj.group(3)}": {{"{custom_entry}": "<parameter>"}}. {e}')
+                    self.logger.warning(
+                        f'Issue getting custom parameter. Plugin parameter must contain an entry like '
+                        f'"{matchobj.group(3)}": {{"{custom_entry}": "<parameter>"}}. {e}'
+                    )
                 except AttributeError:
                     self.logger.warning(f'Parameter {matchobj.group(3)} does not exist.')
             return ''
@@ -370,7 +392,7 @@ class SDPCommandStr(SDPCommand):
 
 
 class SDPCommandParseStr(SDPCommandStr):
-    """ Command for string-based communication with parsed arguments
+    """Command for string-based communication with parsed arguments
 
     With this class, you can simplify the creation of read and write commands
     containing data values.
@@ -398,7 +420,7 @@ class SDPCommandParseStr(SDPCommandStr):
     lookup table, the '{MD_LOOKUP}' identifier is replaced with a regex which
     triggers on any of the possible lookup values.
     The same applies for ``{VALID_LIST}`` and ``{VALID_LIST_CI}`` for the
-    respective valid_lists from the command settings; including one of 
+    respective valid_lists from the command settings; including one of
     ``{CUSTOM_PATTERN1}``...``{CUSTOM_PATTERN3}`` will replace these with the
     respective custom pattern from the device class.
 
@@ -427,10 +449,12 @@ class SDPCommandParseStr(SDPCommandStr):
 
             # apply substitutions
             if isinstance(data, str):
-                d = {CMD_STR_VAL_RAW: data,
-                     CMD_STR_VAL_UPP: data.upper(),
-                     CMD_STR_VAL_LOW: data.lower(),
-                     CMD_STR_VAL_CAP: data.capitalize()}
+                d = {
+                    CMD_STR_VAL_RAW: data,
+                    CMD_STR_VAL_UPP: data.upper(),
+                    CMD_STR_VAL_LOW: data.lower(),
+                    CMD_STR_VAL_CAP: data.capitalize(),
+                }
                 cmd_str = self._parse_str(cmd.format(**d), data)
             else:
                 d = {CMD_STR_VAL_RAW: data}
@@ -466,17 +490,14 @@ class SDPCommandParseStr(SDPCommandStr):
                 match = regex.search(data)
                 if match:
                     if len(match.groups()) == 1:
-
                         # one captured group - ok
                         value = self._DT.get_shng_data(match.group(1), **kwargs)
                         found = True
                         break
                     elif len(match.groups()) > 1:
-
                         # more than one captured group - error
                         raise ValueError(f'reply_pattern {pattern} has more than one pair of capturing parentheses')
                     else:
-
                         # no captured groups = no parentheses = no extraction of value, just do the "normal" thing
                         value = self._DT.get_shng_data(data, **kwargs)
                         found = True
@@ -489,7 +510,7 @@ class SDPCommandParseStr(SDPCommandStr):
 
 
 class SDPCommandJSON(SDPCommand):
-    """ Command for JSON-RPC communication
+    """Command for JSON-RPC communication
 
     With this class, you can send JSON-RPC commands to the device and read
     from it.
@@ -535,6 +556,7 @@ class SDPCommandJSON(SDPCommand):
         :return: params-dict (or None)
         :rtype: dict
         """
+
         def check_value(val: Any, data: Any) -> Any:
 
             if isinstance(val, list):
@@ -562,7 +584,6 @@ class SDPCommandJSON(SDPCommand):
         params = deepcopy(getattr(self, CMD_ATTR_PARAMS))
 
         if isinstance(params, list):
-
             # unnamed parameters, list format
             for i in range(len(params)):
                 params[i] = check_value(params[i], data)
@@ -571,7 +592,6 @@ class SDPCommandJSON(SDPCommand):
                     params[i] = kwargs['playerid']
 
         elif isinstance(params, dict):
-
             # named parameters, dict format
             for key in params:
                 params[key] = check_value(params[key], data)
@@ -585,7 +605,7 @@ class SDPCommandJSON(SDPCommand):
 
 
 class SDPCommandViessmann(SDPCommand):
-    """ Command for Viessmann binary command format
+    """Command for Viessmann binary command format
 
     With this class, you can send commands to Viessmann heating systems
 
@@ -596,6 +616,7 @@ class SDPCommandViessmann(SDPCommand):
 
     params and param_value need to be None or lists of the same length.
     """
+
     def __init__(self, command: str, dt_class: type[DT.Datatype], **kwargs):
 
         super().__init__(command, dt_class, **kwargs)
@@ -625,7 +646,9 @@ class SDPCommandViessmann(SDPCommand):
             else:
                 cmd = self.opcode
 
-        ddict = self._build_dict(self._DT.get_send_data(data, len=self.len, mult=self.mult, signed=self.signed), **kwargs)
+        ddict = self._build_dict(
+            self._DT.get_send_data(data, len=self.len, mult=self.mult, signed=self.signed), **kwargs
+        )
         return {'payload': cmd, 'data': ddict}
 
     def get_shng_data(self, data: Any, **kwargs) -> Any:

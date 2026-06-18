@@ -30,17 +30,15 @@ import lib.config
 from lib.plugin import Plugins
 from lib.metadata import Metadata
 from lib.model.smartplugin import SmartPlugin
-from lib.constants import (KEY_CLASS_PATH, YAML_FILE)
+from lib.constants import KEY_CLASS_PATH, YAML_FILE
 
 
 class PluginData:
-
     def __init__(self):
 
         self.plugins = Plugins.get_instance()
 
         return
-
 
     # -----------------------------------------------------------------------------------
     #    PLUGINS  -  Interface methods (for admin frontend)
@@ -105,7 +103,6 @@ class PluginData:
         shyaml.yaml_save_roundtrip(config_filename, plugin_yaml, create_backup=True)
         # self.logger.warning("Config-Information not saved to etc/plugin.yaml")
 
-
         # item_data = []
         # item = self.items.return_item(item_path)
         # if 'num' in item.type():
@@ -116,4 +113,3 @@ class PluginData:
         # item(value, caller='admin')
 
         return '{"result": "true"}'
-

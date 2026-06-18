@@ -28,6 +28,7 @@ import datetime
 This module contains utils to be used in logging
 """
 
+
 class Filter(logging.Filter):
     """
     This class builds a filter to be used in logging.yaml to configure logging
@@ -40,6 +41,7 @@ class Filter(logging.Filter):
     Returning True tells logging to suppress this logentry,
     whereas False will include the record into further processing and eventual output
     """
+
     def __init__(self, name='', module='', msg='', timestamp='', invert=False):
         self.logger = logging.getLogger(__name__)
         self.name = name if isinstance(name, list) else [] if len(name) == 0 else [name]
@@ -54,22 +56,22 @@ class Filter(logging.Filter):
             try:
                 compiled_name.append(re.compile(n))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(n, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(n, err))
         for m in self.module:
             try:
                 compiled_module.append(re.compile(m))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(m, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(m, err))
         for msg in self.msg:
             try:
                 compiled_msg.append(re.compile(msg))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(msg, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(msg, err))
         for stamp in self.timestamp:
             try:
                 compiled_timestamp.append(re.compile(stamp))
             except Exception as err:
-                self.logger.error("There is a problem with filter {}. Error: {}".format(stamp, err))
+                self.logger.error('There is a problem with filter {}. Error: {}'.format(stamp, err))
         self.name = compiled_name
         self.module = compiled_module
         self.msg = compiled_msg
@@ -102,8 +104,8 @@ class Filter(logging.Filter):
         for msg in self.msg:
             if msg.match(record.msg):
                 hits += 1
-        #invert is False: hide record if all of the given parameters match
-        #invert is True: show record if all of the given parameters match
+        # invert is False: hide record if all of the given parameters match
+        # invert is True: show record if all of the given parameters match
         return True if hits < total and not self.invert else True if hits >= total and self.invert else False
 
 
@@ -123,6 +125,7 @@ class DuplicateFilter(object):
     Returning True tells logging to suppress this logentry,
     whereas False will include the record into further processing and eventual output
     """
+
     def __init__(self):
         self.last_log = None
 

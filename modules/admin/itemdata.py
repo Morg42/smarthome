@@ -30,24 +30,22 @@ import cherrypy
 import lib.config
 from lib.item import Items
 
-from lib.constants import (ATTRIBUTE_SEPARATOR)
+from lib.constants import ATTRIBUTE_SEPARATOR
 
 
 class ItemData:
-
     def __init__(self):
 
         self.items = Items.get_instance()
 
         return
 
-
     # -----------------------------------------------------------------------------------
     #    ITEMS  -  Old Interface methods (from backend)
     # -----------------------------------------------------------------------------------
 
     @cherrypy.expose
-    def items_json(self, mode="tree"):
+    def items_json(self, mode='tree'):
         """
         returns a list of items as json structure
 
@@ -61,19 +59,18 @@ class ItemData:
         if mode == 'tree':
             parent_items_sorted = []
             for item in items_sorted:
-                if "." not in item._path:
+                if '.' not in item._path:
                     parent_items_sorted.append(item)
 
             (item_data, item_count) = self._build_item_tree(parent_items_sorted)
-            self.logger.info("admin: items_json: In tree-mode, {} items returned".format(item_count))
+            self.logger.info('admin: items_json: In tree-mode, {} items returned'.format(item_count))
             return json.dumps([item_count, item_data])
         else:
             item_list = []
             for item in items_sorted:
                 item_list.append(item._path)
-            self.logger.info("admin: items_json: Not in tree-mode, {} items returned".format(len(item_list)))
+            self.logger.info('admin: items_json: Not in tree-mode, {} items returned'.format(len(item_list)))
             return json.dumps(item_list)
-
 
     def _build_item_tree(self, parent_items_sorted):
         item_data = []
@@ -88,13 +85,19 @@ class ItemData:
             if self.module.itemtree_fullpath:
                 tree_label = item._path
             else:
-                tree_label = lpath[len(lpath)-1]
-            item_data.append({'label': tree_label, 'children': nodes,
-                              'path': item._path,  'name': item._name, 'tags': tags,
-#                              'nodename': lpath[len(lpath)-1], 'nodes': nodes
-                              })
+                tree_label = lpath[len(lpath) - 1]
+            item_data.append(
+                {
+                    'label': tree_label,
+                    'children': nodes,
+                    'path': item._path,
+                    'name': item._name,
+                    'tags': tags,
+                    #                              'nodename': lpath[len(lpath)-1], 'nodes': nodes
+                }
+            )
 
-        return item_data, len(item_data)+count_sum
+        return item_data, len(item_data) + count_sum
 
     # -----------------------------------------------------------------------------------
 
@@ -108,7 +111,7 @@ class ItemData:
         wrk = wrk.replace('<', '&lt;')
         try:
             return str(ast.literal_eval(wrk))
-        except:
+        except Exception:
             self.logger.error(f"escape_complex_value: cannot handle value = '{wrk}'")
             return ''
 
@@ -153,16 +156,16 @@ class ItemData:
             if description is None:
                 description = ''
 
-            #cycle = ''
+            # cycle = ''
             crontab = ''
             for entry in self._sh.scheduler._scheduler:
-                if entry == "items." + item._path:
-            #        if self._sh.scheduler._scheduler[entry]['cycle']:
-            #            cycle = self._sh.scheduler._scheduler[entry]['cycle']
+                if entry == 'items.' + item._path:
+                    #        if self._sh.scheduler._scheduler[entry]['cycle']:
+                    #            cycle = self._sh.scheduler._scheduler[entry]['cycle']
                     if self._sh.scheduler._scheduler[entry]['cron']:
                         crontab = html.escape(str(self._sh.scheduler._scheduler[entry]['cron']))
                     break
-            #if cycle == '':
+            # if cycle == '':
             #    cycle = '-'
             if crontab == '':
                 crontab = '-'
@@ -209,15 +212,15 @@ class ItemData:
             for trigger in item.get_logic_triggers():
                 logic_name = format(trigger)
                 logic_info = self._sh.logics.get_logic_info(logic_name)
-                self.logger.info(f"Triggered {logic_name=}, {logic_info=}")
-                logic={'name': logic_name, 'description': logic_info.get('description', '')}
+                self.logger.info(f'Triggered {logic_name=}, {logic_info=}')
+                logic = {'name': logic_name, 'description': logic_info.get('description', '')}
                 logics.append(logic)
-                #logics.append(html.escape(format(trigger)))
+                # logics.append(html.escape(format(trigger)))
             triggers = []
             for trigger in item.get_method_triggers():
                 trig = format(trigger)
-                trig = trig[1:len(trig) - 27]
-                triggers.append(html.escape(format(trig.replace("<", ""))))
+                trig = trig[1 : len(trig) - 27]
+                triggers.append(html.escape(format(trig.replace('<', ''))))
 
             for trigger in item.get_item_triggers():
                 trig = "bound item '" + trigger._path + "' (eval)"
@@ -235,11 +238,11 @@ class ItemData:
             if self._trigger_condition_raw == []:
                 self._trigger_condition_raw = ''
 
-            hysteresis_upper_threshold =  str(item._hysteresis_upper_threshold)
+            hysteresis_upper_threshold = str(item._hysteresis_upper_threshold)
             if item._hysteresis_upper_timer is not None:
                 hysteresis_upper_threshold += ' ' + ATTRIBUTE_SEPARATOR + ' ' + str(item._hysteresis_upper_timer)
 
-            hysteresis_lower_threshold =  str(item._hysteresis_lower_threshold)
+            hysteresis_lower_threshold = str(item._hysteresis_lower_threshold)
             if item._hysteresis_lower_timer is not None:
                 hysteresis_lower_threshold += ' ' + ATTRIBUTE_SEPARATOR + ' ' + str(item._hysteresis_lower_timer)
 
@@ -247,55 +250,56 @@ class ItemData:
             if item._autotimer_value is not None:
                 autotimer += ' ' + ATTRIBUTE_SEPARATOR + ' ' + str(item._autotimer_value)
 
-            data_dict = {'path': item.property.path,
-                         'name': item.property.name,
-                         'description': description,
-                         'type': item.property.type,
-                         'value': value,
-                         'change_age': item.property.last_change_age,
-                         'update_age': item.property.last_update_age,
-                         'last_update': str(item.property.last_update),
-                         'last_change': str(item.property.last_change),
-                         'changed_by': changed_by,
-                         'updated_by': updated_by,
-                         'last_value': last_value,
-                         'previous_change_age': item.property.prev_change_age,
-                         'previous_update_age': item.property.prev_update_age,
-                         'previous_update': str(item.property.prev_update),
-                         'previous_change': str(item.property.prev_change),
-                         'previous_change_by': previous_changed_by,
-                         'previous_update_by': previous_updated_by,
-                         'previous_value': prev_value,
-                         'enforce_updates': enforce_updates,
-                         'enforce_change': enforce_change,
-                         'cache': cache,
-                         'eval': html.escape(self.disp_str(item._eval)),
-                         'trigger': self.disp_str(item._trigger),
-                         'trigger_condition': self.disp_str(item._trigger_condition),
-                         'trigger_condition_raw': self.disp_str(self._trigger_condition_raw),
-                         'hysteresis_input': self.disp_str(item._hysteresis_input),
-                         'hysteresis_upper_threshold': self.disp_str(hysteresis_upper_threshold),
-                         'hysteresis_lower_threshold': self.disp_str(hysteresis_lower_threshold),
-                         'on_update': html.escape(self.list_to_displaystring(on_update_list)),
-                         'on_change': html.escape(self.list_to_displaystring(str(on_change_list))),
-                         'log_change': self.disp_str(item._log_change),
-                         'log_level': self.disp_str(item._log_level_name),
-                         'log_text': self.disp_str(item._log_text),
-                         'log_mapping': self.disp_str(item._log_mapping),
-                         'log_rules': self.disp_str(item._log_rules),
-                         'cycle': str(cycle),
-                         'crontab': str(crontab),
-                         'autotimer': self.disp_str(autotimer),
-                         'threshold': self.disp_str(item._threshold),
-                         'threshold_crossed': '',
-#                         'config': json.dumps(item_conf_sorted),
-#                         'logics': json.dumps(logics),
-#                         'triggers': json.dumps(triggers),
-                         'config': dict(item_conf_sorted),
-                         'logics': logics,
-                         'triggers': triggers,
-                         'filename': str(item._filename),
-                         }
+            data_dict = {
+                'path': item.property.path,
+                'name': item.property.name,
+                'description': description,
+                'type': item.property.type,
+                'value': value,
+                'change_age': item.property.last_change_age,
+                'update_age': item.property.last_update_age,
+                'last_update': str(item.property.last_update),
+                'last_change': str(item.property.last_change),
+                'changed_by': changed_by,
+                'updated_by': updated_by,
+                'last_value': last_value,
+                'previous_change_age': item.property.prev_change_age,
+                'previous_update_age': item.property.prev_update_age,
+                'previous_update': str(item.property.prev_update),
+                'previous_change': str(item.property.prev_change),
+                'previous_change_by': previous_changed_by,
+                'previous_update_by': previous_updated_by,
+                'previous_value': prev_value,
+                'enforce_updates': enforce_updates,
+                'enforce_change': enforce_change,
+                'cache': cache,
+                'eval': html.escape(self.disp_str(item._eval)),
+                'trigger': self.disp_str(item._trigger),
+                'trigger_condition': self.disp_str(item._trigger_condition),
+                'trigger_condition_raw': self.disp_str(self._trigger_condition_raw),
+                'hysteresis_input': self.disp_str(item._hysteresis_input),
+                'hysteresis_upper_threshold': self.disp_str(hysteresis_upper_threshold),
+                'hysteresis_lower_threshold': self.disp_str(hysteresis_lower_threshold),
+                'on_update': html.escape(self.list_to_displaystring(on_update_list)),
+                'on_change': html.escape(self.list_to_displaystring(str(on_change_list))),
+                'log_change': self.disp_str(item._log_change),
+                'log_level': self.disp_str(item._log_level_name),
+                'log_text': self.disp_str(item._log_text),
+                'log_mapping': self.disp_str(item._log_mapping),
+                'log_rules': self.disp_str(item._log_rules),
+                'cycle': str(cycle),
+                'crontab': str(crontab),
+                'autotimer': self.disp_str(autotimer),
+                'threshold': self.disp_str(item._threshold),
+                'threshold_crossed': '',
+                #                         'config': json.dumps(item_conf_sorted),
+                #                         'logics': json.dumps(logics),
+                #                         'triggers': json.dumps(triggers),
+                'config': dict(item_conf_sorted),
+                'logics': logics,
+                'triggers': triggers,
+                'filename': str(item._filename),
+            }
             if item._threshold:
                 data_dict['threshold'] = str(item._threshold_data[0]) + ' : ' + str(item._threshold_data[1])
                 data_dict['threshold_crossed'] = str(item._threshold_data[2])
@@ -315,7 +319,6 @@ class ItemData:
                 data_dict['last_value'] = self.escape_complex_value(last_value)
                 data_dict['previous_value'] = self.escape_complex_value(prev_value)
 
-
             item_data.append(data_dict)
             return json.dumps(item_data, default=str)
         else:
@@ -332,14 +335,15 @@ class ItemData:
         if self.items is None:
             self.items = Items.get_instance()
         self.logger.info("item_change_value_html: item '{}' set to value '{}'".format(item_path, value))
-        item_data = []
         try:
             item = self.items.return_item(item_path)
         except Exception as e:
-            self.logger.error("item_change_value_html: item '{}' set to value '{}' - Exception {}".format(item_path, value, e))
+            self.logger.error(
+                "item_change_value_html: item '{}' set to value '{}' - Exception {}".format(item_path, value, e)
+            )
             return
         if 'num' in item.type():
-            if "." in value or "," in value:
+            if '.' in value or ',' in value:
                 value = float(value)
             else:
                 if value == '':
@@ -349,8 +353,6 @@ class ItemData:
 
         return
 
-
-
     def disp_str(self, val):
         s = str(val)
         if s == 'False':
@@ -359,14 +361,13 @@ class ItemData:
             s = '-'
         return s
 
-    def list_to_displaystring(self, l):
-        """
-        """
-        if type(l) is str:
-            return l
+    def list_to_displaystring(self, lst):
+        """ """
+        if type(lst) is str:
+            return lst
 
         edit_string = ''
-        for entry in l:
+        for entry in lst:
             if edit_string != '':
                 edit_string += ' | '
             edit_string += str(entry)
@@ -393,4 +394,3 @@ class ItemData:
                 else:
                     on_list.append(on_eval_list)
         return on_list
-

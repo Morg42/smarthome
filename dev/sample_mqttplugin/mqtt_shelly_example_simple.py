@@ -42,12 +42,11 @@ class Shelly(MqttPlugin):
 
     PLUGIN_VERSION = '1.0.0'
 
-
     def __init__(self, sh):
         """
         Initalizes the plugin.
 
-        :param sh:  **Deprecated**: The instance of the smarthome object. For SmartHomeNG versions 1.4 and up: **Don't use it**!
+        :param sh:  **Deprecated**: The smarthome instance. For SmartHomeNG >= 1.4: **Don't use it**!
 
         If you need the sh object at all, use the method self.get_sh() to get it. There should be almost no need for
         a reference to the sh object any more.
@@ -65,19 +64,18 @@ class Shelly(MqttPlugin):
         # self.param1 = self.get_parameter_value('param1')
 
         # Initialization code goes here
-        self.shelly_items = []              # to hold item information for web interface
+        self.shelly_items = []  # to hold item information for web interface
 
         # if plugin should start even without web interface
         self.init_webinterface(WebInterface)
 
         return
 
-
     def run(self):
         """
         Run method for the plugin
         """
-        self.logger.debug("Run method called")
+        self.logger.debug('Run method called')
         self.alive = True
 
         # start subscription to all topics
@@ -85,19 +83,17 @@ class Shelly(MqttPlugin):
 
         return
 
-
     def stop(self):
         """
         Stop method for the plugin
         """
-        self.logger.debug("Stop method called")
+        self.logger.debug('Stop method called')
         self.alive = False
 
         # stop subscription to all topics
         self.stop_subscriptions()
 
         return
-
 
     def parse_item(self, item):
         """
@@ -113,7 +109,7 @@ class Shelly(MqttPlugin):
                         can be sent to the knx with a knx write function within the knx plugin.
         """
         if self.has_iattr(item.conf, 'shelly_id'):
-            self.logger.debug(f"parsing item: {item}")
+            self.logger.debug(f'parsing item: {item}')
 
             shelly_id = self.get_iattr_value(item.conf, 'shelly_id').upper()
             shelly_type = self.get_iattr_value(item.conf, 'shelly_type').lower()
@@ -131,7 +127,6 @@ class Shelly(MqttPlugin):
 
             return self.update_item
 
-
     def parse_logic(self, logic):
         """
         Default plugin parse_logic method
@@ -139,7 +134,6 @@ class Shelly(MqttPlugin):
         if 'xxx' in logic.conf:
             # self.function(logic['name'])
             pass
-
 
     def update_item(self, item, caller=None, source=None, dest=None):
         """
@@ -154,12 +148,12 @@ class Shelly(MqttPlugin):
         :param source: if given it represents the source
         :param dest: if given it represents the dest
         """
-        self.logger.info(f"update_item: {item}")
+        self.logger.info(f'update_item: {item}')
 
         if self.alive and caller != self.get_shortname():
             # code to execute if the plugin is not stopped
             # and only, if the item has not been changed by this this plugin:
-            self.logger.info(f"update_item: {item}, item has been changed outside this plugin")
+            self.logger.info(f'update_item: {item}, item has been changed outside this plugin')
 
             # publish topic with new relay state
             shelly_id = self.get_iattr_value(item.conf, 'shelly_id').upper()

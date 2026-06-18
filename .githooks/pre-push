@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# pre-push — pytest must pass before a push is allowed.
+# Installed via: git config core.hooksPath .githooks
+
+SHNG_DIR="$(git rev-parse --show-toplevel)"
+cd "$SHNG_DIR" || exit 1
+
+PYTEST="${SHNG_DIR}/venvs/shng/bin/pytest"
+[ -x "$PYTEST" ] || PYTEST="pytest"
+
+echo ""
+echo "── pre-push gate (shng) ────────────────────────────────────────"
+echo "  running tests/ ..."
+echo ""
+
+if ! "$PYTEST" tests/ --tb=short -q; then
+    echo ""
+    echo "==> PUSH REJECTED: tests failed."
+    echo ""
+    echo "    Fix failing tests, then:  git push"
+    echo "    Bypass (use sparingly):   git push --no-verify"
+    echo ""
+    echo "    Note: pytest is a required CI check — failures will block your PR."
+    echo "────────────────────────────────────────────────────────────────"
+    echo ""
+    exit 1
+fi
+
+echo "  pytest: OK"
+echo "────────────────────────────────────────────────────────────────"
+echo ""

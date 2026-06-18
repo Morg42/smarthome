@@ -5,6 +5,7 @@ import lib.config
 
 verbose = True
 
+
 class ConfigBaseTests:
     fmt = None
 
@@ -113,14 +114,13 @@ class ConfigBaseTests:
         self.assertTrue('child2' in conf['parent2'])
         self.assertTrue('attr6' in conf['parent2']['child2'])
         self.assertEqual('value6', conf['parent2']['child2']['attr6'])
-    
 
-class TestConfigYaml(unittest.TestCase,ConfigBaseTests):
 
+class TestConfigYaml(unittest.TestCase, ConfigBaseTests):
     fmt = 'yaml'
 
     def test_yamlread_multiline(self):
-        if verbose == True:
+        if verbose:
             print()
             print('=== TestConfigYaml:')
         conf = self.config('keyvalues')

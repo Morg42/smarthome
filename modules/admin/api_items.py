@@ -29,23 +29,27 @@ from lib.item import Items
 
 import jwt
 from .rest import RESTResource
+from .itemdata import ItemData
 
 
-class ItemsController(RESTResource):
-
+class ItemsController(RESTResource, ItemData):
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
 
-        self.items = Items.get_instance()
+        ItemData.__init__(self)
 
         return
 
-
     # ======================================================================
     #  GET /api/items
+    #  GET /api/items/structs
+    #  GET /api/items/tree
+    #  GET /api/items/{item_path}
     #
     def read(self, id=None):
         """
@@ -57,22 +61,71 @@ class ItemsController(RESTResource):
 
         if id == 'structs':
             # /api/items/structs
-            self.logger.info(f"ItemsController GET /api/items/{id}")
+            self.logger.info(f'ItemsController GET /api/items/{id}')
             result = self.items.return_struct_definitions(all=False)
-            #self.logger.notice(f"ItemsController.root(): result = {result}")
             return json.dumps(result)
 
-            #raise cherrypy.NotFound
-            #self.logger.info("LogController (GET): logfiles = {}".format(logs))
-            #return json.dumps({'logs':logs, 'default': self.root_logname})
+        if id == 'tree':
+            # /api/items/tree  — returns [count, tree_data] matching the legacy items_json() format
+            self.logger.info('ItemsController GET /api/items/tree')
+            return self.items_json('tree')
+
+        if id is not None:
+            # /api/items/{item_path}  — returns item detail array (same format as legacy endpoint)
+            self.logger.info(f'ItemsController GET /api/items/{id}')
+            result = self.item_detail_json_html(id)
+            if result is None:
+                raise cherrypy.HTTPError(404, f"Item '{id}' not found")
+            return result
 
         return None
 
     read.expose_resource = True
     read.authentication_needed = True
 
-class ItemsListController(RESTResource):
+    # ======================================================================
+    #  PUT /api/items/{item_path}
+    #
+    def update(self, id=None):
+        """
+        Handle PUT requests — set an item value.
 
+        Request body: JSON object with a "value" key.
+        """
+        if id is None:
+            raise cherrypy.HTTPError(400, 'Item path required')
+
+        if self.items is None:
+            self.items = Items.get_instance()
+
+        body = cherrypy.request.body.read()
+        try:
+            data = json.loads(body)
+            value = data.get('value')
+        except (json.JSONDecodeError, AttributeError, TypeError):
+            raise cherrypy.HTTPError(400, 'Invalid JSON body — expected {"value": ...}')
+
+        item = self.items.return_item(id)
+        if item is None:
+            raise cherrypy.HTTPError(404, f"Item '{id}' not found")
+
+        self.logger.info(f'ItemsController PUT /api/items/{id}: value={value!r}')
+
+        if item.type() and 'num' in item.type():
+            if isinstance(value, str):
+                if '.' in value or ',' in value:
+                    value = float(value.replace(',', '.'))
+                else:
+                    value = int(value) if value != '' else 0
+
+        item(value, caller='admin')
+        return json.dumps({'result': 'ok'})
+
+    update.expose_resource = True
+    update.authentication_needed = True
+
+
+class ItemsListController(RESTResource):
     def __init__(self, module):
         self._sh = module._sh
         self.module = module
@@ -84,7 +137,7 @@ class ItemsListController(RESTResource):
         return
 
     # ======================================================================
-    #  GET /api/items
+    #  GET /api/items/list
     #
     def read(self, id=None):
         """

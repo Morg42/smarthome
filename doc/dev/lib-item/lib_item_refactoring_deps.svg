@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 620" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11">
+  <defs>
+    <marker id="arr-blue" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L7,3.5 z" fill="#2980b9"/>
+    </marker>
+    <marker id="arr-green" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L7,3.5 z" fill="#27ae60"/>
+    </marker>
+  </defs>
+
+  <rect width="980" height="620" fill="#f8f9fa" rx="8"/>
+  <text x="490" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">Module Dependency Map</text>
+
+  <!-- ═══ item.py — centre ═══ -->
+  <rect x="390" y="265" width="160" height="58" rx="6" fill="#2980b9" stroke="#1a6496" stroke-width="2"/>
+  <text x="470" y="289" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">item.py</text>
+  <text x="470" y="306" text-anchor="middle" font-size="10" fill="#cde" font-style="italic">imports + delegates</text>
+
+  <!-- ═══ TOP ROW — Round 1 (solid green) ═══ -->
+  <rect x="20"  y="50" width="165" height="42" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="102" y="66" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_typehandler.py</text>
+  <text x="102" y="82" text-anchor="middle" font-size="10" fill="#555">157 lines</text>
+
+  <rect x="205" y="50" width="165" height="42" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="287" y="66" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_history.py</text>
+  <text x="287" y="82" text-anchor="middle" font-size="10" fill="#555">187 lines</text>
+
+  <rect x="390" y="50" width="165" height="42" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="472" y="66" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_logchange.py</text>
+  <text x="472" y="82" text-anchor="middle" font-size="10" fill="#555">286 lines</text>
+
+  <rect x="575" y="50" width="165" height="42" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="657" y="66" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_eval.py</text>
+  <text x="657" y="82" text-anchor="middle" font-size="10" fill="#555">289 lines</text>
+
+  <rect x="760" y="50" width="165" height="42" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="842" y="66" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_hysteresis.py</text>
+  <text x="842" y="82" text-anchor="middle" font-size="10" fill="#555">286 lines</text>
+
+  <!-- ═══ LEFT COLUMN ═══ -->
+  <rect x="20"  y="175" width="165" height="42" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="102" y="191" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_pathresolution.py</text>
+  <text x="102" y="207" text-anchor="middle" font-size="10" fill="#555">277 lines</text>
+
+  <rect x="20"  y="255" width="165" height="42" rx="5" fill="#fff" stroke="#27ae60" stroke-width="1.8"/>
+  <text x="102" y="271" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">_autotimer.py</text>
+  <text x="102" y="287" text-anchor="middle" font-size="10" fill="#555">282 lines</text>
+
+  <!-- Round 2 left -->
+  <rect x="20"  y="335" width="165" height="42" rx="5" fill="#fff" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="6,2"/>
+  <text x="102" y="351" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e8449">_casting.py</text>
+  <text x="102" y="367" text-anchor="middle" font-size="10" fill="#555">184 lines</text>
+
+  <rect x="20"  y="415" width="165" height="42" rx="5" fill="#fff" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="6,2"/>
+  <text x="102" y="431" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e8449">_triggers.py</text>
+  <text x="102" y="447" text-anchor="middle" font-size="10" fill="#555">156 lines</text>
+
+  <!-- ═══ BOTTOM ROW ═══ -->
+  <!-- Round 2 -->
+  <rect x="205" y="480" width="165" height="42" rx="5" fill="#fff" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="6,2"/>
+  <text x="287" y="496" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e8449">_parsing.py</text>
+  <text x="287" y="512" text-anchor="middle" font-size="10" fill="#555">326 lines</text>
+
+  <!-- Round 3 -->
+  <rect x="390" y="480" width="165" height="42" rx="5" fill="#fff" stroke="#148f77" stroke-width="1.8" stroke-dasharray="3,3"/>
+  <text x="472" y="496" text-anchor="middle" font-size="11" font-weight="bold" fill="#148f77">_stackinfo.py</text>
+  <text x="472" y="512" text-anchor="middle" font-size="10" fill="#555">102 lines</text>
+
+  <rect x="575" y="480" width="165" height="42" rx="5" fill="#fff" stroke="#148f77" stroke-width="1.8" stroke-dasharray="3,3"/>
+  <text x="657" y="496" text-anchor="middle" font-size="11" font-weight="bold" fill="#148f77">_fade.py</text>
+  <text x="657" y="512" text-anchor="middle" font-size="10" fill="#555">93 lines</text>
+
+  <rect x="760" y="480" width="165" height="42" rx="5" fill="#fff" stroke="#148f77" stroke-width="1.8" stroke-dasharray="3,3"/>
+  <text x="842" y="496" text-anchor="middle" font-size="11" font-weight="bold" fill="#148f77">_json.py</text>
+  <text x="842" y="512" text-anchor="middle" font-size="10" fill="#555">78 lines</text>
+
+  <!-- ═══ item.py → sub-modules (blue dashed) ═══ -->
+  <!-- → _typehandler -->
+  <line x1="420" y1="266" x2="170" y2="91"  stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _history -->
+  <line x1="440" y1="265" x2="358" y2="93"  stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _logchange -->
+  <line x1="468" y1="265" x2="470" y2="93"  stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _eval -->
+  <line x1="500" y1="268" x2="638" y2="93"  stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _hysteresis -->
+  <line x1="535" y1="272" x2="820" y2="93"  stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _pathresolution -->
+  <line x1="390" y1="275" x2="187" y2="196" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _autotimer -->
+  <line x1="392" y1="283" x2="187" y2="275" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _casting -->
+  <line x1="390" y1="293" x2="187" y2="354" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _triggers -->
+  <line x1="392" y1="310" x2="187" y2="434" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _parsing -->
+  <line x1="440" y1="323" x2="340" y2="479" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _stackinfo -->
+  <line x1="465" y1="323" x2="468" y2="479" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _fade -->
+  <line x1="500" y1="320" x2="636" y2="479" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <!-- → _json -->
+  <line x1="538" y1="310" x2="820" y2="479" stroke="#2980b9" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+
+  <!-- ═══ Cross-module calls (green dashed) ═══ -->
+  <!-- _eval → _history (via item proxy) -->
+  <line x1="620" y1="72"  x2="373" y2="72"  stroke="#27ae60" stroke-width="1.1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+  <!-- _hysteresis → _history -->
+  <line x1="764" y1="78"  x2="373" y2="78"  stroke="#27ae60" stroke-width="1.1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+  <!-- _logchange → _pathresolution -->
+  <line x1="430" y1="92"  x2="155" y2="195" stroke="#27ae60" stroke-width="1.1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+  <!-- _parsing → _pathresolution -->
+  <line x1="260" y1="480" x2="150" y2="218" stroke="#27ae60" stroke-width="1.1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+
+  <!-- ═══ Proxy methods box ═══ -->
+  <rect x="600" y="240" width="220" height="86" rx="5" fill="#fef9e7" stroke="#f39c12" stroke-width="1.5"/>
+  <text x="710" y="258" text-anchor="middle" font-size="10" font-weight="bold" fill="#d68910">Proxies on Item</text>
+  <text x="710" y="273" text-anchor="middle" font-size="9.5" fill="#7d6608">_update_item()  →  __update</text>
+  <text x="710" y="287" text-anchor="middle" font-size="9.5" fill="#7d6608">_run_attribute_eval()  →  __run_attribute_eval</text>
+  <text x="710" y="301" text-anchor="middle" font-size="9.5" fill="#7d6608">_logics_to_trigger  →  __logics_to_trigger</text>
+  <text x="710" y="315" text-anchor="middle" font-size="9.5" fill="#7d6608">_methods_to_trigger  →  __methods_to_trigger</text>
+  <line x1="600" y1="283" x2="550" y2="283" stroke="#f39c12" stroke-width="1.2" stroke-dasharray="4,2"/>
+
+  <!-- ═══ Legend ═══ -->
+  <rect x="20" y="568" width="940" height="38" rx="5" fill="#fff" stroke="#ddd"/>
+  <line x1="36"  y1="587" x2="76"  y2="587" stroke="#2980b9" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+  <text x="82"  y="591" font-size="10" fill="#333">item.py imports sub-module</text>
+  <line x1="232" y1="587" x2="272" y2="587" stroke="#27ae60" stroke-width="1.1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+  <text x="278" y="591" font-size="10" fill="#333">cross-module call via item proxy</text>
+  <rect x="466" y="580" width="10" height="10" fill="#fef9e7" stroke="#f39c12" rx="1"/>
+  <text x="480" y="590" font-size="10" fill="#333">proxy (wraps __dunder)</text>
+  <rect x="620" y="580" width="10" height="10" fill="#fff" stroke="#27ae60" rx="1"/>
+  <text x="634" y="590" font-size="10" fill="#555">Round 1</text>
+  <rect x="700" y="580" width="10" height="10" fill="#fff" stroke="#1e8449" stroke-dasharray="6,2" rx="1"/>
+  <text x="714" y="590" font-size="10" fill="#555">Round 2</text>
+  <rect x="780" y="580" width="10" height="10" fill="#fff" stroke="#148f77" stroke-dasharray="3,3" rx="1"/>
+  <text x="794" y="590" font-size="10" fill="#555">Round 3</text>
+</svg>

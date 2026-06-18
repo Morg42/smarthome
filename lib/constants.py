@@ -24,19 +24,61 @@
 This file describes a group of system wide constants for items, plugins and file extensions
 """
 
-#item types
-ITEM_TYPES=["num", "str", "bool", "list", "dict", "foo", "scene", "timestamp", "datetime"]
-ITEM_DEFAULTS= __defaults = {'num': 0, 'str': '', 'bool': False, 'list': [], 'dict': {}, 'foo': None, 'scene': 0, 'timestamp': 0.0, 'datetime': None}
+# item types
+ITEM_TYPES = ['num', 'str', 'bool', 'list', 'dict', 'foo', 'scene', 'timestamp', 'datetime']
+ITEM_DEFAULTS = __defaults = {
+    'num': 0,
+    'str': '',
+    'bool': False,
+    'list': [],
+    'dict': {},
+    'foo': None,
+    'scene': 0,
+    'timestamp': 0.0,
+    'datetime': None,
+}
 FOO = 'foo'
 
-#metadata types
-META_DATA_TYPES=['bool', 'int', 'float', 'num', 'scene', 'str', 'password', 'list', 'dict', 'ip', 'ipv4', 'ipv6', 'mac', 'knx_ga', 'foo', 'timestamp']
-META_DATA_DEFAULTS={'bool': False, 'int': 0, 'float': 0.0, 'num': 0, 'scene': 0, 'str': '',  'password': '',
-                    'list': [], 'dict': {}, 'OrderedDict': {},
-                    'ip': '0.0.0.0', 'ipv4': '0.0.0.0', 'ipv6': '', 'mac': '00:00:00:00:00:00', 'knx_ga': '',
-                    'foo': None, 'timestamp': 0.0}
+# metadata types
+META_DATA_TYPES = [
+    'bool',
+    'int',
+    'float',
+    'num',
+    'scene',
+    'str',
+    'password',
+    'list',
+    'dict',
+    'ip',
+    'ipv4',
+    'ipv6',
+    'mac',
+    'knx_ga',
+    'foo',
+    'timestamp',
+]
+META_DATA_DEFAULTS = {
+    'bool': False,
+    'int': 0,
+    'float': 0.0,
+    'num': 0,
+    'scene': 0,
+    'str': '',
+    'password': '',
+    'list': [],
+    'dict': {},
+    'OrderedDict': {},
+    'ip': '0.0.0.0',
+    'ipv4': '0.0.0.0',
+    'ipv6': '',
+    'mac': '00:00:00:00:00:00',
+    'knx_ga': '',
+    'foo': None,
+    'timestamp': 0.0,
+}
 
-#config params for items
+# config params for items
 KEY_ENFORCE_UPDATES = 'enforce_updates'
 KEY_ENFORCE_CHANGE = 'enforce_change'
 KEY_CACHE = 'cache'
@@ -76,8 +118,8 @@ ATTRIBUTE_SEPARATOR = ';'
 KEY_STRUCT = 'struct'
 KEY_REMARK = 'remark'
 
-#global config params for plugins
-KEY_INSTANCE =         'instance'
+# global config params for plugins
+KEY_INSTANCE = 'instance'
 KEY_DEFAULT_INSTANCE = 'default_instance'
 KEY_WEBIF_PAGELENGTH = 'webif_pagelength'
 KEY_CLASS_PATH = 'class_path'
@@ -85,14 +127,14 @@ KEY_CLASS_NAME = 'class_name'
 
 CACHE_PICKLE = 'pickle'
 CACHE_JSON = 'json'
-CACHE_FORMAT=CACHE_PICKLE
+CACHE_FORMAT = CACHE_PICKLE
 
-#plugin methods
+# plugin methods
 PLUGIN_PARSE_ITEM = 'parse_item'
 PLUGIN_PARSE_LOGIC = 'parse_logic'
 PLUGIN_REMOVE_ITEM = 'remove_item'
 
-#file extensions
+# file extensions
 YAML_FILE = '.yaml'
 DEFAULT_FILE = '.default'
 
@@ -116,15 +158,40 @@ BASE_LOG = 'logging'
 BASE_MODULE = 'module'
 BASE_PLUGIN = 'plugin'
 BASE_LOGIC = 'logic'
+BASE_LOGIC_GROUPS = 'logic_groups'
 BASE_STRUCT = 'struct'
 BASE_HOLIDAY = 'holidays'
 BASE_ADMIN = 'admin'
 
-DIRS = (DIR_VAR, DIR_LIB, DIR_CACHE, DIR_ENV, DIR_TPL, DIR_PLUGINS, DIR_MODULES, DIR_ETC, DIR_ITEMS, DIR_STRUCTS, DIR_LOGICS, DIR_UF, DIR_SCENES)
-BASES = (BASE_SH, BASE_LOG, BASE_MODULE, BASE_PLUGIN, BASE_LOGIC, BASE_STRUCT, BASE_HOLIDAY, BASE_ADMIN)
+DIRS = (
+    DIR_VAR,
+    DIR_LIB,
+    DIR_CACHE,
+    DIR_ENV,
+    DIR_TPL,
+    DIR_PLUGINS,
+    DIR_MODULES,
+    DIR_ETC,
+    DIR_ITEMS,
+    DIR_STRUCTS,
+    DIR_LOGICS,
+    DIR_UF,
+    DIR_SCENES,
+)
+BASES = (
+    BASE_SH,
+    BASE_LOG,
+    BASE_MODULE,
+    BASE_PLUGIN,
+    BASE_LOGIC,
+    BASE_LOGIC_GROUPS,
+    BASE_STRUCT,
+    BASE_HOLIDAY,
+    BASE_ADMIN,
+)
 FILES = DIRS + BASES
 
-#attributes for 'autotimer' parameter
-KEY_ATTRIB_COMPAT     = 'assign_compatibility'	# name of key in smarthome.yaml
-ATTRIB_COMPAT_V12     = 'compat_1.2'
-ATTRIB_COMPAT_LATEST  = 'latest'
+# attributes for 'autotimer' parameter
+KEY_ATTRIB_COMPAT = 'assign_compatibility'  # name of key in smarthome.yaml
+ATTRIB_COMPAT_V12 = 'compat_1.2'
+ATTRIB_COMPAT_LATEST = 'latest'

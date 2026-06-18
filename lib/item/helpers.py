@@ -30,7 +30,7 @@ from lib.shtime import Shtime
 from ast import literal_eval
 import pickle
 
-from lib.constants import (CACHE_FORMAT, CACHE_JSON, CACHE_PICKLE, ATTRIBUTE_SEPARATOR)
+from lib.constants import CACHE_FORMAT, CACHE_JSON, CACHE_PICKLE, ATTRIBUTE_SEPARATOR
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +80,7 @@ def cast_foo(value):
 # write testcase and replace
 # -> should castng be restricted like this or handled exactly like Utils.to_bool()?
 #    Example: cast_bool(2) is False, Utils.to_bool(2) is True
+
 
 def cast_bool(value):
     if type(value) in [bool, int, float]:
@@ -189,6 +190,7 @@ def cast_datetime(value):
 # Methods for handling of duration_value strings
 #####################################################################
 
+
 def split_duration_value_string(value, ATTRIB_COMPAT_DEFAULT):
     """
     splits a duration value string into its three components
@@ -206,9 +208,13 @@ def split_duration_value_string(value, ATTRIB_COMPAT_DEFAULT):
     if value.find(ATTRIBUTE_SEPARATOR) >= 0:
         time, __, attrvalue = value.partition(ATTRIBUTE_SEPARATOR)
         attrvalue, __, compat = attrvalue.partition(ATTRIBUTE_SEPARATOR)
-    elif value.find('=') >= 0 and value[value.find('='):value.find('=') + 2] != '==':
+    elif value.find('=') >= 0 and value[value.find('=') : value.find('=') + 2] != '==':
         time, __, attrvalue = value.partition('=')
-        if attrvalue.find('=') >= 0 and (attrvalue.rfind('=') != attrvalue.rfind('==')) and (attrvalue.endswith('compat') or attrvalue.endswith('compat_1.2') or attrvalue.endswith('latest')):
+        if (
+            attrvalue.find('=') >= 0
+            and (attrvalue.rfind('=') != attrvalue.rfind('=='))
+            and (attrvalue.endswith('compat') or attrvalue.endswith('compat_1.2') or attrvalue.endswith('latest'))
+        ):
             attrvalue, __, compat = attrvalue.rpartition('=')
     else:
         time = value
@@ -259,23 +265,27 @@ def join_duration_value_string(time, value, compat=''):
 # Cache Methods
 #####################################################################
 
+
 def json_serialize(obj):
     """
     helper method to convert values to json serializable formats
     """
     import datetime
+
     if isinstance(obj, datetime.datetime):
         return obj.isoformat()
     if isinstance(obj, datetime.date):
         return obj.isoformat()
-    raise TypeError("Type not serializable")
+    raise TypeError('Type not serializable')
+
 
 def json_obj_hook(json_dict):
     """
     helper method for json deserialization
     """
     import dateutil
-    for (key, value) in json_dict.items():
+
+    for key, value in json_dict.items():
         try:
             json_dict[key] = dateutil.parser.parse(value)
         except Exception:
@@ -298,6 +308,7 @@ def cache_read(filename, tz, cformat=CACHE_FORMAT):
 
     return (dt, value)
 
+
 def cache_write(filename, value, cformat=CACHE_FORMAT):
     try:
         if cformat == CACHE_PICKLE:
@@ -308,7 +319,7 @@ def cache_write(filename, value, cformat=CACHE_FORMAT):
             with open(filename, 'w', encoding='UTF-8') as f:
                 json.dump(value, f, default=json_serialize)
     except IOError:
-        logger.warning("Could not write to {}".format(filename))
+        logger.warning('Could not write to {}'.format(filename))
 
 
 #####################################################################

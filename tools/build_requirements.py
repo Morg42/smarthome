@@ -41,19 +41,20 @@ sys.path.insert(0, sh_basedir)
 
 program_name = sys.argv[0]
 arguments = sys.argv[1:]
-if "-debug_tox" in arguments:
+if '-debug_tox' in arguments:
     import logging
+
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger('build_requirements')
     logger.setLevel(logging.DEBUG)
-    logger.debug("sys.path = {}".format(sys.path))
-
-import lib.shpypi as shpypi
+    logger.debug('sys.path = {}'.format(sys.path))
 
 import bin.shngversion
+
 VERSION = bin.shngversion.get_shng_version()
 
 from lib.shpypi import Shpypi
+
 shpypi = Shpypi.get_instance()
 if shpypi is None:
     shpypi = Shpypi(base=sh_basedir, version=VERSION, for_tests=True)
@@ -65,25 +66,25 @@ selection = 'all'
 
 
 if not os.path.exists(os.path.join(sh_basedir, 'modules')):
-    print ("Directory <shng-root>/modules not found!")
+    print('Directory <shng-root>/modules not found!')
     exit(1)
 if not os.path.exists(os.path.join(sh_basedir, 'plugins')):
-    print ("Directory <shng-root>/plugins not found!")
+    print('Directory <shng-root>/plugins not found!')
     exit(1)
 if not os.path.exists(os.path.join(sh_basedir, 'requirements')):
-    print ("Directory <shng-root>/requirements not found!")
+    print('Directory <shng-root>/requirements not found!')
     exit(1)
 
-#req_files = shpypi.req_files('1.9.0.1', for_tests=True)
+# req_files = shpypi.req_files('1.9.0.1', for_tests=True)
 
 # req_files.create_requirementsfile('core')
 # print("File 'requirements" + os.sep + "core.txt' created.")
 # req_files.create_requirementsfile('modules')
 # print("File 'requirements" + os.sep + "modules.txt' created.")
 fn = shpypi.req_files.create_requirementsfile('base')
-print("File {} created.".format(fn))
+print('File {} created.'.format(fn))
 
 # req_files.create_requirementsfile('plugins')
 # print("File 'requirements" + os.sep + "plugins.txt' created.")
 fn = shpypi.req_files.create_requirementsfile('all')
-print("File {} created.".format(fn))
+print('File {} created.'.format(fn))

@@ -1,0 +1,164 @@
+# pyproject.toml — SmartHomeNG (core)
+#
+# SYNC NOTE: ruff settings here must stay in sync with ../plugins/pyproject.toml
+# (the plugins repo).  When changing either file, update the other.
+#
+# Currently used for: ruff linting configuration
+#
+# Future: this file can fully replace setup.py (see MIGRATION NOTE at bottom).
+# When ready, add the [build-system] and [project] sections below and delete setup.py.
+
+# ------------------------------------------------------------------------------
+# RUFF — linter configuration
+# Docs: https://docs.astral.sh/ruff/configuration/
+# ------------------------------------------------------------------------------
+
+[tool.ruff]
+target-version = "py310"   # matches enforced minimum in bin/smarthome.py
+line-length = 120
+exclude = [
+    "deprecated",
+    "lib/env",    # logic scripts: sh/logic/logger injected at exec() time, not importable
+    "examples",   # example logic scripts with the same injected-namespace pattern
+    "plugins",           # has its own pyproject.toml and is linted by the plugins CI scope
+]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+docstring-code-format = true
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+
+# --- Phase 1 (active): baseline rules, high signal / low noise ---
+# E  = pycodestyle errors (syntax, indentation, whitespace)
+# F  = pyflakes (undefined names, unused imports, shadowed variables)
+select = ["E", "F"]
+
+ignore = [
+    "E501",   # line too long — pervasive, cosmetic; address separately
+    "E402",   # module-level import not at top — smarthome uses dynamic/conditional imports
+    # "E711",   # comparison to None using == — prevalent pattern in codebase -> fixed in core
+    # "E712",   # comparison to True/False — prevalent pattern in codebase -> fixed in core
+    "F401",   # unused import — some are intentional re-exports; audit before enabling
+]
+
+# --- Phase 2 (enable after Phase 1 violations are resolved): ---
+# Uncomment the following to add bugbear rules.
+# B catches real bugs: bare except, mutable default args, assert in non-test code, etc.
+# Note: B006 (mutable default arg) and B007 (unused loop var) may need per-file ignores.
+#
+# select = ["E", "F", "B"]
+# extend-ignore = ["B008"]   # do-not-perform-function-call-in-default-argument — review per case
+
+# --- Phase 3 (enable after Phase 2 is clean): ---
+# Uncomment to enforce import ordering (replaces isort).
+# Run `ruff check --fix` once to auto-sort all imports.
+#
+# select = ["E", "F", "B", "I"]
+
+# --- Phase 4 (optional modernisation): ---
+# UP = pyupgrade — flags Python 2-isms and pre-3.9 patterns (e.g. typing.List → list)
+# Run `ruff check --fix` to apply most UP fixes automatically.
+# Review carefully: some changes alter runtime behaviour on older Python versions.
+#
+# select = ["E", "F", "B", "I", "UP"]
+
+# --- Phase 5 (long-term, after type hint completion work): ---
+# ANN = flake8-annotations — requires type hints on all public functions/methods.
+# Very aggressive; only enable after the type-hint improvement investment is done.
+#
+# select = ["E", "F", "B", "I", "UP", "ANN"]
+# extend-ignore = ["ANN101", "ANN102"]   # self/cls annotations not required
+
+[tool.ruff.lint.per-file-ignores]
+# Tests commonly import fixtures without explicit use; also allow assert statements.
+"tests/*" = ["F401", "F811"]
+# Dev templates are intentionally skeletal; SDP_standalone is injected by the SDP framework.
+"dev/*"   = ["F401", "E302", "F821"]
+# Tools are standalone scripts; import hygiene is less critical.
+"tools/*" = ["F401"]
+# Admin __init__ deliberately uses star-imports to assemble all API controllers.
+"modules/admin/__init__.py" = ["F403", "F405"]
+# cpuinfo.py and cpuinfo_sh.py are vendored third-party files — do not modify.
+"lib/cpuinfo.py"    = ["E101", "E701", "E721", "E741"]
+"lib/cpuinfo_sh.py" = ["E701", "E741", "F821"]  # unicode is a Python 2 builtin in vendored compat code
+# Sphinx conf.py has 'tags' injected by the Sphinx build environment.
+"doc/user/source/conf.py" = ["F821"]
+
+# --- Future: enable per-module strictness as each area is cleaned up ---
+# Example: once lib/item/ is clean, remove it from the ignore list below.
+#
+# "lib/item/*"     = ["F401"]   # remove when item module is clean
+# "lib/scheduler.py" = ["B"]    # remove when scheduler is clean
+
+# ------------------------------------------------------------------------------
+# MIGRATION NOTE: replacing setup.py with pyproject.toml
+# ------------------------------------------------------------------------------
+# To complete the migration, add the two sections below and delete setup.py.
+# Test with: pip install -e . --no-build-isolation
+# Verify entry point works: smarthomeng --version (after configuring scripts below)
+#
+# Step 1: add build system declaration
+#
+# [build-system]
+# requires = ["setuptools>=61", "wheel"]
+# build-backend = "setuptools.backends.legacy:build"
+#
+# Step 2: add project metadata (replaces setup() call in setup.py)
+# Version should be read dynamically from bin/shngversion.py or a __version__ variable.
+# Until dynamic reading is wired up, pin it here and keep in sync with shngversion.py.
+#
+# [project]
+# name = "SmartHomeNG"
+# version = "1.12.0.1"           # keep in sync with shNG_version in bin/shngversion.py
+# description = "Open-source home automation platform running on Python 3."
+# license = { text = "GPL-3.0-or-later" }
+# readme = "README.md"
+# requires-python = ">=3.9"      # enforced at runtime in bin/smarthome.py
+# keywords = ["home", "automation", "smarthome"]
+# authors = []                   # populate as desired
+#
+# classifiers = [
+#     "Intended Audience :: End Users/Desktop",
+#     "Intended Audience :: Developers",
+#     "Operating System :: POSIX :: Linux",
+#     "Operating System :: MacOS :: MacOS X",
+#     "Programming Language :: Python :: 3.9",
+#     "Programming Language :: Python :: 3.10",
+#     "Programming Language :: Python :: 3.11",
+#     "Programming Language :: Python :: 3.12",
+#     "Programming Language :: Python :: 3.13",
+#     "Topic :: Home Automation",
+# ]
+#
+# # Runtime dependencies — currently managed via requirements/ files;
+# # populate here if/when pip-based distribution becomes a goal.
+# # Keep in sync with lib/requirements.txt.
+# dependencies = [
+#     "ephem>=4.2,<5.0.0",
+#     "pytz",
+#     "babel",
+#     "python-dateutil>=2.9.0",
+#     "holidays>=0.59",
+#     "psutil>=6.1.1,<8.0.0",
+#     "portalocker>=3.2.0,<4.0.0",
+#     "requests>=2.31.0",
+#     "netifaces2",
+#     "xmltodict",
+#     "ruamel.yaml>=0.15.78,<=0.16.8",
+# ]
+#
+# Step 3: configure the entry point (replaces empty console_scripts in setup.py)
+#
+# [project.scripts]
+# smarthomeng = "bin.smarthome:main"
+# # Note: requires adding a main() function to bin/smarthome.py first.
+#
+# Step 4: tell setuptools which packages to include
+#
+# [tool.setuptools.packages.find]
+# exclude = ["tests", "tests.*", "plugins", "plugins.*"]
+#
+# Step 5: delete setup.py

@@ -25,6 +25,7 @@ import logging
 import sys
 import socket
 import platform
+
 if os.name != 'nt':
     import pwd
 import psutil
@@ -36,13 +37,13 @@ import cherrypy
 import bin.shngversion as shngversion
 from .rest import RESTResource
 
-#import bin.shngversion
+# import bin.shngversion
 import lib.daemon
 import lib.backup as backup
 from lib.shpypi import Shpypi
 from lib.shtime import Shtime
 from lib.utils import Utils
-from lib.constants import (DIR_ETC, DIR_MODULES)
+from lib.constants import DIR_ETC, DIR_MODULES
 
 
 # ======================================================================
@@ -65,11 +66,11 @@ def get_process_info(command, wait=True, append_error=False):
     # Interact with process: Send data to stdin. Read data from stdout and stderr, until end-of-file is reached.
     # Wait for process to terminate. The optional input argument should be a string to be sent to the child process, or None, if no data should be sent to the child.
     (result, err) = p.communicate()
-#    logger.warning("get_process_info: command='{}', result='{}', err='{}'".format(command, result, err))
+    #    logger.warning("get_process_info: command='{}', result='{}', err='{}'".format(command, result, err))
 
     if wait:
         ## Wait for date to terminate. Get return returncode ##
-        p_status = p.wait()
+        p.wait()
 
     return str(result, encoding='utf-8', errors='strict')
 
@@ -86,11 +87,12 @@ class SystemController(RESTResource):
         self._sh = module._sh
         self.module = module
         self.base_dir = self._sh.get_basedir()
-        self.logger = logging.getLogger(__name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:])
+        self.logger = logging.getLogger(
+            __name__.split('.')[0] + '.' + __name__.split('.')[1] + '.' + __name__.split('.')[2][4:]
+        )
 
         self.etc_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
         self.modules_dir = self._sh.get_config_dir(DIR_ETC)  # not used?
-
 
     # ======================================================================
     #  /api/system
@@ -108,7 +110,6 @@ class SystemController(RESTResource):
         response['client_ip'] = client_ip
         return json.dumps(response)
 
-
     # ======================================================================
     #  /api/system/info
     #
@@ -123,8 +124,8 @@ class SystemController(RESTResource):
         tzname = self.module.shtime.tzname()
         system = platform.system()
 
-        #self.read_linuxinfo()
-        #vers = Utils.strip_quotes(self.os_release.get('PRETTY_NAME', ''))
+        # self.read_linuxinfo()
+        # vers = Utils.strip_quotes(self.os_release.get('PRETTY_NAME', ''))
         vers = self._sh.systeminfo.get_osname()
         if vers == '':
             vers = platform.version()
@@ -146,8 +147,9 @@ class SystemController(RESTResource):
         rt = Shtime.get_instance().runtime_as_dict()
         sh_runtime_seconds = rt['total_seconds']
 
-        pyversion = "{0}.{1}.{2} {3}".format(sys.version_info[0], sys.version_info[1], sys.version_info[2],
-                                             sys.version_info[3])
+        pyversion = '{0}.{1}.{2} {3}'.format(
+            sys.version_info[0], sys.version_info[1], sys.version_info[2], sys.version_info[3]
+        )
 
         response = {}
         response['tzname'] = tzname
@@ -171,7 +173,7 @@ class SystemController(RESTResource):
         ip = Utils.get_all_local_ipv4_addresses()
         if '127.0.0.1' in ip:
             ip.remove('127.0.0.1')
-            #ip.append('127.0.0.1')
+            # ip.append('127.0.0.1')
         if len(ip) == 1:
             response['ip'] = ip[0]
         else:
@@ -238,13 +240,12 @@ class SystemController(RESTResource):
         response['backup_stem'] = ''
         try:
             response['backup_stem'] = self._sh._backup_name_stem
-        except:
+        except Exception:
             pass
         response['last_backup'] = backup.get_lastbackuptime()
 
-        self.logger.info("SystemController.info(): response = {}".format(response))
+        self.logger.info('SystemController.info(): response = {}'.format(response))
         return json.dumps(response)
-
 
     def get_knx_daemon(self):
         """
@@ -256,21 +257,20 @@ class SystemController(RESTResource):
 
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
-            if get_process_info("ps cax|grep eibd") != '':
+            if get_process_info('ps cax|grep eibd') != '':
                 daemon = 'eibd'
-            if get_process_info("ps cax|grep knxd") != '':
+            if get_process_info('ps cax|grep knxd') != '':
                 if daemon != 'SERVICES.INACTIVE':
                     daemon += ' and knxd'
                 else:
                     daemon = 'knxd'
                     # get version of installed knx daemon (knxd v0.14.30 outputs version to stderr instead of stdout)
-                    wrk = get_process_info("knxd -l?V|grep knxd", append_error=True)
+                    wrk = get_process_info('knxd -l?V|grep knxd', append_error=True)
                     wrk = wrk.split()
                     wrk = wrk[1].split(':')
                     if wrk != []:
                         daemon += ' v' + wrk[0]
         return daemon
-
 
     def get_1wire_daemon(self):
         """
@@ -278,7 +278,7 @@ class SystemController(RESTResource):
         """
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
-            if get_process_info("ps cax|grep owserver") != '':
+            if get_process_info('ps cax|grep owserver') != '':
                 daemon = 'owserver'
                 # get version of installed owserver
                 wrk = get_process_info("owserver -V|grep 'owserver version'", append_error=True)
@@ -287,7 +287,6 @@ class SystemController(RESTResource):
                     daemon += ' v' + wrk[2]
         return daemon
 
-
     def get_mqtt_daemon(self):
         """
         Tests it 1wire are running
@@ -295,15 +294,14 @@ class SystemController(RESTResource):
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
             # test id mqtt broker is running
-            if get_process_info("ps cax|grep mosquitto") != '':
+            if get_process_info('ps cax|grep mosquitto') != '':
                 daemon = 'mosquitto'
                 # get version of installed mosquitto broker
-                wrk = get_process_info("/usr/sbin/mosquitto -h|grep version")
+                wrk = get_process_info('/usr/sbin/mosquitto -h|grep version')
                 wrk = wrk.split()
                 if wrk != []:
                     daemon += ' v' + wrk[2]
         return daemon
-
 
     def get_node_red_daemon(self):
         """
@@ -311,15 +309,14 @@ class SystemController(RESTResource):
         """
         daemon = 'SERVICES.INACTIVE'
         if os.name != 'nt':
-            if get_process_info("ps cax|grep node-red") != '':
+            if get_process_info('ps cax|grep node-red') != '':
                 daemon = 'node-red'
                 # get version of installed node-red
-                wrk = get_process_info("node-red --help|grep Node-RED")
+                wrk = get_process_info('node-red --help|grep Node-RED')
                 wrk = wrk.split()
                 if wrk != []:
                     daemon += ' ' + wrk[1]
         return daemon
-
 
     # ======================================================================
     #  /api/system/status
@@ -337,7 +334,6 @@ class SystemController(RESTResource):
     #
     #     # self.logger.debug("ServerController.index(): /{} - response '{}'".format(id, response))
     #     return json.dumps(response)
-
 
     # # ======================================================================
     # #  /api/server/restart
@@ -383,7 +379,6 @@ class SystemController(RESTResource):
     read.authentication_needed = True
     # read.public_root = True
 
-
     def update(self, id='', level=None):
         """
         Handle PUT requests for server API
@@ -397,4 +392,3 @@ class SystemController(RESTResource):
 
     # update.expose_resource = True
     # update.authentication_needed = True
-

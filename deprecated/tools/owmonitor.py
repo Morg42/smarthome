@@ -49,7 +49,7 @@ while 1:
             typ = ow.read(sensor + 'type')
             sensors = ow.identify_sensor(sensor)
             print("new sensor {0} ({1}) provides: {2}".format(sensor, typ, sensors))
-        except Exception as e:
+        except Exception:
             pass
     old += dif
     time.sleep(1)

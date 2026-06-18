@@ -1,0 +1,13 @@
+%YAML 1.1
+---
+# Item definitions for test_item_hysteresis.py
+# Input sensor drives a hysteresis output item
+
+sensor_temp:
+    type: num
+
+heating_active:
+    type: bool
+    hysteresis_input: sensor_temp
+    hysteresis_upper_threshold: '22'
+    hysteresis_lower_threshold: '18'

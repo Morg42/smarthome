@@ -42,7 +42,6 @@ TIMEFRAME_REGEX = re.compile(r'^(\d+)([ihdwmy]?)$', re.VERBOSE | re.IGNORECASE)
 
 
 class Utils(object):
-
     @staticmethod
     def is_mac(mac):
         """
@@ -148,7 +147,12 @@ class Utils(object):
         """
 
         try:
-            return bool(re.match("^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])\\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$", string))
+            return bool(
+                re.match(
+                    '^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])\\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$',
+                    string,
+                )
+            )
         except TypeError:
             return False
 
@@ -168,7 +172,7 @@ class Utils(object):
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(('10.255.255.255', 1))
             IP = s.getsockname()[0]
-        except:
+        except OSError:
             IP = '127.0.0.1'
         finally:
             if 's' in locals():
@@ -188,7 +192,7 @@ class Utils(object):
             s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
             s.connect(('fda2:ffff:ffff:ffff:ffff:ffff:ffff:ffff', 1))
             IP = s.getsockname()[0]
-        except:
+        except OSError:
             IP = '::1'
         finally:
             if 's' in locals():
@@ -221,6 +225,7 @@ class Utils(object):
         :return: ipv4 addresses
         """
         from netifaces import AF_INET
+
         return Utils.get_all_addresses_for_addressfamily(AF_INET)
 
     @staticmethod
@@ -231,6 +236,7 @@ class Utils(object):
         :return: ipv6 addresses
         """
         from netifaces import AF_INET6
+
         return Utils.get_all_addresses_for_addressfamily(AF_INET6)
 
     @staticmethod
@@ -258,7 +264,7 @@ class Utils(object):
         g = groupaddress.split('/')
         if len(g) != 3:
             return False
-        if not(Utils.is_int(g[0]) and Utils.is_int(g[1]) and Utils.is_int(g[2])):
+        if not (Utils.is_int(g[0]) and Utils.is_int(g[1]) and Utils.is_int(g[2])):
             return False
         if (int(g[0]) < 0) or (int(g[0]) > 31):
             return False
@@ -267,7 +273,6 @@ class Utils(object):
         if (int(g[2]) < 0) or (int(g[2]) > 255):
             return False
         return True
-
 
     @staticmethod
     def is_timeframe(string: str) -> bool:
@@ -291,8 +296,8 @@ class Utils(object):
             return False
 
     @staticmethod
-    def to_timeframe(value: str) -> int:        # works for Python 3.9 and under
-#    def to_timeframe(value: str | int) -> int:  # works for Python 3.10 and above
+    def to_timeframe(value: str) -> int:  # works for Python 3.9 and under
+        #    def to_timeframe(value: str | int) -> int:  # works for Python 3.10 and above
         """
         Converts a timeframe value to milliseconds. See is_timeframe() method.
         The special value 'now' is supported for the current time.
@@ -360,8 +365,8 @@ class Utils(object):
             return False
 
     @staticmethod
-    def to_bool(value: str, default: bool = 'exception') -> bool:           # works for Python 3.9 and under
-#    def to_bool(value: str|int|float, default: bool='exception') -> bool:   # works for Python 3.10 and above
+    def to_bool(value: str, default: bool = 'exception') -> bool:  # works for Python 3.9 and under
+        #    def to_bool(value: str|int|float, default: bool='exception') -> bool:   # works for Python 3.10 and above
 
         """
         Converts a value to boolean.
@@ -379,9 +384,9 @@ class Utils(object):
         """
         # -> should it be possible to cast strings: 0 -> False and non-0 -> True (analog to integer values)?
         if isinstance(value, str):
-            if value.lower() in ("yes", "y", "true", "t", "1", "on"):
+            if value.lower() in ('yes', 'y', 'true', 't', '1', 'on'):
                 return True
-            if value.lower() in ("no", "n", "false", "f", "0", "off", ""):
+            if value.lower() in ('no', 'n', 'false', 'f', '0', 'off', ''):
                 return False
             if default == 'exception':
                 raise Exception('Invalid value for boolean conversion: ' + value)
@@ -401,7 +406,7 @@ class Utils(object):
 
         hashfunc = hashlib.sha512()
         hashfunc.update(plaintext.encode())
-        return "".join(format(b, "02x") for b in hashfunc.digest())
+        return ''.join(format(b, '02x') for b in hashfunc.digest())
 
     @staticmethod
     def is_hash(value: str) -> bool:
@@ -457,12 +462,11 @@ class Utils(object):
         if type(string) is str:
             string = string.strip()
             if len(string) >= 2:
-                if string[0] in ['"', "'"]:        # check if string starts with ' or "
-                    if string[-1] == string[0]:    # and end with it
+                if string[0] in ['"', "'"]:  # check if string starts with ' or "
+                    if string[-1] == string[0]:  # and end with it
                         if string.count(string[0]) == 2:  # if they are the only one
                             string = string[1:-1]  # remove them
         return string
-
 
     @staticmethod
     def string_to_list(string):
@@ -499,12 +503,11 @@ class Utils(object):
                 er = Utils.strip_quotes(er)
             else:
                 if er.find('.') != -1:
-                    er=float(er)
+                    er = float(er)
                 else:
-                    er=int(er)
+                    er = int(er)
             rl.append(er)
         return rl
-
 
     @staticmethod
     def strip_square_brackets(string):
@@ -521,8 +524,8 @@ class Utils(object):
         if type(string) is str:
             string = string.strip()
             if len(string) >= 2:
-                if string[0] == '[':           # check if string starts with [
-                    if string[-1] == ']':      # and end with ]
+                if string[0] == '[':  # check if string starts with [
+                    if string[-1] == ']':  # and end with ]
                         string = string[1:-1]  # remove them
         return string
 
@@ -553,7 +556,6 @@ class Utils(object):
                     string = string3
         return string
 
-
     @staticmethod
     def get_type(var):
         """
@@ -565,7 +567,6 @@ class Utils(object):
         """
 
         return str(type(var))[8:-2]
-
 
     @staticmethod
     def execute_subprocess(commandline, wait=True):
@@ -579,19 +580,20 @@ class Utils(object):
         # Interact with process: Send data to stdin. Read data from stdout and stderr, until end-of-file is reached.
         # Wait for process to terminate. The optional input argument should be a string to be sent to the child process, or None, if no data should be sent to the child.
         (result, err) = p.communicate()
-    #    logger.warning("get_process_info: commandline='{}', result='{}', err='{}'".format(command, result, err))
+        #    logger.warning("get_process_info: commandline='{}', result='{}', err='{}'".format(command, result, err))
 
-    #    print("result="+str(result))
-    #    print("err="+str(err))
+        #    print("result="+str(result))
+        #    print("err="+str(err))
         if wait:
             # Wait for date to terminate. Get return returncode
             p.wait()
         return (str(result, encoding='utf-8', errors='strict'), str(err, encoding='utf-8', errors='strict'))
 
-#--------------------------------------------------------------------------------------------
 
-class Version():
+# --------------------------------------------------------------------------------------------
 
+
+class Version:
     @staticmethod
     def check_list(versl):
 
@@ -635,7 +637,7 @@ class Version():
             vi = 0
             try:
                 vi = int(v)
-            except:
+            except Exception:
                 pass
             vlist.append(vi)
         vlist[3] += build
@@ -647,6 +649,7 @@ class Version():
         if versl == [0, 0, 0, 0]:
             return ''
         import copy
+
         versl2 = copy.deepcopy(versl)
         cls.check_list(versl2)
         if versl2 == '':
@@ -655,7 +658,7 @@ class Version():
         if versl2[3] == 0:
             del versl2[3]
         versls = [str(int) for int in versl2]
-        vers = ".".join(versls)
+        vers = '.'.join(versls)
 
         return 'v' + vers
 
@@ -694,12 +697,22 @@ class Version():
         # logger.warning(f"_compare_versions: v1={v1}, v2={v2}, operator='{operator}', result={result}")
         return result
 
-#--------------------------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------------------------
+
 
 def get_python_version():
-    PYTHON_VERSION = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + '.' + str(sys.version_info[2]) + ' ' + str(sys.version_info[3])
+    PYTHON_VERSION = (
+        str(sys.version_info[0])
+        + '.'
+        + str(sys.version_info[1])
+        + '.'
+        + str(sys.version_info[2])
+        + ' '
+        + str(sys.version_info[3])
+    )
     if sys.version_info[3] != 'final':
-        PYTHON_VERSION += ' '+str(sys.version_info[4])
+        PYTHON_VERSION += ' ' + str(sys.version_info[4])
     return PYTHON_VERSION
 
 
@@ -715,7 +728,7 @@ def execute_subprocess(commandline, wait=True):
     print("err='{}'".format(err))
     if wait:
         ## Wait for date to terminate. Get return returncode ##
-        p_status = p.wait()
+        p.wait()
     return str(result, encoding='utf-8', errors='strict')
 
 
@@ -726,6 +739,4 @@ def running_virtual():
 
     # The check for sys.real_prefix covers virtualenv,
     # the equality of non-empty sys.base_prefix with sys.prefix covers venv.
-    return (getattr(sys, 'base_prefix', sys.prefix) != sys.prefix or
-            hasattr(sys, 'real_prefix'))
-
+    return getattr(sys, 'base_prefix', sys.prefix) != sys.prefix or hasattr(sys, 'real_prefix')

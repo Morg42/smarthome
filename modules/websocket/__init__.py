@@ -54,7 +54,7 @@ class Websocket(Module):
         self.logger = logging.getLogger(__name__)
         self._sh = sh
         self.etc_dir = sh._etc_dir
-        #self.shtime = Shtime.get_instance()
+        # self.shtime = Shtime.get_instance()
 
         self.logger.debug(f"Module '{self._shortname}': Initializing")
 
@@ -77,24 +77,26 @@ class Websocket(Module):
             try:
                 self.ssl_context.load_cert_chain(pem_file, key_file)
             except Exception as e:
-                self.logger.error(f"Secure websocket port not opened because the following error ocured while initilizing tls: {e}")
+                self.logger.error(
+                    f'Secure websocket port not opened because the following error ocured while initilizing tls: {e}'
+                )
                 self.ssl_context = None
                 self.use_tls = False
 
         if self.use_tls and self.port == self.tls_port:
-            self.logger.error("Secure websocket port not opened because it cannnot be the same port as the ws:// port:")
+            self.logger.error('Secure websocket port not opened because it cannnot be the same port as the ws:// port:')
             self.ssl_context = None
             self.use_tls = False
 
         if self.ip == '0.0.0.0':
-            self.logger.info(f"Listening on IP .: all local IPs")
+            self.logger.info('Listening on IP .: all local IPs')
         else:
-            self.logger.info(f"Listening on IP .: {self.ip}")
-        self.logger.info(f"port / tls_port .: {self.port} / {self.tls_port}")
-        self.logger.info(f"use_tls .........: {self.use_tls}")
-        self.logger.info(f"certificate .....: key: ../etc/{self.tls_cert} / ../etc/{self.tls_key}")
+            self.logger.info(f'Listening on IP .: {self.ip}')
+        self.logger.info(f'port / tls_port .: {self.port} / {self.tls_port}')
+        self.logger.info(f'use_tls .........: {self.use_tls}')
+        self.logger.info(f'certificate .....: key: ../etc/{self.tls_cert} / ../etc/{self.tls_key}')
 
-        self.loop = None    # Var to hold the event loop for asyncio
+        self.loop = None  # Var to hold the event loop for asyncio
 
         self.initialize_payload_protocols()
         return
@@ -112,10 +114,10 @@ class Websocket(Module):
         try:
             self._server_thread = threading.Thread(target=self._ws_server_thread, name=_name)
             self._server_thread.start()
-            self.logger.dbghigh("Starting websocket server(s)...")
+            self.logger.dbghigh('Starting websocket server(s)...')
         except Exception as e:
             self.conn = None
-            self.logger.error(f"Websocket Server: Cannot start server - Error: {e}")
+            self.logger.error(f'Websocket Server: Cannot start server - Error: {e}')
         return
 
     def stop(self):
@@ -127,18 +129,17 @@ class Websocket(Module):
         """
         self.logger.dbghigh(self.translate("Methode '{method}' aufgerufen", {'method': 'stop()'}))
 
-        self.logger.info("Shutting down websocket server(s)...")
+        self.logger.info('Shutting down websocket server(s)...')
         self.loop.call_soon_threadsafe(self.loop.stop)
         time.sleep(5)
 
         try:
             self._server_thread.join()
-            self.logger.info("Websocket Server(s): Stopped")
+            self.logger.info('Websocket Server(s): Stopped')
         except Exception as err:
-            self.logger.info(f"Stopping websocket error: {err}")
+            self.logger.info(f'Stopping websocket error: {err}')
             pass
         return
-
 
     def initialize_payload_protocols(self):
         """
@@ -150,31 +151,34 @@ class Websocket(Module):
 
         # parameters and class instance for sync_example protocol
         from . import sync_example
+
         self.initialize_payload_protocol(sync_example.Protocol)
 
         # parameters and class instance for smartVISU protocol
         from . import smartvisu
+
         self.initialize_payload_protocol(smartvisu.Protocol)
 
         # parameters and class instance for smartVISU protocol
         from . import admin
+
         self.initialize_payload_protocol(admin.Protocol)
 
         return
-
 
     def initialize_payload_protocol(self, Protocol):
 
         # hand the websocket module instance (self) to protocol object
         id = Protocol.protocol_id
-        prot = Protocol(self, self.logger.name+'.'+id)
+        prot = Protocol(self, self.logger.name + '.' + id)
         self.protocols[prot.protocol_path] = {}
         self.protocols[prot.protocol_path]['id'] = id
         self.protocols[prot.protocol_path]['name'] = prot.protocol_name
         self.protocols[prot.protocol_path]['protocol'] = prot
-        self.logger.info(f"Payload protocol '{ prot.protocol_name}' initialized ({'enabled' if prot.protocol_enabled else 'disabled'})")
+        self.logger.info(
+            f"Payload protocol '{prot.protocol_name}' initialized ({'enabled' if prot.protocol_enabled else 'disabled'})"
+        )
         return
-
 
     def get_payload_protocol_by_id(self, id):
 
@@ -185,7 +189,6 @@ class Websocket(Module):
                 break
         return result
 
-
     def get_port(self):
         """
         Returns the port used for the ws:// protocol
@@ -194,7 +197,6 @@ class Websocket(Module):
         """
 
         return self.port
-
 
     def get_tls_port(self):
         """
@@ -205,7 +207,6 @@ class Websocket(Module):
 
         return self.tls_port
 
-
     def get_use_tls(self):
         """
         Returns True, if secure websocket protocol (wss://) is enabled
@@ -214,7 +215,6 @@ class Websocket(Module):
         """
 
         return self.use_tls
-
 
     # ===============================================================================
     # Module specific code
@@ -251,20 +251,20 @@ class Websocket(Module):
         try:
             self.loop.run_forever()
         finally:
-            #self.logger.warning("_ws_server_thread: finally")
+            # self.logger.warning("_ws_server_thread: finally")
             try:
                 self.loop.shutdown_asyncgens()
-                #if python_version >= '3.9':
+                # if python_version >= '3.9':
                 #    self.loop.shutdown_default_executor()
-                #time.sleep(3)
-                #self.logger.notice(f"all_tasks: {self.loop.Task.all_tasks()}")
-                #self.loop.run_until_complete(self.loop.shutdown_asyncgens())
+                # time.sleep(3)
+                # self.logger.notice(f"all_tasks: {self.loop.Task.all_tasks()}")
+                # self.loop.run_until_complete(self.loop.shutdown_asyncgens())
             except Exception as e:
-                self.logger.warning(f"_ws_server_thread: finally - Exception on loop.shutdown_asyncgens(): {e}")
+                self.logger.warning(f'_ws_server_thread: finally - Exception on loop.shutdown_asyncgens(): {e}')
             try:
                 self.loop.close()
             except Exception as e:
-                self.logger.warning(f"_ws_server_thread: finally - Exception on loop.close(): {e}")
+                self.logger.warning(f'_ws_server_thread: finally - Exception on loop.close(): {e}')
 
     USERS = set()
 
@@ -273,20 +273,19 @@ class Websocket(Module):
             await asyncio.sleep(1)
 
         if ssl_context:
-            self.logger.info("Secure websocket server started")
+            self.logger.info('Secure websocket server started')
             try:
                 await websockets.serve(self.handle_new_connection, ip, port, ssl=ssl_context)
             except OSError as e:
-                self.logger.error(f"Cannot start secure websocket server - error: {e}")
+                self.logger.error(f'Cannot start secure websocket server - error: {e}')
         else:
-            self.logger.info("Websocket server started")
+            self.logger.info('Websocket server started')
             try:
                 await websockets.serve(self.handle_new_connection, ip, port)
             except OSError as e:
-                self.logger.error(f"Cannot start websocket server - error: {e}")
+                self.logger.error(f'Cannot start websocket server - error: {e}')
 
         return
-
 
     """
     ===============================================================================
@@ -300,15 +299,17 @@ class Websocket(Module):
         """
         Wait for incoming connection and handle the request
         """
-#        if path == '/sync' and not sync_enabled:
-#            return
+        #        if path == '/sync' and not sync_enabled:
+        #            return
 
         await self.register(websocket)
         try:
             # Determine payload protocol and start it if found and enabled
             payload = self.protocols.get(path, None)
             if payload is None:
-                self.logger.warning(f"Unsupported websocket path '{path}' used by {self.client_address(websocket)}. Cannot determine payload protocol - terminating connection")
+                self.logger.warning(
+                    f"Unsupported websocket path '{path}' used by {self.client_address(websocket)}. Cannot determine payload protocol - terminating connection"
+                )
             else:
                 if payload['protocol'].protocol_enabled:
                     self.logger.info(f"Starting '{payload['name']}' payload protocol")
@@ -318,7 +319,7 @@ class Websocket(Module):
 
         except Exception as e:
             # connection has been ended or not established in payload protocol
-            self.logger.info(f"handle_new_connection: Connection to {e} has been terminated in payload protocol")
+            self.logger.info(f'handle_new_connection: Connection to {e} has been terminated in payload protocol')
         finally:
             await self.unregister(websocket)
         return
@@ -348,23 +349,25 @@ class Websocket(Module):
         Log info about connection/disconnection of users
         """
         if not websocket.remote_address:
-            self.logger.info(f"USER {action}: {'with SSL connection'} - local port: {websocket.port} - path: {websocket.path}")
+            self.logger.info(
+                f'USER {action}: {"with SSL connection"} - local port: {websocket.port} - path: {websocket.path}'
+            )
         else:
-            self.logger.info(f"USER {action}: {self.client_address(websocket)} - local port: {websocket.port} - path: {websocket.path}")
+            self.logger.info(
+                f'USER {action}: {self.client_address(websocket)} - local port: {websocket.port} - path: {websocket.path}'
+            )
 
-        self.logger.dbghigh(f"Connected USERS: {len(self.USERS)}")
+        self.logger.dbghigh(f'Connected USERS: {len(self.USERS)}')
         for u in self.USERS:
-            self.logger.dbghigh(f"- user: {self.client_address(u)}    path: {u.path}    secure: {u.secure}    port: {u.port}")
+            self.logger.dbghigh(
+                f'- user: {self.client_address(u)}    path: {u.path}    secure: {u.secure}    port: {u.port}'
+            )
         return
-
-
-
 
     def client_address(self, websocket):
         if websocket.remote_address is None:
             return 'unknown (wss)'
         return websocket.remote_address[0] + ':' + str(websocket.remote_address[1])
-
 
     def get_payload_users(self, protocol_path):
         # get USERS, that use this protocol
