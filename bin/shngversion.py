@@ -115,9 +115,9 @@ from lib.utils import Version
 
 # Update auf 1.12.0    wg. Release
 # Update auf 1.12.0.1  wg. Kennzeichnung des Repo Stands als "nach dem v1.11.0 Release"
-shNG_version = '1.12.0.1'
-shNG_branch = 'develop'
-shNG_releasedate = '09. Mai 2026'  # Muss beim Release für den master branch auf das Release Datum gesetzt werden
+shNG_version = '1.12.1.0'
+shNG_branch = 'master'
+shNG_releasedate = '18. Juni 2026'
 
 # ---------------------------------------------------------------------------------
 FileBASE = None
