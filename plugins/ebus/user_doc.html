@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ebus &mdash; Dokumentation v1.12.0 v1.12.0 (Stand 09. Mai 2026) Dokumentation</title>
+  <title>ebus &mdash; Dokumentation v1.12.1 v1.12.1 (Stand 18. Juni 2026) Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
@@ -42,7 +42,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Dokumentation v1.12.0
+            Dokumentation v1.12.1
               <img src="../../_static/logo_long_inverse3.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -55,8 +55,9 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../einleitung.html">Einleitung</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.12.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../was_war_neu.html">Neuerungen der letzten Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-12">Neuerungen im Release v1.12</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-11">Neuerungen im Release v1.11</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-10">Neuerungen im Release v1.10</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../was_war_neu.html#neuerungen-bei-plugins">Neuerungen bei Plugins</a><ul>
@@ -399,6 +400,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#teilweises-einbinden-von-structs-partial-struct-inclusion-new">Teilweises Einbinden von structs (partial struct inclusion) <span class="redsup">new</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#verwendung-mehrerer-definitionsdateien">Verwendung mehrerer Definitionsdateien</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#beispiele">Beispiele</a></li>
 </ul>
@@ -4034,6 +4036,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_build_requirements.html">build_requirements.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_conf_to_yaml_converter.html">conf_to_yaml_converter.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_getshngpid.html">getshngpid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/tools_install_hooks.html">install-hooks.sh</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#wozu-dienen-die-hooks">Wozu dienen die Hooks?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#scope-der-checks">Scope der Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#push-trotzdem-erzwingen">Push trotzdem erzwingen</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_plugin_metadata_checker.html">plugin_metadata_checker.py</a></li>
 </ul>
 </li>
@@ -5211,6 +5220,27 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../release/1_12_1.html">Release 1.12.1 - 06. Mai 2026</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#allgemein">Allgemein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#updates-im-core">Updates im Core</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#anderungen-an-plugins">Änderungen an Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#dokumentation">Dokumentation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../release/1_12_1.html#module-admin">module.admin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../release/1_12_0.html">Release 1.12.0 - 06. Mai 2026</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../release/1_12_0.html#uberblick">Überblick</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#minimum-python-version">Minimum Python Version</a></li>
@@ -5600,7 +5630,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Dokumentation v1.12.0</a>
+          <a href="../../index.html">Dokumentation v1.12.1</a>
       </nav>
 
       <div class="wy-nav-content">

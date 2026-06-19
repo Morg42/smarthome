@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lib.smarthome &mdash; Dokumentation v1.12.0 v1.12.0 (Stand 09. Mai 2026) Dokumentation</title>
+  <title>lib.smarthome &mdash; Dokumentation v1.12.1 v1.12.1 (Stand 18. Juni 2026) Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
@@ -39,7 +39,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Dokumentation v1.12.0
+            Dokumentation v1.12.1
               <img src="../../_static/logo_long_inverse3.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -52,8 +52,9 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../einleitung.html">Einleitung</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.12.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../was_war_neu.html">Neuerungen der letzten Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-12">Neuerungen im Release v1.12</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-11">Neuerungen im Release v1.11</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-10">Neuerungen im Release v1.10</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../was_war_neu.html#neuerungen-bei-plugins">Neuerungen bei Plugins</a><ul>
@@ -396,6 +397,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#teilweises-einbinden-von-structs-partial-struct-inclusion-new">Teilweises Einbinden von structs (partial struct inclusion) <span class="redsup">new</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#verwendung-mehrerer-definitionsdateien">Verwendung mehrerer Definitionsdateien</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#beispiele">Beispiele</a></li>
 </ul>
@@ -4031,6 +4033,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_build_requirements.html">build_requirements.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_conf_to_yaml_converter.html">conf_to_yaml_converter.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_getshngpid.html">getshngpid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/tools_install_hooks.html">install-hooks.sh</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#wozu-dienen-die-hooks">Wozu dienen die Hooks?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#scope-der-checks">Scope der Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#push-trotzdem-erzwingen">Push trotzdem erzwingen</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_plugin_metadata_checker.html">plugin_metadata_checker.py</a></li>
 </ul>
 </li>
@@ -5208,6 +5217,27 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../release/1_12_1.html">Release 1.12.1 - 06. Mai 2026</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#allgemein">Allgemein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#updates-im-core">Updates im Core</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#anderungen-an-plugins">Änderungen an Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#dokumentation">Dokumentation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../release/1_12_1.html#module-admin">module.admin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../release/1_12_0.html">Release 1.12.0 - 06. Mai 2026</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../release/1_12_0.html#uberblick">Überblick</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#minimum-python-version">Minimum Python Version</a></li>
@@ -5597,7 +5627,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Dokumentation v1.12.0</a>
+          <a href="../../index.html">Dokumentation v1.12.1</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -5707,7 +5737,30 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">lib.shyaml</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lib.shpypi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Shpypi</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lib.triggertimes</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerTimes</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">lib.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">YAML_FILE</span><span class="p">,</span> <span class="n">DEFAULT_FILE</span><span class="p">,</span> <span class="n">DIRS</span><span class="p">,</span> <span class="n">BASES</span><span class="p">,</span> <span class="n">BASE_LOG</span><span class="p">,</span> <span class="n">BASE_LOGIC</span><span class="p">,</span> <span class="n">BASE_MODULE</span><span class="p">,</span> <span class="n">BASE_PLUGIN</span><span class="p">,</span> <span class="n">BASE_SH</span><span class="p">,</span> <span class="n">DIR_CACHE</span><span class="p">,</span> <span class="n">DIR_ENV</span><span class="p">,</span> <span class="n">DIR_ETC</span><span class="p">,</span> <span class="n">DIR_ITEMS</span><span class="p">,</span> <span class="n">DIR_LIB</span><span class="p">,</span> <span class="n">DIR_LOGICS</span><span class="p">,</span> <span class="n">DIR_MODULES</span><span class="p">,</span> <span class="n">DIR_PLUGINS</span><span class="p">,</span> <span class="n">DIR_SCENES</span><span class="p">,</span> <span class="n">DIR_STRUCTS</span><span class="p">,</span> <span class="n">DIR_TPL</span><span class="p">,</span> <span class="n">DIR_UF</span><span class="p">,</span> <span class="n">DIR_VAR</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lib.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">YAML_FILE</span><span class="p">,</span>
+    <span class="n">DEFAULT_FILE</span><span class="p">,</span>
+    <span class="n">DIRS</span><span class="p">,</span>
+    <span class="n">BASES</span><span class="p">,</span>
+    <span class="n">BASE_LOG</span><span class="p">,</span>
+    <span class="n">BASE_LOGIC</span><span class="p">,</span>
+    <span class="n">BASE_MODULE</span><span class="p">,</span>
+    <span class="n">BASE_PLUGIN</span><span class="p">,</span>
+    <span class="n">BASE_SH</span><span class="p">,</span>
+    <span class="n">DIR_CACHE</span><span class="p">,</span>
+    <span class="n">DIR_ENV</span><span class="p">,</span>
+    <span class="n">DIR_ETC</span><span class="p">,</span>
+    <span class="n">DIR_ITEMS</span><span class="p">,</span>
+    <span class="n">DIR_LIB</span><span class="p">,</span>
+    <span class="n">DIR_LOGICS</span><span class="p">,</span>
+    <span class="n">DIR_MODULES</span><span class="p">,</span>
+    <span class="n">DIR_PLUGINS</span><span class="p">,</span>
+    <span class="n">DIR_SCENES</span><span class="p">,</span>
+    <span class="n">DIR_STRUCTS</span><span class="p">,</span>
+    <span class="n">DIR_TPL</span><span class="p">,</span>
+    <span class="n">DIR_UF</span><span class="p">,</span>
+    <span class="n">DIR_VAR</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">lib.userfunctions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">uf</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lib.systeminfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Systeminfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -5719,7 +5772,8 @@
 <span class="c1"># Classes</span>
 <span class="c1">#####################################################################</span>
 
-<div class="viewcode-block" id="SmartHome"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">SmartHome</span><span class="p">():</span>
+
+<div class="viewcode-block" id="SmartHome"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">SmartHome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SmartHome ist the main class of SmartHomeNG. All other objects can be addressed relative to</span>
 <span class="sd">    the main oject, which is an instance of this class. Mostly it is referred to as ``sh``, ``_sh`` or ``smarthome``.</span>
@@ -5821,9 +5875,8 @@
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_dir</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o775</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SmartHome.check_migrate_config"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.check_migrate_config">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_migrate_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; test for new directory setup and migrate if config_etc is set &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;test for new directory setup and migrate if config_etc is set&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_etc</span><span class="p">:</span>
-
             <span class="c1"># setup dir names</span>
             <span class="n">dirnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;logics&#39;</span><span class="p">,</span> <span class="s1">&#39;structs&#39;</span><span class="p">,</span> <span class="s1">&#39;scenes&#39;</span><span class="p">,</span> <span class="s1">&#39;functions&#39;</span><span class="p">]</span>
             <span class="n">old_dirs</span> <span class="o">=</span> <span class="p">{</span><span class="nb">dir</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE</span><span class="p">,</span> <span class="nb">dir</span><span class="p">)</span> <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">dirnames</span><span class="p">}</span>
@@ -5858,9 +5911,11 @@
 
                     <span class="k">if</span> <span class="n">err_files</span><span class="p">:</span>
                         <span class="n">many</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">err_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;While migrating </span><span class="si">{</span><span class="n">conf</span><span class="si">}</span><span class="s2"> dir, the following file</span><span class="si">{</span><span class="s1">&#39;s&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">many</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2"> caused conflicts with existing files: &quot;</span><span class="p">);</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">of</span><span class="si">}</span><span class="s1"> (existing target: </span><span class="si">{</span><span class="n">nf</span><span class="si">}</span><span class="s1">)&#39;</span> <span class="k">for</span> <span class="n">of</span><span class="p">,</span> <span class="n">nf</span> <span class="ow">in</span> <span class="n">err_files</span><span class="p">]))</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please check and move or remove files manually&quot;</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s1">&#39;While migrating </span><span class="si">{</span><span class="n">conf</span><span class="si">}</span><span class="s1"> dir, the following file</span><span class="si">{</span><span class="s2">&quot;s&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">many</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="si">}</span><span class="s1"> caused conflicts with existing files: &#39;</span>
+                        <span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">of</span><span class="si">}</span><span class="s1"> (existing target: </span><span class="si">{</span><span class="n">nf</span><span class="si">}</span><span class="s1">)&#39;</span> <span class="k">for</span> <span class="n">of</span><span class="p">,</span> <span class="n">nf</span> <span class="ow">in</span> <span class="n">err_files</span><span class="p">]))</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Please check and move or remove files manually&#39;</span><span class="p">)</span>
                         <span class="n">errs</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">odir</span><span class="o">.</span><span class="n">rmdir</span><span class="p">()</span>
@@ -5889,9 +5944,14 @@
         <span class="k">global</span> <span class="n">_sh_instance</span>
         <span class="k">if</span> <span class="n">_sh_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
             <span class="n">curframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
             <span class="n">calframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">curframe</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;A second &#39;smarthome&#39; object has been created. There should only be ONE instance of class &#39;smarthome&#39;!!! Called from: </span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">calframe</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">calframe</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s2">&quot;A second &#39;smarthome&#39; object has been created. There should only be ONE instance of class &#39;smarthome&#39;!!! Called from: </span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">calframe</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">calframe</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_sh_instance</span> <span class="o">=</span> <span class="bp">self</span>
 
@@ -5906,7 +5966,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">initialize_dir_vars</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_directories</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logs</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">Logs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>   <span class="c1"># initialize object for memory logs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logs</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">Logs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># initialize object for memory logs</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span><span class="p">)</span>
 
@@ -5947,8 +6007,8 @@
             <span class="k">del</span> <span class="n">config</span>  <span class="c1"># clean up</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># no valid smarthome.yaml found</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No base configuration - terminating SmartHomeNG&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hint: Are Language (preferably: DE_de) and character (UTF-8) set configured in operating system?&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No base configuration - terminating SmartHomeNG&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hint: Are Language (preferably: DE_de) and character (UTF-8) set configured in operating system?&#39;</span><span class="p">)</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_module_paths&#39;</span><span class="p">):</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_paths</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_paths</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="k">else</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_paths</span><span class="p">])</span>
@@ -5970,7 +6030,7 @@
         <span class="c1"># at this point self._config_etc is of type bool</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialize_dir_vars</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_conf_directories</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_migrate_config</span><span class="p">()</span>            
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_migrate_config</span><span class="p">()</span>
 
         <span class="c1">#############################################################</span>
         <span class="c1"># Setting (local) tz if set in smarthome.yaml</span>
@@ -5986,6 +6046,7 @@
         <span class="c1"># get shng version information</span>
         <span class="c1"># shngversion.get_plugins_version() may only be called after logging is initialized</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">bin.shngversion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">shngversion</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">branch</span> <span class="o">=</span> <span class="n">shngversion</span><span class="o">.</span><span class="n">get_shng_branch</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">shngversion</span><span class="o">.</span><span class="n">get_shng_version</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins_version</span> <span class="o">=</span> <span class="n">shngversion</span><span class="o">.</span><span class="n">get_plugins_version</span><span class="p">()</span>
@@ -6004,8 +6065,8 @@
             <span class="n">lib</span><span class="o">.</span><span class="n">daemon</span><span class="o">.</span><span class="n">daemonize</span><span class="p">(</span><span class="n">PIDFILE</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">lib</span><span class="o">.</span><span class="n">daemon</span><span class="o">.</span><span class="n">write_pidfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">PIDFILE</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MODE = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--------------------   Init SmartHomeNG </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">   --------------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MODE = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--------------------   Init SmartHomeNG </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s1">   --------------------&#39;</span><span class="p">)</span>
 
         <span class="c1">#############################################################</span>
         <span class="c1"># Write startup message to log(s)</span>
@@ -6013,44 +6074,47 @@
         <span class="n">virtual_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">if</span> <span class="n">lib</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">running_virtual</span><span class="p">():</span>
             <span class="n">virtual_text</span> <span class="o">=</span> <span class="s1">&#39; in virtual environment&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--------------------   Init SmartHomeNG </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">   --------------------&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--------------------   Init SmartHomeNG </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s1">   --------------------&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">logsetup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with logging config: </span><span class="si">{</span><span class="n">logsetup</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running in Python interpreter &#39;v</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">PYTHON_VERSION</span><span class="si">}</span><span class="s2">&#39;</span><span class="si">{</span><span class="n">virtual_text</span><span class="si">}</span><span class="s2">, from directory </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Problem with logging config: </span><span class="si">{</span><span class="n">logsetup</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Running in Python interpreter &#39;v</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">PYTHON_VERSION</span><span class="si">}</span><span class="s2">&#39;</span><span class="si">{</span><span class="n">virtual_text</span><span class="si">}</span><span class="s2">, from directory </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - operating system &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">systeminfo</span><span class="o">.</span><span class="n">get_osname</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39; (pid=</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">systeminfo</span><span class="o">.</span><span class="n">get_rasppi_info</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - on &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">systeminfo</span><span class="o">.</span><span class="n">get_cpubrand</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - on &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">systeminfo</span><span class="o">.</span><span class="n">get_rasppi_info</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="s1">&#39;NOTICE&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">31</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - Loglevel NOTICE is set to value </span><span class="si">{</span><span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="s1">&#39;NOTICE&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> because handler of root logger is set to level WARNING or higher - Set level of handler &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logs</span><span class="o">.</span><span class="n">root_handler_name</span><span class="si">}</span><span class="s2">&#39; to &#39;NOTICE&#39;!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; - Loglevel NOTICE is set to value </span><span class="si">{</span><span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="s1">&#39;NOTICE&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> because handler of root logger is set to level WARNING or higher - Set level of handler &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logs</span><span class="o">.</span><span class="n">root_handler_name</span><span class="si">}</span><span class="s2">&#39; to &#39;NOTICE&#39;!&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">default_encoding</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">getpreferredencoding</span><span class="p">()</span>  <span class="c1"># returns cp1252 on windows</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">default_encoding</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;UTF8&#39;</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">]):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Encoding should be UTF8 but is instead </span><span class="si">{</span><span class="n">default_encoding</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">default_encoding</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;UTF8&#39;</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Encoding should be UTF8 but is instead </span><span class="si">{</span><span class="n">default_encoding</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extern_conf_dir</span> <span class="o">!=</span> <span class="n">BASE</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using config dir </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_extern_conf_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using config dir </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_extern_conf_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="c1">#############################################################</span>
         <span class="c1"># Initialize multi-language support</span>
         <span class="n">lib</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">initialize_translations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_language</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fallback_language_order</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Translation initialized&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Translation initialized&#39;</span><span class="p">)</span>
         <span class="c1"># make reload_translations() method publicly available for call by eval-syntax-checker</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reload_translations</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">reload_translations</span>
 
         <span class="c1">#############################################################</span>
         <span class="c1"># Test if plugins are installed</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_plugins_dir</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Plugin folder does not exist!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Plugin folder does not exist!&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please create folder &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_plugins_dir</span><span class="si">}</span><span class="s2">&#39; and install plugins.&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Aborting&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Aborting&#39;</span><span class="p">)</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_plugins_dir</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No plugins found in folder &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_plugins_dir</span><span class="si">}</span><span class="s2">&#39;. Please install plugins.&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Aborting&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Aborting&#39;</span><span class="p">)</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
 
         <span class="c1">#############################################################</span>
         <span class="c1"># test if needed Python packages for configured plugins</span>
@@ -6064,22 +6128,30 @@
         <span class="n">base_reqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shpypi</span><span class="o">.</span><span class="n">test_base_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">base_reqs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">(</span><span class="s1">&#39;SmartHomeNG (Python package installation)&#39;</span><span class="p">)</span>
-            <span class="n">exit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>    <span class="c1"># exit code 5 -&gt; for systemctl to restart SmartHomeNG</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># exit code 5 -&gt; for systemctl to restart SmartHomeNG</span>
         <span class="k">elif</span> <span class="n">base_reqs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Python package requirements for modules are not met and unable to install base requirements&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Do you have multiple Python3 Versions installed? Maybe PIP3 looks into a wrong Python environment. Try to configure pip_command in etc/smarthome.yaml&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Aborting&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s1">&#39;Python package requirements for modules are not met and unable to install base requirements&#39;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s1">&#39;Do you have multiple Python3 Versions installed? Maybe PIP3 looks into a wrong Python environment. Try to configure pip_command in etc/smarthome.yaml&#39;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Aborting&#39;</span><span class="p">)</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">plugin_reqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shpypi</span><span class="o">.</span><span class="n">test_conf_plugins_requirements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_plugin_conf_basename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plugins_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plugin_reqs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">(</span><span class="s1">&#39;SmartHomeNG (Python package installation)&#39;</span><span class="p">)</span>
-            <span class="n">exit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>    <span class="c1"># exit code 5 -&gt; for systemctl to restart SmartHomeNG</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># exit code 5 -&gt; for systemctl to restart SmartHomeNG</span>
         <span class="k">elif</span> <span class="n">plugin_reqs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Python package requirements for configured plugins are not met and unable to install those requirements&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Do you have multiple Python3 Versions installed? Maybe PIP3 looks into a wrong Python environment. Try to configure pip_command in etc/smarthome.yaml&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s1">&#39;Python package requirements for configured plugins are not met and unable to install those requirements&#39;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s1">&#39;Do you have multiple Python3 Versions installed? Maybe PIP3 looks into a wrong Python environment. Try to configure pip_command in etc/smarthome.yaml&#39;</span>
+            <span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Aborting&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Aborting&#39;</span><span class="p">)</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Initializing: Requirements checked&#39;</span><span class="p">}</span>
@@ -6093,7 +6165,7 @@
         <span class="c1"># Check Time</span>
         <span class="k">while</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="o">&lt;</span> <span class="s1">&#39;2024-01-01&#39;</span><span class="p">:</span>  <span class="c1"># XXX update date</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Waiting for updated time.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for updated time.&#39;</span><span class="p">)</span>
 
         <span class="c1">#############################################################</span>
         <span class="c1"># Catching Exceptions</span>
@@ -6102,7 +6174,7 @@
         <span class="c1">#############################################################</span>
         <span class="c1"># Initialize holidays</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">_initialize_holidays</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s2">&quot; - &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">log_msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s1">&#39; - &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">log_msg</span><span class="p">)</span>
 
         <span class="c1">#############################################################</span>
         <span class="c1"># check processor speed (if not done before)</span>
@@ -6116,12 +6188,13 @@
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">utf</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANG&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">utf</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">]):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Locale for the enviroment is not set to a valid value. Set the LANG environment variable to a value supporting UTF-8&quot;</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Locale for the enviroment is not set. Defaulting to en_US.UTF-8&quot;</span><span class="p">)</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LANG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;en_US.UTF-8&#39;</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LC_ALL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;en_US.UTF-8&#39;</span>
-
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s1">&#39;Locale for the enviroment is not set to a valid value. Set the LANG environment variable to a value supporting UTF-8&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Locale for the enviroment is not set. Defaulting to en_US.UTF-8&#39;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;en_US.UTF-8&#39;</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LC_ALL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;en_US.UTF-8&#39;</span>
 
         <span class="c1">#############################################################</span>
         <span class="c1"># Link Tools</span>
@@ -6141,13 +6214,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_sun_neverup_delta</span> <span class="o">=</span> <span class="mf">0.00001</span>
 
         <span class="k">if</span> <span class="n">lib</span><span class="o">.</span><span class="n">orb</span><span class="o">.</span><span class="n">ephem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not find/use ephem!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Could not find/use ephem!&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_lon&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_lat&#39;</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No latitude/longitude specified =&gt; you could not use the sun and moon object.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sun</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">orb</span><span class="o">.</span><span class="n">Orb</span><span class="p">(</span><span class="s1">&#39;sun&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elev</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sun_neverup_delta</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">moon</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">orb</span><span class="o">.</span><span class="n">Orb</span><span class="p">(</span><span class="s1">&#39;moon&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elev</span><span class="p">)</span>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -6158,7 +6230,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat</span><span class="p">)</span>
 
-
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6167,7 +6238,6 @@
 <span class="sd">        :return: longitude (from smarthome.yaml)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon</span><span class="p">)</span>
-
 
 <div class="viewcode-block" id="SmartHome.get_defaultlanguage"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_defaultlanguage">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_defaultlanguage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6203,7 +6273,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.get_confdir"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_confdir">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_confdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to return the config directory (that contain &#39;etc&#39;, &#39;logics&#39; and &#39;items&#39; subdirectories)</span>
@@ -6213,7 +6282,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extern_conf_dir</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.get_etcdir"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_etcdir">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_etcdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to return the etc config directory</span>
@@ -6221,7 +6289,6 @@
 <span class="sd">        :return: Config directory as an absolute path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_etc_dir</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.get_structsdir"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_structsdir">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_structsdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6239,7 +6306,6 @@
 <span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_dir</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.get_config_dir"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_config_dir">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_config_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6263,7 +6329,6 @@
 
         <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.get_config_file"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_config_file">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="n">YAML_FILE</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to return a config file used by SmartHomeNG</span>
@@ -6280,7 +6345,6 @@
 
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_etcdir</span><span class="p">(),</span> <span class="n">config</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.getBaseDir"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.getBaseDir">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">getBaseDir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to return the base directory of the running SmartHomeNG installation</span>
@@ -6292,7 +6356,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;sh.get_basedir()&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.checkConfigFiles"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.checkConfigFiles">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">checkConfigFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6318,7 +6381,6 @@
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">default</span><span class="p">):</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">conf_basename</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.init_logging"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.init_logging">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">init_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf_basename</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function initiates the logging for SmartHomeNG.</span>
@@ -6329,14 +6391,14 @@
 
         <span class="k">if</span> <span class="n">logsetup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">conf_basename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_conf_basename</span> <span class="o">+</span> <span class="n">YAML_FILE</span> <span class="o">+</span> <span class="s1">&#39;.default&#39;</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       Trying default logging configuration from:&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;       </span><span class="si">{</span><span class="n">conf_basename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;       Trying default logging configuration from:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;       </span><span class="si">{</span><span class="n">conf_basename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">logs</span><span class="o">.</span><span class="n">configure_logging</span><span class="p">(</span><span class="s1">&#39;logging.yaml.default&#39;</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ABORTING&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ABORTING&#39;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">()</span>
                 <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting with default logging configuration&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting with default logging configuration&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;interactive&#39;</span><span class="p">:</span>  <span class="c1"># remove default stream handler</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
@@ -6347,7 +6409,6 @@
         <span class="k">elif</span> <span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;quiet&#39;</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">logsetup</span></div>
-
 
     <span class="c1">#################################################################</span>
     <span class="c1"># Process Methods</span>
@@ -6397,7 +6458,7 @@
         <span class="c1">#############################################################</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Starting: Initializing and starting loadable modules&#39;</span><span class="p">}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Init loadable Modules&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Init loadable Modules&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modules</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">Modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_conf_basename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
@@ -6418,8 +6479,8 @@
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&gt; Start initialization of plugins&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start initialization of plugins&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&gt; Start initialization of plugins&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Start initialization of plugins&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">Plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_plugin_conf_basename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_load_complete</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -6429,14 +6490,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Starting: Loading item definitions&#39;</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&gt; Start initialization of items&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start initialization of items&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---&gt; Start initialization of items&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Start initialization of items&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">load_itemdefinitions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_etc_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plugins_dir</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">item_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">item_count</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;---&gt; Items initialization finished, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">item_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> items loaded&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Items initialization finished, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">item_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> items loaded&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;---&gt; Items initialization finished, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">item_count</span><span class="p">()</span><span class="si">}</span><span class="s1"> items loaded&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Items initialization finished, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">item_count</span><span class="p">()</span><span class="si">}</span><span class="s1"> items loaded&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item_load_complete</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1">#############################################################</span>
@@ -6479,8 +6540,8 @@
         <span class="c1">#############################################################</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Running&#39;</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------------   SmartHomeNG initialization finished   --------------------&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s2">&quot;--------------------   SmartHomeNG initialization finished   --------------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--------------------   SmartHomeNG initialization finished   --------------------&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s1">&#39;--------------------   SmartHomeNG initialization finished   --------------------&#39;</span><span class="p">)</span>
 
         <span class="c1"># need to keep the main thread running, so just do nothing...</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive</span><span class="p">:</span>
@@ -6493,7 +6554,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Stopping&#39;</span><span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stop: Number of Threads: </span><span class="si">{</span><span class="n">threading</span><span class="o">.</span><span class="n">activeCount</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;stop: Number of Threads: </span><span class="si">{</span><span class="n">threading</span><span class="o">.</span><span class="n">activeCount</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
@@ -6512,23 +6573,28 @@
             <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;Main&#39;</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">pass</span>
 
         <span class="k">if</span> <span class="n">threading</span><span class="o">.</span><span class="n">active_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">header_logged</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threading</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;Main&#39;</span> <span class="ow">and</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> \
-                        <span class="ow">and</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;modules.websocket.websocket_server&#39;</span> \
-                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;ThreadPoolExecutor&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">thread</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;Main&#39;</span>
+                    <span class="ow">and</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span>
+                    <span class="ow">and</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;modules.websocket.websocket_server&#39;</span>
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;ThreadPoolExecutor&#39;</span><span class="p">)</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">header_logged</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The following threads have not been terminated properly by their plugins (please report to the plugin&#39;s author):&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;The following threads have not been terminated properly by their plugins (please report to the plugin&#39;s author):&quot;</span>
+                        <span class="p">)</span>
                         <span class="n">header_logged</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-Thread: </span><span class="si">{</span><span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, still alive&quot;</span><span class="p">)</span>
-<span class="c1">#            if header_logged:</span>
-<span class="c1">#                self._logger.warning(&quot;SmartHomeNG stopped&quot;)</span>
-<span class="c1">#        else:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s2">&quot;--------------------   SmartHomeNG stopped   --------------------&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-Thread: </span><span class="si">{</span><span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">, still alive&#39;</span><span class="p">)</span>
+        <span class="c1">#            if header_logged:</span>
+        <span class="c1">#                self._logger.warning(&quot;SmartHomeNG stopped&quot;)</span>
+        <span class="c1">#        else:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s1">&#39;--------------------   SmartHomeNG stopped   --------------------&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">33</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Stopped&#39;</span><span class="p">}</span>
 
@@ -6547,16 +6613,18 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;foreground&#39;</span><span class="p">,</span> <span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="s1">&#39;interactive&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
                 <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;, initiated by &#39;</span> <span class="o">+</span> <span class="n">source</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--------------------   SmartHomeNG should restart</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> but is in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="si">}</span><span class="s2"> mode and thus will just try to stop --------------------&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;--------------------   SmartHomeNG should restart</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1"> but is in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="si">}</span><span class="s1"> mode and thus will just try to stop --------------------&#39;</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">30</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Another RESTART is issued, while SmartHomeNG is restarting. Reason: &quot;</span><span class="o">+</span><span class="n">source</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Another RESTART is issued, while SmartHomeNG is restarting. Reason: &#39;</span> <span class="o">+</span> <span class="n">source</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shng_status</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Restarting&#39;</span><span class="p">}</span>
             <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
                 <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;, initiated by &#39;</span> <span class="o">+</span> <span class="n">source</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--------------------   SmartHomeNG restarting</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">   --------------------&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger_main</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--------------------   SmartHomeNG restarting</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">   --------------------&#39;</span><span class="p">)</span>
             <span class="c1"># python_bin could contain spaces (at least on windows)</span>
             <span class="n">python_bin</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
             <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">python_bin</span><span class="p">:</span>
@@ -6564,27 +6632,27 @@
             <span class="n">command</span> <span class="o">=</span> <span class="n">python_bin</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span><span class="p">,</span> <span class="s1">&#39;bin&#39;</span><span class="p">,</span> <span class="s1">&#39;smarthome.py&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; -r&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Restart command = &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">exit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># exit code 5 -&gt; for systemctl to restart SmartHomeNG</span>
             <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">SubprocessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Restart command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39; failed with error </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.list_threads"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.list_threads">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">list_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
         <span class="n">cp_threads</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">http_threads</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threading</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CP Server&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CP Server&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">cp_threads</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;HTTPServer&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">http_threads</span> <span class="o">+=</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;HTTPServer&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">http_threads</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_threads: </span><span class="si">{</span><span class="n">txt</span><span class="si">}</span><span class="s2"> - Number of Threads: </span><span class="si">{</span><span class="n">threading</span><span class="o">.</span><span class="n">activeCount</span><span class="p">()</span><span class="si">}</span><span class="s2"> (CP Server=</span><span class="si">{</span><span class="n">cp_threads</span><span class="si">}</span><span class="s2">, HTTPServer=</span><span class="si">{</span><span class="n">http_threads</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;list_threads: </span><span class="si">{</span><span class="n">txt</span><span class="si">}</span><span class="s1"> - Number of Threads: </span><span class="si">{</span><span class="n">threading</span><span class="o">.</span><span class="n">activeCount</span><span class="p">()</span><span class="si">}</span><span class="s1"> (CP Server=</span><span class="si">{</span><span class="n">cp_threads</span><span class="si">}</span><span class="s1">, HTTPServer=</span><span class="si">{</span><span class="n">http_threads</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threading</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CP Server&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;HTTPServer&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_threads: </span><span class="si">{</span><span class="n">txt</span><span class="si">}</span><span class="s2"> - Thread </span><span class="si">{</span><span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CP Server&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;HTTPServer&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;list_threads: </span><span class="si">{</span><span class="n">txt</span><span class="si">}</span><span class="s1"> - Thread </span><span class="si">{</span><span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span></div>
-
 
     <span class="c1">#################################################################</span>
     <span class="c1"># Item Methods</span>
@@ -6592,7 +6660,6 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">get_toplevel_items</span><span class="p">()</span>
-
 
     <span class="c1">#################################################################</span>
     <span class="c1"># Event Methods</span>
@@ -6615,7 +6682,6 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__event_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">method</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__all_listeners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.return_event_listeners"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.return_event_listeners">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">return_event_listeners</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6640,20 +6706,22 @@
     <span class="c1">#################################################################</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_maintenance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;_maintenance: Started&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;_maintenance: Started&#39;</span><span class="p">)</span>
         <span class="n">references</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_object_refcount</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_maintenance: Object references: </span><span class="si">{</span><span class="n">references</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;_maintenance: Object references: </span><span class="si">{</span><span class="n">references</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_garbage_collection</span><span class="p">()</span>
         <span class="n">references</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_object_refcount</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_maintenance: Object references: </span><span class="si">{</span><span class="n">references</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;_maintenance: Object references: </span><span class="si">{</span><span class="n">references</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_excepthook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
-        <span class="n">mytb</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">tb</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhandled exception: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="se">\n</span><span class="s2">running SmartHomeNG </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="se">\n</span><span class="s2">Exception: </span><span class="si">{</span><span class="n">mytb</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">mytb</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">tb</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Unhandled exception: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="se">\n</span><span class="s1">running SmartHomeNG </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="se">\n</span><span class="s1">Exception: </span><span class="si">{</span><span class="n">mytb</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_garbage_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">dbghigh</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Garbage collector: collected </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> objects.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">dbghigh</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Garbage collector: collected </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1"> objects.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_export_threadinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="s1">&#39;threadinfo.json&#39;</span><span class="p">)</span>
@@ -6665,7 +6733,7 @@
                 <span class="n">at</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">ident</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">at</span><span class="p">[</span><span class="s1">&#39;native_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">native_id</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                     <span class="n">at</span><span class="p">[</span><span class="s1">&#39;native_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
                 <span class="n">at</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span>
                 <span class="n">all_threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">at</span><span class="p">)</span>
@@ -6690,7 +6758,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">objects</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;object_refcount - sort: Exception </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;object_refcount - sort: Exception </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">objects</span></div>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_object_refcount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -6698,13 +6766,23 @@
         <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
                 <span class="c1"># skip deprecation warning on MacOS, these ciphers shouldn&#39;t be used anyway</span>
-                <span class="k">if</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;cryptography.hazmat.primitives.ciphers.algorithms&#39;</span> <span class="ow">and</span> <span class="n">sym</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SECT233K1&#39;</span><span class="p">,</span> <span class="s1">&#39;Blowfish&#39;</span><span class="p">,</span> <span class="s1">&#39;CAST5&#39;</span><span class="p">,</span> <span class="s1">&#39;IDEA&#39;</span><span class="p">,</span> <span class="s1">&#39;SEED&#39;</span><span class="p">,</span> <span class="s1">&#39;TripleDES&#39;</span><span class="p">,</span> <span class="s1">&#39;ARC4&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;cryptography.hazmat.primitives.asymmetric.ec&#39;</span> <span class="ow">and</span> <span class="n">sym</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;SECT&#39;</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;cryptography.hazmat.primitives.ciphers.algorithms&#39;</span> <span class="ow">and</span> <span class="n">sym</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s1">&#39;SECT233K1&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Blowfish&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;CAST5&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;IDEA&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;TripleDES&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;ARC4&#39;</span><span class="p">,</span>
+                <span class="p">]:</span>
                     <span class="k">continue</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">sym</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
                         <span class="n">objects</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">pass</span>
         <span class="k">return</span> <span class="n">objects</span>
 
@@ -6727,14 +6805,14 @@
             <span class="n">n_func</span> <span class="o">=</span> <span class="s1">&#39;- use the &#39;</span> <span class="o">+</span> <span class="n">n_func</span> <span class="o">+</span> <span class="s1">&#39; instead&#39;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">d_test</span> <span class="o">=</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">f_locals</span><span class="p">[</span><span class="s1">&#39;self&#39;</span><span class="p">]</span><span class="o">.</span><span class="vm">__module__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
             <span class="n">d_test</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
         <span class="n">called_by</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
         <span class="n">in_class</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">in_class</span> <span class="o">=</span> <span class="s1">&#39;class &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">f_locals</span><span class="p">[</span><span class="s1">&#39;self&#39;</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="n">d_test</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
             <span class="n">in_class</span> <span class="o">=</span> <span class="s1">&#39;a logic?&#39;</span> <span class="o">+</span> <span class="n">d_test</span>
         <span class="k">if</span> <span class="n">called_by</span> <span class="o">==</span> <span class="s1">&#39;&lt;module&gt;&#39;</span><span class="p">:</span>
             <span class="n">called_by</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
@@ -6749,16 +6827,17 @@
                     <span class="k">break</span>
                 <span class="n">called_by</span> <span class="o">+=</span> <span class="s1">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="n">c_b</span>
 
-<span class="c1">#            called_by = str(sys._getframe(3).f_code.co_name)</span>
+        <span class="c1">#            called_by = str(sys._getframe(3).f_code.co_name)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;dep_id_list&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dep_id_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">id_str</span> <span class="o">=</span> <span class="n">d_func</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">in_class</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">called_by</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">id_str</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_id_list</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DEPRECATED: Used function &#39;</span><span class="si">{</span><span class="n">d_func</span><span class="si">}</span><span class="s2">&#39;, called in &#39;</span><span class="si">{</span><span class="n">in_class</span><span class="si">}</span><span class="s2">&#39; by &#39;</span><span class="si">{</span><span class="n">called_by</span><span class="si">}</span><span class="s2">&#39; </span><span class="si">{</span><span class="n">n_func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">id_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_id_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DEPRECATED: Used function &#39;</span><span class="si">{</span><span class="n">d_func</span><span class="si">}</span><span class="s2">&#39;, called in &#39;</span><span class="si">{</span><span class="n">in_class</span><span class="si">}</span><span class="s2">&#39; by &#39;</span><span class="si">{</span><span class="n">called_by</span><span class="si">}</span><span class="s2">&#39; </span><span class="si">{</span><span class="n">n_func</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dep_id_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_str</span><span class="p">)</span>
         <span class="k">return</span>
-
 
     <span class="c1">#####################################################################</span>
     <span class="c1"># THE FOLLOWING METHODS ARE DEPRECATED, remove in 1.12</span>
@@ -6780,9 +6859,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;lib.utils.Utils.to_bool(string) function&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">lib</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">Utils</span><span class="o">.</span><span class="n">to_bool</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span></div>
-
 
     <span class="c1">#################################################################</span>
     <span class="c1"># Item Methods</span>
@@ -6802,7 +6880,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Items-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.return_item"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.return_item">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">return_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to return the item for a given path</span>
@@ -6818,9 +6895,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Items-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">return_item</span><span class="p">(</span><span class="n">string</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.return_items"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.return_items">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">return_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;</span>
 <span class="sd">        Function to return a list with all items</span>
 
 <span class="sd">        DEPRECATED - Use the Items-API instead</span>
@@ -6830,7 +6906,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Items-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">return_items</span><span class="p">()</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.match_items"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.match_items">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">match_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6846,21 +6921,21 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Items-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">match_items</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span></div>
-<span class="c1">#        regex, __, attr = regex.partition(&#39;:&#39;)</span>
-<span class="c1">#        regex = regex.replace(&#39;.&#39;, &#39;\.&#39;).replace(&#39;*&#39;, &#39;.*&#39;) + &#39;$&#39;</span>
-<span class="c1">#        regex = re.compile(regex)</span>
-<span class="c1">#        attr, __, val = attr.partition(&#39;[&#39;)</span>
-<span class="c1">#        val = val.rstrip(&#39;]&#39;)</span>
-<span class="c1">#        if attr != &#39;&#39; and val != &#39;&#39;:</span>
-<span class="c1">#            return [self.__item_dict[item] for item in self.__items if regex.match(item) and attr in self.__item_dict[item].conf and ((type(self.__item_dict[item].conf[attr]) in [list,dict] and val in self.__item_dict[item].conf[attr]) or (val == self.__item_dict[item].conf[attr]))]</span>
-<span class="c1">#        elif attr != &#39;&#39;:</span>
-<span class="c1">#            return [self.__item_dict[item] for item in self.__items if regex.match(item) and attr in self.__item_dict[item].conf]</span>
-<span class="c1">#        else:</span>
-<span class="c1">#            return [self.__item_dict[item] for item in self.__items if regex.match(item)]</span>
 
+    <span class="c1">#        regex, __, attr = regex.partition(&#39;:&#39;)</span>
+    <span class="c1">#        regex = regex.replace(&#39;.&#39;, &#39;\.&#39;).replace(&#39;*&#39;, &#39;.*&#39;) + &#39;$&#39;</span>
+    <span class="c1">#        regex = re.compile(regex)</span>
+    <span class="c1">#        attr, __, val = attr.partition(&#39;[&#39;)</span>
+    <span class="c1">#        val = val.rstrip(&#39;]&#39;)</span>
+    <span class="c1">#        if attr != &#39;&#39; and val != &#39;&#39;:</span>
+    <span class="c1">#            return [self.__item_dict[item] for item in self.__items if regex.match(item) and attr in self.__item_dict[item].conf and ((type(self.__item_dict[item].conf[attr]) in [list,dict] and val in self.__item_dict[item].conf[attr]) or (val == self.__item_dict[item].conf[attr]))]</span>
+    <span class="c1">#        elif attr != &#39;&#39;:</span>
+    <span class="c1">#            return [self.__item_dict[item] for item in self.__items if regex.match(item) and attr in self.__item_dict[item].conf]</span>
+    <span class="c1">#        else:</span>
+    <span class="c1">#            return [self.__item_dict[item] for item in self.__items if regex.match(item)]</span>
 
 <div class="viewcode-block" id="SmartHome.find_items"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.find_items">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;</span>
 <span class="sd">        Function to find items that match the specified configuration</span>
 
 <span class="sd">        DEPRECATED - Use the Items-API instead</span>
@@ -6873,7 +6948,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Items-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">find_items</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.find_children"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.find_children">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">conf</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6892,7 +6966,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Items-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">find_children</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span></div>
 
-
     <span class="c1">#################################################################</span>
     <span class="c1"># Module Methods</span>
     <span class="c1">#################################################################</span>
@@ -6907,7 +6980,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Modules-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">return_modules</span><span class="p">()</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.get_module"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_module">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6925,7 +6997,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Modules-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get_module</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-
     <span class="c1">#################################################################</span>
     <span class="c1"># Plugin Methods</span>
     <span class="c1">#################################################################</span>
@@ -6942,7 +7013,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Plugins-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">return_plugins</span><span class="p">()</span></div>
 
-
     <span class="c1">#################################################################</span>
     <span class="c1"># Logic Methods</span>
     <span class="c1">#################################################################</span>
@@ -6954,7 +7024,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Logics-API&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logics</span><span class="o">.</span><span class="n">reload_logics</span><span class="p">(</span><span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.return_logic"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.return_logic">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">return_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -6971,7 +7040,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Logics-API&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logics</span><span class="o">.</span><span class="n">return_logic</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.return_logics"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.return_logics">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">return_logics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the names of all loaded logics</span>
@@ -6983,7 +7051,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Logics-API&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logics</span><span class="o">.</span><span class="n">return_logics</span><span class="p">()</span></div>
-
 
     <span class="c1">#################################################################</span>
     <span class="c1"># Time Methods</span>
@@ -7014,7 +7081,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Shtime-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">()</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.utcnow"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.utcnow">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">utcnow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the actual time in GMT</span>
@@ -7027,7 +7093,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Shtime-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span></div>
-
 
 <div class="viewcode-block" id="SmartHome.utcinfo"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.utcinfo">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">utcinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -7042,7 +7107,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Shtime-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">utcinfo</span><span class="p">()</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.runtime"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.runtime">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">runtime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the uptime of SmartHomeNG</span>
@@ -7056,13 +7120,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deprecated_warning</span><span class="p">(</span><span class="s1">&#39;Shtime-API&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">runtime</span><span class="p">()</span></div>
 
-
 <div class="viewcode-block" id="SmartHome.get_instance"><a class="viewcode-back" href="../../entwicklung/core/core_shng.html#lib.smarthome.SmartHome.get_instance">[Doku]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">():</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; returns the instance of running smarthome class &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;returns the instance of running smarthome class&quot;&quot;&quot;</span>
         <span class="k">global</span> <span class="n">_sh_instance</span>
         <span class="k">return</span> <span class="n">_sh_instance</span></div></div>
-
 </pre></div>
 
            </div>

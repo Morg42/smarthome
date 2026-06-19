@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modules.admin.api_plugins &mdash; Dokumentation v1.12.0 v1.12.0 (Stand 09. Mai 2026) Dokumentation</title>
+  <title>modules.admin.api_plugins &mdash; Dokumentation v1.12.1 v1.12.1 (Stand 18. Juni 2026) Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
@@ -39,7 +39,7 @@
           
           
           <a href="../../../index.html" class="icon icon-home">
-            Dokumentation v1.12.0
+            Dokumentation v1.12.1
               <img src="../../../_static/logo_long_inverse3.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -52,8 +52,9 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../einleitung.html">Einleitung</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../was_ist_neu.html">Neuerungen im Release v1.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../was_ist_neu.html">Neuerungen im Release v1.12.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../was_war_neu.html">Neuerungen der letzten Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../was_war_neu.html#neuerungen-im-release-v1-12">Neuerungen im Release v1.12</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../was_war_neu.html#neuerungen-im-release-v1-11">Neuerungen im Release v1.11</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../was_war_neu.html#neuerungen-im-release-v1-10">Neuerungen im Release v1.10</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../was_war_neu.html#neuerungen-bei-plugins">Neuerungen bei Plugins</a><ul>
@@ -396,6 +397,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../../konfiguration/item_structs.html#teilweises-einbinden-von-structs-partial-struct-inclusion-new">Teilweises Einbinden von structs (partial struct inclusion) <span class="redsup">new</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../konfiguration/item_structs.html#verwendung-mehrerer-definitionsdateien">Verwendung mehrerer Definitionsdateien</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../konfiguration/item_structs.html#beispiele">Beispiele</a></li>
 </ul>
@@ -4031,6 +4033,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../tools/tools_build_requirements.html">build_requirements.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tools/tools_conf_to_yaml_converter.html">conf_to_yaml_converter.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tools/tools_getshngpid.html">getshngpid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/tools_install_hooks.html">install-hooks.sh</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/tools_install_hooks.html#wozu-dienen-die-hooks">Wozu dienen die Hooks?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/tools_install_hooks.html#scope-der-checks">Scope der Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/tools_install_hooks.html#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/tools_install_hooks.html#push-trotzdem-erzwingen">Push trotzdem erzwingen</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tools/tools_plugin_metadata_checker.html">plugin_metadata_checker.py</a></li>
 </ul>
 </li>
@@ -5208,6 +5217,27 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../../release/1_12_1.html">Release 1.12.1 - 06. Mai 2026</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../release/1_12_1.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../release/1_12_1.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../release/1_12_1.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../release/1_12_1.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../release/1_12_1.html#allgemein">Allgemein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../release/1_12_1.html#updates-im-core">Updates im Core</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../release/1_12_1.html#anderungen-an-plugins">Änderungen an Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../release/1_12_1.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../release/1_12_1.html#dokumentation">Dokumentation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../release/1_12_1.html#module-admin">module.admin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../../release/1_12_0.html">Release 1.12.0 - 06. Mai 2026</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../release/1_12_0.html#uberblick">Überblick</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../release/1_12_0.html#minimum-python-version">Minimum Python Version</a></li>
@@ -5597,7 +5627,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dokumentation v1.12.0</a>
+          <a href="../../../index.html">Dokumentation v1.12.1</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -5655,7 +5685,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">lib.plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plugins</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metadata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lib.model.smartplugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">SmartPlugin</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">lib.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">KEY_CLASS_PATH</span><span class="p">,</span> <span class="n">YAML_FILE</span><span class="p">,</span> <span class="n">DIR_PLUGINS</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lib.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">KEY_CLASS_PATH</span><span class="p">,</span> <span class="n">YAML_FILE</span><span class="p">,</span> <span class="n">DIR_PLUGINS</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.rest</span><span class="w"> </span><span class="kn">import</span> <span class="n">RESTResource</span>
 
@@ -5665,11 +5695,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_sh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_basedir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_config_dir</span><span class="p">(</span><span class="n">DIR_PLUGINS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
+            <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span>
-
 
     <span class="c1"># ======================================================================</span>
     <span class="c1">#  GET /api/plugins</span>
@@ -5680,20 +5711,18 @@
 
 <span class="sd">        return an object with type info about all installed plugins</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PluginsController(): read&quot;</span><span class="p">)</span>
-
-        <span class="n">default_language</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_defaultlanguage</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;PluginsController(): read&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span> <span class="o">==</span> <span class="p">{}:</span>
             <span class="n">plugins_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span><span class="p">))</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;- plugins_list_sorted = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plugins_list</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;- plugins_list_sorted = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plugins_list</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plugins_list</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s1">&#39;plugin.yaml&#39;</span><span class="p">)):</span>
                         <span class="n">plg_yaml</span> <span class="o">=</span> <span class="n">shyaml</span><span class="o">.</span><span class="n">yaml_load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s1">&#39;plugin.yaml&#39;</span><span class="p">)))</span>
                         <span class="k">if</span> <span class="n">plg_yaml</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;- no valid plugin.yaml found for plugin </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;- no valid plugin.yaml found for plugin </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">plg_data</span> <span class="o">=</span> <span class="n">plg_yaml</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;plugin&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                             <span class="k">if</span> <span class="n">plg_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -5701,7 +5730,7 @@
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">plg_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;- no plugin.yaml: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;- no plugin.yaml: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span><span class="p">)</span></div>
 
@@ -5710,16 +5739,16 @@
 
 
 <div class="viewcode-block" id="PluginsInstalledController"><a class="viewcode-back" href="../../../referenz/module/module_admin.html#modules.admin.api_plugins.PluginsInstalledController">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">PluginsInstalledController</span><span class="p">(</span><span class="n">RESTResource</span><span class="p">):</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_sh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_basedir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_config_dir</span><span class="p">(</span><span class="n">DIR_PLUGINS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
+            <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span>
-
 
     <span class="c1"># ======================================================================</span>
     <span class="c1">#  GET /api/plugins/installed</span>
@@ -5728,24 +5757,26 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return an object with data about all installed plugins</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PluginsInstalledController(): index&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;PluginsInstalledController(): index&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">shng_status</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;PluginsInstalledController.read(): SmartHomeNG has not yet finished initialization&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;PluginsInstalledController.read(): SmartHomeNG has not yet finished initialization&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({})</span>
-
-        <span class="n">default_language</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_defaultlanguage</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span> <span class="o">==</span> <span class="p">{}:</span>
             <span class="n">plugins_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PluginsInstalledController.read(): plugin_list (sollte sortiert sein) = &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plugins_list</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;PluginsInstalledController.read(): plugin_list (sollte sortiert sein) = &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plugins_list</span><span class="p">)</span>
+            <span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;- plugins_list_sorted = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plugins_list</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;- plugins_list_sorted = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plugins_list</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plugins_list</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s1">&#39;plugin.yaml&#39;</span><span class="p">)):</span>
                         <span class="n">plg_yaml</span> <span class="o">=</span> <span class="n">shyaml</span><span class="o">.</span><span class="n">yaml_load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s1">&#39;plugin.yaml&#39;</span><span class="p">)))</span>
-                        <span class="k">if</span> <span class="n">plg_yaml</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PluginsInstalledController.read(): Plugin &#39;</span><span class="si">{}</span><span class="s2">&#39;: plugin.yaml cannot be read&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="n">plg_yaml</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                <span class="s2">&quot;PluginsInstalledController.read(): Plugin &#39;</span><span class="si">{}</span><span class="s2">&#39;: plugin.yaml cannot be read&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                            <span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">plg_data</span> <span class="o">=</span> <span class="n">plg_yaml</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;plugin&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                             <span class="k">if</span> <span class="n">plg_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -5770,8 +5801,12 @@
                                 <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="s1">&#39;multi_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plg_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;multi_instance&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="s1">&#39;configuration_needed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plg_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;configuration_needed&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;- no plugin.yaml: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PluginsInstalledController.read(): Plugin Liste (sollte sortiert sein), json.dumps(self.plugin_data) = &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span><span class="p">)))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;- no plugin.yaml: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;PluginsInstalledController.read(): Plugin Liste (sollte sortiert sein), json.dumps(self.plugin_data) = &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
     <span class="n">read</span><span class="o">.</span><span class="n">expose_resource</span> <span class="o">=</span> <span class="kc">True</span>
@@ -5779,18 +5814,18 @@
 
 
 <div class="viewcode-block" id="PluginsConfigController"><a class="viewcode-back" href="../../../referenz/module/module_admin.html#modules.admin.api_plugins.PluginsConfigController">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">PluginsConfigController</span><span class="p">(</span><span class="n">RESTResource</span><span class="p">):</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_sh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_basedir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_config_dir</span><span class="p">(</span><span class="n">DIR_PLUGINS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
+            <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span>
-
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_pluginname_and_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plg_section</span><span class="p">,</span> <span class="n">plg_conf</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -5818,11 +5853,12 @@
                 <span class="n">meta</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="s1">&#39;plugin&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">classpath</span> <span class="o">+</span> <span class="n">plugin_version</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;Plugin configuration section &#39;</span><span class="si">{}</span><span class="s2">&#39;: Neither &#39;plugin_name&#39; nor &#39;</span><span class="si">{}</span><span class="s2">&#39; are defined.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plg_section</span><span class="p">,</span>
-                                                                                                            <span class="n">KEY_CLASS_PATH</span><span class="p">))</span>
+                    <span class="s2">&quot;Plugin configuration section &#39;</span><span class="si">{}</span><span class="s2">&#39;: Neither &#39;plugin_name&#39; nor &#39;</span><span class="si">{}</span><span class="s2">&#39; are defined.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">plg_section</span><span class="p">,</span> <span class="n">KEY_CLASS_PATH</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
                 <span class="n">meta</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="s1">&#39;plugin&#39;</span><span class="p">,</span> <span class="n">classpath</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">plugin_name</span> <span class="o">+</span> <span class="n">plugin_version</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
-
 
     <span class="c1"># ======================================================================</span>
     <span class="c1">#  GET /api/plugins/config</span>
@@ -5839,13 +5875,17 @@
 
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># make it &#39;readonly&#39;, if plugin.conf is used</span>
-        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;readonly&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">config_filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;.yaml&#39;</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;readonly&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">config_filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;.yaml&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;readonly&#39;</span><span class="p">]:</span>
             <span class="c1"># for beta-testing: create a backup of ../etc/plugin.yaml</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_etc_dir</span><span class="p">,</span> <span class="s1">&#39;plugin_before_admin_config.yaml&#39;</span><span class="p">)):</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">config_filename</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_etc_dir</span><span class="p">,</span> <span class="s1">&#39;plugin_before_admin_config.yaml&#39;</span><span class="p">))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Created a backup copy of plugin.yaml (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_etc_dir</span><span class="p">,</span> <span class="s1">&#39;plugin_before_admin_config.yaml&#39;</span><span class="p">)))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s1">&#39;Created a backup copy of plugin.yaml (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_etc_dir</span><span class="p">,</span> <span class="s1">&#39;plugin_before_admin_config.yaml&#39;</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
 
         <span class="c1"># get path to plugin configuration file, withou extension</span>
         <span class="n">_conf</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">parse_basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">config_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">configtype</span><span class="o">=</span><span class="s1">&#39;plugin&#39;</span><span class="p">)</span>
@@ -5855,15 +5895,15 @@
             <span class="k">if</span> <span class="n">plg</span> <span class="o">==</span> <span class="s1">&#39;?&#39;</span><span class="p">:</span>
                 <span class="n">plg</span> <span class="o">=</span> <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;class_path&#39;</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
             <span class="n">plginstance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">return_plugin</span><span class="p">(</span><span class="n">confplg</span><span class="p">)</span>
-            <span class="n">typ</span> <span class="o">=</span> <span class="s1">&#39;?&#39;</span>
-            <span class="k">if</span> <span class="n">plginstance</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_loaded&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plginstance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">plginstance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># self.logger.warning(&quot;confplg {}: type(plginstance) = {}&quot;.format(confplg, type(plginstance)))</span>
                 <span class="c1"># self.logger.warning(&quot;confplg {}: type(plginstance.metadata) = {}&quot;.format(confplg, type(plginstance.metadata)))</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">typ</span> <span class="o">=</span> <span class="n">plginstance</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get_string</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
+                    <span class="n">plginstance</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get_string</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
                     <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_meta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plginstance</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">meta</span>
                     <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plginstance</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;plugin&#39;</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;confplg </span><span class="si">{}</span><span class="s1">: Passed for plginstance = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">confplg</span><span class="p">,</span> <span class="n">plginstance</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># nicht geladene Plugins</span>
@@ -5871,15 +5911,13 @@
                 <span class="n">plugin_name</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pluginname_and_metadata</span><span class="p">(</span><span class="n">confplg</span><span class="p">,</span> <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">])</span>
                 <span class="c1"># self.logger.warning(&quot;plugin_name = {}, meta = {}&quot;.format(plugin_name, metadata.meta))</span>
 
-                <span class="n">typ</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_string</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
                 <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_meta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">meta</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;plugin&#39;</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
                     <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                     <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_description&#39;</span><span class="p">][</span><span class="s1">&#39;de&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
                     <span class="n">_conf</span><span class="p">[</span><span class="n">confplg</span><span class="p">][</span><span class="s1">&#39;_description&#39;</span><span class="p">][</span><span class="s1">&#39;en&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-
 
         <span class="n">info</span><span class="p">[</span><span class="s1">&#39;plugin_config&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_conf</span>
 
@@ -5890,10 +5928,8 @@
 
 
 <div class="viewcode-block" id="PluginsInfoController"><a class="viewcode-back" href="../../../referenz/module/module_admin.html#modules.admin.api_plugins.PluginsInfoController">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">PluginsInfoController</span><span class="p">(</span><span class="n">RESTResource</span><span class="p">):</span>
-
     <span class="n">blog_urls</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_update_bloglinks_active</span> <span class="o">=</span> <span class="kc">False</span>
-
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">shng_url_root</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_sh</span>
@@ -5902,7 +5938,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_basedir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_config_dir</span><span class="p">(</span><span class="n">DIR_PLUGINS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
+            <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 
@@ -5917,22 +5955,20 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">module</span><span class="o">.</span><span class="n">add_stop_method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;__init__: Exception </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;__init__: Exception </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
         <span class="k">return</span>
-
 
 <div class="viewcode-block" id="PluginsInfoController.stop"><a class="viewcode-back" href="../../../referenz/module/module_admin.html#modules.admin.api_plugins.PluginsInfoController.stop">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If the Controller has started threads or uses python modules that created threads,</span>
 <span class="sd">        put cleanup code here.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PluginsInfoController: Shutting down&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;PluginsInfoController: Shutting down&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_bloglinks_active</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="c1"># Stop scheduler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blog_task_name</span><span class="p">)</span>
 
         <span class="k">return</span></div>
-
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_test_for_blog_articles_task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -5940,10 +5976,12 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">shng_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>   <span class="c1"># Running</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_blog_task_name</span><span class="p">][</span><span class="s1">&#39;cycle&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">120</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span>  <span class="c1"># set scheduler cycle to test every 2 hours</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">shng_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>  <span class="c1"># Running</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_blog_task_name</span><span class="p">][</span><span class="s1">&#39;cycle&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="mi">120</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span> <span class="kc">None</span>
+            <span class="p">}</span>  <span class="c1"># set scheduler cycle to test every 2 hours</span>
             <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">temp_blog_urls</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -5966,27 +6004,36 @@
                                 <span class="n">temp_blog_urls</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
                             <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
                                 <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">500</span><span class="p">,</span> <span class="mi">503</span><span class="p">]:</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;www.smarthomeng.de sent status_code </span><span class="si">{}</span><span class="s2"> for get-request to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">temp_blog_urls</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]))</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                                        <span class="s1">&#39;www.smarthomeng.de sent status_code </span><span class="si">{}</span><span class="s1"> for get-request to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                            <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">temp_blog_urls</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span>
+                                        <span class="p">)</span>
+                                    <span class="p">)</span>
                                 <span class="k">else</span><span class="p">:</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s2">&quot;www.smarthomeng.de sent status_code </span><span class="si">{}</span><span class="s2"> for get-request to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">temp_blog_urls</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]))</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span>
+                                        <span class="s1">&#39;www.smarthomeng.de sent status_code </span><span class="si">{}</span><span class="s1"> for get-request to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                            <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">temp_blog_urls</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span>
+                                        <span class="p">)</span>
+                                    <span class="p">)</span>
                                 <span class="n">temp_blog_urls</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">pass</span>
                         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;[Errno 101]&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>     <span class="c1"># [Errno 101] Das Netzwerk ist nicht erreichbar</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;[Errno 101]&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>  <span class="c1"># [Errno 101] Das Netzwerk ist nicht erreichbar</span>
                     <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;_test_for_blog_articles: OSError </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;_test_for_blog_articles: OSError </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;_test_for_blog_articles: Exception </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;_test_for_blog_articles: Exception </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">blog_urls</span> <span class="o">=</span> <span class="n">temp_blog_urls</span>
             <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;_test_for_blog_articles_task: Used time: </span><span class="si">{}</span><span class="s2"> - blog_urls = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blog_urls</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s1">&#39;_test_for_blog_articles_task: Used time: </span><span class="si">{}</span><span class="s1"> - blog_urls = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blog_urls</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;_test_for_blog_articles: Plugin initialization not finished&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;_test_for_blog_articles: Plugin initialization not finished&#39;</span><span class="p">)</span>
         <span class="k">return</span>
-
 
     <span class="c1"># ======================================================================</span>
     <span class="c1">#  GET /api/plugins/info</span>
@@ -5995,8 +6042,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a list of all configured plugin instances</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PluginsInfoController (index)&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;PluginsInfoController (index)&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 
         <span class="c1"># get data for display of page</span>
@@ -6013,7 +6060,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">documentation_base_url</span> <span class="o">=</span> <span class="s1">&#39;https://smarthomeng.github.io/smarthome/&#39;</span>
 
-        <span class="c1">#self._test_for_blog_articles()</span>
+        <span class="c1"># self._test_for_blog_articles()</span>
         <span class="n">plugin_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">return_plugins</span><span class="p">():</span>
             <span class="n">plugin</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -6024,7 +6071,7 @@
             <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;triggers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">_itemlist</span><span class="p">:</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;triggers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
-            <span class="c1">#self.logger.warning(&quot;{} items={}, itemlist={}&quot;.format(x.get_shortname(), len(plugin[&#39;triggers&#39;]), plugin[&#39;triggers&#39;]))</span>
+            <span class="c1"># self.logger.warning(&quot;{} items={}, itemlist={}&quot;.format(x.get_shortname(), len(plugin[&#39;triggers&#39;]), plugin[&#39;triggers&#39;]))</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">SmartPlugin</span><span class="p">):</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">get_shortname</span><span class="p">()</span>
@@ -6087,9 +6134,9 @@
             <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">get_string</span><span class="p">(</span><span class="s1">&#39;documentation&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-            <span class="k">if</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plugins/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/user_doc.html&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;plugins/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s2">&quot;pluginname&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">/user_doc.html&#39;</span><span class="p">):</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-            <span class="k">elif</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plugins_doc/config/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.html&quot;</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;plugins_doc/config/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s2">&quot;pluginname&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">.html&#39;</span><span class="p">):</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
             <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;support&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">get_string</span><span class="p">(</span><span class="s1">&#39;support&#39;</span><span class="p">)</span>
             <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;maintainer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">get_string</span><span class="p">(</span><span class="s1">&#39;maintainer&#39;</span><span class="p">)</span>
@@ -6098,15 +6145,19 @@
             <span class="c1"># construct urls to config page and user_doc page</span>
             <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;documentation_config_doc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
             <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;documentation_user_doc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-            <span class="k">if</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;smartplugin&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;priv_&#39;</span><span class="p">)):</span>
-                <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;documentation_config_doc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">documentation_base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;plugins_doc/config/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.html&quot;</span>
+            <span class="k">if</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;smartplugin&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;priv_&#39;</span><span class="p">)):</span>
+                <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;documentation_config_doc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">documentation_base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;plugins_doc/config/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s2">&quot;pluginname&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">.html&#39;</span>
+                <span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span><span class="p">,</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">],</span> <span class="s1">&#39;user_doc.rst&#39;</span><span class="p">)):</span>
-                    <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;documentation_user_doc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">documentation_base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;plugins/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/user_doc.html&quot;</span>
+                    <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;documentation_user_doc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">documentation_base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;plugins/</span><span class="si">{</span><span class="n">plugin</span><span class="p">[</span><span class="s2">&quot;pluginname&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">/user_doc.html&#39;</span>
+                    <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;stopped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">alive</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;stoppable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;stopped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;stoppable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="n">plugin</span><span class="p">[</span><span class="s1">&#39;pluginname&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;backend&#39;</span><span class="p">:</span>
@@ -6123,14 +6174,15 @@
 
 
 <div class="viewcode-block" id="PluginsAPIController"><a class="viewcode-back" href="../../../referenz/module/module_admin.html#modules.admin.api_plugins.PluginsAPIController">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">PluginsAPIController</span><span class="p">(</span><span class="n">RESTResource</span><span class="p">):</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_sh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_basedir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_config_dir</span><span class="p">(</span><span class="n">DIR_PLUGINS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
+            <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 
@@ -6144,9 +6196,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a list of all configured plugin instances</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PluginsAPIController (index)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;PluginsAPIController (index)&#39;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">return_plugins</span><span class="p">():</span>
@@ -6156,7 +6208,7 @@
                     <span class="n">api</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get_plugin_function_defstrings</span><span class="p">(</span><span class="n">with_type</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">api</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">api</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plugin_config_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">function</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plugin_config_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">function</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span><span class="p">)</span></div>
 
@@ -6164,16 +6216,16 @@
     <span class="n">read</span><span class="o">.</span><span class="n">authentication_needed</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
-
 <div class="viewcode-block" id="PluginsLogicParametersController"><a class="viewcode-back" href="../../../referenz/module/module_admin.html#modules.admin.api_plugins.PluginsLogicParametersController">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">PluginsLogicParametersController</span><span class="p">(</span><span class="n">RESTResource</span><span class="p">):</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_sh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_basedir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sh</span><span class="o">.</span><span class="n">get_config_dir</span><span class="p">(</span><span class="n">DIR_PLUGINS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
+            <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 

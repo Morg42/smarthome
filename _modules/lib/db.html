@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lib.db &mdash; Dokumentation v1.12.0 v1.12.0 (Stand 09. Mai 2026) Dokumentation</title>
+  <title>lib.db &mdash; Dokumentation v1.12.1 v1.12.1 (Stand 18. Juni 2026) Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
@@ -39,7 +39,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Dokumentation v1.12.0
+            Dokumentation v1.12.1
               <img src="../../_static/logo_long_inverse3.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -52,8 +52,9 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../einleitung.html">Einleitung</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../was_ist_neu.html">Neuerungen im Release v1.12.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../was_war_neu.html">Neuerungen der letzten Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-12">Neuerungen im Release v1.12</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-11">Neuerungen im Release v1.11</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../was_war_neu.html#neuerungen-im-release-v1-10">Neuerungen im Release v1.10</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../was_war_neu.html#neuerungen-bei-plugins">Neuerungen bei Plugins</a><ul>
@@ -396,6 +397,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#teilweises-einbinden-von-structs-partial-struct-inclusion-new">Teilweises Einbinden von structs (partial struct inclusion) <span class="redsup">new</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#verwendung-mehrerer-definitionsdateien">Verwendung mehrerer Definitionsdateien</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../konfiguration/item_structs.html#beispiele">Beispiele</a></li>
 </ul>
@@ -4031,6 +4033,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_build_requirements.html">build_requirements.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_conf_to_yaml_converter.html">conf_to_yaml_converter.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_getshngpid.html">getshngpid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/tools_install_hooks.html">install-hooks.sh</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#wozu-dienen-die-hooks">Wozu dienen die Hooks?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#scope-der-checks">Scope der Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/tools_install_hooks.html#push-trotzdem-erzwingen">Push trotzdem erzwingen</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/tools_plugin_metadata_checker.html">plugin_metadata_checker.py</a></li>
 </ul>
 </li>
@@ -5208,6 +5217,27 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../release/1_12_1.html">Release 1.12.1 - 06. Mai 2026</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#uberblick">Überblick</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#minimum-python-version">Minimum Python Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#unterstutzte-python-versionen">Unterstützte Python Versionen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#anderungen-am-core">Änderungen am Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#allgemein">Allgemein</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#updates-im-core">Updates im Core</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#anderungen-an-plugins">Änderungen an Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../release/1_12_1.html#weitere-anderungen">Weitere Änderungen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../release/1_12_1.html#dokumentation">Dokumentation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../release/1_12_1.html#module-admin">module.admin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../release/1_12_0.html">Release 1.12.0 - 06. Mai 2026</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../release/1_12_0.html#uberblick">Überblick</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../release/1_12_0.html#minimum-python-version">Minimum Python Version</a></li>
@@ -5597,7 +5627,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Dokumentation v1.12.0</a>
+          <a href="../../index.html">Dokumentation v1.12.1</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -5651,7 +5681,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">lib.shtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">Shtime</span>
 
 
-<div class="viewcode-block" id="Database"><a class="viewcode-back" href="../../lib/db.html#lib.db.Database">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">Database</span><span class="p">():</span>
+<div class="viewcode-block" id="Database"><a class="viewcode-back" href="../../lib/db.html#lib.db.Database">[Doku]</a><span class="k">class</span><span class="w"> </span><span class="nc">Database</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A database abstraction layer based on DB-API2 specification.</span>
 
 <span class="sd">    It provides basic functionality to access databases using Python driver</span>
@@ -5703,49 +5733,58 @@
     <span class="c1"># - {0}: Number of parameter (counting from 1 for first parameter)</span>
     <span class="c1"># - {1}: First match of input_token regex (use 2 for second, 3 for third, etc)</span>
     <span class="n">_translations</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="s1">&#39;qmark&#39;</span> <span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;qmark&#39;</span>    <span class="p">:</span> <span class="p">{},</span>
-        <span class="s1">&#39;format&#39;</span>   <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;numeric&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;named&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;pyformat&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;%(arg</span><span class="si">{0}</span><span class="s1">)s&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">}</span>
-      <span class="p">},</span>
-      <span class="s1">&#39;format&#39;</span> <span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;qmark&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;format&#39;</span>   <span class="p">:</span> <span class="p">{},</span>
-        <span class="s1">&#39;numeric&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;named&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;pyformat&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;%(arg</span><span class="si">{0}</span><span class="s1">)s&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">}</span>
-      <span class="p">},</span>
-      <span class="s1">&#39;numeric&#39;</span> <span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;qmark&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;format&#39;</span>   <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;numeric&#39;</span>  <span class="p">:</span> <span class="p">{},</span>
-        <span class="s1">&#39;named&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:arg</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;pyformat&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;%(arg</span><span class="si">{1}</span><span class="s1">)s&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">}</span>
-      <span class="p">},</span>
-      <span class="s1">&#39;named&#39;</span> <span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;qmark&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;format&#39;</span>   <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;numeric&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;named&#39;</span>    <span class="p">:</span> <span class="p">{},</span>
-        <span class="s1">&#39;pyformat&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;%(</span><span class="si">{1}</span><span class="s1">)s&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">}</span>
-      <span class="p">},</span>
-      <span class="s1">&#39;pyformat&#39;</span> <span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;qmark&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;format&#39;</span>   <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;numeric&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;named&#39;</span>    <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span> <span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span> <span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;pyformat&#39;</span> <span class="p">:</span> <span class="p">{}</span>
-      <span class="p">},</span>
+        <span class="s1">&#39;qmark&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;qmark&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;numeric&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;named&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;pyformat&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;%(arg</span><span class="si">{0}</span><span class="s1">)s&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;qmark&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;numeric&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;named&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;pyformat&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;%(arg</span><span class="si">{0}</span><span class="s1">)s&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">},</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;numeric&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;qmark&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;numeric&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;named&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:arg</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;pyformat&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\d+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;%(arg</span><span class="si">{1}</span><span class="s1">)s&#39;</span><span class="p">,</span> <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;arg</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;named&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;qmark&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;numeric&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;named&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;pyformat&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;%(</span><span class="si">{1}</span><span class="s1">)s&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;pyformat&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;qmark&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;numeric&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span> <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;named&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;input_token&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%\((\w+)\)\w+&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;output_token&#39;</span><span class="p">:</span> <span class="s1">&#39;:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;input_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;output_name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;pyformat&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="p">},</span>
     <span class="p">}</span>
-    <span class="n">_translation_param_types</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="s1">&#39;qmark&#39;</span>    <span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-      <span class="s1">&#39;format&#39;</span>   <span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-      <span class="s1">&#39;numeric&#39;</span>  <span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-      <span class="s1">&#39;named&#39;</span>    <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-      <span class="s1">&#39;pyformat&#39;</span> <span class="p">:</span> <span class="nb">dict</span>
-    <span class="p">}</span>
+    <span class="n">_translation_param_types</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;qmark&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="s1">&#39;numeric&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="s1">&#39;named&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="s1">&#39;pyformat&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dbapi</span><span class="p">,</span> <span class="n">connect</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="s1">&#39;named&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new database instance</span>
@@ -5786,11 +5825,15 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">dbapi</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;DB-API import failed for </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2">: </span><span class="si">{}</span><span class="s2"> - module installed?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dbapi</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;DB-API import failed for &quot;</span><span class="si">{}</span><span class="s1">&quot;: </span><span class="si">{}</span><span class="s1"> - module installed?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dbapi</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
                 <span class="k">return</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_input</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styles</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: SQL format style </span><span class="si">{}</span><span class="s2"> not supported (only </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styles</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s1">&#39;Database [</span><span class="si">{}</span><span class="s1">]: SQL format style </span><span class="si">{}</span><span class="s1"> not supported (only </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styles</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">return</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5809,7 +5852,7 @@
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">v</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                             <span class="k">break</span>
-                        <span class="k">except</span><span class="p">:</span>
+                        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                             <span class="k">pass</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">connect</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">OrderedDict</span><span class="p">):</span>
@@ -5820,7 +5863,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_format_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi</span><span class="o">.</span><span class="n">paramstyle</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styles</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: DB-API driver format style </span><span class="si">{}</span><span class="s2"> not supported (only </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styles</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s1">&#39;Database [</span><span class="si">{}</span><span class="s1">]: DB-API driver format style </span><span class="si">{}</span><span class="s1"> not supported (only </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styles</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">return</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_translation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translations</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_input</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_output</span><span class="p">]</span>
@@ -5837,12 +5884,18 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: Could not connect to the database using &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi_name</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: Could not connect to the database using &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi_name</span><span class="p">,</span> <span class="n">e</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">raise</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: Connected with </span><span class="si">{}</span><span class="s2"> using </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> style&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_output</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s1">&#39;Database [</span><span class="si">{}</span><span class="s1">]: Connected with </span><span class="si">{}</span><span class="s1"> using &quot;</span><span class="si">{}</span><span class="s1">&quot; style&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_output</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Database.close"><a class="viewcode-back" href="../../lib/db.html#lib.db.Database.close">[Doku]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the database connection&quot;&quot;&quot;</span>
@@ -5875,30 +5928,38 @@
 <span class="sd">        and values are a two-item list for a rollout and rollback statement.</span>
 
 <span class="sd">        E.g.::</span>
-<span class="sd">           db.setup({1:[&#39;CREATE TABLE xyz (...)&#39;, &#39;DROP TABLE xyz&#39;], 2:[...]})</span>
+<span class="sd">           db.setup({1: [&#39;CREATE TABLE xyz (...)&#39;, &#39;DROP TABLE xyz&#39;], 2: [...]})</span>
 
 <span class="sd">        For an extended example take a look into the &#39;database&#39; plugin.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">()</span>
         <span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">version_table</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[^a-z0-9_]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;_version&quot;</span><span class="p">;</span>
+        <span class="n">version_table</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[^a-z0-9_]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;_version&#39;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">version</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetchone</span><span class="p">(</span><span class="s2">&quot;SELECT MAX(version) FROM &quot;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-               <span class="n">version</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Missing table &quot;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s2">&quot; error can be ignored, will be created now!&quot;</span><span class="p">);</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE &quot;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s2">&quot;(version NUMERIC, updated BIGINT, rollout TEXT, rollback TEXT)&quot;</span><span class="p">,</span> <span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">version</span><span class="p">,)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetchone</span><span class="p">(</span><span class="s1">&#39;SELECT MAX(version) FROM &#39;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">version</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Missing table &#39;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s1">&#39; error can be ignored, will be created now!&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s1">&#39;CREATE TABLE &#39;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s1">&#39;(version NUMERIC, updated BIGINT, rollout TEXT, rollback TEXT)&#39;</span><span class="p">,</span>
+                <span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="n">version</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: Version </span><span class="si">{}</span><span class="s2"> found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">version</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Database [</span><span class="si">{}</span><span class="s1">]: Version </span><span class="si">{}</span><span class="s1"> found&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">version</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">queries</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">version</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: Upgrading to version </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Database [</span><span class="si">{}</span><span class="s1">]: Upgrading to version </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">queries</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">)</span>
 
                 <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shtime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>  <span class="c1"># type: ignore (shtime is set dynamically)</span>
                 <span class="n">ts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timetuple</span><span class="p">())</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">microsecond</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO &quot;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s2">&quot;(version, updated, rollout, rollback) VALUES(?, ?, ?, ?);&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">queries</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">queries</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">formatting</span><span class="o">=</span><span class="s1">&#39;qmark&#39;</span><span class="p">,</span> <span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s1">&#39;INSERT INTO &#39;</span> <span class="o">+</span> <span class="n">version_table</span> <span class="o">+</span> <span class="s1">&#39;(version, updated, rollout, rollback) VALUES(?, ?, ?, ?);&#39;</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">queries</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">queries</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="n">formatting</span><span class="o">=</span><span class="s1">&#39;qmark&#39;</span><span class="p">,</span>
+                    <span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">,</span>
+                <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -5946,12 +6007,12 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">stmt</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">formatting</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can not prepare query: </span><span class="si">{}</span><span class="s2"> (args </span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Can not prepare query: </span><span class="si">{}</span><span class="s1"> (args </span><span class="si">{}</span><span class="s1">): </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
             <span class="k">raise</span>
 
         <span class="n">c</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">cur</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cur</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">result</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
@@ -5965,7 +6026,7 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;no such table: database_version&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># log error only, if query not executed on a new and empty database</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can not execute query: </span><span class="si">{</span><span class="n">stmt</span><span class="si">}</span><span class="s2"> (args </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Can not execute query: </span><span class="si">{</span><span class="n">stmt</span><span class="si">}</span><span class="s1"> (args </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s1">): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="k">raise</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -5989,18 +6050,18 @@
             <span class="n">locked</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected</span><span class="p">()</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
                 <span class="n">locked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">locked</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">fetchone</span><span class="p">(</span><span class="s2">&quot;SELECT 1&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fetchone</span><span class="p">(</span><span class="s1">&#39;SELECT 1&#39;</span><span class="p">)</span>
                     <span class="n">retry</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Database [</span><span class="si">{}</span><span class="s2">]: Connection error </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Database [</span><span class="si">{}</span><span class="s1">]: Connection error </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">locked</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -6018,10 +6079,10 @@
 <span class="sd">        the result. It accepts the same arguments as mentioned in the</span>
 <span class="sd">        &#39;execute()&#39; method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">cur</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cur</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fetchone: No cursor defined for stmt </span><span class="si">{</span><span class="n">stmt</span><span class="si">}</span><span class="s2"> with params </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;fetchone: No cursor defined for stmt </span><span class="si">{</span><span class="n">stmt</span><span class="si">}</span><span class="s1"> with params </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="n">formatting</span><span class="p">,</span> <span class="n">cur</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
@@ -6038,7 +6099,7 @@
 <span class="sd">        This method can be used to fetch all rows from the result. It accepts</span>
 <span class="sd">        the same arguments as mentioned in the &#39;execute()&#39; method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">cur</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cur</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="n">formatting</span><span class="p">,</span> <span class="n">cur</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
@@ -6059,7 +6120,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">param_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-                <span class="n">param_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">param_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="k">if</span> <span class="n">formatting</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">translation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translation</span>
@@ -6095,8 +6156,7 @@
                 <span class="n">param_result</span><span class="p">[</span><span class="n">output_name</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">input_name</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)]</span>
                 <span class="n">cnt</span> <span class="o">=</span> <span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">stmt</span><span class="p">,</span>  <span class="n">param_result</span><span class="p">)</span></div>
-
+        <span class="k">return</span> <span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="n">param_result</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
