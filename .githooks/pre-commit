@@ -16,7 +16,7 @@ if [ -z "$STAGED" ]; then
 fi
 
 # --- Format (auto-apply + re-stage) ---
-echo "$STAGED" | xargs "$RUFF" format --quiet
+echo "$STAGED" | xargs "$RUFF" format --quiet && echo 'Formatted.'
 echo "$STAGED" | xargs git add
 
 # --- Lint ---

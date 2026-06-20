@@ -9,6 +9,7 @@ no serial hardware or connection setup is required.
 """
 
 import builtins
+
 builtins.SDP_standalone = False
 
 import logging
@@ -25,28 +26,49 @@ from plugins.viessmann.protocol import SDPProtocolViessmann
 # ---------------------------------------------------------------------------
 
 P300_CS = {
-    'baudrate': 4800, 'bytesize': 8, 'parity': 'E', 'stopbits': 2,
+    'baudrate': 4800,
+    'bytesize': 8,
+    'parity': 'E',
+    'stopbits': 2,
     'timeout': 0.5,
-    'startbyte': 0x41, 'request': 0x00, 'response': 0x01,
-    'error': 0x03, 'read': 0x01, 'write': 0x02, 'functioncall': 0x07,
-    'acknowledge': 0x06, 'not_initiated': 0x05, 'init_error': 0x15,
-    'reset_command': 0x04, 'reset_command_response': 0x05,
-    'sync_command': 0x160000, 'sync_command_response': 0x06,
-    'command_bytes_read': 5, 'command_bytes_write': 5,
+    'startbyte': 0x41,
+    'request': 0x00,
+    'response': 0x01,
+    'error': 0x03,
+    'read': 0x01,
+    'write': 0x02,
+    'functioncall': 0x07,
+    'acknowledge': 0x06,
+    'not_initiated': 0x05,
+    'init_error': 0x15,
+    'reset_command': 0x04,
+    'reset_command_response': 0x05,
+    'sync_command': 0x160000,
+    'sync_command_response': 0x06,
+    'command_bytes_read': 5,
+    'command_bytes_write': 5,
 }
 
 KW_CS = {
-    'baudrate': 4800, 'bytesize': 8, 'parity': 'E', 'stopbits': 2,
+    'baudrate': 4800,
+    'bytesize': 8,
+    'parity': 'E',
+    'stopbits': 2,
     'timeout': 1,
-    'startbyte': 0x01, 'read': 0xF7, 'write': 0xF4,
-    'acknowledge': 0x01, 'reset_command': 0x04,
-    'not_initiated': 0x05, 'write_ack': 0x00,
+    'startbyte': 0x01,
+    'read': 0xF7,
+    'write': 0xF4,
+    'acknowledge': 0x01,
+    'reset_command': 0x04,
+    'not_initiated': 0x05,
+    'write_ack': 0x00,
 }
 
 
 # ---------------------------------------------------------------------------
 # Helper — build a minimal protocol instance
 # ---------------------------------------------------------------------------
+
 
 def _make_proto(viess_proto='P300'):
     p = object.__new__(SDPProtocolViessmann)
@@ -61,7 +83,7 @@ def _make_proto(viess_proto='P300'):
     p._read_bytes = MagicMock(return_value=b'')
     p._close = MagicMock()
     p._open = MagicMock()
-    p._connection = MagicMock()   # needed by KW reset_input_buffer
+    p._connection = MagicMock()  # needed by KW reset_input_buffer
     return p
 
 
@@ -69,8 +91,8 @@ def _make_proto(viess_proto='P300'):
 # Static utility methods
 # ---------------------------------------------------------------------------
 
-class TestStaticUtilities(unittest.TestCase):
 
+class TestStaticUtilities(unittest.TestCase):
     def test_int2bytes_single_byte(self):
         result = SDPProtocolViessmann._int2bytes(0x06, 1)
         self.assertEqual(result, b'\x06')
@@ -86,11 +108,11 @@ class TestStaticUtilities(unittest.TestCase):
 
     def test_bytes2int_unsigned(self):
         result = SDPProtocolViessmann._bytes2int(b'\x95\x00', signed=False)
-        self.assertEqual(result, 149)   # 0x0095 little-endian
+        self.assertEqual(result, 149)  # 0x0095 little-endian
 
     def test_bytes2int_signed_negative(self):
         result = SDPProtocolViessmann._bytes2int(b'\xd8\xff', signed=True)
-        self.assertEqual(result, -40)   # -40 in 16-bit signed little-endian
+        self.assertEqual(result, -40)  # -40 in 16-bit signed little-endian
 
     def test_bytes2hexstring(self):
         result = SDPProtocolViessmann._bytes2hexstring(b'\x41\x06\x0a')
@@ -118,8 +140,8 @@ class TestStaticUtilities(unittest.TestCase):
 # _build_payload()
 # ---------------------------------------------------------------------------
 
-class TestBuildPayload(unittest.TestCase):
 
+class TestBuildPayload(unittest.TestCase):
     def setUp(self):
         self.p = _make_proto('P300')
 
@@ -127,12 +149,12 @@ class TestBuildPayload(unittest.TestCase):
         data_dict = {'payload': '0101', 'data': {'len': 2, 'value': None, 'kwseq': False}}
         packet, responselen = self.p._build_payload(data_dict)
         # Expected: [0x41, 0x05, 0x00, 0x01, 0x01, 0x01, 0x02, 0x0A]
-        self.assertEqual(packet[0:1], b'\x41')   # startbyte
-        self.assertEqual(packet[1:2], b'\x05')   # command_bytes_read
-        self.assertEqual(packet[2:3], b'\x00')   # request
-        self.assertEqual(packet[3:4], b'\x01')   # read opcode
-        self.assertEqual(packet[4:6], bytes.fromhex('0101'))   # addr
-        self.assertEqual(packet[6:7], b'\x02')   # cmdlen
+        self.assertEqual(packet[0:1], b'\x41')  # startbyte
+        self.assertEqual(packet[1:2], b'\x05')  # command_bytes_read
+        self.assertEqual(packet[2:3], b'\x00')  # request
+        self.assertEqual(packet[3:4], b'\x01')  # read opcode
+        self.assertEqual(packet[4:6], bytes.fromhex('0101'))  # addr
+        self.assertEqual(packet[6:7], b'\x02')  # cmdlen
         # checksum is last byte; verify it matches _calc_checksum of rest
         expected_cs = SDPProtocolViessmann._calc_checksum(packet[:-1])
         self.assertEqual(packet[-1], expected_cs)
@@ -144,12 +166,12 @@ class TestBuildPayload(unittest.TestCase):
         self.assertEqual(responselen, 11)
 
     def test_p300_write_command_structure(self):
-        valuebytes = b'\x3c'   # write value 60 (°C setpoint)
+        valuebytes = b'\x3c'  # write value 60 (°C setpoint)
         data_dict = {'payload': '6000', 'data': {'len': 1, 'value': valuebytes, 'kwseq': False}}
         packet, responselen = self.p._build_payload(data_dict)
-        self.assertEqual(packet[3:4], b'\x02')            # write opcode
+        self.assertEqual(packet[3:4], b'\x02')  # write opcode
         self.assertEqual(packet[4:6], bytes.fromhex('6000'))  # addr
-        self.assertIn(valuebytes, bytes(packet))          # value embedded
+        self.assertIn(valuebytes, bytes(packet))  # value embedded
 
     def test_p300_write_response_length(self):
         valuebytes = b'\x3c'
@@ -193,15 +215,16 @@ P300_BAD_CHECKSUM[-1] = 0xFF
 def _sequential_read(data: bytes):
     """Return a side_effect that serves data in sequential chunks by requested size."""
     pos = [0]
+
     def reader(n):
-        chunk = data[pos[0]:pos[0] + n]
+        chunk = data[pos[0] : pos[0] + n]
         pos[0] += n
         return bytes(chunk)
+
     return reader
 
 
 class TestParseResponse(unittest.TestCase):
-
     def setUp(self):
         self.p = _make_proto('P300')
 
@@ -231,8 +254,8 @@ class TestParseResponse(unittest.TestCase):
 # _send_init_on_send() — P300
 # ---------------------------------------------------------------------------
 
-class TestSendInitP300(unittest.TestCase):
 
+class TestSendInitP300(unittest.TestCase):
     def setUp(self):
         self.p = _make_proto('P300')
 
@@ -289,8 +312,8 @@ class TestSendInitP300(unittest.TestCase):
 # _send_init_on_send() — KW
 # ---------------------------------------------------------------------------
 
-class TestSendInitKW(unittest.TestCase):
 
+class TestSendInitKW(unittest.TestCase):
     def setUp(self):
         self.p = _make_proto('KW')
 
@@ -305,7 +328,7 @@ class TestSendInitKW(unittest.TestCase):
     @patch('plugins.viessmann.protocol.sleep')
     def test_kw_sync_failure_raises_sdp_protocol_error(self, mock_sleep):
         """5 failed sync attempts → SDPProtocolError (not return False)."""
-        self.p._read_bytes.return_value = b'\xff'   # never matches NOINIT
+        self.p._read_bytes.return_value = b'\xff'  # never matches NOINIT
         with self.assertRaises(SDPProtocolError):
             self.p._send_init_on_send()
 
@@ -325,15 +348,12 @@ class TestSendInitKW(unittest.TestCase):
 # _send() — P300 error paths
 # ---------------------------------------------------------------------------
 
-class TestSendP300ErrorPaths(unittest.TestCase):
 
+class TestSendP300ErrorPaths(unittest.TestCase):
     def setUp(self):
         self.p = _make_proto('P300')
         # pre-build a minimal data_dict that _build_payload accepts
-        self.data_dict = {
-            'payload': '0101',
-            'data': {'len': 2, 'value': None, 'kwseq': False},
-        }
+        self.data_dict = {'payload': '0101', 'data': {'len': 2, 'value': None, 'kwseq': False}}
 
     def test_no_response_raises_sdp_connection_error(self):
         self.p._read_bytes.return_value = b''
@@ -351,13 +371,13 @@ class TestSendP300ErrorPaths(unittest.TestCase):
     def test_not_initiated_raises_sdp_protocol_error_and_clears_flag(self):
         NOTINIT = SDPProtocolViessmann._int2bytes(P300_CS['not_initiated'], 1)
         self.p._read_bytes.return_value = NOTINIT
-        self.p._is_initialized = True   # was initialized; device reset
+        self.p._is_initialized = True  # was initialized; device reset
         with self.assertRaises(SDPProtocolError):
             self.p._send(self.data_dict)
         self.assertFalse(self.p._is_initialized)
 
     def test_wrong_ack_raises_sdp_protocol_error(self):
-        WRONG = b'\xAB' + b'\x00' * 10   # not ACK (0x06)
+        WRONG = b'\xab' + b'\x00' * 10  # not ACK (0x06)
         self.p._read_bytes.return_value = WRONG
         with self.assertRaises(SDPProtocolError):
             self.p._send(self.data_dict)
@@ -368,12 +388,14 @@ class TestSendP300ErrorPaths(unittest.TestCase):
             self.p._send(self.data_dict)
         self.p._close.assert_called_once()
 
-    def test_close_called_on_protocol_error(self):
+    def test_close_not_called_on_protocol_error(self):
+        # Device returning an error byte (0x15) is a protocol-level rejection —
+        # the serial link is intact, so _close() must NOT be called.
         ERROR = SDPProtocolViessmann._int2bytes(P300_CS['error'], 1)
         self.p._read_bytes.return_value = ERROR + b'\x00' * 10
         with self.assertRaises(SDPProtocolError):
             self.p._send(self.data_dict)
-        self.p._close.assert_called_once()
+        self.p._close.assert_not_called()
 
     def test_is_initialized_cleared_on_any_error(self):
         self.p._is_initialized = True
@@ -396,20 +418,14 @@ class TestSendP300ErrorPaths(unittest.TestCase):
         self.assertEqual(result, bytearray([0x00, 0x95]))
 
     def test_successful_write_returns_none(self):
-        write_dict = {
-            'payload': '6000',
-            'data': {'len': 1, 'value': b'\x3c', 'kwseq': False},
-        }
+        write_dict = {'payload': '6000', 'data': {'len': 1, 'value': b'\x3c', 'kwseq': False}}
         self.p._read_bytes.side_effect = _sequential_read(bytes(P300_VALID_WRITE))
         result = self.p._send(write_dict)
         self.assertIsNone(result)
 
     def test_device_error_response_raises_sdp_protocol_error(self):
         """10-byte P300 device error response must raise SDPProtocolError, not checksum mismatch."""
-        write_dict = {
-            'payload': '6000',
-            'data': {'len': 1, 'value': b'\x3c', 'kwseq': False},
-        }
+        write_dict = {'payload': '6000', 'data': {'len': 1, 'value': b'\x3c', 'kwseq': False}}
         self.p._read_bytes.side_effect = _sequential_read(bytes(P300_DEVICE_ERROR_WRITE))
         with self.assertRaises(SDPProtocolError) as ctx:
             self.p._send(write_dict)
@@ -420,14 +436,11 @@ class TestSendP300ErrorPaths(unittest.TestCase):
 # _send() — KW error paths
 # ---------------------------------------------------------------------------
 
-class TestSendKWErrorPaths(unittest.TestCase):
 
+class TestSendKWErrorPaths(unittest.TestCase):
     def setUp(self):
         self.p = _make_proto('KW')
-        self.data_dict = {
-            'payload': '0101',
-            'data': {'len': 2, 'value': None, 'kwseq': False},
-        }
+        self.data_dict = {'payload': '0101', 'data': {'len': 2, 'value': None, 'kwseq': False}}
 
     def test_kw_no_response_raises_sdp_connection_error(self):
         self.p._read_bytes.return_value = b''
