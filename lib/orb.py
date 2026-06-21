@@ -40,30 +40,170 @@ except ImportError:
 
 """
 This library contains a class Orb for calculating sun or moon related events.
-Currently it uses ephem for calculation of the sky bound events.
+
+The actual ephemeris computation is delegated to a swappable backend (see
+_OrbBackend below) - currently only an ephem-based backend exists. This
+indirection exists to allow evaluating alternative ephemeris libraries
+(e.g. skyfield) without changing Orb's public API or any of its callers.
 """
+
+
+class _OrbBackend:
+    """
+    Backend interface for astronomical calculations.
+
+    All datetime/timezone normalisation, degree-offset clamping (avoiding
+    NeverUp/AlwaysUp conditions for non-zero offsets) and moff/day-adjustment
+    arithmetic lives in Orb itself, so it is identical across backends. A
+    backend only has to answer "given this resolved UTC instant, body and
+    horizon, when does the next transit/antitransit/rising/setting happen,
+    or where is the body right now" - nothing more.
+
+    next_rising()/next_setting() must return None (not raise) when the body
+    does not cross the given horizon during the relevant circuit (midnight
+    sun / polar night with doff=0, or an unreachable offset that slipped
+    through despite clamping) - this is a backend-agnostic contract, not an
+    ephem-specific exception type.
+    """
+
+    def get_observer_and_orb(self, lon, lat, elev, body):
+        raise NotImplementedError
+
+    def next_transit(self, lon, lat, elev, body, date_utc, doff):
+        raise NotImplementedError
+
+    def next_antitransit(self, lon, lat, elev, body, date_utc, doff):
+        raise NotImplementedError
+
+    def next_rising(self, lon, lat, elev, body, date_utc, doff, center):
+        raise NotImplementedError
+
+    def next_setting(self, lon, lat, elev, body, date_utc, doff, center):
+        raise NotImplementedError
+
+    def position(self, lon, lat, elev, body, date_utc):
+        """Returns (azimuth_rad, altitude_rad)."""
+        raise NotImplementedError
+
+    def moon_light_percent(self, lon, lat, elev, date_utc):
+        """Returns the illuminated fraction of the moon's disc, 0-100."""
+        raise NotImplementedError
+
+    def moon_phase_octant(self, lon, lat, elev, date_utc):
+        """Returns the moon phase as an octant of its cycle, 0-7."""
+        raise NotImplementedError
+
+
+class _EphemBackend(_OrbBackend):
+    """PyEphem-based implementation of _OrbBackend."""
+
+    def get_observer_and_orb(self, lon, lat, elev, body):
+        """
+        Return a tuple of an instance of an observer with location information
+        and a celestial body
+        Both returned objects are uniquely created to prevent errors in computation
+
+        See also this thread at `Stackoverflow <https://stackoverflow.com/questions/26428904/pyephem-advances-observer-date-on-neveruperror>`_
+        dated back to 2015 where the creator of pyephem writes:
+
+        > Second answer: As long as each thread has its own Moon and Observer objects,
+          it should be able to do its own computations without ruining those of any other threads.
+
+        :return: tuple of observer and celestial body
+        """
+        observer = ephem.Observer()
+        # ephem expects lat and lon as strings
+        observer.long = str(lon)
+        observer.lat = str(lat)
+        if elev:
+            observer.elevation = float(elev)
+
+        if body == 'sun':
+            orb = ephem.Sun()
+            logger.debug("'sun' object requested in function get_observer_and_orb()")
+        elif body == 'moon':
+            orb = ephem.Moon()
+            logger.debug("'moon' object requested in function get_observer_and_orb()")
+        else:
+            logger.error("neither 'sun' nor 'moon' requested in function get_observer_and_orb()")
+
+        return observer, orb
+
+    def next_transit(self, lon, lat, elev, body, date_utc, doff):
+        observer, orb = self.get_observer_and_orb(lon, lat, elev, body)
+        observer.date = date_utc
+        observer.horizon = str(doff)
+        return observer.next_transit(orb).datetime().replace(tzinfo=tzutc())
+
+    def next_antitransit(self, lon, lat, elev, body, date_utc, doff):
+        observer, orb = self.get_observer_and_orb(lon, lat, elev, body)
+        observer.date = date_utc
+        observer.horizon = str(doff)
+        return observer.next_antitransit(orb).datetime().replace(tzinfo=tzutc())
+
+    def next_rising(self, lon, lat, elev, body, date_utc, doff, center):
+        observer, orb = self.get_observer_and_orb(lon, lat, elev, body)
+        observer.date = date_utc
+        observer.horizon = str(doff)
+        try:
+            if not doff == 0:
+                next_rising = observer.next_rising(orb, use_center=center).datetime()
+            else:
+                next_rising = observer.next_rising(orb).datetime()
+        except (ephem.AlwaysUpError, ephem.NeverUpError) as e:
+            logger.notice(f'ephem: {body} has no rise event for {date_utc} at this location ({e}); returning None')
+            return None
+        return next_rising.replace(tzinfo=tzutc())
+
+    def next_setting(self, lon, lat, elev, body, date_utc, doff, center):
+        observer, orb = self.get_observer_and_orb(lon, lat, elev, body)
+        observer.date = date_utc
+        observer.horizon = str(doff)
+        try:
+            if not doff == 0:
+                next_setting = observer.next_setting(orb, use_center=center).datetime()
+            else:
+                next_setting = observer.next_setting(orb).datetime()
+        except (ephem.AlwaysUpError, ephem.NeverUpError) as e:
+            logger.notice(f'ephem: {body} has no set event for {date_utc} at this location ({e}); returning None')
+            return None
+        return next_setting.replace(tzinfo=tzutc())
+
+    def position(self, lon, lat, elev, body, date_utc):
+        observer, orb = self.get_observer_and_orb(lon, lat, elev, body)
+        observer.date = date_utc
+        orb.compute(observer)
+        return (orb.az, orb.alt)
+
+    def moon_light_percent(self, lon, lat, elev, date_utc):
+        observer, orb = self.get_observer_and_orb(lon, lat, elev, 'moon')
+        observer.date = date_utc
+        orb.compute(observer)
+        return int(round(orb.moon_phase * 100))
+
+    def moon_phase_octant(self, lon, lat, elev, date_utc):
+        observer, orb = self.get_observer_and_orb(lon, lat, elev, 'moon')
+        observer.date = date_utc
+        orb.compute(observer)
+        cycle = 29.530588861
+        last = ephem.previous_new_moon(observer.date)
+        frac = (observer.date - last) / cycle
+        return int(round(frac * 8))
+
+
+_BACKENDS = {}
+if ephem is not None:
+    _BACKENDS['ephem'] = _EphemBackend
 
 
 class Orb:
     """
     Save an observers location and the name of a celestial body for future use
 
-    The Methods internally use PyEphem for computation
+    The Methods internally use a swappable backend for computation (currently
+    only PyEphem is implemented, see _OrbBackend/_EphemBackend above).
 
-    An `Observer` instance allows  to compute the positions of
-    celestial bodies as seen from a particular position on the Earth's surface.
-    Following attributes can be set after creation (used defaults are given):
-
-        `date` - the moment the `Observer` is created
-        `lat` - zero degrees latitude
-        `lon` - zero degrees longitude
-        `elevation` - 0 meters above sea level
-        `horizon` - 0 degrees
-        `epoch` - J2000
-        `temp` - 15 degrees Celsius
-        `pressure` - 1010 mBar
-
-    All calculations by ephem will be based on utc time.
+    All calculations are based on utc time.
     Changelog of pypehem:
     > Version 4.1.1 (2021 November 27)
     > When you provide PyEphem with a Python datetime that has a time zone attached,
@@ -84,7 +224,7 @@ class Orb:
     This ambiguity is not handled right now
     """
 
-    def __init__(self, orb, lon, lat, elev=False, neverup_delta=0.00001):
+    def __init__(self, orb, lon, lat, elev=False, neverup_delta=0.00001, backend='ephem'):
         """
         Save location and celestial body
 
@@ -92,9 +232,12 @@ class Orb:
         :param lon: longitude of observer in degrees
         :param lat: latitude of observer in degrees
         :param elev: elevation of observer in meters
+        :param backend: name of the ephemeris backend to use (currently only 'ephem')
         """
-        if ephem is None:
-            logger.warning('Could not find/use ephem!')
+        try:
+            self._backend = _BACKENDS[backend]()
+        except KeyError:
+            logger.warning(f"Could not find/use ephemeris backend '{backend}'!")
             return
 
         self.shtime = Shtime.get_instance()
@@ -116,40 +259,17 @@ class Orb:
             self.phase = self._phase
             self.light = self._light
 
-        logger.debug(f'Orb object {orb=} created with location {lon=},{lat=},{elev=}')
+        logger.debug(f'Orb object {orb=} created with location {lon=},{lat=},{elev=}, {backend=}')
 
     def get_observer_and_orb(self):
         """
         Return a tuple of an instance of an observer with location information
-        and a celestial body
-        Both returned objects are uniquely created to prevent errors in computation
-
-        See also this thread at `Stackoverflow <https://stackoverflow.com/questions/26428904/pyephem-advances-observer-date-on-neveruperror>`_
-        dated back to 2015 where the creator of pyephem writes:
-
-        > Second answer: As long as each thread has its own Moon and Observer objects,
-          it should be able to do its own computations without ruining those of any other threads.
+        and a celestial body, as provided by the active backend. Both returned
+        objects are uniquely created to prevent errors in computation.
 
         :return: tuple of observer and celestial body
         """
-
-        observer = ephem.Observer()
-        # ephem expects lat and lon as strings
-        observer.long = str(self.lon)
-        observer.lat = str(self.lat)
-        if self.elev:
-            observer.elevation = float(self.elev)
-
-        if self.orb == 'sun':
-            orb = ephem.Sun()
-            logger.debug("'sun' object requested in function get_observer_and_orb()")
-        elif self.orb == 'moon':
-            orb = ephem.Moon()
-            logger.debug("'moon' object requested in function get_observer_and_orb()")
-        else:
-            logger.error("neither 'sun' nor 'moon' requested in function get_observer_and_orb()")
-
-        return observer, orb
+        return self._backend.get_observer_and_orb(self.lon, self.lat, self.elev, self.orb)
 
     def unaware_datetime_to_utc(self, naive_dt):
         local_aware = naive_dt.replace(tzinfo=self.shtime.tzinfo())
@@ -160,6 +280,19 @@ class Orb:
 
     def utc_to_local(self, utc_dt):
         return utc_dt.astimezone(self.shtime.tzinfo())
+
+    def _resolve_to_utc(self, dt, moff=0):
+        """Resolve an optional dt parameter (None/naive/aware) to a UTC datetime,
+        applying the minute offset the same way for all callers."""
+        if dt is None:
+            return (
+                self.shtime.utcnow()
+                - dateutil.relativedelta.relativedelta(minutes=moff)
+                + dateutil.relativedelta.relativedelta(seconds=2)
+            )
+        if dt.tzinfo is None:
+            return self.unaware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
+        return self.aware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
 
     def _avoid_neverup(self, dt, date_utc, doff):
         """
@@ -221,42 +354,17 @@ class Orb:
         :return: datetime of next transit
         :rtype: datetime
         """
-        observer, orb = self.get_observer_and_orb()
-        if dt is None:
-            dt = (
-                self.shtime.utcnow()
-                - dateutil.relativedelta.relativedelta(minutes=moff)
-                + dateutil.relativedelta.relativedelta(seconds=2)
-            )
-            observer.date = dt
-            logger.debug(
-                f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
-            )
-        else:
-            if dt.tzinfo is None:
-                # unaware datetime
-                logger.debug(
-                    f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
-                )
-                observer.date = self.unaware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
-            else:
-                logger.debug(
-                    f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
-                )
-                observer.date = self.aware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
-
-        # observer.date.datetime will be utc but it might be without tzinfo
-        date_utc = (observer.date.datetime()).replace(tzinfo=tzutc())
+        date_utc = self._resolve_to_utc(dt, moff)
+        logger.debug(f'noon for {self.orb} with doff={doff}, moff={moff}, dt={dt}, resolved date_utc={date_utc}')
 
         # attention: _avoid_neverup itself calls noon(), this might well get circular in some circumstances
         if not doff == 0:
             doff = self._avoid_neverup(dt, date_utc, doff)
 
-        observer.horizon = str(doff)
-        next_transit = observer.next_transit(orb).datetime()
+        next_transit = self._backend.next_transit(self.lon, self.lat, self.elev, self.orb, date_utc, doff)
         next_transit = next_transit + dateutil.relativedelta.relativedelta(minutes=moff)
         next_transit = next_transit.replace(tzinfo=tzutc())
-        logger.debug(f'ephem: noon for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_transit}')
+        logger.debug(f'noon for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_transit}')
         return next_transit
 
     def midnight(self, doff=0, moff=0, dt=None):
@@ -272,43 +380,17 @@ class Orb:
         :return: datetime of next antitransit
         :rtype: datetime
         """
-
-        observer, orb = self.get_observer_and_orb()
-        if dt is None:
-            observer.date = (
-                self.shtime.utcnow()
-                - dateutil.relativedelta.relativedelta(minutes=moff)
-                + dateutil.relativedelta.relativedelta(seconds=2)
-            )
-            logger.debug(
-                f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
-            )
-        else:
-            if dt.tzinfo is None:
-                # unaware datetime
-                logger.debug(
-                    f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
-                )
-                observer.date = self.unaware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
-            else:
-                logger.debug(
-                    f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
-                )
-                observer.date = self.aware_datetime_to_utc(dt) - dateutil.relativedelta.relativedelta(minutes=moff)
-
-        date_utc = (observer.date.datetime()).replace(tzinfo=tzutc())
+        date_utc = self._resolve_to_utc(dt, moff)
+        logger.debug(f'midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt}, resolved date_utc={date_utc}')
 
         # attention: _avoid_neverup itself calls noon(), this might well get circular in some circumstances
         if not doff == 0:
             doff = self._avoid_neverup(dt, date_utc, doff)
 
-        observer.horizon = str(doff)
-        next_antitransit = observer.next_antitransit(orb).datetime()
+        next_antitransit = self._backend.next_antitransit(self.lon, self.lat, self.elev, self.orb, date_utc, doff)
         next_antitransit = next_antitransit + dateutil.relativedelta.relativedelta(minutes=moff)
         next_antitransit = next_antitransit.replace(tzinfo=tzutc())
-        logger.debug(
-            f'ephem: midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_antitransit}'
-        )
+        logger.debug(f'midnight for {self.orb} with doff={doff}, moff={moff}, dt={dt} will be {next_antitransit}')
         return next_antitransit
 
     def rise(self, doff=0, moff=0, center=True, dt=None):
@@ -318,56 +400,33 @@ class Orb:
         :param moff:    minutes offset from time of rise (either before or after)
         :param center:  if True then the centerpoint of either sun or moon will be considered to make the transit otherwise the upper limb will be considered
         :param dt:      start time for the search for a rise, if not given the current time will be used
-        :return: datetime of next rising in utc timezone
+        :return: datetime of next rising in utc timezone, or None if the body does not rise during this circuit
         """
-        observer, orb = self.get_observer_and_orb()
-        # workaround if rise is 0.001 seconds in the past
-        if dt is None:
-            observer.date = self.shtime.utcnow() + dateutil.relativedelta.relativedelta(seconds=2)
-            logger.debug(
-                f'ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
-            )
-        else:
-            if dt.tzinfo is None:
-                # unaware datetime
-                logger.debug(
-                    f'ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
-                )
-                observer.date = self.unaware_datetime_to_utc(dt)
-            else:
-                logger.debug(
-                    f'ephem: rise for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
-                )
-                observer.date = self.aware_datetime_to_utc(dt)
-
-        date_utc = (observer.date.datetime()).replace(tzinfo=tzutc())
+        # _resolve_to_utc adds 2 seconds when dt is None, working around rise being 0.001s in the past
+        date_utc = self._resolve_to_utc(dt, 0)
+        logger.debug(f'rise for {self.orb} with doff={doff}, moff={moff}, dt={dt}, resolved date_utc={date_utc}')
 
         # attention: _avoid_neverup itself calls noon(), this might well get circular in some circumstances
         if not doff == 0:
             doff = self._avoid_neverup(dt, date_utc, doff)
-        observer.horizon = str(doff)
-        try:
-            if not doff == 0:
-                next_rising = observer.next_rising(orb, use_center=center).datetime()
-                observer.horizon = 0
-                next_real_rising = observer.next_rising(orb, use_center=center).datetime().replace(tzinfo=tzutc())
-            else:
-                next_rising = observer.next_rising(orb).datetime()
-                next_real_rising = next_rising.replace(tzinfo=tzutc())
-        except (ephem.AlwaysUpError, ephem.NeverUpError) as e:
-            # _avoid_neverup only clamps non-zero degree offsets; a plain (doff=0) rise
-            # genuinely does not occur during midnight sun / polar night at this location.
-            logger.notice(f'ephem: {self.orb} has no rise event for {date_utc} at this location ({e}); returning None')
+
+        next_rising = self._backend.next_rising(self.lon, self.lat, self.elev, self.orb, date_utc, doff, center)
+        if next_rising is None:
             return None
+        if not doff == 0:
+            next_real_rising = self._backend.next_rising(self.lon, self.lat, self.elev, self.orb, date_utc, 0, center)
+            if next_real_rising is None:
+                return None
+        else:
+            next_real_rising = next_rising
+
         next_rising = next_rising + dateutil.relativedelta.relativedelta(minutes=moff)
         next_rising = next_rising.replace(tzinfo=tzutc())
         if doff < 0 and next_rising > next_real_rising:
-            logger.debug(
-                f'ephem: adjusted next_rising {next_rising} to previous day as it is later than {next_real_rising}'
-            )
+            logger.debug(f'adjusted next_rising {next_rising} to previous day as it is later than {next_real_rising}')
             next_rising -= datetime.timedelta(days=1)
         logger.debug(
-            f'ephem: next_rising for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_rising}'
+            f'next_rising for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_rising}'
         )
         return next_rising
 
@@ -378,56 +437,35 @@ class Orb:
         :param moff:    minutes offset from time of setting (either before or after)
         :param center:  if True then the centerpoint of either sun or moon will be considered to make the transit otherwise the upper limb will be considered
         :param dt:      start time for the search for a setting, if not given the current time will be used
-        :return: datetime of next setting in utc timezone
+        :return: datetime of next setting in utc timezone, or None if the body does not set during this circuit
         """
-        observer, orb = self.get_observer_and_orb()
-        # workaround if set is 0.001 seconds in the past
-        if dt is None:
-            observer.date = self.shtime.utcnow() + dateutil.relativedelta.relativedelta(seconds=2)
-            logger.debug(
-                f'ephem: set for {self.orb} with doff={doff}, moff={moff}, dt is None, using observer.date={observer.date}'
-            )
-        else:
-            if dt.tzinfo is None:
-                # unaware datetime
-                logger.debug(
-                    f'ephem: set for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt is unaware of timezone, assuming local time'
-                )
-                observer.date = self.unaware_datetime_to_utc(dt)
-            else:
-                logger.debug(
-                    f'ephem: set for {self.orb} with doff={doff}, moff={moff}, dt={dt}, dt timezone is {dt.tzinfo}'
-                )
-                observer.date = self.aware_datetime_to_utc(dt)
-
-        date_utc = (observer.date.datetime()).replace(tzinfo=tzutc())
+        # _resolve_to_utc adds 2 seconds when dt is None, working around set being 0.001s in the past
+        date_utc = self._resolve_to_utc(dt, 0)
+        logger.debug(f'set for {self.orb} with doff={doff}, moff={moff}, dt={dt}, resolved date_utc={date_utc}')
 
         # avoid NeverUp error
         if not doff == 0:
             doff = self._avoid_neverup(dt, date_utc, doff)
-        observer.horizon = str(doff)
-        try:
-            if not doff == 0:
-                next_setting = observer.next_setting(orb, use_center=center).datetime()
-                observer.horizon = 0
-                next_real_setting = observer.next_setting(orb, use_center=center).datetime().replace(tzinfo=tzutc())
-            else:
-                next_setting = observer.next_setting(orb).datetime()
-                next_real_setting = next_setting.replace(tzinfo=tzutc())
-        except (ephem.AlwaysUpError, ephem.NeverUpError) as e:
-            # _avoid_neverup only clamps non-zero degree offsets; a plain (doff=0) setting
-            # genuinely does not occur during midnight sun / polar night at this location.
-            logger.notice(f'ephem: {self.orb} has no set event for {date_utc} at this location ({e}); returning None')
+
+        next_setting = self._backend.next_setting(self.lon, self.lat, self.elev, self.orb, date_utc, doff, center)
+        if next_setting is None:
             return None
+        if not doff == 0:
+            next_real_setting = self._backend.next_setting(self.lon, self.lat, self.elev, self.orb, date_utc, 0, center)
+            if next_real_setting is None:
+                return None
+        else:
+            next_real_setting = next_setting
+
         next_setting = next_setting + dateutil.relativedelta.relativedelta(minutes=moff)
         next_setting = next_setting.replace(tzinfo=tzutc())
         if doff < 0 and next_setting < next_real_setting:
             logger.debug(
-                f'ephem: adjusted next_setting {next_setting} to next day as it is earlier than actual sunset at {next_real_setting}'
+                f'adjusted next_setting {next_setting} to next day as it is earlier than actual sunset at {next_real_setting}'
             )
             next_setting += datetime.timedelta(days=1)
         logger.debug(
-            f'ephem: next_setting for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_setting}'
+            f'next_setting for {self.orb} with doff={doff}, moff={moff}, center={center}, dt={dt} will be {next_setting}'
         )
         return next_setting
 
@@ -439,35 +477,27 @@ class Orb:
         :param dt:      time for which the position needs to be calculated
         :return:        a tuple with azimuth and elevation
         """
-        observer, orb = self.get_observer_and_orb()
         if dt is None:
             date = self.shtime.utcnow()
-            logger.debug(
-                f'ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt is None, using observer.date={observer.date}'
-            )
+            logger.debug(f'pos for {self.orb} with offset={offset}, degree={degree}, dt is None, using now={date}')
+        elif dt.tzinfo is None:
+            logger.debug(f'pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, assuming local time')
+            date = self.unaware_datetime_to_utc(dt)
         else:
-            if dt.tzinfo is None:
-                # unaware datetime
-                logger.debug(
-                    f'ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, dt is unaware of timezone, assuming local time'
-                )
-                date = self.unaware_datetime_to_utc(dt)
-            else:
-                logger.debug(
-                    f'ephem: pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, dt timezone is {dt.tzinfo}'
-                )
-                date = self.aware_datetime_to_utc(dt)
+            logger.debug(
+                f'pos for {self.orb} with offset={offset}, degree={degree}, dt={dt}, dt timezone is {dt.tzinfo}'
+            )
+            date = self.aware_datetime_to_utc(dt)
 
         if offset:
             date += dateutil.relativedelta.relativedelta(minutes=offset)
 
-        observer.date = date
-        orb.compute(observer)
+        az, alt = self._backend.position(self.lon, self.lat, self.elev, self.orb, date)
 
         if degree:
-            return (math.degrees(orb.az), math.degrees(orb.alt))
+            return (math.degrees(az), math.degrees(alt))
         else:
-            return (orb.az, orb.alt)
+            return (az, alt)
 
     def _light(self, offset=None):
         """
@@ -475,14 +505,10 @@ class Orb:
         for the current time plus an offset
         :param offset: an offset given in minutes
         """
-        observer, orb = self.get_observer_and_orb()
         date = self.shtime.utcnow()
         if offset:
             date += dateutil.relativedelta.relativedelta(minutes=offset)
-        observer.date = date
-        orb.compute(observer)
-        light = int(round(orb.moon_phase * 100))
-        return light
+        return self._backend.moon_light_percent(self.lon, self.lat, self.elev, date)
 
     def _phase(self, offset=None):
         """
@@ -490,14 +516,7 @@ class Orb:
         for the current time plus an offset
         :param offset: an offset given in minutes
         """
-        observer, orb = self.get_observer_and_orb()
         date = self.shtime.utcnow()
-        cycle = 29.530588861
         if offset:
             date += dateutil.relativedelta.relativedelta(minutes=offset)
-        observer.date = date
-        orb.compute(observer)
-        last = ephem.previous_new_moon(observer.date)
-        frac = (observer.date - last) / cycle
-        phase = int(round(frac * 8))
-        return phase
+        return self._backend.moon_phase_octant(self.lon, self.lat, self.elev, date)

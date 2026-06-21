@@ -93,6 +93,18 @@ class TestOrbInit(unittest.TestCase):
         orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
         self.assertEqual(orb.orb, 'sun')
 
+    def test_ephem_backend_used_by_default(self):
+        orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        from lib.orb import _EphemBackend
+
+        self.assertIsInstance(orb._backend, _EphemBackend)
+
+    def test_unknown_backend_warns_and_leaves_orb_unconfigured(self):
+        orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='skyfield')
+        # skyfield isn't registered yet (tracer bullet for the planned migration) -
+        # Orb.__init__ returns early, same as the historical "ephem not installed" case.
+        self.assertFalse(hasattr(orb, 'orb'))
+
     def test_moon_object_created(self):
         orb = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
         self.assertEqual(orb.orb, 'moon')
