@@ -152,14 +152,14 @@ class Orb:
         return observer, orb
 
     def unaware_datetime_to_utc(self, naive_dt):
-        local_aware = naive_dt.astimezone()
+        local_aware = naive_dt.replace(tzinfo=self.shtime.tzinfo())
         return local_aware.astimezone(datetime.timezone.utc)
 
     def aware_datetime_to_utc(self, aware_dt):
         return aware_dt.astimezone(datetime.timezone.utc)
 
     def utc_to_local(self, utc_dt):
-        return utc_dt.astimezone()
+        return utc_dt.astimezone(self.shtime.tzinfo())
 
     def _avoid_neverup(self, dt, date_utc, doff):
         """
@@ -346,13 +346,19 @@ class Orb:
         if not doff == 0:
             doff = self._avoid_neverup(dt, date_utc, doff)
         observer.horizon = str(doff)
-        if not doff == 0:
-            next_rising = observer.next_rising(orb, use_center=center).datetime()
-            observer.horizon = 0
-            next_real_rising = observer.next_rising(orb, use_center=center).datetime().replace(tzinfo=tzutc())
-        else:
-            next_rising = observer.next_rising(orb).datetime()
-            next_real_rising = next_rising.replace(tzinfo=tzutc())
+        try:
+            if not doff == 0:
+                next_rising = observer.next_rising(orb, use_center=center).datetime()
+                observer.horizon = 0
+                next_real_rising = observer.next_rising(orb, use_center=center).datetime().replace(tzinfo=tzutc())
+            else:
+                next_rising = observer.next_rising(orb).datetime()
+                next_real_rising = next_rising.replace(tzinfo=tzutc())
+        except (ephem.AlwaysUpError, ephem.NeverUpError) as e:
+            # _avoid_neverup only clamps non-zero degree offsets; a plain (doff=0) rise
+            # genuinely does not occur during midnight sun / polar night at this location.
+            logger.notice(f'ephem: {self.orb} has no rise event for {date_utc} at this location ({e}); returning None')
+            return None
         next_rising = next_rising + dateutil.relativedelta.relativedelta(minutes=moff)
         next_rising = next_rising.replace(tzinfo=tzutc())
         if doff < 0 and next_rising > next_real_rising:
@@ -400,13 +406,19 @@ class Orb:
         if not doff == 0:
             doff = self._avoid_neverup(dt, date_utc, doff)
         observer.horizon = str(doff)
-        if not doff == 0:
-            next_setting = observer.next_setting(orb, use_center=center).datetime()
-            observer.horizon = 0
-            next_real_setting = observer.next_setting(orb, use_center=center).datetime().replace(tzinfo=tzutc())
-        else:
-            next_setting = observer.next_setting(orb).datetime()
-            next_real_setting = next_setting.replace(tzinfo=tzutc())
+        try:
+            if not doff == 0:
+                next_setting = observer.next_setting(orb, use_center=center).datetime()
+                observer.horizon = 0
+                next_real_setting = observer.next_setting(orb, use_center=center).datetime().replace(tzinfo=tzutc())
+            else:
+                next_setting = observer.next_setting(orb).datetime()
+                next_real_setting = next_setting.replace(tzinfo=tzutc())
+        except (ephem.AlwaysUpError, ephem.NeverUpError) as e:
+            # _avoid_neverup only clamps non-zero degree offsets; a plain (doff=0) setting
+            # genuinely does not occur during midnight sun / polar night at this location.
+            logger.notice(f'ephem: {self.orb} has no set event for {date_utc} at this location ({e}); returning None')
+            return None
         next_setting = next_setting + dateutil.relativedelta.relativedelta(minutes=moff)
         next_setting = next_setting.replace(tzinfo=tzutc())
         if doff < 0 and next_setting < next_real_setting:

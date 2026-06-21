@@ -56,9 +56,18 @@ _SUMMER_SOLSTICE = datetime.datetime(2024, 6, 21, 0, 0, 0, tzinfo=datetime.timez
 _WINTER_SOLSTICE = datetime.datetime(2024, 12, 21, 0, 0, 0, tzinfo=datetime.timezone.utc)
 # Noon on summer solstice (for position tests)
 _SUMMER_NOON = datetime.datetime(2024, 6, 21, 11, 31, 0, tzinfo=datetime.timezone.utc)
+# Spring equinox 2024 (Berlin) — day/night roughly equal length
+_SPRING_EQUINOX = datetime.datetime(2024, 3, 20, 0, 0, 0, tzinfo=datetime.timezone.utc)
+
+# Tromsø, Norway (69.65°N) — well inside the Arctic Circle, exercises
+# midnight sun (summer) / polar night (winter), where the sun's plain
+# (doff=0) rise/set genuinely does not occur on the given calendar day.
+TROMSO_LON = 18.9553
+TROMSO_LAT = 69.6492
+TROMSO_ELEV = 10
 
 
-def _make_shtime():
+def _make_shtime(tz='UTC'):
     import lib.shtime as _m
 
     _m._shtime_instance = None
@@ -71,7 +80,7 @@ def _make_shtime():
             return os.path.join(base, basename + extension)
 
     st = Shtime(_Sh())
-    st.set_tz('UTC')
+    st.set_tz(tz)
     return st
 
 
@@ -287,6 +296,159 @@ class TestCoordinateConversions(unittest.TestCase):
         utc = datetime.datetime(2024, 6, 21, 12, 0, 0, tzinfo=datetime.timezone.utc)
         result = self.sun.utc_to_local(utc)
         self.assertIsInstance(result, datetime.datetime)
+
+
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
+class TestCoordinateConversionsUseConfiguredTz(unittest.TestCase):
+    """Regression tests: unaware_datetime_to_utc/utc_to_local must use shng's
+    configured timezone (self.shtime.tzinfo()), not whatever the OS-level
+    timezone happens to be. force_os_tz creates a genuine mismatch so these
+    actually exercise the bug rather than relying on OS/configured tz happening
+    to agree in the test environment."""
+
+    def setUp(self):
+        self.shtime = _make_shtime('Pacific/Honolulu')
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+
+    def test_unaware_to_utc_uses_configured_tz(self):
+        with common.force_os_tz('Europe/Berlin'):
+            naive = datetime.datetime(2024, 6, 15, 12, 0, 0)
+            result = self.sun.unaware_datetime_to_utc(naive)
+            # 12:00 Honolulu (UTC-10) -> 22:00 UTC same day
+            self.assertEqual(result, datetime.datetime(2024, 6, 15, 22, 0, 0, tzinfo=datetime.timezone.utc))
+
+    def test_utc_to_local_uses_configured_tz(self):
+        with common.force_os_tz('Europe/Berlin'):
+            utc_dt = datetime.datetime(2024, 6, 15, 12, 0, 0, tzinfo=datetime.timezone.utc)
+            result = self.sun.utc_to_local(utc_dt)
+            # 12:00 UTC -> 02:00 Honolulu (UTC-10) same day
+            self.assertEqual(result.hour, 2)
+            self.assertEqual(result.utcoffset(), datetime.timedelta(hours=-10))
+
+
+# ===========================================================================
+# Equinox sanity (second reference point beyond the solstice tests, prep
+# for ephem-to-skyfield comparison)
+# ===========================================================================
+
+
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
+class TestEquinox(unittest.TestCase):
+    def setUp(self):
+        self.shtime = _make_shtime()
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+
+    def test_equinox_day_length_close_to_twelve_hours(self):
+        # True day/night equality ("equilux") happens a few days after the
+        # astronomical equinox due to atmospheric refraction and the sun's
+        # angular size; 30 min tolerance covers that gap.
+        rise = self.sun.rise(dt=_SPRING_EQUINOX)
+        sset = self.sun.set(dt=_SPRING_EQUINOX)
+        day_length = sset - rise
+        self.assertLess(abs(day_length.total_seconds() - 12 * 3600), 30 * 60)
+
+    def test_equinox_rise_approx(self):
+        expected = datetime.datetime(2024, 3, 20, 5, 8, 0, tzinfo=datetime.timezone.utc)
+        result = self.sun.rise(dt=_SPRING_EQUINOX)
+        diff = abs(result.replace(tzinfo=datetime.timezone.utc) - expected)
+        self.assertLessEqual(diff, datetime.timedelta(minutes=15))
+
+    def test_equinox_set_approx(self):
+        expected = datetime.datetime(2024, 3, 20, 17, 21, 0, tzinfo=datetime.timezone.utc)
+        result = self.sun.set(dt=_SPRING_EQUINOX)
+        diff = abs(result.replace(tzinfo=datetime.timezone.utc) - expected)
+        self.assertLessEqual(diff, datetime.timedelta(minutes=15))
+
+
+# ===========================================================================
+# Moon rise/set sanity (only phase/light were characterized before)
+# ===========================================================================
+
+
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
+class TestMoonRiseSet(unittest.TestCase):
+    def setUp(self):
+        self.shtime = _make_shtime()
+        self.moon = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+
+    def test_moon_rise_is_utc_aware(self):
+        result = self.moon.rise(dt=_SPRING_EQUINOX)
+        self.assertIsNotNone(result.tzinfo)
+
+    def test_moon_set_is_utc_aware(self):
+        result = self.moon.set(dt=_SPRING_EQUINOX)
+        self.assertIsNotNone(result.tzinfo)
+
+    def test_moon_rise_within_24h_of_search_start(self):
+        # Moon rise/set always occurs roughly once per ~24h50m (lunar day);
+        # a "next" search should never jump multiple days.
+        result = self.moon.rise(dt=_SPRING_EQUINOX)
+        self.assertLess((result - _SPRING_EQUINOX).total_seconds() / 3600, 26)
+
+    def test_moon_set_within_24h_of_search_start(self):
+        result = self.moon.set(dt=_SPRING_EQUINOX)
+        self.assertLess((result - _SPRING_EQUINOX).total_seconds() / 3600, 26)
+
+    def test_moon_minute_offset_shifts_time(self):
+        rise_plain = self.moon.rise(dt=_SPRING_EQUINOX)
+        rise_plus30 = self.moon.rise(moff=30, dt=_SPRING_EQUINOX)
+        diff = rise_plus30 - rise_plain
+        self.assertAlmostEqual(diff.total_seconds() / 60, 30, delta=1)
+
+
+# ===========================================================================
+# High-latitude (midnight sun / polar night) regression tests
+#
+# Orb.rise()/set() with doff=0 (the default) used to crash with an uncaught
+# ephem.AlwaysUpError/NeverUpError at any location where the sun's plain
+# horizon crossing genuinely does not occur on the given day. _avoid_neverup
+# only clamps non-zero degree offsets, so this path had no protection.
+# ===========================================================================
+
+
+@unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
+class TestHighLatitudeNeverUp(unittest.TestCase):
+    def setUp(self):
+        self.shtime = _make_shtime()
+        self.sun = Orb('sun', TROMSO_LON, TROMSO_LAT, TROMSO_ELEV)
+
+    def test_midnight_sun_rise_returns_none_not_raises(self):
+        # Tromsø, summer solstice: sun never sets, so it never "rises" either
+        # (it's already up). Must not raise AlwaysUpError.
+        result = self.sun.rise(dt=_SUMMER_SOLSTICE)
+        self.assertIsNone(result)
+
+    def test_midnight_sun_set_returns_none_not_raises(self):
+        result = self.sun.set(dt=_SUMMER_SOLSTICE)
+        self.assertIsNone(result)
+
+    def test_polar_night_rise_returns_none_not_raises(self):
+        # Tromsø, winter solstice: sun never rises above the horizon.
+        result = self.sun.rise(dt=_WINTER_SOLSTICE)
+        self.assertIsNone(result)
+
+    def test_polar_night_set_returns_none_not_raises(self):
+        result = self.sun.set(dt=_WINTER_SOLSTICE)
+        self.assertIsNone(result)
+
+    def test_noon_unaffected_by_midnight_sun(self):
+        # Transit (solar noon) always exists regardless of whether the sun
+        # crosses the horizon that day.
+        result = self.sun.noon(dt=_SUMMER_SOLSTICE)
+        self.assertIsInstance(result, datetime.datetime)
+
+    def test_midnight_unaffected_by_polar_night(self):
+        result = self.sun.midnight(dt=_WINTER_SOLSTICE)
+        self.assertIsInstance(result, datetime.datetime)
+
+    def test_equinox_rise_set_work_normally_at_high_latitude(self):
+        # Sanity check: away from the solstices, Tromsø still has normal
+        # rise/set events (this should never have been broken).
+        rise = self.sun.rise(dt=_SPRING_EQUINOX)
+        sset = self.sun.set(dt=_SPRING_EQUINOX)
+        self.assertIsInstance(rise, datetime.datetime)
+        self.assertIsInstance(sset, datetime.datetime)
+        self.assertLess(rise, sset)
 
 
 if __name__ == '__main__':
