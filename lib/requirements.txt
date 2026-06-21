@@ -1,5 +1,6 @@
 # lib.orb:
 ephem>=4.2,<5.0.0
+skyfield>=1.49,<2.0.0
 pytz
 babel
 

@@ -38,6 +38,13 @@ try:
 except ImportError:
     HAS_EPHEM = False
 
+try:
+    from skyfield.api import Loader as _skyfield_loader_check
+
+    HAS_SKYFIELD = True
+except ImportError:
+    HAS_SKYFIELD = False
+
 from lib.orb import Orb
 from lib.shtime import Shtime
 
@@ -100,10 +107,17 @@ class TestOrbInit(unittest.TestCase):
         self.assertIsInstance(orb._backend, _EphemBackend)
 
     def test_unknown_backend_warns_and_leaves_orb_unconfigured(self):
-        orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='skyfield')
-        # skyfield isn't registered yet (tracer bullet for the planned migration) -
-        # Orb.__init__ returns early, same as the historical "ephem not installed" case.
+        orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='nonexistent')
+        # Orb.__init__ returns early for an unregistered backend name, same as
+        # the historical "ephem not installed" case.
         self.assertFalse(hasattr(orb, 'orb'))
+
+    @unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+    def test_skyfield_backend_selectable(self):
+        orb = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='skyfield')
+        from lib.orb import _SkyfieldBackend
+
+        self.assertIsInstance(orb._backend, _SkyfieldBackend)
 
     def test_moon_object_created(self):
         orb = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
@@ -128,10 +142,11 @@ class TestSunRiseSet(unittest.TestCase):
     """Sunrise and sunset times against published USNO values (±10 min)."""
 
     TOLERANCE = datetime.timedelta(minutes=10)
+    BACKEND = 'ephem'
 
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend=self.BACKEND)
 
     def test_summer_solstice_sunrise_approx(self):
         # pyephem computes Berlin sunrise on 2024-06-21 ≈ 02:43 UTC.
@@ -184,11 +199,20 @@ class TestSunRiseSet(unittest.TestCase):
         self.assertAlmostEqual(diff.total_seconds() / 60, 30, delta=1)
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestSunRiseSetSkyfield(TestSunRiseSet):
+    """Same characterization suite as TestSunRiseSet, against the skyfield backend."""
+
+    BACKEND = 'skyfield'
+
+
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestSolarNoon(unittest.TestCase):
+    BACKEND = 'ephem'
+
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend=self.BACKEND)
 
     def test_noon_approx_time(self):
         # pyephem computes Berlin solar noon on 2024-06-21 ≈ 11:08 UTC.
@@ -212,11 +236,18 @@ class TestSolarNoon(unittest.TestCase):
         self.assertIsNotNone(result.tzinfo)
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestSolarNoonSkyfield(TestSolarNoon):
+    BACKEND = 'skyfield'
+
+
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestSolarPosition(unittest.TestCase):
+    BACKEND = 'ephem'
+
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend=self.BACKEND)
 
     def test_pos_returns_two_values(self):
         result = self.sun.pos(dt=_SUMMER_SOLSTICE)
@@ -253,11 +284,18 @@ class TestSolarPosition(unittest.TestCase):
         self.assertLessEqual(el_deg, 90)
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestSolarPositionSkyfield(TestSolarPosition):
+    BACKEND = 'skyfield'
+
+
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestMoon(unittest.TestCase):
+    BACKEND = 'ephem'
+
     def setUp(self):
         self.shtime = _make_shtime()
-        self.moon = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.moon = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend=self.BACKEND)
 
     def test_moon_rise_returns_datetime(self):
         result = self.moon.rise(dt=_SUMMER_SOLSTICE)
@@ -284,6 +322,11 @@ class TestMoon(unittest.TestCase):
         self.assertIsInstance(result, int)
         self.assertGreaterEqual(result, 0)
         self.assertLessEqual(result, 100)
+
+
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestMoonSkyfield(TestMoon):
+    BACKEND = 'skyfield'
 
 
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
@@ -346,9 +389,11 @@ class TestCoordinateConversionsUseConfiguredTz(unittest.TestCase):
 
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestEquinox(unittest.TestCase):
+    BACKEND = 'ephem'
+
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend=self.BACKEND)
 
     def test_equinox_day_length_close_to_twelve_hours(self):
         # True day/night equality ("equilux") happens a few days after the
@@ -372,6 +417,11 @@ class TestEquinox(unittest.TestCase):
         self.assertLessEqual(diff, datetime.timedelta(minutes=15))
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestEquinoxSkyfield(TestEquinox):
+    BACKEND = 'skyfield'
+
+
 # ===========================================================================
 # Moon rise/set sanity (only phase/light were characterized before)
 # ===========================================================================
@@ -379,9 +429,11 @@ class TestEquinox(unittest.TestCase):
 
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestMoonRiseSet(unittest.TestCase):
+    BACKEND = 'ephem'
+
     def setUp(self):
         self.shtime = _make_shtime()
-        self.moon = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV)
+        self.moon = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend=self.BACKEND)
 
     def test_moon_rise_is_utc_aware(self):
         result = self.moon.rise(dt=_SPRING_EQUINOX)
@@ -408,6 +460,11 @@ class TestMoonRiseSet(unittest.TestCase):
         self.assertAlmostEqual(diff.total_seconds() / 60, 30, delta=1)
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestMoonRiseSetSkyfield(TestMoonRiseSet):
+    BACKEND = 'skyfield'
+
+
 # ===========================================================================
 # High-latitude (midnight sun / polar night) regression tests
 #
@@ -415,14 +472,20 @@ class TestMoonRiseSet(unittest.TestCase):
 # ephem.AlwaysUpError/NeverUpError at any location where the sun's plain
 # horizon crossing genuinely does not occur on the given day. _avoid_neverup
 # only clamps non-zero degree offsets, so this path had no protection.
+#
+# The skyfield variant exercises the *different* mechanism that backend uses
+# to signal "no event": checking the find_risings()/find_settings() events
+# flag rather than catching an ephem-specific exception.
 # ===========================================================================
 
 
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestHighLatitudeNeverUp(unittest.TestCase):
+    BACKEND = 'ephem'
+
     def setUp(self):
         self.shtime = _make_shtime()
-        self.sun = Orb('sun', TROMSO_LON, TROMSO_LAT, TROMSO_ELEV)
+        self.sun = Orb('sun', TROMSO_LON, TROMSO_LAT, TROMSO_ELEV, backend=self.BACKEND)
 
     def test_midnight_sun_rise_returns_none_not_raises(self):
         # Tromsø, summer solstice: sun never sets, so it never "rises" either
@@ -461,6 +524,11 @@ class TestHighLatitudeNeverUp(unittest.TestCase):
         self.assertIsInstance(rise, datetime.datetime)
         self.assertIsInstance(sset, datetime.datetime)
         self.assertLess(rise, sset)
+
+
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestHighLatitudeNeverUpSkyfield(TestHighLatitudeNeverUp):
+    BACKEND = 'skyfield'
 
 
 if __name__ == '__main__':

@@ -24,6 +24,7 @@
 import logging
 import datetime
 import math
+import os
 import dateutil.relativedelta
 
 from dateutil.tz import tzutc
@@ -36,6 +37,14 @@ try:
     import ephem
 except ImportError:
     ephem = None  # noqa
+
+try:
+    from skyfield.api import Loader, wgs84
+    from skyfield import almanac as skyfield_almanac
+except ImportError:
+    Loader = None  # noqa
+    wgs84 = None  # noqa
+    skyfield_almanac = None  # noqa
 
 
 """
@@ -191,9 +200,146 @@ class _EphemBackend(_OrbBackend):
         return int(round(frac * 8))
 
 
+class _SkyfieldBackend(_OrbBackend):
+    """
+    Skyfield-based implementation of _OrbBackend.
+
+    Skyfield's almanac search functions (find_risings/find_settings/find_transits)
+    sample the search window and bisect, unlike pyephem's Newton-iteration-based
+    next_rising()/next_setting()/next_transit() - this is structurally more robust
+    near turning points (e.g. close to a solstice, where the rate of change of
+    sunset time approaches zero) where the iterative approach has been observed to
+    occasionally overshoot. See orb_eph.py vs. orb_sky.py prototype comparison at
+    https://github.com/CaeruleusAqua/smarthome_skyfield for the origin of this
+    implementation's approach.
+
+    Ephemeris data (de421.bsp, ~17MB) is downloaded on first use and cached on disk;
+    requires network access the first time a Skyfield-backed Orb is created.
+    """
+
+    # Loaded lazily, shared across all instances/Orb objects in this process -
+    # loading the ephemeris file and timescale data is expensive and the data
+    # itself is stateless/reusable.
+    _load = None
+    _planets = None
+    _ts = None
+
+    @classmethod
+    def _ensure_loaded(cls):
+        if cls._planets is not None:
+            return
+        data_dir = cls._data_dir()
+        cls._load = Loader(data_dir)
+        cls._planets = cls._load('de421.bsp')
+        cls._ts = cls._load.timescale()
+        logger.info(f'skyfield: loaded de421.bsp ephemeris data from {data_dir}')
+
+    @staticmethod
+    def _data_dir():
+        sh = getattr(Shtime.get_instance(), '_sh', None)
+        var_dir = getattr(sh, '_var_dir', None)
+        if var_dir:
+            return os.path.join(var_dir, 'skyfield-data')
+        return '~/.skyfield-data'
+
+    def _body(self, body):
+        self._ensure_loaded()
+        return self._planets[body]
+
+    def _observer(self, lon, lat, elev):
+        self._ensure_loaded()
+        topos = wgs84.latlon(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elev or 0)
+        return self._planets['earth'] + topos
+
+    def get_observer_and_orb(self, lon, lat, elev, body):
+        return self._observer(lon, lat, elev), self._body(body)
+
+    def next_transit(self, lon, lat, elev, body, date_utc, doff):
+        # doff (degree offset for the horizon) only affects rise/set, not transit
+        # (the meridian crossing happens regardless of horizon) - kept as a
+        # parameter purely to match the shared _OrbBackend interface.
+        observer = self._observer(lon, lat, elev)
+        orb = self._body(body)
+        t0 = self._ts.from_datetime(date_utc)
+        t1 = self._ts.from_datetime(date_utc + datetime.timedelta(days=2))
+        times = skyfield_almanac.find_transits(observer, orb, t0, t1)
+        if len(times) == 0:
+            return None
+        return times[0].utc_datetime().replace(tzinfo=tzutc())
+
+    def next_antitransit(self, lon, lat, elev, body, date_utc, doff):
+        # skyfield has no public antitransit finder; almanac.find_transits() looks
+        # for hour angle 0 (upper meridian crossing). almanac._find() is the
+        # private generic search helper find_transits() itself uses - reuse it
+        # directly with a target hour angle of pi (180°, lower meridian crossing).
+        observer = self._observer(lon, lat, elev)
+        orb = self._body(body)
+        t0 = self._ts.from_datetime(date_utc)
+        t1 = self._ts.from_datetime(date_utc + datetime.timedelta(days=2))
+
+        def _antitransit_hour_angle(latitude, declination, altitude_radians):
+            return math.pi
+
+        times, _events = skyfield_almanac._find(observer, orb, t0, t1, 0, _antitransit_hour_angle)
+        if len(times) == 0:
+            return None
+        return times[0].utc_datetime().replace(tzinfo=tzutc())
+
+    def next_rising(self, lon, lat, elev, body, date_utc, doff, center):
+        # center (use_center in the ephem backend) has no equivalent in skyfield's
+        # find_risings()/find_settings(): skyfield always computes against the
+        # body's actual apparent disc, there is no "upper limb" mode to opt out of.
+        observer = self._observer(lon, lat, elev)
+        orb = self._body(body)
+        t0 = self._ts.from_datetime(date_utc)
+        t1 = self._ts.from_datetime(date_utc + datetime.timedelta(days=2))
+        times, events = skyfield_almanac.find_risings(observer, orb, t0, t1, doff)
+        for time, event in zip(times, events):
+            if event:
+                return time.utc_datetime().replace(tzinfo=tzutc())
+        # every candidate in the window was a "merely transits, doesn't touch
+        # the horizon" entry - midnight sun / polar night for this horizon.
+        logger.notice(f'skyfield: {body} has no rise event for {date_utc} at this location; returning None')
+        return None
+
+    def next_setting(self, lon, lat, elev, body, date_utc, doff, center):
+        observer = self._observer(lon, lat, elev)
+        orb = self._body(body)
+        t0 = self._ts.from_datetime(date_utc)
+        t1 = self._ts.from_datetime(date_utc + datetime.timedelta(days=2))
+        times, events = skyfield_almanac.find_settings(observer, orb, t0, t1, doff)
+        for time, event in zip(times, events):
+            if event:
+                return time.utc_datetime().replace(tzinfo=tzutc())
+        logger.notice(f'skyfield: {body} has no set event for {date_utc} at this location; returning None')
+        return None
+
+    def position(self, lon, lat, elev, body, date_utc):
+        observer = self._observer(lon, lat, elev)
+        orb = self._body(body)
+        t = self._ts.from_datetime(date_utc)
+        alt, az, _distance = observer.at(t).observe(orb).apparent().altaz()
+        return (az.radians, alt.radians)
+
+    def moon_light_percent(self, lon, lat, elev, date_utc):
+        self._ensure_loaded()
+        t = self._ts.from_datetime(date_utc)
+        phase_angle = skyfield_almanac.moon_phase(self._planets, t).radians
+        light = (1 - math.cos(phase_angle)) / 2 * 100
+        return int(round(light))
+
+    def moon_phase_octant(self, lon, lat, elev, date_utc):
+        self._ensure_loaded()
+        t = self._ts.from_datetime(date_utc)
+        phase_angle = skyfield_almanac.moon_phase(self._planets, t).degrees
+        return int(round(phase_angle / 360 * 8))
+
+
 _BACKENDS = {}
 if ephem is not None:
     _BACKENDS['ephem'] = _EphemBackend
+if Loader is not None:
+    _BACKENDS['skyfield'] = _SkyfieldBackend
 
 
 class Orb:
