@@ -29,9 +29,15 @@ import dateutil.relativedelta
 
 from dateutil.tz import tzutc
 
+from lib.constants import DIR_CACHE, DIR_VAR
 from lib.shtime import Shtime
 
 logger = logging.getLogger(__name__)
+
+# shng root directory - same computation lib/smarthome.py uses for its own
+# BASE constant. Not imported from lib.smarthome directly: that module
+# constructs Orb instances itself, so importing it here would be circular.
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 try:
     import ephem
@@ -229,18 +235,34 @@ class _SkyfieldBackend(_OrbBackend):
         if cls._planets is not None:
             return
         data_dir = cls._data_dir()
+        target = os.path.join(data_dir, 'de421.bsp')
+        missing = not os.path.exists(target)
+        if missing:
+            logger.error(
+                f"skyfield: ephemeris data not found at {target}. Run 'tools/fetch_skyfield_data.py' once "
+                f'to download it (~17MB, one-time download, valid through 2053) - attempting to download '
+                f'it now, which will fail if no network access is available.'
+            )
         cls._load = Loader(data_dir)
-        cls._planets = cls._load('de421.bsp')
+        try:
+            cls._planets = cls._load('de421.bsp')
+        except Exception as e:
+            if missing:
+                logger.error(
+                    f'skyfield: automatic download of ephemeris data to {target} failed ({e}). '
+                    f"Fetch it manually once network access is available: 'tools/fetch_skyfield_data.py'"
+                )
+            raise
         cls._ts = cls._load.timescale()
         logger.info(f'skyfield: loaded de421.bsp ephemeris data from {data_dir}')
 
     @staticmethod
     def _data_dir():
-        sh = getattr(Shtime.get_instance(), '_sh', None)
-        var_dir = getattr(sh, '_var_dir', None)
-        if var_dir:
-            return os.path.join(var_dir, 'skyfield-data')
-        return '~/.skyfield-data'
+        # var/cache/ is shng's established location for runtime-downloaded/
+        # regenerable data that should never be committed to the repo. Fixed
+        # relative to shng's own install location - no dependency on a live
+        # Shtime/smarthome instance, and no fallback to the user's home dir.
+        return os.path.join(_BASE_DIR, DIR_VAR, DIR_CACHE, 'skyfield-data')
 
     def _body(self, body):
         self._ensure_loaded()
