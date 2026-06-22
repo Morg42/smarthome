@@ -286,9 +286,25 @@ if __name__ == '__main__':
         sh = SmartHome(MODE=MODE, extern_conf_dir=extern_conf_dir, config_etc=args.config_etc)
         _sh_thread = threading.Thread(target=sh.start)
         _sh_thread.start()
+
         shell = code.InteractiveConsole(locals())
+        console_active = True
         while sh.alive:
-            shell.interact()
+            if console_active:
+                try:
+                    shell.interact()
+                except (EOFError, ValueError):
+                    try:
+                        sys.stdin = open('/dev/tty', 'r')
+                        sys.stdout = open('/dev/tty', 'w')
+                        shell = code.InteractiveConsole(locals())
+                    except OSError:
+                        print(
+                            'ERROR: Interactive console lost its controlling terminal; SmartHomeNG keeps running without it.'
+                        )
+                        console_active = False
+            else:
+                time.sleep(1)
         exit(0)
     elif args.logics:
         _reload_logics()
