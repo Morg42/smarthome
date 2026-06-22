@@ -569,7 +569,13 @@ class SmartHome:
         # orb_backend: which ephemeris library lib.orb.Orb uses ('ephem' or 'skyfield').
         # Default set in initialize_vars(), overridden by smarthome.yaml if present.
         if self._orb_backend not in lib.orb._BACKENDS:
-            self._logger.warning(f"Could not find/use ephemeris backend '{self._orb_backend}'!")
+            if self._orb_backend.startswith('skyfield') and lib.orb.Loader is None:
+                self._logger.warning(
+                    f"Could not find/use ephemeris backend '{self._orb_backend}' - skyfield is not installed. "
+                    f"Run 'tools/fetch_skyfield_data.py' once to install it."
+                )
+            else:
+                self._logger.warning(f"Could not find/use ephemeris backend '{self._orb_backend}'!")
         elif not (hasattr(self, '_lon') and hasattr(self, '_lat')):
             self._logger.warning('No latitude/longitude specified => you could not use the sun and moon object.')
         else:

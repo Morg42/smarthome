@@ -18,34 +18,49 @@
 #########################################################################
 
 """
-Ensures the skyfield ephemeris file (de421.bsp, ~17MB) used by the optional
-skyfield backend of lib.orb is present on disk, downloading it once if
-missing.
+Single entry point for opting into lib.orb's skyfield backend:
+  1) installs the skyfield package itself (pip), if not already present
+  2) downloads the skyfield ephemeris file (de421.bsp, ~17MB) it needs, if
+     not already present
 
-This is the only network access the skyfield backend ever requires: de421.bsp
-covers 1899-07-28 through 2053-10-08 and never needs re-fetching within that
-range. Run this once before switching lib.orb to the skyfield backend (set
-``orb_backend: skyfield`` in etc/smarthome.yaml) so SmartHomeNG's normal
-runtime never needs network access for it - matches the existing
-skyfield.api.Loader behaviour of skipping the download entirely if the file
-already exists at the target path, so re-running this script is always safe
-and a no-op once the file is in place.
+skyfield is deliberately NOT in lib/requirements.txt - shpypi's core-requirements
+check (run by bin/smarthome.py on every startup) runs before smarthome.yaml is
+even parsed, so it can't know whether orb_backend is actually set to
+'skyfield', and would otherwise install skyfield's dependencies (numpy, sgp4,
+jplephem) for every installation regardless of whether it's ever used. Run
+this script once instead, then set ``orb_backend: skyfield`` in
+etc/smarthome.yaml.
 
-Not run automatically at startup/install time: doing so unconditionally would
-download 17MB for every installation regardless of which backend is actually
-configured (orb_backend defaults to 'ephem'), reintroducing exactly the kind
-of required network access this is meant to avoid for everyone who hasn't
-opted into skyfield.
+The ephemeris file is the only network access the skyfield backend ever
+requires: de421.bsp covers 1899-07-28 through 2053-10-08 and never needs
+re-fetching within that range. Re-running this script is always safe and a
+no-op once both the package and the file are in place (skyfield.api.Loader
+skips its own download if the file already exists at the target path).
 
 Usage:
     tools/fetch_skyfield_data.py
 """
 
 import os
+import subprocess
 import sys
 
 sh_basedir = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.insert(0, sh_basedir)
+
+# Keep this in sync with tests/requirements.txt's skyfield line.
+SKYFIELD_REQUIREMENT = 'skyfield>=1.49,<2.0.0'
+
+try:
+    import skyfield  # noqa: F401
+except ImportError:
+    print(f"skyfield is not installed. Installing it now ('pip install {SKYFIELD_REQUIREMENT}')...", flush=True)
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', SKYFIELD_REQUIREMENT])
+    except subprocess.CalledProcessError as e:
+        print(f'ERROR: pip install failed: {e}')
+        print(f"Install it manually, then re-run this script: pip install '{SKYFIELD_REQUIREMENT}'")
+        sys.exit(1)
 
 try:
     from lib.orb import _BACKENDS, _SkyfieldBackend
@@ -54,8 +69,7 @@ except ImportError as e:
     sys.exit(1)
 
 if 'skyfield' not in _BACKENDS:
-    print("lib.orb's skyfield backend is not available (skyfield not installed).")
-    print("Run 'pip install -r requirements/base.txt' first, then re-run this script.")
+    print("lib.orb's skyfield backend is still not available after installing skyfield - see the error above.")
     sys.exit(1)
 
 data_dir = _SkyfieldBackend._data_dir()
@@ -75,3 +89,4 @@ except Exception as e:
     sys.exit(1)
 
 print(f'Done. Skyfield ephemeris data is now cached at {target}.')
+print("You can now set 'orb_backend: skyfield' in etc/smarthome.yaml.")

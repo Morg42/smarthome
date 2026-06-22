@@ -206,6 +206,13 @@ class TestSunRiseSetSkyfield(TestSunRiseSet):
     BACKEND = 'skyfield'
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestSunRiseSetSkyfieldCached(TestSunRiseSet):
+    """Same characterization suite again, against the cached skyfield backend."""
+
+    BACKEND = 'skyfield-cached'
+
+
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestSolarNoon(unittest.TestCase):
     BACKEND = 'ephem'
@@ -239,6 +246,11 @@ class TestSolarNoon(unittest.TestCase):
 @unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
 class TestSolarNoonSkyfield(TestSolarNoon):
     BACKEND = 'skyfield'
+
+
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestSolarNoonSkyfieldCached(TestSolarNoon):
+    BACKEND = 'skyfield-cached'
 
 
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
@@ -289,6 +301,11 @@ class TestSolarPositionSkyfield(TestSolarPosition):
     BACKEND = 'skyfield'
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestSolarPositionSkyfieldCached(TestSolarPosition):
+    BACKEND = 'skyfield-cached'
+
+
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
 class TestMoon(unittest.TestCase):
     BACKEND = 'ephem'
@@ -327,6 +344,11 @@ class TestMoon(unittest.TestCase):
 @unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
 class TestMoonSkyfield(TestMoon):
     BACKEND = 'skyfield'
+
+
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestMoonSkyfieldCached(TestMoon):
+    BACKEND = 'skyfield-cached'
 
 
 @unittest.skipUnless(HAS_EPHEM, 'pyephem not installed')
@@ -422,6 +444,11 @@ class TestEquinoxSkyfield(TestEquinox):
     BACKEND = 'skyfield'
 
 
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestEquinoxSkyfieldCached(TestEquinox):
+    BACKEND = 'skyfield-cached'
+
+
 # ===========================================================================
 # Moon rise/set sanity (only phase/light were characterized before)
 # ===========================================================================
@@ -463,6 +490,11 @@ class TestMoonRiseSet(unittest.TestCase):
 @unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
 class TestMoonRiseSetSkyfield(TestMoonRiseSet):
     BACKEND = 'skyfield'
+
+
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestMoonRiseSetSkyfieldCached(TestMoonRiseSet):
+    BACKEND = 'skyfield-cached'
 
 
 # ===========================================================================
@@ -529,6 +561,89 @@ class TestHighLatitudeNeverUp(unittest.TestCase):
 @unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
 class TestHighLatitudeNeverUpSkyfield(TestHighLatitudeNeverUp):
     BACKEND = 'skyfield'
+
+
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestHighLatitudeNeverUpSkyfieldCached(TestHighLatitudeNeverUp):
+    BACKEND = 'skyfield-cached'
+
+
+# ===========================================================================
+# Correctness: the cached backend must agree with the uncached one exactly.
+# The cache batches a whole year of events and bisects into it instead of
+# running a fresh search per call - these tests catch the bug we found while
+# building it (a circumpolar query returning the next *real* event months
+# away instead of None - see _SkyfieldCachedBackend.SAME_CIRCUIT_DAYS).
+# ===========================================================================
+
+
+@unittest.skipUnless(HAS_SKYFIELD, 'skyfield not installed')
+class TestSkyfieldCachedMatchesUncached(unittest.TestCase):
+    def setUp(self):
+        self.shtime = _make_shtime()
+        self.sun = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='skyfield')
+        self.sun_cached = Orb('sun', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='skyfield-cached')
+        self.moon = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='skyfield')
+        self.moon_cached = Orb('moon', BERLIN_LON, BERLIN_LAT, BERLIN_ELEV, backend='skyfield-cached')
+        self.tromso_sun = Orb('sun', TROMSO_LON, TROMSO_LAT, TROMSO_ELEV, backend='skyfield')
+        self.tromso_sun_cached = Orb('sun', TROMSO_LON, TROMSO_LAT, TROMSO_ELEV, backend='skyfield-cached')
+
+    def test_sun_rise_matches_across_several_dates(self):
+        for dt in (_SUMMER_SOLSTICE, _WINTER_SOLSTICE, _SPRING_EQUINOX):
+            with self.subTest(dt=dt):
+                self.assertEqual(self.sun.rise(dt=dt), self.sun_cached.rise(dt=dt))
+
+    def test_sun_set_matches_across_several_dates(self):
+        for dt in (_SUMMER_SOLSTICE, _WINTER_SOLSTICE, _SPRING_EQUINOX):
+            with self.subTest(dt=dt):
+                self.assertEqual(self.sun.set(dt=dt), self.sun_cached.set(dt=dt))
+
+    def test_sun_rise_matches_repeated_calls_across_consecutive_days(self):
+        # exercises the cache hit path (second+ call for the same doff)
+        dt = _SUMMER_SOLSTICE
+        for _ in range(5):
+            with self.subTest(dt=dt):
+                self.assertEqual(self.sun.rise(dt=dt), self.sun_cached.rise(dt=dt))
+            dt = self.sun.rise(dt=dt) + datetime.timedelta(seconds=1)
+
+    def test_noon_midnight_match(self):
+        self.assertEqual(self.sun.noon(dt=_SUMMER_SOLSTICE), self.sun_cached.noon(dt=_SUMMER_SOLSTICE))
+        self.assertEqual(self.sun.midnight(dt=_WINTER_SOLSTICE), self.sun_cached.midnight(dt=_WINTER_SOLSTICE))
+
+    def test_moon_rise_set_match(self):
+        self.assertEqual(self.moon.rise(dt=_SPRING_EQUINOX), self.moon_cached.rise(dt=_SPRING_EQUINOX))
+        self.assertEqual(self.moon.set(dt=_SPRING_EQUINOX), self.moon_cached.set(dt=_SPRING_EQUINOX))
+
+    def test_circumpolar_none_matches(self):
+        # the actual bug this test suite exists to catch: the cached backend
+        # must return None here too, not the next real event months away.
+        self.assertIsNone(self.tromso_sun.rise(dt=_SUMMER_SOLSTICE))
+        self.assertIsNone(self.tromso_sun_cached.rise(dt=_SUMMER_SOLSTICE))
+        self.assertIsNone(self.tromso_sun.set(dt=_SUMMER_SOLSTICE))
+        self.assertIsNone(self.tromso_sun_cached.set(dt=_SUMMER_SOLSTICE))
+        self.assertIsNone(self.tromso_sun.rise(dt=_WINTER_SOLSTICE))
+        self.assertIsNone(self.tromso_sun_cached.rise(dt=_WINTER_SOLSTICE))
+
+    def test_circumpolar_equinox_still_matches(self):
+        # away from the solstices, Tromsø has normal events again - the cache
+        # must resolve these via the proximity check too, not just return None.
+        self.assertEqual(self.tromso_sun.rise(dt=_SPRING_EQUINOX), self.tromso_sun_cached.rise(dt=_SPRING_EQUINOX))
+        self.assertEqual(self.tromso_sun.set(dt=_SPRING_EQUINOX), self.tromso_sun_cached.set(dt=_SPRING_EQUINOX))
+
+    def test_query_at_cache_window_boundary_is_not_a_false_none(self):
+        # Regression test: a query landing exactly at the cached window's end
+        # must not be mistaken for "confirmed no event" - that's just where the
+        # search stopped, not proof nothing exists just beyond it (found via
+        # 1000 sequential daily queries at Berlin - never circumpolar - wrongly
+        # returning None right at each yearly cache-refill boundary). Use a
+        # short CACHE_HORIZON_DAYS to hit the boundary deterministically
+        # without iterating a full year.
+        self.sun_cached._backend.CACHE_HORIZON_DAYS = 3
+        self.sun_cached.rise(dt=_SUMMER_SOLSTICE)  # populates the cache, covered_end = +3 days
+        boundary = _SUMMER_SOLSTICE + datetime.timedelta(days=3)
+        result = self.sun_cached.rise(dt=boundary)
+        self.assertIsNotNone(result)
+        self.assertEqual(result, self.sun.rise(dt=boundary))
 
 
 if __name__ == '__main__':
