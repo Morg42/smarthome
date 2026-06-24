@@ -91,6 +91,7 @@ Thumbs.db
 requirements/all.txt
 requirements/base.txt
 requirements/conf_all.txt
+requirements/test_plugins.txt
 
 # ignore users tools settings
 /custom_plugins/
