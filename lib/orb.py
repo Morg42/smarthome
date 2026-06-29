@@ -281,7 +281,11 @@ class _SkyfieldBackend(_OrbBackend):
 
     def _observer(self, lon, lat, elev):
         self._ensure_loaded()
-        topos = wgs84.latlon(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elev or 0)
+        # skyfield's Angle() does plain numeric division on the degrees value
+        # without coercing it first - non-float types (e.g. Decimal, as
+        # configured via etc/smarthome.yaml) raise a numpy TypeError instead
+        # of computing (python-skyfield#1090). Coerce explicitly.
+        topos = wgs84.latlon(latitude_degrees=float(lat), longitude_degrees=float(lon), elevation_m=float(elev or 0))
         return self._planets['earth'] + topos
 
     def get_observer_and_orb(self, lon, lat, elev, body):
