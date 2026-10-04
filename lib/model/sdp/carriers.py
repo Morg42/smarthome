@@ -5,7 +5,7 @@
 #########################################################################
 #  This file is part of SmartHomeNG.
 #
-#  Typed data passed between SmartDevicePlugin, protocols and connections
+#  Typed contracts between SmartDevicePlugin, protocols and connections
 #
 #  SmartHomeNG is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #########################################################################
 
 """
-Typed data passed between SmartDevicePlugin, protocols and connections.
+Typed contracts between SmartDevicePlugin, protocols and connections.
 
 - ``DeviceConfig``: static connection and protocol settings
 - ``ConnectionHooks``: callbacks a connection or protocol reports to
